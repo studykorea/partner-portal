@@ -1,0 +1,20 @@
+[
+  {
+    "agency_id": "kiec",
+    "agency_name": "KIEC",
+    "status": "active",
+    "created_at": "2026-05-18 00:00:00"
+  },
+  {
+    "agency_id": "realize_education",
+    "agency_name": "Realize Education",
+    "status": "active",
+    "created_at": "2026-05-18 00:00:00"
+  },
+  {
+    "agency_id": "uniquest",
+    "agency_name": "UniQuest",
+    "status": "active",
+    "created_at": "2026-05-18 00:00:00"
+  }
+]

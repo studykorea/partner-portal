@@ -1,0 +1,17 @@
+[
+  {
+    "username": "admin",
+    "full_name": "Super Admin",
+    "agency_name": "UniQuest",
+    "email": "admin@uniquest.com",
+    "phone": "",
+    "country": "South Korea",
+    "partner_group": "Admin",
+    "password_hash": "5c06eb3d5a05a19f49476d694ca81a36344660e9d5b98e3d6a6630f31c2422e7",
+    "role": "admin",
+    "status": "approved",
+    "created_at": "2026-05-18 00:00:00",
+    "agency_id": "uniquest",
+    "account_type": "UniQuest Admin"
+  }
+]
