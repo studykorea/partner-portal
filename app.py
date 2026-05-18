@@ -281,6 +281,7 @@ if "agency_id" not in st.session_state: st.session_state.agency_id = None
 if "account_type" not in st.session_state: st.session_state.account_type = None
 
 st.markdown("""
+
 <style>
 :root {--navy:#002B5B;--navy2:#053B7A;--blue:#005BDB;--black:#101828;--muted:#667085;--light:#F6F8FC;--border:#D9E2F1;}
 .stApp {background:#FFFFFF;color:var(--black);}
@@ -2138,6 +2139,29 @@ div[data-testid="stFileUploader"] label {
 }
 .home-row-gap-v53 {
     height: 34px;
+}
+/* Button color fix for Streamlit Cloud */
+.stButton > button,
+div[data-testid="stButton"] > button,
+button[kind="secondary"],
+button[kind="primary"] {
+    background-color: #FFFFFF !important;
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+    border: 1px solid #D1D5DB !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+}
+
+.stButton > button:hover,
+div[data-testid="stButton"] > button:hover,
+button[kind="secondary"]:hover,
+button[kind="primary"]:hover {
+    background-color: #F8FAFC !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    border: 1px solid #94A3B8 !important;
 }
 
 </style>
