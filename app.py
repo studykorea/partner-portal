@@ -1,7 +1,7 @@
 
 import streamlit as st
 import pandas as pd
-import json, hashlib, base64, re, os, re
+import json, hashlib, base64, re, os, hmac, re
 from pathlib import Path
 from datetime import datetime
 from sqlalchemy import create_engine, text
@@ -18,6 +18,7 @@ SCHOLARSHIPS = DATA / "scholarship_rules.csv"
 ELIG_LOGS = DATA / "eligibility_logs.csv"
 TUIT_LOGS = DATA / "tuition_logs.csv"
 INQUIRIES = DATA / "inquiries.csv"
+APPLICATIONS = DATA / "applications.csv"
 DATABASE_URL_KEY = "DATABASE_URL"
 
 CSV_TABLE_MAP = {
@@ -27,6 +28,7 @@ CSV_TABLE_MAP = {
     "eligibility_logs.csv": "eligibility_logs",
     "tuition_logs.csv": "tuition_logs",
     "inquiries.csv": "inquiries",
+    "applications.csv": "applications",
 }
 JSON_TABLE_MAP = {
     "users.json": "users",
@@ -112,19 +114,31 @@ def _ensure_db_table_from_file(p):
 
         _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
 
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_sql_table_cached(table):
+    return pd.read_sql_query(text(f'SELECT * FROM "{table}"'), get_engine()).fillna("")
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_seed_csv_cached(path_str):
+    return pd.read_csv(path_str, keep_default_na=False).fillna("")
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_seed_json_cached(path_str):
+    return json.loads(Path(path_str).read_text(encoding="utf-8")) if Path(path_str).exists() else []
+
 def read_csv(p):
     table = _table_for_csv_path(p)
     if table:
         _ensure_db_table_from_file(p)
         try:
-            return pd.read_sql_query(text(f'SELECT * FROM "{table}"'), get_engine()).fillna("")
+            return _read_sql_table_cached(table).copy()
         except Exception as e:
             st.error(f"Could not read table '{table}': {e}")
             return pd.DataFrame()
 
     if not Path(p).exists():
         return pd.DataFrame()
-    return pd.read_csv(p, keep_default_na=False).fillna("")
+    return _read_seed_csv_cached(str(p)).copy()
 
 def write_csv(p, df):
     df = _clean_df_for_db(df)
@@ -132,8 +146,7 @@ def write_csv(p, df):
     if table:
         df.to_sql(table, get_engine(), if_exists="replace", index=False)
 
-        # Also update the local seed CSV for backup/local consistency.
-        # This CSV should not be treated as the main production database.
+        # Also update the local seed CSV for local backup. Supabase is still the main DB.
         try:
             Path(p).parent.mkdir(parents=True, exist_ok=True)
             df.to_csv(p, index=False, encoding="utf-8-sig")
@@ -144,6 +157,7 @@ def write_csv(p, df):
         return
 
     df.to_csv(p, index=False, encoding="utf-8-sig")
+    st.cache_data.clear()
 
 def add_row(p, row):
     df = read_csv(p)
@@ -158,13 +172,13 @@ def read_json(p):
     if table:
         _ensure_db_table_from_file(p)
         try:
-            df = pd.read_sql_query(text(f'SELECT * FROM "{table}"'), get_engine()).fillna("")
+            df = _read_sql_table_cached(table).copy()
             return df.to_dict(orient="records")
         except Exception as e:
             st.error(f"Could not read table '{table}': {e}")
             return []
 
-    return json.loads(Path(p).read_text(encoding="utf-8")) if Path(p).exists() else []
+    return _read_seed_json_cached(str(p))
 
 def write_json(p, d):
     table = _table_for_json_path(p)
@@ -174,6 +188,7 @@ def write_json(p, d):
         return
 
     Path(p).write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    st.cache_data.clear()
 
 def find_user(username):
     for u in read_json(USERS):
@@ -229,17 +244,10 @@ def visible_logs(df):
         return df[df.get("agency_id", "") == current_agency_id()]
     return df[df.get("partner_username", "") == st.session_state.username]
 
-def b64(path):
-    return base64.b64encode(path.read_bytes()).decode() if path.exists() else ""
-
-
-
-def asset_img_url(relative_path):
-    path = BASE / str(relative_path)
-    if not path.exists():
-        return ""
-    return "data:image/jpeg;base64," + b64(path)
-
+@st.cache_data(ttl=3600, show_spinner=False)
+def _b64_file_cached(path_str):
+    p = Path(path_str)
+    return base64.b64encode(p.read_bytes()).decode() if p.exists() and p.is_file() else ""
 
 def b64(path):
     try:
@@ -248,28 +256,34 @@ def b64(path):
         p = str(path).strip()
         if p == "" or p.lower() in ["nan", "none", "null", "<na>"]:
             return ""
-        p = BASE / p
-        if not p.exists() or not p.is_file():
+        full_path = BASE / p
+        if not full_path.exists() or not full_path.is_file():
             return ""
-        return base64.b64encode(p.read_bytes()).decode()
+        return _b64_file_cached(str(full_path))
     except Exception:
         return ""
 
+def asset_img_url(relative_path):
+    encoded = b64(relative_path)
+    return "data:image/jpeg;base64," + encoded if encoded else ""
 
 def asset_img_html(relative_path, class_name="uni-photo"):
-    path = BASE / str(relative_path)
-    if not path.exists():
+    encoded = b64(relative_path)
+    if not encoded:
         return '<div class="thumb">🏛️</div>'
-    encoded = b64(path)
     return f'<img class="{class_name}" src="data:image/jpeg;base64,{encoded}">'
 
+@st.cache_data(ttl=300, show_spinner=False)
+def universities():
+    return read_csv(UNIS)
 
-@st.cache_data
-def universities(): return pd.read_csv(UNIS, keep_default_na=False).fillna("")
-@st.cache_data
-def criteria(): return pd.read_csv(CRITERIA, keep_default_na=False).fillna("")
-@st.cache_data
-def scholarship_rules(): return pd.read_csv(SCHOLARSHIPS, keep_default_na=False).fillna("") if SCHOLARSHIPS.exists() else pd.DataFrame()
+@st.cache_data(ttl=300, show_spinner=False)
+def criteria():
+    return read_csv(CRITERIA)
+
+@st.cache_data(ttl=300, show_spinner=False)
+def scholarship_rules():
+    return read_csv(SCHOLARSHIPS) if SCHOLARSHIPS.exists() else pd.DataFrame()
 
 if "page" not in st.session_state: st.session_state.page = "Home"
 if "logged_in" not in st.session_state: st.session_state.logged_in = False
@@ -280,8 +294,55 @@ if "full_name" not in st.session_state: st.session_state.full_name = None
 if "agency_id" not in st.session_state: st.session_state.agency_id = None
 if "account_type" not in st.session_state: st.session_state.account_type = None
 
-st.markdown("""
 
+def _set_login_session_from_user_v60(user):
+    st.session_state.logged_in = True
+    st.session_state.username = user["username"]
+    st.session_state.role = user["role"]
+    st.session_state.agency_name = user.get("agency_name", "")
+    st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
+    st.session_state.full_name = user.get("full_name", "")
+    st.session_state.account_type = user.get("account_type", user.get("role", ""))
+
+def _make_auth_token_v60(user):
+    data = f'{user.get("username","")}|{user.get("password_hash","")}|{user.get("status","")}|{user.get("role","")}'
+    secret = get_database_url()
+    sig = hmac.new(secret.encode("utf-8"), data.encode("utf-8"), hashlib.sha256).hexdigest()[:40]
+    return f'{user.get("username","")}:{sig}'
+
+def _verify_auth_token_v60(token):
+    try:
+        username, sig = str(token).split(":", 1)
+        user = find_user(username)
+        if not user or user.get("status") != "approved":
+            return None
+        expected = _make_auth_token_v60(user).split(":", 1)[1]
+        if hmac.compare_digest(sig, expected):
+            return user
+    except Exception:
+        return None
+    return None
+
+def restore_login_from_query_v60():
+    if st.session_state.get("logged_in"):
+        return
+    try:
+        token = st.query_params.get("auth", "")
+    except Exception:
+        token = ""
+    if isinstance(token, list):
+        token = token[0] if token else ""
+    if token:
+        user = _verify_auth_token_v60(token)
+        if user:
+            _set_login_session_from_user_v60(user)
+            if st.session_state.page in ["Home", "Login", "Partner Sign Up"]:
+                st.session_state.page = "Admin Dashboard" if user["role"] == "admin" else "Dashboard"
+
+restore_login_from_query_v60()
+
+
+st.markdown("""
 <style>
 :root {--navy:#002B5B;--navy2:#053B7A;--blue:#005BDB;--black:#101828;--muted:#667085;--light:#F6F8FC;--border:#D9E2F1;}
 .stApp {background:#FFFFFF;color:var(--black);}
@@ -2140,7 +2201,9 @@ div[data-testid="stFileUploader"] label {
 .home-row-gap-v53 {
     height: 34px;
 }
-/* Button color fix for Streamlit Cloud */
+
+
+/* Button color fix for Streamlit Cloud v60 */
 .stButton > button,
 div[data-testid="stButton"] > button,
 button[kind="secondary"],
@@ -2164,6 +2227,142 @@ button[kind="primary"]:hover {
     border: 1px solid #94A3B8 !important;
 }
 
+
+/* v61 advanced university and application UI */
+.filter-panel-v61 {background:#F6F8FC;border:1px solid #DCE6F4;border-radius:16px;padding:18px 18px 6px 18px;margin:16px 0 24px 0;}
+.uni-title-row-v61 {display:flex;justify-content:space-between;align-items:flex-start;gap:18px;}
+.status-area-v61 {display:flex;flex-direction:column;gap:8px;min-width:170px;}
+.status-badge-v61,.scholarship-badge-v61 {display:inline-flex;justify-content:center;align-items:center;border-radius:999px;padding:9px 14px;font-weight:900;font-size:13px;}
+.open-v61 {background:#10B981!important;color:#FFFFFF!important;}
+.closed-v61 {background:#DC2626!important;color:#FFFFFF!important;}
+.scholarship-badge-v61 {background:#EEF5FF!important;color:#002B5B!important;border:1px solid #CFE0FF;}
+.info-grid-v61 {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px;}
+.info-grid-v61 div,.program-detail-v61 div {background:#F7F9FC;border:1px solid #E3EAF5;border-radius:12px;padding:13px 15px;}
+.info-grid-v61 b,.program-detail-v61 b {display:block;color:#002B5B!important;margin-bottom:6px;}
+.info-grid-v61 span,.program-detail-v61 span {display:block;color:#101828!important;}
+.student-chart-v61 {display:flex;gap:18px;align-items:center;background:#FFFFFF;border:1px solid #DCE6F4;border-radius:16px;padding:16px;margin-top:20px;}
+.student-chart-v61 span {display:block;color:#475467!important;margin-top:5px;}
+.pie-v61 {width:105px;height:105px;min-width:105px;border-radius:50%;border:6px solid #FFFFFF;box-shadow:0 8px 20px rgba(16,24,40,.08);}
+.subhead-v61 {color:#002B5B!important;margin-top:22px!important;margin-bottom:10px!important;}
+.country-list-v61 {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.country-list-v61 div,.country-list-v61 span {background:#F7F9FC;border:1px solid #E3EAF5;border-radius:12px;padding:12px;}
+.country-list-v61 b {display:block;color:#101828!important;}
+.country-list-v61 span {color:#475467!important;}
+.map-box-v61 {border:1px solid #DCE6F4;border-radius:16px;overflow:hidden;height:310px;background:#F6F8FC;}
+.map-box-v61 iframe {width:100%;height:100%;border:0;}
+.program-detail-v61 {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 8px 0;}
+.application-head-v61 {background:linear-gradient(90deg,#002B5B,#053B7A);border-radius:22px;padding:30px;margin-bottom:24px;}
+.application-head-v61,.application-head-v61 * {color:#FFFFFF!important;}
+.application-head-v61 span {display:inline-block;background:#10B981;border-radius:999px;padding:8px 14px;font-weight:900;}
+@media(max-width:1000px){.info-grid-v61,.country-list-v61,.program-detail-v61{grid-template-columns:1fr;}.uni-title-row-v61{flex-direction:column;}}
+
+
+/* v62 premium UniQuest redesign */
+.uq-topbar-v62 {
+    position: sticky; top: 0; z-index: 999;
+    height: 76px; background:#FFFFFF;
+    border-bottom:1px solid #E6ECF5;
+    display:flex; align-items:center;
+    padding: 8px 28px 8px 28px;
+    box-shadow:0 4px 18px rgba(16,24,40,.04);
+}
+.uq-brand-v62 {display:flex;align-items:center;height:58px;}
+.uq-logo-v62 {height:54px; object-fit:contain;}
+.uq-logo-text-v62 {font-size:32px;font-weight:900;color:#002B5B;}
+.uq-nav-btn-v62 div[data-testid="stButton"] button,
+.uq-nav-btn-v62 .stButton button {
+    background:transparent!important;
+    color:#002B5B!important;
+    -webkit-text-fill-color:#002B5B!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:10px!important;
+    font-weight:800!important;
+    height:48px!important;
+}
+.uq-nav-btn-v62.active-nav-v62 div[data-testid="stButton"] button {
+    color:#005BDB!important;
+    -webkit-text-fill-color:#005BDB!important;
+    border-bottom:3px solid #005BDB!important;
+    border-radius:0!important;
+}
+.uq-nav-btn-v62 div[data-testid="stButton"] button:hover {
+    background:#F3F7FF!important;
+    color:#005BDB!important;
+    -webkit-text-fill-color:#005BDB!important;
+}
+.hero-premium-v62 {
+    min-height:360px; background-size:cover; background-position:center;
+    position:relative; overflow:hidden; display:flex; align-items:center; padding:34px 54px;
+}
+.hero-pattern-v62 {
+    position:absolute; left:22%; top:20px; width:420px; height:240px;
+    background:radial-gradient(circle, rgba(255,255,255,.14) 1px, transparent 2px);
+    background-size:16px 16px; opacity:.65;
+}
+.hero-content-v62 {position:relative; z-index:2; max-width:640px;}
+.step-pill-v62 {
+    display:inline-flex; gap:10px; align-items:center; background:rgba(255,255,255,.12);
+    color:#FFFFFF!important; border:1px solid rgba(255,255,255,.25);
+    border-radius:999px; padding:6px 16px; font-weight:800; margin-bottom:16px;
+}
+.step-pill-v62 span {background:#005BDB;color:#FFFFFF!important;border-radius:999px;padding:5px 14px;}
+.hero-premium-v62 h1 {font-size:48px!important;line-height:1.08!important;color:#FFFFFF!important;margin:0 0 18px 0!important;}
+.hero-premium-v62 p {font-size:17px!important;line-height:1.55!important;color:#FFFFFF!important;}
+.featured-head-v62 {display:flex;justify-content:space-between;align-items:center;margin:24px 54px 10px;}
+.featured-head-v62 h2 {color:#101828!important;font-size:24px!important;}
+.featured-head-v62 span {color:#005BDB!important;font-weight:800;}
+.uni-feature-card-v62 {
+    background:#FFFFFF;border:1px solid #DDE7F5;border-radius:14px;overflow:hidden;
+    box-shadow:0 8px 22px rgba(16,24,40,.06); min-height:245px; padding-bottom:14px; position:relative;
+}
+.uni-photo-premium-v62 {width:100%;height:85px;object-fit:cover;display:block;}
+.uni-shield-v62 {position:absolute;top:60px;left:20px;background:#FFFFFF;border:4px solid #EFF5FF;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;}
+.uni-feature-card-v62 h3 {font-size:16px!important;color:#002B5B!important;padding:24px 18px 4px;margin:0!important;}
+.uni-feature-card-v62 p {color:#475467!important;font-size:13px!important;padding:0 18px;margin:6px 0!important;}
+.access-note-v62 {text-align:center;color:#667085!important;margin:16px 0 10px!important;}
+.features-v62 {display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#EFF6FF;border-top:1px solid #DDE7F5;border-bottom:1px solid #DDE7F5;padding:20px 55px;margin-top:28px;}
+.feature-v62 {display:flex;gap:14px;align-items:center;justify-content:center;border-right:1px solid #D6E2F2;}
+.feature-v62:last-child{border-right:0;}
+.feature-icon-v62 {width:44px;height:44px;border-radius:50%;background:#FFFFFF;color:#005BDB;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.feature-v62 b{color:#002B5B!important;}
+.feature-v62 span{color:#667085!important;}
+.uq-footer-v62 {background:linear-gradient(90deg,#002B5B,#001C3D);padding:32px 55px 18px;color:#FFFFFF!important;}
+.uq-footer-v62 * {color:#FFFFFF!important;}
+.uq-footer-grid-v62 {display:grid;grid-template-columns:1.6fr 1.15fr 1.1fr 1.55fr 1fr;gap:28px;align-items:start;}
+.footer-logo-v62 {max-width:190px;filter:brightness(0) invert(1);}
+.footer-action-v62 {background:#005BDB;border:0;border-radius:8px;padding:10px 20px;font-weight:800;}
+.socials-v62 span {display:inline-flex;width:38px;height:38px;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border-radius:50%;margin-right:8px;}
+.footer-bottom-v62 {border-top:1px solid rgba(255,255,255,.15);margin-top:22px;padding-top:14px;font-size:13px;color:#C7D7EA!important;display:flex;justify-content:space-between;}
+.signup-shell-v62 {background:linear-gradient(90deg,#002B5B 0%,#002B5B 43%,#F5F8FF 43%,#F5F8FF 100%);padding:34px 64px 24px;}
+.signup-left-v62 {color:#FFFFFF!important;padding:24px 10px;}
+.signup-left-v62 * {color:#FFFFFF!important;}
+.signup-left-v62 h1{font-size:46px!important;line-height:1.12!important;}
+.signup-left-v62 p{font-size:17px!important;line-height:1.55!important;}
+.signup-benefit-v62 {display:flex;gap:18px;margin:28px 0;align-items:flex-start;}
+.signup-benefit-v62 > div {width:54px;height:54px;border-radius:14px;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:25px;}
+.important-note-v62 {background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:18px;margin-top:24px;}
+.signup-card-v62 {background:#FFFFFF;border-radius:18px;padding:28px 34px;box-shadow:0 16px 40px rgba(16,24,40,.18);border:1px solid #E3EAF5;}
+.dashboard-layout-v62 {display:flex;background:#F7FAFF;min-height:720px;}
+.sidebar-v62 {position:fixed;left:0;top:76px;bottom:0;width:282px;background:linear-gradient(180deg,#002B5B,#001C3D);padding:24px 18px;z-index:100;color:#FFFFFF!important;}
+.sidebar-v62 * {color:#FFFFFF!important;}
+.side-brand-v62 {font-size:26px;font-weight:900;margin-bottom:22px;}
+.side-line-v62 {height:1px;background:rgba(255,255,255,.16);margin-bottom:16px;}
+.sidebar-v62 div[data-testid="stButton"] button {background:transparent!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border:0!important;text-align:left!important;justify-content:flex-start!important;font-weight:800!important;}
+.sidebar-v62 div[data-testid="stButton"] button:hover {background:#005BDB!important;}
+.side-status-v62 {position:absolute;bottom:80px;left:18px;right:18px;border:1px solid rgba(255,255,255,.20);border-radius:14px;padding:18px;}
+.side-status-v62 span{color:#65E095!important;}
+.main-v62 {margin-left:282px;padding:24px 30px;width:calc(100% - 282px);background:#F7FAFF;}
+.welcome-v62 {font-size:19px;font-weight:900;color:#002B5B!important;padding:12px 0;}
+.avatar-v62 {width:42px;height:42px;background:#002B5B;color:#FFFFFF!important;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+.partner-hero,.partner-stat-card,.partner-panel,.white-panel,.card {box-shadow:0 10px 30px rgba(16,24,40,.06)!important;border:1px solid #E3EAF5!important;border-radius:16px!important;}
+@media(max-width:1050px){
+    .features-v62,.uq-footer-grid-v62{grid-template-columns:1fr;}
+    .signup-shell-v62{background:#002B5B;padding:24px;}
+    .sidebar-v62{position:relative;top:0;width:100%;bottom:auto;}
+    .main-v62{margin-left:0;width:100%;}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -2177,17 +2376,15 @@ def set_page(p):
 
 
 
+
 def header():
-    st.markdown('<div class="header-align-v47">', unsafe_allow_html=True)
-    cols = st.columns([1.65, .82, .98, 1.22, .92, .92, .98, .75, 1.05], gap="small")
+    logo_b64 = b64("uniquest_logo.png")
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}" class="uq-logo-v62">' if logo_b64 else '<div class="uq-logo-text-v62">UniQuest</div>'
+    st.markdown('<div class="uq-topbar-v62">', unsafe_allow_html=True)
+    cols = st.columns([1.9, .55, .75, 1.05, .85, .75, .85, .55, .95], gap="small")
 
     with cols[0]:
-        st.markdown(
-            '<div class="site-title-wrap-v47">'
-            '<div class="site-title-v47">Partner Portal for<br>University Recruitment</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown(f'<div class="uq-brand-v62">{logo_html}</div>', unsafe_allow_html=True)
 
     menu_items = [
         ("Home", "Home"),
@@ -2197,49 +2394,60 @@ def header():
         ("Contact Us", "Contact Us"),
         ("MoU Contact", "Contact Us"),
         ("Login", "Login"),
-        ("Partner Sign Up", "Partner Sign Up"),
+        ("👥  Partner Sign Up", "Partner Sign Up"),
     ]
 
     for col, (label, page) in zip(cols[1:], menu_items):
         with col:
-            st.markdown('<div class="nav-button-wrap-v47">', unsafe_allow_html=True)
-            if st.button(label, key=f"nav_v47_{label}", use_container_width=True):
+            active = "active-nav-v62" if st.session_state.get("page") == page else ""
+            st.markdown(f'<div class="uq-nav-btn-v62 {active}">', unsafe_allow_html=True)
+            if st.button(label, key=f"nav_v62_{label}", use_container_width=True):
                 set_page(page)
             st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-def footer():
 
-    st.markdown("""
-    <div class="features">
-      <div class="feature"><div class="icon">✓</div><div><b>Trusted Partnerships</b><br><span class="muted">Work with verified universities</span></div></div>
-      <div class="feature"><div class="icon">i</div><div><b>Accurate Information</b><br><span class="muted">Up-to-date admission & fee details</span></div></div>
-      <div class="feature"><div class="icon">✓</div><div><b>Eligibility Made Easy</b><br><span class="muted">Quick checks for better guidance</span></div></div>
-      <div class="feature"><div class="icon">☆</div><div><b>Scholarship Support</b><br><span class="muted">Maximize opportunities for students</span></div></div>
+def footer():
+    logo_b64 = b64("uniquest_logo_footer.png") or b64("uniquest_logo.png")
+    logo_html = f'<img src="data:image/png;base64,{logo_b64}" class="footer-logo-v62">' if logo_b64 else '<h2>UniQuest</h2>'
+    st.markdown(f"""
+    <div class="features-v62">
+      <div class="feature-v62"><div class="feature-icon-v62">🛡️</div><div><b>Trusted Partnerships</b><br><span>Work with verified universities</span></div></div>
+      <div class="feature-v62"><div class="feature-icon-v62">📄</div><div><b>Accurate Information</b><br><span>Up-to-date admission & fee details</span></div></div>
+      <div class="feature-v62"><div class="feature-icon-v62">✓</div><div><b>Eligibility Made Easy</b><br><span>Quick checks for better guidance</span></div></div>
+      <div class="feature-v62"><div class="feature-icon-v62">🎓</div><div><b>Scholarship Support</b><br><span>Maximize opportunities for students</span></div></div>
     </div>
 
-    <div class="footer-lite-v27">
-      <div class="footer-lite-grid-v27">
+    <div class="uq-footer-v62">
+      <div class="uq-footer-grid-v62">
+        <div>{logo_html}</div>
         <div>
-          <h3>Partner Portal for<br>University Recruitment</h3>
-          <p>Empowering global education partnerships.</p>
+          <h4>Contact Us</h4>
+          <p>☎ +82 10 1234 5678</p>
+          <p>✉ info@uniquest.com</p>
+          <p>📍 Seoul, South Korea</p>
         </div>
-        <div class="footer-contact-row-v27">
-          <span>☎ +82 51 711 2773</span>
-          <span>✉ uniqueststudy@gmail.com</span>
-          <span>📍 Busan, Republic of Korea</span>
+        <div>
+          <h4>Quick Links</h4>
+          <p>Universities</p>
+          <p>Eligibility Check</p>
+          <p>Tuition Fees</p>
+        </div>
+        <div>
+          <h4>Partnership Inquiries</h4>
+          <p>Interested in becoming an approved partner?</p>
+          <button class="footer-action-v62">✉ Get in Touch</button>
+        </div>
+        <div>
+          <h4>Follow Us</h4>
+          <div class="socials-v62"><span>f</span><span>in</span><span>▶</span><span>◎</span></div>
         </div>
       </div>
-      <hr>
-      <p class="copyright-v27">© 2026 Partner Portal for University Recruitment. All rights reserved.</p>
+      <div class="footer-bottom-v62">© 2026 UniQuest. All rights reserved. <span>Privacy Policy&nbsp;&nbsp; | &nbsp;&nbsp;Terms of Use</span></div>
     </div>
     """, unsafe_allow_html=True)
-
-
-
-
 
 
 def format_money_v37(x):
@@ -2520,172 +2728,150 @@ def chunk_records_v53(records, size=5):
         yield records[i:i+size]
 
 
+
 def home():
     header()
     hero_img = asset_img_url("assets/home_hero.jpg")
     bg = ""
     if hero_img:
-        bg = "background-image: linear-gradient(90deg, rgba(0,43,91,.98) 0%, rgba(0,43,91,.88) 36%, rgba(0,43,91,.42) 68%, rgba(0,43,91,.08) 100%), url('" + hero_img + "');"
+        bg = "background-image: linear-gradient(90deg, rgba(0,43,91,.98) 0%, rgba(0,43,91,.92) 34%, rgba(0,91,219,.35) 62%, rgba(0,43,91,.08) 100%), url('" + hero_img + "');"
     st.markdown(f"""
-    <div class="hero-v32" style="{bg}">
-      <div class="hero-text-v32">
-        <h1 style="color:#FFFFFF!important;">Partner Portal for<br>University Recruitment</h1>
+    <div class="hero-premium-v62" style="{bg}">
+      <div class="hero-pattern-v62"></div>
+      <div class="hero-content-v62">
+        <div class="step-pill-v62"><span>Step 1</span> Home Page</div>
+        <h1>Partner Portal for<br>University Recruitment</h1>
         <p>Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
-        <p class="lock-v32">🔒 Detailed information is available only for approved partners.</p>
       </div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown('<div class="hero-buttons-v32">', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1.22, 1.08, 5.4])
+
+    c1, c2, c3 = st.columns([1.15, 1.15, 5.4])
     with c1:
-        if st.button("Apply for Partner Access", key="hero_apply_real", use_container_width=True): set_page("Partner Sign Up")
+        if st.button("👥  Apply for Partner Access", key="hero_apply_v62", use_container_width=True): set_page("Partner Sign Up")
     with c2:
-        if st.button("Explore Universities", key="hero_explore_real", use_container_width=True): set_page("Universities")
-    st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("🏛️  Explore Universities", key="hero_explore_v62", use_container_width=True): set_page("Universities")
 
-    st.markdown('<div class="section featured-v32"><h2>Featured Universities</h2>', unsafe_allow_html=True)
-    unis = universities().reset_index(drop=True)
-    uni_records = list(unis.iterrows())
-
-    for row_idx, row_items in enumerate(chunk_records_v53(uni_records, 5)):
-        cols = st.columns(5, gap="medium")
-        for col_idx, (i, u) in enumerate(row_items):
-            with cols[col_idx]:
-                image_html = asset_img_html(u.get("Image", ""), "uni-photo")
-                location_text = display_value_v53(u.get("Location", ""))
-                students_text = student_count_v53(u)
-                intl_text = intl_count_v53(u)
-
-                students_html = f"<p>👥 {students_text}</p>" if students_text else ""
-                intl_html = f"<p>🌏 {intl_text}</p>" if intl_text else ""
-
-                st.markdown(f"""
-                <div class="card uni-card-v53">
-                  {image_html}
-                  <h3>{display_value_v53(u.get('University',''))}</h3>
-                  <p class="muted">📍 {location_text}</p>
-                  {students_html}
-                  {intl_html}
-                </div>
-                """, unsafe_allow_html=True)
-
-                if st.button("View Details", key=f"view_v53_{i}", use_container_width=True):
+    st.markdown('<div class="featured-head-v62"><h2>Featured Universities</h2><span>View All Universities →</span></div>', unsafe_allow_html=True)
+    unis = universities().reset_index(drop=True).head(5)
+    cols = st.columns(5, gap="medium")
+    for col_idx, (i, u) in enumerate(unis.iterrows()):
+        with cols[col_idx]:
+            image_html = asset_img_html(u.get("Image", ""), "uni-photo-premium-v62")
+            st.markdown(f"""
+            <div class="uni-feature-card-v62">
+              {image_html}
+              <div class="uni-shield-v62">🏛️</div>
+              <h3>{display_value_v53(u.get('University',''))}</h3>
+              <p>📍 {display_value_v53(u.get('Location',''))}</p>
+              <p>👥 {student_count_v53(u) or 'Students'}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            cc1, cc2 = st.columns(2)
+            with cc1:
+                if st.button("View Details", key=f"view_v62_{i}", use_container_width=True):
                     st.session_state.selected_uni = u["University"]
                     set_page("Universities")
-        if row_idx < (len(uni_records) - 1) // 5:
-            st.markdown('<div class="home-row-gap-v53"></div>', unsafe_allow_html=True)
+            with cc2:
+                if st.button("Requirements", key=f"req_v62_{i}", use_container_width=True):
+                    st.session_state.selected_uni = u["University"]
+                    set_page("Universities")
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
+    st.markdown('<p class="access-note-v62">🔒 Access to detailed university information, programs, and fees is limited to approved partners.</p>', unsafe_allow_html=True)
     footer()
 
 
 
 def signup():
     header()
+    st.markdown('<div class="signup-shell-v62">', unsafe_allow_html=True)
     left, right = st.columns([0.95, 1.35], gap="large")
 
     with left:
         st.markdown("""
-        <div class="public-left-box navy">
-          <h1 style="font-size:44px;line-height:1.12;">Partner Sign Up /<br>Agency Registration</h1>
-          <p style="font-size:17px;">Create your partner account to access university information, eligibility tools, and agency resources.</p>
-          <hr style="border-color:rgba(255,255,255,.25);">
-          <h3>🛡️ Admin Approval Required</h3><p>All accounts are approved by Partner Portal Admin before access is granted.</p>
-          <h3>🏢 Agency Team Structure</h3><p>KIEC and Realize Education can be selected directly. Other agencies can enter their agency name manually.</p>
-          <h3>🔒 Secure & Confidential</h3><p>Staff can only view their own records, while representatives can view their agency records.</p>
+        <div class="signup-left-v62">
+          <div class="step-pill-v62"><span>Step 2</span> Partner Sign Up</div>
+          <h1>Partner Sign Up /<br>Agency Registration</h1>
+          <p>Create your partner account to access UniQuest's university network, eligibility tools, and partner resources.</p>
+          <hr>
+          <div class="signup-benefit-v62"><div>🛡️</div><section><h3>Admin Approval Required</h3><p>All partner accounts are verified by our team. Access is granted only after approval.</p></section></div>
+          <div class="signup-benefit-v62"><div>👥</div><section><h3>Trusted Partner Network</h3><p>We work with experienced and verified education partners worldwide.</p></section></div>
+          <div class="signup-benefit-v62"><div>🔒</div><section><h3>Secure & Confidential</h3><p>Your information is safe with us and used strictly for partnership purposes.</p></section></div>
+          <div class="important-note-v62"><b>ℹ️ Important Note</b><br>Your access will remain limited until your account is reviewed and approved by the UniQuest admin team.</div>
         </div>
         """, unsafe_allow_html=True)
 
     with right:
-        st.markdown('<div class="public-form-wrap"><div class="white-panel">', unsafe_allow_html=True)
+        st.markdown('<div class="signup-card-v62">', unsafe_allow_html=True)
         st.subheader("Create Your Partner Account")
-        st.caption("Please fill in the details below to register your agency account.")
+        st.caption("Please fill in the details below to register your agency with UniQuest.")
 
         with st.form("signup"):
             row1_left, row1_right = st.columns(2)
             with row1_left:
-                account_type = st.selectbox("Account Type", ["Agency Representative", "Agency Staff"])
+                agency = st.text_input("Agency / Company Name", placeholder="Enter agency or company name")
             with row1_right:
                 connection = st.selectbox("Official Partner Connection", ["KIEC","Realize Education","Other / New Agency"])
 
             row2_left, row2_right = st.columns(2)
             with row2_left:
-                agency_select = st.selectbox("Agency Name", ["KIEC", "Realize Education", "Other / New Agency"])
-                if agency_select == "Other / New Agency":
-                    agency = st.text_input("Enter Agency Name")
-                else:
-                    agency = agency_select
+                name = st.text_input("Representative Full Name", placeholder="Enter full name")
             with row2_right:
-                email = st.text_input("Email Address")
+                email = st.text_input("Email Address", placeholder="Enter email address")
 
             row3_left, row3_right = st.columns(2)
             with row3_left:
-                name = st.text_input("Representative / Staff Full Name")
+                phone = st.text_input("Phone Number / WhatsApp", placeholder="+977 98XXXXXXXX")
             with row3_right:
                 country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
 
             row4_left, row4_right = st.columns(2)
             with row4_left:
-                phone = st.text_input("Phone / WhatsApp")
+                account_type = st.selectbox("Business Registration Type", ["Agency Representative", "Agency Staff", "Other"])
             with row4_right:
                 username = st.text_input("Create Username")
 
             row5_left, row5_right = st.columns(2)
             with row5_left:
-                password = st.text_input("Create Eligibleword", type="password")
+                password = st.text_input("Create Password", type="password")
             with row5_right:
-                confirm = st.text_input("Confirm Eligibleword", type="password")
+                confirm = st.text_input("Confirm Password", type="password")
 
-            agree = st.checkbox("I agree to the portal's Terms of Use and Privacy Policy.")
+            supporting_doc = st.file_uploader("Upload Supporting Documents Optional", type=["pdf","jpg","jpeg","png"])
+            agree = st.checkbox("I agree to UniQuest's Terms of Use and Privacy Policy.")
 
-            if st.form_submit_button("Submit for Approval", use_container_width=True):
+            if st.form_submit_button("✈ Submit for Approval", use_container_width=True):
                 if not all([agency,name,email,username,password,confirm,account_type]):
                     st.error("Please complete all required fields.")
                 elif password != confirm:
-                    st.error("Eligiblewords do not match.")
-                elif find_user(username):
-                    st.error("This username already exists.")
+                    st.error("Passwords do not match.")
                 elif not agree:
                     st.error("Please agree to the terms.")
+                elif find_user(username):
+                    st.error("This username already exists.")
                 else:
-                    agencies = read_agencies()
-                    existing_agency = find_agency_by_name(agency)
-
-                    if existing_agency:
-                        agency_id = existing_agency.get("agency_id")
-                        agency_name_clean = existing_agency.get("agency_name")
-                    else:
-                        agency_id = normalize_agency_id(agency)
-                        agency_name_clean = agency.strip()
-                        agencies.append({
-                            "agency_id": agency_id,
-                            "agency_name": agency_name_clean,
-                            "status": "pending",
-                            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        })
-                        write_agencies(agencies)
-
-                    users = read_json(USERS)
                     role = "agency_rep" if account_type == "Agency Representative" else "agency_staff"
+                    agency_id = normalize_agency_id(agency)
+                    users = read_json(USERS)
                     users.append({
                         "username": username,
-                        "full_name": name,
-                        "agency_name": agency_name_clean,
+                        "password_hash": hash_pw(password),
+                        "role": role,
+                        "agency_name": agency,
                         "agency_id": agency_id,
+                        "full_name": name,
                         "email": email,
                         "phone": phone,
                         "country": country,
                         "partner_group": connection,
                         "account_type": account_type,
-                        "password_hash": hash_pw(password),
-                        "role": role,
                         "status": "pending",
                         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     })
                     write_json(USERS, users)
-                    set_page("Pending")
-        st.markdown('</div></div>', unsafe_allow_html=True)
+                    set_page("Approval Pending")
+        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     footer()
 
 
@@ -2742,13 +2928,11 @@ def login():
                 elif user["status"] != "approved":
                     set_page("Pending")
                 else:
-                    st.session_state.logged_in = True
-                    st.session_state.username = user["username"]
-                    st.session_state.role = user["role"]
-                    st.session_state.agency_name = user.get("agency_name", "")
-                    st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
-                    st.session_state.full_name = user.get("full_name", "")
-                    st.session_state.account_type = user.get("account_type", user.get("role", ""))
+                    _set_login_session_from_user_v60(user)
+                    try:
+                        st.query_params["auth"] = _make_auth_token_v60(user)
+                    except Exception:
+                        pass
                     set_page("Admin Dashboard" if user["role"] == "admin" else "Dashboard")
         if st.button("Create New Partner Account", key="go_signup_from_login", use_container_width=True):
             set_page("Partner Sign Up")
@@ -2756,25 +2940,47 @@ def login():
     footer()
 
 
+
 def dash_shell(items):
-    st.markdown('<div class="dash">', unsafe_allow_html=True)
-    st.markdown('<div class="side navy"><h2>Partner Portal</h2></div>', unsafe_allow_html=True)
-    with st.container():
-        pass
-    st.markdown('<div class="main">', unsafe_allow_html=True)
-    cols = st.columns(len(items)+1)
-    for c,item in zip(cols, items):
-        with c:
-            if st.button(item, key=f"dashnav_{item}", use_container_width=True):
-                set_page(item)
-    with cols[-1]:
-        if st.button("Logout", key="logout", use_container_width=True):
+    st.markdown('<div class="dashboard-layout-v62">', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="sidebar-v62">
+      <div class="side-brand-v62">🛡️ UniQuest</div>
+      <div class="side-line-v62"></div>
+    """, unsafe_allow_html=True)
+    for item in items:
+        icon = {
+            "Dashboard":"⌂", "Universities":"🏛️", "Eligibility Check":"◎", "Tuition & Scholarship":"▣",
+            "Contact Us":"☏", "Partner Management":"👥", "Eligibility Rules":"☑", "Tuition Rules":"💵",
+            "Scholarship Rules":"🎓", "Applications":"📄", "Admin Dashboard":"⌂"
+        }.get(item, "›")
+        if st.button(f"{icon}  {item}", key=f"dashnav_v62_{item}", use_container_width=True):
+            set_page(item)
+    st.markdown("""
+      <div class="side-status-v62">
+        <b>Partner Status</b><br>
+        <span>● Approved Partner</span>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="main-v62">', unsafe_allow_html=True)
+    top_cols = st.columns([5.2, 1.2, .35])
+    with top_cols[0]:
+        st.markdown(f'<div class="welcome-v62">Welcome, {st.session_state.get("agency_name") or st.session_state.get("full_name") or "Partner"}</div>', unsafe_allow_html=True)
+    with top_cols[1]:
+        if st.button("Logout", key="logout_v62", use_container_width=True):
             for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type"]:
                 st.session_state[k] = False if k == "logged_in" else None
+            try:
+                st.query_params.clear()
+            except Exception:
+                pass
             set_page("Home")
-
+    with top_cols[2]:
+        st.markdown('<div class="avatar-v62">GP</div>', unsafe_allow_html=True)
 
 admin_shell = dash_shell
+
 
 def close_shell():
     st.markdown('</div></div>', unsafe_allow_html=True)
@@ -3414,7 +3620,7 @@ def contact():
 
 
 def admin():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
 
     users = pd.DataFrame(read_json(USERS))
     if len(users):
@@ -3522,7 +3728,7 @@ def add_user_record_v58(new_row):
 
 
 def admin_partner_management_v58():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader("Partner Management")
     st.caption("Edit, approve/reject, or delete partner users. Admin account cannot be deleted here for safety.")
 
@@ -3643,7 +3849,7 @@ def admin_partner_management_v58():
     close_shell()
 
 def admin_table(title, df):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader(title)
     st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
     st.info("Later, we can add Add/Edit/Delete forms here.")
@@ -3666,7 +3872,7 @@ def safe_write_csv_v48(path, df):
     clear_data_cache_v48()
 
 def editable_table_v48(title, path, key, help_text=""):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader(title)
     if help_text:
         st.caption(help_text)
@@ -3691,7 +3897,7 @@ def editable_table_v48(title, path, key, help_text=""):
     close_shell()
 
 def admin_universities_edit_v48():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader("Universities Management")
     st.caption("Edit school information directly. Uploading a photo will update the selected school's image path automatically.")
 
@@ -3772,7 +3978,7 @@ def admin_tuition_edit_v48():
 
 
 def admin_university_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader("University Management")
     st.caption("Add, edit, or update university information. New universities will appear on the Home and Universities pages. To appear in Eligibility, add at least one major in Eligibility Rules after adding the university.")
 
@@ -3781,7 +3987,8 @@ def admin_university_management_v49():
     required_cols = [
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Tuition_Range","Scholarship_Info","Overview","Image",
-        "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
+        "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size",
+        "Application_Status","Application_Deadline","Maps_URL","Country_Students"
     ]
     df = ensure_columns_v49(df, required_cols)
 
@@ -3807,6 +4014,10 @@ def admin_university_management_v49():
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
+                application_status = st.selectbox("Application Status", ["Open", "Closed"], key="add_app_status_v61")
+                application_deadline = st.text_input("Application Deadline Optional")
+                maps_url = st.text_input("Google Maps URL or Address Optional")
+                country_students = st.text_area("Country-wise Students e.g. Nepal:500; Vietnam:200", height=70)
                 photo = st.file_uploader("University Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
 
             submitted = st.form_submit_button("Add University", use_container_width=True)
@@ -3835,6 +4046,10 @@ def admin_university_management_v49():
                         "Region": region.strip(),
                         "School_Size": school_size.strip(),
                         "Total_Students": school_size.strip(),
+                        "Application_Status": application_status,
+                        "Application_Deadline": application_deadline.strip(),
+                        "Maps_URL": maps_url.strip(),
+                        "Country_Students": country_students.strip(),
                     }
                     df2 = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
                     write_csv(uni_file, df2)
@@ -3869,6 +4084,11 @@ def admin_university_management_v49():
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
+                    current_status = display_clean_v50(row.get("Application_Status", "Open")) or "Open"
+                    application_status = st.selectbox("Application Status", ["Open", "Closed"], index=0 if current_status != "Closed" else 1, key="edit_app_status_v61")
+                    application_deadline = st.text_input("Application Deadline Optional", value=display_clean_v50(row.get("Application_Deadline", "")))
+                    maps_url = st.text_input("Google Maps URL or Address Optional", value=display_clean_v50(row.get("Maps_URL", "")))
+                    country_students = st.text_area("Country-wise Students e.g. Nepal:500; Vietnam:200", value=display_clean_v50(row.get("Country_Students", "")), height=70)
                     current_img = st.text_input("Current Image Path", value=display_clean_v50(row.get("Image", "")))
                     photo = st.file_uploader("Upload New Photo", type=["png","jpg","jpeg"], key="edit_uni_photo_v49")
 
@@ -3893,6 +4113,10 @@ def admin_university_management_v49():
                     df.loc[idx, "Tuition_Range"] = tuition_range.strip()
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()
+                    df.loc[idx, "Application_Status"] = application_status
+                    df.loc[idx, "Application_Deadline"] = application_deadline.strip()
+                    df.loc[idx, "Maps_URL"] = maps_url.strip()
+                    df.loc[idx, "Country_Students"] = country_students.strip()
                     df.loc[idx, "Image"] = image_path
                     write_csv(uni_file, df)
                     reload_data_v49()
@@ -3913,7 +4137,7 @@ def admin_university_management_v49():
 
 
 def admin_criteria_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader("Program, Eligibility Criteria & Tuition Management")
     st.caption("Add or edit majors, criteria, application fee, admission fee, and tuition by university/program.")
 
@@ -4047,7 +4271,7 @@ def admin_criteria_management_v49():
 
 
 def admin_scholarship_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
     st.subheader("Scholarship Rule Management")
     st.caption("Add or edit scholarship rules by university and program.")
 
@@ -4163,6 +4387,391 @@ def admin_scholarship_management_v49():
     close_shell()
 
 
+
+# ============================================================
+# v61 University filters, map, program apply, and online application
+# ============================================================
+from urllib.parse import quote_plus
+
+def number_from_text_v61(value):
+    text = str(value or "")
+    m = re.search(r"([0-9][0-9,]*)", text)
+    if not m:
+        return 0
+    try:
+        return int(m.group(1).replace(",", ""))
+    except Exception:
+        return 0
+
+def application_status_v61(u):
+    for key in ["Application_Status", "Applications_Open", "Application_Open", "Status"]:
+        val = str(u.get(key, "")).strip()
+        if val:
+            if val.lower() in ["open", "opened", "yes", "true", "receiving", "available"]:
+                return "Open"
+            if val.lower() in ["closed", "no", "false", "not receiving", "not available"]:
+                return "Closed"
+            return val
+    return "Open"
+
+def scholarship_max_percent_v61(university):
+    df = scholarship_rules()
+    if df is None or len(df) == 0 or "University" not in df.columns:
+        return 0
+    sub = df[df["University"].astype(str).str.lower() == str(university).lower()]
+    vals = []
+    for _, r in sub.iterrows():
+        for key in ["Scholarship_Percent", "Scholarship_Text"]:
+            text_val = str(r.get(key, ""))
+            nums = re.findall(r"([0-9]+(?:\.[0-9]+)?)", text_val)
+            for n in nums:
+                try:
+                    f = float(n)
+                    if 0 < f <= 1:
+                        f *= 100
+                    if f <= 100:
+                        vals.append(f)
+                except Exception:
+                    pass
+    return int(max(vals)) if vals else 0
+
+def map_embed_v61(u):
+    maps_url = str(u.get("Maps_URL", "") or u.get("Google_Maps_URL", "")).strip()
+    if maps_url and "google" in maps_url.lower() and "output=embed" in maps_url:
+        src = maps_url
+    else:
+        query = maps_url or str(u.get("Address", "") or u.get("Location", "") or u.get("University", ""))
+        src = f"https://maps.google.com/maps?q={quote_plus(query)}&output=embed"
+    return f"""
+    <div class="map-box-v61">
+      <iframe src="{src}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    """
+
+def country_flags_html_v61(u):
+    raw = str(u.get("Country_Students", "") or u.get("Country_Wise_Students", "") or "").strip()
+    flags = {"Nepal":"🇳🇵","Vietnam":"🇻🇳","China":"🇨🇳","India":"🇮🇳","Bangladesh":"🇧🇩",
+             "Sri Lanka":"🇱🇰","Myanmar":"🇲🇲","Mongolia":"🇲🇳","Uzbekistan":"🇺🇿",
+             "Pakistan":"🇵🇰","Indonesia":"🇮🇩","Korea":"🇰🇷"}
+    if not raw:
+        return '<div class="country-list-v61"><span>🌏 Country-wise student data can be added by Admin.</span></div>'
+    items = []
+    for part in re.split(r"[;\n,]+", raw):
+        if ":" in part:
+            country, count = part.split(":", 1)
+        elif "-" in part:
+            country, count = part.split("-", 1)
+        else:
+            continue
+        country = country.strip()
+        count = count.strip()
+        flag = flags.get(country, "🌐")
+        items.append(f"<div><b>{flag} {country}</b><span>{count}</span></div>")
+    if not items:
+        return '<div class="country-list-v61"><span>🌏 Country-wise student data can be added by Admin.</span></div>'
+    return '<div class="country-list-v61">' + ''.join(items) + '</div>'
+
+def student_pie_html_v61(u):
+    total = number_from_text_v61(u.get("School_Size", "")) or number_from_text_v61(u.get("Total_Students", ""))
+    intl = number_from_text_v61(u.get("International_Students", ""))
+    if total <= 0:
+        return """
+        <div class="student-chart-v61">
+          <div class="pie-v61" style="background:#E5E7EB;"></div>
+          <div><b>Student Composition</b><span>Total student data can be added by Admin.</span></div>
+        </div>
+        """
+    intl = min(intl, total)
+    domestic = max(total - intl, 0)
+    pct = int((intl / total) * 100) if total else 0
+    return f"""
+    <div class="student-chart-v61">
+      <div class="pie-v61" style="background: conic-gradient(#005BDB 0 {pct}%, #DCE6F4 {pct}% 100%);"></div>
+      <div>
+        <b>Student Composition</b>
+        <span>International: {intl:,} ({pct}%)</span>
+        <span>Domestic/Other: {domestic:,}</span>
+        <span>Total: {total:,}</span>
+      </div>
+    </div>
+    """
+
+def program_details_html_v61(row):
+    req = str(row.get("IELTS_Criteria", "") or row.get("Minimum_IELTS", "") or "Not provided")
+    gpa = str(row.get("GPA_Criteria", "") or row.get("Minimum_GPA", "") or "Not provided")
+    app_fee = money_text(row.get("Application_Fee_KRW", ""))
+    adm_fee = money_text(row.get("Admission_Fee_KRW", ""))
+    tuition = money_text(row.get("Tuition_Fee_Per_Semester_KRW", row.get("Tuition_KRW", "")))
+    return f"""
+    <div class="program-detail-v61">
+      <div><b>Major / Department</b><span>{row.get("Major","")}</span></div>
+      <div><b>Language Requirement</b><span>{req}</span></div>
+      <div><b>GPA / Academic Requirement</b><span>{gpa}</span></div>
+      <div><b>Application Fee</b><span>{app_fee}</span></div>
+      <div><b>Admission Fee</b><span>{adm_fee}</span></div>
+      <div><b>Tuition / Semester</b><span>{tuition}</span></div>
+    </div>
+    """
+
+def set_application_context_v61(university, program, major):
+    st.session_state.application_university = university
+    st.session_state.application_program = program
+    st.session_state.application_major = major
+    set_page("Application Form")
+
+def upload_to_local_v61(uploaded, application_id, label):
+    if uploaded is None:
+        return ""
+    out_dir = BASE / "applications_uploads" / application_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    safe_label = re.sub(r"[^a-z0-9_]+", "_", label.lower()).strip("_")
+    safe_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", uploaded.name)
+    out_path = out_dir / f"{safe_label}_{safe_name}"
+    out_path.write_bytes(uploaded.getbuffer())
+    return str(out_path.relative_to(BASE)).replace("\\", "/")
+
+def universities_page(public=False):
+    if public:
+        header()
+        st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
+    else:
+        dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+        st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
+
+    st.title("Universities Information")
+    df = universities().copy()
+    if df is None or len(df) == 0:
+        st.warning("No university data found.")
+        if public:
+            footer()
+        else:
+            close_shell()
+        return
+
+    df["__status"] = df.apply(application_status_v61, axis=1)
+    df["__scholarship_max"] = df["University"].apply(scholarship_max_percent_v61)
+
+    st.markdown('<div class="filter-panel-v61">', unsafe_allow_html=True)
+    c1, c2, c3, c4 = st.columns([1.4, 1.1, 1.1, 1.2])
+    with c1:
+        search = st.text_input("Search universities by name, location, or major", key="uni_search_v61")
+    with c2:
+        locations = ["All"] + sorted([x for x in df.get("Location", pd.Series(dtype=str)).dropna().astype(str).unique().tolist() if x.strip()])
+        selected_location = st.selectbox("Location / City", locations, key="uni_location_filter_v61")
+    with c3:
+        status_filter = st.selectbox("Application Status", ["All", "Open", "Closed"], key="uni_status_filter_v61")
+    with c4:
+        sort_mode = st.selectbox("Sort By", ["Default", "Scholarship High to Low", "University A-Z"], key="uni_sort_v61")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    if search:
+        s = search.lower()
+        df = df[df.apply(lambda r: s in " ".join(map(str, r.values)).lower(), axis=1)]
+    if selected_location != "All" and "Location" in df.columns:
+        df = df[df["Location"].astype(str) == selected_location]
+    if status_filter != "All":
+        df = df[df["__status"].astype(str).str.lower() == status_filter.lower()]
+    if sort_mode == "Scholarship High to Low":
+        df = df.sort_values("__scholarship_max", ascending=False)
+    elif sort_mode == "University A-Z":
+        df = df.sort_values("University")
+
+    for _, u in df.iterrows():
+        status = application_status_v61(u)
+        status_class = "open-v61" if status.lower() == "open" else "closed-v61"
+        scholarship_max = scholarship_max_percent_v61(u["University"])
+        image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
+
+        st.markdown(f"""
+        <div class="uni-card-v32 uni-card-extra-v61">
+          {image_html}
+          <div class="uni-body-v32">
+            <div class="uni-title-row-v61">
+              <div>
+                <h2>{u['University']}</h2>
+                <p class="uni-overview-v32">{u.get('Overview','')}</p>
+              </div>
+              <div class="status-area-v61">
+                <span class="status-badge-v61 {status_class}">{status}</span>
+                <span class="scholarship-badge-v61">Max scholarship {scholarship_max}%</span>
+              </div>
+            </div>
+            <div class="info-grid-v61">
+              <div><b>Location</b><span>{u.get('Location','')}</span></div>
+              <div><b>Region</b><span>{u.get('Region','')}</span></div>
+              <div><b>School Size</b><span>{u.get('School_Size', u.get('Total_Students',''))}</span></div>
+              <div><b>Foreign Students</b><span>{u.get('International_Students','')}</span></div>
+              <div><b>Homepage</b><span>{u.get('Homepage','')}</span></div>
+              <div><b>Application</b><span>{status}</span></div>
+            </div>
+            {student_pie_html_v61(u)}
+            <h3 class="subhead-v61">Country-wise Student Numbers</h3>
+            {country_flags_html_v61(u)}
+            <h3 class="subhead-v61">Location View</h3>
+            {map_embed_v61(u)}
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        prog_df = criteria()
+        prog_df = prog_df[prog_df["University"].astype(str) == str(u["University"])]
+        with st.expander(f"Available departments/programs and application options for {u['University']}", expanded=False):
+            if len(prog_df) == 0:
+                st.info("No program/department data has been added by Admin yet.")
+            else:
+                for program_name in sorted(prog_df["Program"].dropna().astype(str).unique()):
+                    st.markdown(f"### {program_name}")
+                    rows = prog_df[prog_df["Program"].astype(str) == program_name]
+                    for i, (_, r) in enumerate(rows.iterrows()):
+                        st.markdown(program_details_html_v61(r), unsafe_allow_html=True)
+                        if status.lower() == "open":
+                            if st.button(f"Apply - {r.get('Major','')}", key=f"apply_v61_{u['University']}_{program_name}_{i}", use_container_width=True):
+                                set_application_context_v61(u["University"], program_name, r.get("Major",""))
+                        else:
+                            st.button(f"Application Closed - {r.get('Major','')}", key=f"closed_v61_{u['University']}_{program_name}_{i}", disabled=True, use_container_width=True)
+
+    if public:
+        st.markdown('</div>', unsafe_allow_html=True)
+        footer()
+    else:
+        st.markdown('</div>', unsafe_allow_html=True)
+        close_shell()
+
+def application_form_v61():
+    if not st.session_state.logged_in:
+        header()
+        st.markdown('<div class="section"><div class="white-panel"><h2>Partner Access Required</h2><p>Please login with an approved partner account to submit applications.</p></div></div>', unsafe_allow_html=True)
+        footer()
+        return
+
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    st.subheader("Online Application Submission")
+
+    uni = st.session_state.get("application_university", "")
+    program = st.session_state.get("application_program", "")
+    major = st.session_state.get("application_major", "")
+
+    st.markdown(f"""
+    <div class="application-head-v61">
+      <h2>{uni}</h2>
+      <p>{program} · {major}</p>
+      <span>Application status: Open</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.form("application_form_v61"):
+        st.markdown("### 1. Student Basic Information")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            student_name = st.text_input("Student Full Name")
+            dob = st.date_input("Date of Birth")
+            passport = st.text_input("Passport Number")
+            home_contact = st.text_input("Home Country Contact Number")
+        with c2:
+            student_email = st.text_input("Student Email Address")
+            sub_agent_email = st.text_input("Sub-agent / Submitting Agent Email Optional")
+            submission_type = st.selectbox("Submission Type", ["Self", st.session_state.agency_name or "Partner", "KIEC", "Realize Education", "Etc."])
+            application_level = st.selectbox("Application Level", ["Korean Language Program D4-1", "EAP D4-7", "Undergraduate", "Master", "PhD"])
+        with c3:
+            high_school_name = st.text_input("High School Name For Undergraduate")
+            previous_university = st.text_input("Graduated University Name For Master/PhD")
+            passout_year = st.text_input("Passout / Graduation Date YYYY/MM/DD")
+            enrolled_period = st.text_input("Enrolled Period YYYY/MM/DD ~ YYYY/MM/DD")
+
+        st.markdown("### 2. Family and Financial Information")
+        c4, c5, c6 = st.columns(3)
+        with c4:
+            family_name = st.text_input("One Family Member Name")
+        with c5:
+            family_contact = st.text_input("Family Member Contact Number")
+        with c6:
+            family_occupation = st.text_input("Family Member Occupation")
+
+        st.markdown("### 3. Statement")
+        self_intro = st.text_area("Self Introduction Around 500 Words", height=160)
+        study_plan = st.text_area("Study Plan Around 500 Words", height=160)
+
+        st.markdown("### 4. Required Attachments")
+        st.info("PDF/JPG/PNG accepted. Samples can be added later as downloadable templates.")
+        f1, f2, f3 = st.columns(3)
+        with f1:
+            photo = st.file_uploader("PP Size Photo JPG/PNG", type=["jpg","jpeg","png"])
+            passport_file = st.file_uploader("Passport Copy PDF/JPG/PNG", type=["pdf","jpg","jpeg","png"])
+            hs_cert = st.file_uploader("High School Certificate PDF", type=["pdf"])
+        with f2:
+            hs_transcript = st.file_uploader("High School Transcript PDF", type=["pdf"])
+            language_cert = st.file_uploader("IELTS/TOEFL/TOPIK Certificate PDF", type=["pdf"])
+            family_rel = st.file_uploader("Family Relationship Certificate PDF", type=["pdf"])
+        with f3:
+            family_id = st.file_uploader("Family Members ID Card Copy Notarized PDF", type=["pdf"])
+            bank_cert = st.file_uploader("Bank Certificate PDF", type=["pdf"])
+            cv_file = st.file_uploader("CV PDF For Master/PhD", type=["pdf"])
+            embassy_docs = st.file_uploader("Embassy Verified / Apostille Academic Documents PDF", type=["pdf"])
+
+        notes = st.text_area("Additional Notes Optional")
+        submitted = st.form_submit_button("Submit Application", use_container_width=True)
+
+        if submitted:
+            if not student_name.strip() or not passport.strip() or not student_email.strip():
+                st.error("Student name, passport number, and student email are required.")
+            else:
+                app_id = "APP" + datetime.now().strftime("%Y%m%d%H%M%S")
+                saved = {
+                    "photo_file": upload_to_local_v61(photo, app_id, "photo"),
+                    "passport_file": upload_to_local_v61(passport_file, app_id, "passport"),
+                    "high_school_certificate_file": upload_to_local_v61(hs_cert, app_id, "high_school_certificate"),
+                    "high_school_transcript_file": upload_to_local_v61(hs_transcript, app_id, "high_school_transcript"),
+                    "language_certificate_file": upload_to_local_v61(language_cert, app_id, "language_certificate"),
+                    "family_relationship_certificate_file": upload_to_local_v61(family_rel, app_id, "family_relationship"),
+                    "family_id_cards_file": upload_to_local_v61(family_id, app_id, "family_id_cards"),
+                    "bank_certificate_file": upload_to_local_v61(bank_cert, app_id, "bank_certificate"),
+                    "cv_file": upload_to_local_v61(cv_file, app_id, "cv"),
+                    "embassy_verified_documents_file": upload_to_local_v61(embassy_docs, app_id, "embassy_verified_docs"),
+                }
+                row = {
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "application_id": app_id,
+                    "status": "Submitted",
+                    "submitted_by": st.session_state.username,
+                    "partner_agency": st.session_state.agency_name,
+                    "university": uni,
+                    "program": program,
+                    "major": major,
+                    "student_name": student_name.strip(),
+                    "date_of_birth": str(dob),
+                    "passport_number": passport.strip(),
+                    "application_level": application_level,
+                    "previous_university": previous_university.strip(),
+                    "high_school_name": high_school_name.strip(),
+                    "passout_year": passout_year.strip(),
+                    "enrolled_period": enrolled_period.strip(),
+                    "home_country_contact": home_contact.strip(),
+                    "student_email": student_email.strip(),
+                    "sub_agent_email": sub_agent_email.strip(),
+                    "submission_type": submission_type,
+                    "family_member_name": family_name.strip(),
+                    "family_member_contact": family_contact.strip(),
+                    "family_member_occupation": family_occupation.strip(),
+                    "self_introduction": self_intro.strip(),
+                    "study_plan": study_plan.strip(),
+                    "notes": notes.strip(),
+                }
+                row.update(saved)
+                add_row(APPLICATIONS, row)
+                st.success(f"Application submitted successfully. Application ID: {app_id}")
+
+    close_shell()
+
+def admin_applications_v61():
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications"])
+    st.subheader("Submitted Applications")
+    apps = read_csv(APPLICATIONS)
+    if apps is None or len(apps) == 0:
+        st.info("No applications have been submitted yet.")
+    else:
+        st.dataframe(apps.sort_values("timestamp", ascending=False), use_container_width=True, hide_index=True)
+    close_shell()
+
 # Routing
 if not st.session_state.logged_in:
     if st.session_state.page == "Partner Sign Up": signup()
@@ -4170,6 +4779,8 @@ if not st.session_state.logged_in:
     elif st.session_state.page == "Login": login()
     elif st.session_state.page == "Universities": universities_page(public=True)
     elif st.session_state.page == "Contact Us": contact()
+    elif st.session_state.page == "Application Form":
+        application_form_v61()
     elif st.session_state.page in ["Eligibility Check","Tuition & Scholarship"]:
         header()
         st.markdown('<div class="section"><div class="white-panel"><h2>Partner Access Required</h2><p>Please login with an approved partner account to access this feature.</p></div></div>', unsafe_allow_html=True)
@@ -4193,6 +4804,8 @@ else:
             admin_tuition_edit_v48()
         elif st.session_state.page == "Scholarship Rules":
             admin_scholarship_edit_v48()
+        elif st.session_state.page == "Applications":
+            admin_applications_v61()
         else:
             admin()
     else:
@@ -4200,5 +4813,6 @@ else:
         elif st.session_state.page == "Eligibility Check": eligibility()
         elif st.session_state.page == "Tuition & Scholarship": tuition()
         elif st.session_state.page == "Contact Us": contact()
+        elif st.session_state.page == "Application Form": application_form_v61()
         else:
             partner_dashboard()

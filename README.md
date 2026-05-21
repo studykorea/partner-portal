@@ -351,3 +351,29 @@ v59 Supabase Ready:
 - Do not upload .streamlit/secrets.toml or partner_portal.db to GitHub.
 - For local testing, create .streamlit/secrets.toml using secrets.example.toml.
 - In Streamlit Cloud, add DATABASE_URL in App settings > Secrets.
+
+
+v60:
+- Added Supabase read caching to improve click speed.
+- Added image base64 caching to reduce repeated image loading.
+- Changed universities/criteria/scholarship helpers to read from Supabase through cached DB helpers.
+- Added refresh-safe login using a signed auth token in the URL query parameter.
+- Logout clears the auth token.
+- Added Streamlit Cloud button color CSS fix inside the existing style block.
+
+
+v61:
+- Added university filters by location/city and application status.
+- Added scholarship high-to-low sorting.
+- Added university detail map view using Google Maps embed.
+- Added student composition pie-style chart and country-wise student display area.
+- Added application open/closed badges.
+- Added Apply buttons for available programs and departments.
+- Added online application submission form with student details and document uploads.
+- Added applications table and Admin > Applications view.
+- Admin can now add application status, maps URL, and country-wise student data for each university.
+
+
+v62:
+- Premium UniQuest-style UI redesign for header, home, signup, dashboard shell, and footer.
+- Keeps v61 functions and Supabase connection.
