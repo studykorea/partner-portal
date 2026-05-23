@@ -340,8 +340,8 @@ def restore_login_from_query_v60():
 restore_login_from_query_v60()
 
 
-# v71: HTML hero buttons use query parameters for navigation.
-def handle_home_query_navigation_v71():
+# v69: HTML hero buttons use query parameters, so this connects them to Streamlit pages.
+def handle_home_query_navigation_v69():
     try:
         go = st.query_params.get("go", "")
     except Exception:
@@ -361,7 +361,37 @@ def handle_home_query_navigation_v71():
         except Exception:
             pass
 
-handle_home_query_navigation_v71()
+handle_home_query_navigation_v69()
+
+
+# v70: Top navigation uses HTML links styled like the reference image.
+def handle_top_nav_query_v70():
+    try:
+        nav = st.query_params.get("nav", "")
+    except Exception:
+        nav = ""
+    if isinstance(nav, list):
+        nav = nav[0] if nav else ""
+
+    nav_map = {
+        "home": "Home",
+        "universities": "Universities",
+        "eligibility": "Eligibility Check",
+        "tuition": "Tuition & Scholarship",
+        "contact": "Contact Us",
+        "mou": "Contact Us",
+        "login": "Login",
+        "signup": "Partner Sign Up",
+    }
+    if nav in nav_map:
+        st.session_state.page = nav_map[nav]
+        try:
+            del st.query_params["nav"]
+        except Exception:
+            pass
+
+handle_top_nav_query_v70()
+
 
 
 
@@ -2430,110 +2460,49 @@ button[kind="primary"]:hover {
 }
 
 
-/* v71 header and reference hero */
-.header-align-v47 {
-    background:#FFFFFF !important;
-    border-bottom:1px solid #E7EEF8 !important;
-    padding:14px 26px 12px 26px !important;
-    margin:0 !important;
-    display:block !important;
+/* v69 reference-style home hero */
+.hero-reference-v69 {
+    min-height: 500px !important;
+    background-color: #002B5B !important;
+    background-size: cover !important;
+    background-position: center right !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
 }
-.site-title-v47 {
-    color:#002B5B !important;
-    -webkit-text-fill-color:#002B5B !important;
-    font-weight:950 !important;
-    line-height:1.08 !important;
-}
-.nav-button-wrap-v47 {
-    display:flex !important;
-    align-items:center !important;
-    height:50px !important;
-}
-.nav-button-wrap-v47 .stButton > button,
-.nav-button-wrap-v47 div[data-testid="stButton"] > button {
-    background:transparent !important;
-    border:0 !important;
-    box-shadow:none !important;
-    color:#0F172A !important;
-    -webkit-text-fill-color:#0F172A !important;
-    font-weight:850 !important;
-    height:46px !important;
-    border-radius:0 !important;
-    padding:0 8px !important;
-}
-.nav-button-wrap-v47 .stButton > button:hover,
-.nav-button-wrap-v47 div[data-testid="stButton"] > button:hover {
-    background:transparent !important;
-    color:#005BDB !important;
-    -webkit-text-fill-color:#005BDB !important;
-}
-/* Login button = outline */
-.header-align-v47 div[data-testid="column"]:nth-child(8) .stButton > button {
-    background:#FFFFFF !important;
-    border:1px solid #BFCBDD !important;
-    border-radius:8px !important;
-    color:#0F172A !important;
-    -webkit-text-fill-color:#0F172A !important;
-    height:48px !important;
-    box-shadow:none !important;
-}
-/* Partner Sign Up button = blue */
-.header-align-v47 div[data-testid="column"]:nth-child(9) .stButton > button {
-    background:#005BDB !important;
-    border:1px solid #005BDB !important;
-    border-radius:8px !important;
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-    height:48px !important;
-    box-shadow:0 8px 18px rgba(0,91,219,.20) !important;
-}
-.header-align-v47 div[data-testid="column"]:nth-child(9) .stButton > button * {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-}
-
-.hero-reference-v71 {
-    min-height:500px !important;
-    background-color:#002B5B !important;
-    background-size:cover !important;
-    background-position:center right !important;
-    position:relative !important;
-    overflow:hidden !important;
-    display:flex !important;
-    align-items:center !important;
-    margin:0 !important;
-    border-radius:0 !important;
-}
-.hero-reference-v71::before {
+.hero-reference-v69::before {
     content:"";
     position:absolute;
     inset:0;
     background:
-      radial-gradient(circle at 23% 15%, rgba(0,91,219,.24), transparent 28%),
-      linear-gradient(90deg, rgba(0,27,64,.74), rgba(0,27,64,.25) 62%, rgba(0,27,64,.02));
+      radial-gradient(circle at 22% 16%, rgba(0,91,219,.22), transparent 28%),
+      linear-gradient(90deg, rgba(0,30,70,.78), rgba(0,30,70,.28) 62%, rgba(0,30,70,.05));
     z-index:1;
     pointer-events:none;
 }
-.hero-dots-v71 {
+.hero-dots-v69 {
     position:absolute;
-    left:410px;
-    top:26px;
-    width:390px;
-    height:210px;
+    left: 420px;
+    top: 22px;
+    width: 390px;
+    height: 210px;
     opacity:.22;
-    background-image:radial-gradient(rgba(255,255,255,.86) 1.35px, transparent 1.35px);
-    background-size:13px 13px;
-    mask-image:radial-gradient(ellipse at center, #000 45%, transparent 76%);
-    -webkit-mask-image:radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    background-image: radial-gradient(rgba(255,255,255,.85) 1.35px, transparent 1.35px);
+    background-size: 13px 13px;
+    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
     z-index:2;
 }
-.hero-inner-v71 {
+.hero-inner-v69 {
     position:relative !important;
     z-index:3 !important;
     margin-left:56px !important;
     width:min(720px, 52vw) !important;
 }
-.hero-step-v71 {
+.hero-step-v69 {
     display:inline-flex !important;
     align-items:center !important;
     gap:10px !important;
@@ -2544,7 +2513,7 @@ button[kind="primary"]:hover {
     margin-bottom:18px !important;
     backdrop-filter:blur(4px);
 }
-.hero-step-v71 span {
+.hero-step-v69 span {
     background:rgba(255,255,255,.18) !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
@@ -2553,27 +2522,26 @@ button[kind="primary"]:hover {
     font-size:12px !important;
     font-weight:900 !important;
 }
-.hero-step-v71 b {
+.hero-step-v69 b {
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
     font-size:13px !important;
     letter-spacing:.2px !important;
 }
-.hero-reference-v71 h1,
-.hero-reference-v71 h1 *,
-.hero-inner-v71 h1,
-.hero-inner-v71 h1 * {
+.hero-reference-v69 h1,
+.hero-reference-v69 h1 *,
+.hero-inner-v69 h1,
+.hero-inner-v69 h1 * {
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
-    opacity:1 !important;
     font-size:54px !important;
     line-height:1.14 !important;
     font-weight:950 !important;
     margin:0 0 20px 0 !important;
     letter-spacing:-.65px !important;
-    text-shadow:0 3px 20px rgba(0,0,0,.38) !important;
+    text-shadow:0 3px 20px rgba(0,0,0,.28) !important;
 }
-.hero-lead-v71 {
+.hero-lead-v69 {
     color:rgba(255,255,255,.96) !important;
     -webkit-text-fill-color:rgba(255,255,255,.96) !important;
     font-size:17px !important;
@@ -2582,14 +2550,14 @@ button[kind="primary"]:hover {
     margin:0 0 18px 0 !important;
     text-shadow:0 2px 12px rgba(0,0,0,.22) !important;
 }
-.hero-buttons-v71 {
+.hero-buttons-v69 {
     display:flex !important;
     gap:18px !important;
     align-items:center !important;
     margin:18px 0 16px 0 !important;
     flex-wrap:wrap !important;
 }
-.hero-buttons-v71 a {
+.hero-buttons-v69 a {
     display:inline-flex !important;
     align-items:center !important;
     justify-content:center !important;
@@ -2602,24 +2570,24 @@ button[kind="primary"]:hover {
     box-shadow:0 14px 28px rgba(0,0,0,.18) !important;
     transition:all .16s ease !important;
 }
-.hero-btn-primary-v71 {
+.hero-btn-primary-v69 {
     background:#005BDB !important;
     border:1px solid #005BDB !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
 }
-.hero-btn-outline-v71 {
+.hero-btn-outline-v69 {
     background:rgba(255,255,255,.07) !important;
     border:1px solid rgba(255,255,255,.76) !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
     backdrop-filter:blur(3px);
 }
-.hero-buttons-v71 a:hover {
+.hero-buttons-v69 a:hover {
     transform:translateY(-1px) !important;
     filter:brightness(1.07) !important;
 }
-.hero-lock-v71 {
+.hero-lock-v69 {
     color:rgba(255,255,255,.95) !important;
     -webkit-text-fill-color:rgba(255,255,255,.95) !important;
     font-size:14px !important;
@@ -2627,28 +2595,149 @@ button[kind="primary"]:hover {
     margin:0 !important;
     text-shadow:0 2px 10px rgba(0,0,0,.25) !important;
 }
+.featured-v32 {
+    padding-top: 28px !important;
+}
 @media(max-width:1000px){
-    .hero-reference-v71 {
+    .hero-reference-v69 {
         min-height:560px !important;
         background-position:center !important;
     }
-    .hero-inner-v71 {
+    .hero-inner-v69 {
         margin-left:28px !important;
         margin-right:28px !important;
         width:auto !important;
     }
-    .hero-reference-v71 h1,
-    .hero-inner-v71 h1 {
+    .hero-reference-v69 h1,
+    .hero-inner-v69 h1 {
         font-size:40px !important;
     }
-    .hero-buttons-v71 {
+    .hero-buttons-v69 {
         flex-direction:column !important;
         align-items:stretch !important;
         max-width:320px !important;
     }
-    .hero-buttons-v71 a {
+    .hero-buttons-v69 a {
         width:100% !important;
         min-width:0 !important;
+    }
+}
+
+
+/* v70 reference-style top navigation */
+.top-nav-reference-v70 {
+    width: 100% !important;
+    min-height: 68px !important;
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #E7EEF8 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 34px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 200 !important;
+}
+.nav-left-v70,
+.nav-right-v70 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 34px !important;
+}
+.nav-right-v70 {
+    gap: 16px !important;
+}
+.nav-link-v70 {
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    text-decoration: none !important;
+    font-weight: 850 !important;
+    font-size: 15px !important;
+    line-height: 68px !important;
+    height: 68px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+.nav-link-v70:hover {
+    color: #005BDB !important;
+    -webkit-text-fill-color: #005BDB !important;
+}
+.nav-link-v70.active {
+    color: #005BDB !important;
+    -webkit-text-fill-color: #005BDB !important;
+}
+.nav-link-v70.active::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 3px !important;
+    background: #005BDB !important;
+    border-radius: 999px 999px 0 0 !important;
+}
+.nav-login-v70,
+.nav-signup-v70 {
+    height: 46px !important;
+    min-width: 112px !important;
+    padding: 0 22px !important;
+    border-radius: 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    box-sizing: border-box !important;
+}
+.nav-login-v70 {
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    border: 1px solid #AEB8C8 !important;
+}
+.nav-login-v70:hover {
+    background: #F8FAFC !important;
+    color: #005BDB !important;
+    -webkit-text-fill-color: #005BDB !important;
+    border-color: #005BDB !important;
+}
+.nav-signup-v70 {
+    background: #005BDB !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: 1px solid #005BDB !important;
+    min-width: 188px !important;
+}
+.nav-signup-v70:hover {
+    background: #004FC0 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border-color: #004FC0 !important;
+}
+@media(max-width:1100px){
+    .top-nav-reference-v70 {
+        padding: 10px 20px !important;
+        min-height: auto !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+    .nav-left-v70 {
+        gap: 18px !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        padding-bottom: 2px !important;
+    }
+    .nav-link-v70 {
+        height: 42px !important;
+        line-height: 42px !important;
+        font-size: 14px !important;
+    }
+    .nav-right-v70 {
+        justify-content: flex-end !important;
     }
 }
 
@@ -2665,37 +2754,30 @@ def set_page(p):
 
 
 
+
 def header():
-    st.markdown('<div class="header-align-v47">', unsafe_allow_html=True)
-    cols = st.columns([1.65, .82, .98, 1.22, .92, .92, .98, .75, 1.05], gap="small")
+    current = st.session_state.get("page", "Home")
 
-    with cols[0]:
-        st.markdown(
-            '<div class="site-title-wrap-v47">'
-            '<div class="site-title-v47">Partner Portal for<br>University Recruitment</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+    def active_cls(target):
+        return " active" if current == target else ""
 
-    menu_items = [
-        ("Home", "Home"),
-        ("Universities", "Universities"),
-        ("Eligibility Check", "Eligibility Check"),
-        ("Tuition Fees", "Tuition & Scholarship"),
-        ("Contact Us", "Contact Us"),
-        ("MoU Contact", "Contact Us"),
-        ("Login", "Login"),
-        ("Partner Sign Up", "Partner Sign Up"),
-    ]
-
-    for col, (label, page) in zip(cols[1:], menu_items):
-        with col:
-            st.markdown('<div class="nav-button-wrap-v47">', unsafe_allow_html=True)
-            if st.button(label, key=f"nav_v47_{label}", use_container_width=True):
-                set_page(page)
-            st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+    nav_html = f"""
+    <div class="top-nav-reference-v70">
+      <div class="nav-left-v70">
+        <a class="nav-link-v70{active_cls('Home')}" href="?nav=home">Home</a>
+        <a class="nav-link-v70{active_cls('Universities')}" href="?nav=universities">Universities</a>
+        <a class="nav-link-v70{active_cls('Eligibility Check')}" href="?nav=eligibility">Eligibility Check</a>
+        <a class="nav-link-v70{active_cls('Tuition & Scholarship')}" href="?nav=tuition">Tuition Fees</a>
+        <a class="nav-link-v70{active_cls('Contact Us')}" href="?nav=contact">Contact Us</a>
+        <a class="nav-link-v70" href="?nav=mou">MoU Contact</a>
+      </div>
+      <div class="nav-right-v70">
+        <a class="nav-login-v70" href="?nav=login">Login</a>
+        <a class="nav-signup-v70" href="?nav=signup">👥&nbsp;&nbsp;Partner Sign Up</a>
+      </div>
+    </div>
+    """
+    st.markdown(nav_html, unsafe_allow_html=True)
 
 
 def footer():
@@ -3011,27 +3093,27 @@ def chunk_records_v53(records, size=5):
 
 def home():
     header()
-    hero_img = asset_img_url("assets/home_hero_building_v71.jpg") or asset_img_url("assets/home_hero.jpg")
+    hero_img = asset_img_url("assets/home_hero.jpg")
     bg = ""
     if hero_img:
         bg = (
             "background-image:"
-            "linear-gradient(90deg, rgba(0,31,72,.99) 0%, rgba(0,43,91,.94) 42%, rgba(0,55,115,.62) 67%, rgba(0,31,72,.18) 100%),"
+            "linear-gradient(90deg, rgba(0,31,72,.98) 0%, rgba(0,43,91,.92) 43%, rgba(0,55,115,.58) 70%, rgba(0,31,72,.16) 100%),"
             "url('" + hero_img + "');"
         )
 
     st.markdown(f"""
-    <section class="hero-reference-v71" style="{bg}">
-      <div class="hero-dots-v71"></div>
-      <div class="hero-inner-v71">
-        <div class="hero-step-v71"><span>Step 1</span><b>Home Page</b></div>
+    <section class="hero-reference-v69" style="{bg}">
+      <div class="hero-dots-v69"></div>
+      <div class="hero-inner-v69">
+        <div class="hero-step-v69"><span>Step 1</span><b>Home Page</b></div>
         <h1>Partner Portal for<br>University Recruitment</h1>
-        <p class="hero-lead-v71">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
-        <div class="hero-buttons-v71">
-          <a class="hero-btn-primary-v71" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
-          <a class="hero-btn-outline-v71" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
+        <p class="hero-lead-v69">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
+        <div class="hero-buttons-v69">
+          <a class="hero-btn-primary-v69" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
+          <a class="hero-btn-outline-v69" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
         </div>
-        <p class="hero-lock-v71">🔒 Detailed information is available only for approved partners.</p>
+        <p class="hero-lock-v69">🔒 Detailed information is available only for approved partners.</p>
       </div>
     </section>
     """, unsafe_allow_html=True)
