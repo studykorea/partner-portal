@@ -3193,28 +3193,45 @@ def _parse_date_v64(value):
         return None
 
 
+def _auto_application_status_v65(open_date_value=None, close_date_value=None, fallback_status=""):
+    """
+    Automatic application status rule:
+    - Before open date: Application Opens Soon
+    - From open date until close date: Application Open
+    - After close date: Application Closed
+    - If dates are missing, use selected/fallback status.
+    """
+    today = datetime.now().date()
+    open_date = _parse_date_v64(open_date_value)
+    close_date = _parse_date_v64(close_date_value)
+    fallback = str(fallback_status or "").strip()
+
+    if open_date and today < open_date:
+        return "Application Opens Soon"
+    if close_date and today > close_date:
+        return "Application Closed"
+    if open_date and today >= open_date:
+        return "Application Open"
+    if close_date and today <= close_date:
+        return "Application Open"
+    if fallback in ["Application Open", "Application Closed", "Application Opens Soon"]:
+        return fallback
+    return "Application Status Not Provided"
+
+
 def _application_status_v64_from_row(row):
     """
-    Supports admin-managed Application_Status and Application_Open_Date.
-    If status is 'Application Opens Soon' and open date has arrived, it displays as Application Open.
+    Supports admin-managed Application_Status, Application_Open_Date, and Application_Close_Date.
+    Dates have priority so the website status changes automatically.
     """
-    raw = str(row.get("Application_Status", "") or row.get("Application Status", "") or "").strip().lower()
+    raw = str(row.get("Application_Status", "") or row.get("Application Status", "") or "").strip()
     intake = str(row.get("Intake", "") or "").strip().lower()
-    open_date = _parse_date_v64(row.get("Application_Open_Date", "") or row.get("Application Open Date", ""))
+    open_date = row.get("Application_Open_Date", "") or row.get("Application Open Date", "")
+    close_date = row.get("Application_Close_Date", "") or row.get("Application Close Date", "")
 
-    today = datetime.now().date()
-
-    if any(x in raw for x in ["closed", "close", "not open", "not opened"]):
-        return "Application Closed"
-    if any(x in raw for x in ["soon", "upcoming", "coming"]):
-        if open_date and open_date <= today:
-            return "Application Open"
-        return "Application Opens Soon"
-    if any(x in raw for x in ["open", "opened"]):
-        return "Application Open"
-
-    if open_date:
-        return "Application Opens Soon" if open_date > today else "Application Open"
+    auto_status = _auto_application_status_v65(open_date, close_date, raw)
+    if auto_status != "Application Status Not Provided":
+        return auto_status
 
     source = intake
     if any(x in source for x in ["closed", "close", "not open", "not opened"]):
@@ -4311,7 +4328,7 @@ def admin_university_management_v49():
     df = read_csv(uni_file)
     required_cols = [
         "University","Location","Total_Students","International_Students","Top_Majors",
-        "Intake","Application_Status","Application_Open_Date","Tuition_Range","Scholarship_Info","Overview","Image",
+        "Intake","Application_Status","Application_Open_Date","Application_Close_Date","Tuition_Range","Scholarship_Info","Overview","Image",
         "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -4341,6 +4358,8 @@ def admin_university_management_v49():
                     key="add_application_status_v64"
                 )
                 application_open_date = st.date_input("Application Open Date", value=None, key="add_application_open_date_v64")
+                application_close_date = st.date_input("Application Close Date", value=None, key="add_application_close_date_v65")
+                st.caption("Status will be calculated automatically: before open date = Opens Soon, between open/close dates = Open, after close date = Closed.")
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
@@ -4354,6 +4373,7 @@ def admin_university_management_v49():
                     st.error("This university already exists. Please use Edit Existing Universities.")
                 else:
                     image_path = save_uploaded_university_photo_v49(photo, university)
+                    calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     new_row = {
                         "University": university.strip(),
                         "Location": location.strip(),
@@ -4361,8 +4381,9 @@ def admin_university_management_v49():
                         "International_Students": intl_students.strip(),
                         "Top_Majors": top_majors.strip(),
                         "Intake": intake.strip(),
-                        "Application_Status": application_status,
+                        "Application_Status": calculated_application_status,
                         "Application_Open_Date": str(application_open_date) if application_open_date else "",
+                        "Application_Close_Date": str(application_close_date) if application_close_date else "",
                         "Tuition_Range": tuition_range.strip(),
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
@@ -4406,7 +4427,7 @@ def admin_university_management_v49():
                     overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120)
                     intake = st.text_input("Intake", value=display_clean_v50(row.get("Intake", "")))
                     status_options_v64 = ["Application Open", "Application Closed", "Application Opens Soon"]
-                    current_status_v64 = display_clean_v50(row.get("Application_Status", "")) or "Application Open"
+                    current_status_v64 = _application_status_v64_from_row(row) if _application_status_v64_from_row(row) in status_options_v64 else (display_clean_v50(row.get("Application_Status", "")) or "Application Open")
                     application_status = st.selectbox(
                         "Application Status",
                         status_options_v64,
@@ -4414,7 +4435,10 @@ def admin_university_management_v49():
                         key="edit_application_status_v64"
                     )
                     current_open_date_v64 = _parse_date_v64(row.get("Application_Open_Date", ""))
+                    current_close_date_v65 = _parse_date_v64(row.get("Application_Close_Date", ""))
                     application_open_date = st.date_input("Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
+                    application_close_date = st.date_input("Application Close Date", value=current_close_date_v65, key="edit_application_close_date_v65")
+                    st.caption("Status will be calculated automatically: before open date = Opens Soon, between open/close dates = Open, after close date = Closed.")
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
@@ -4427,6 +4451,7 @@ def admin_university_management_v49():
 
                 if save_clicked:
                     image_path = save_uploaded_university_photo_v49(photo, university) if photo else current_img
+                    calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     df.loc[idx, "University"] = university.strip()
                     df.loc[idx, "Location"] = location.strip()
                     df.loc[idx, "Region"] = region.strip()
@@ -4439,8 +4464,9 @@ def admin_university_management_v49():
                     df.loc[idx, "International_Students"] = intl_students.strip()
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
-                    df.loc[idx, "Application_Status"] = application_status
+                    df.loc[idx, "Application_Status"] = calculated_application_status
                     df.loc[idx, "Application_Open_Date"] = str(application_open_date) if application_open_date else ""
+                    df.loc[idx, "Application_Close_Date"] = str(application_close_date) if application_close_date else ""
                     df.loc[idx, "Tuition_Range"] = tuition_range.strip()
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()

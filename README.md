@@ -392,3 +392,12 @@ v64:
 - Application status supports Open, Closed, and Opens Soon.
 - If Opens Soon has a future open date, it stays Opens Soon; when date arrives it displays Open.
 - Replaced right-side university detail badges with Undergraduate, Graduate (Masters/Ph.D.), and KLP/EAP program badges plus application status/open date.
+
+
+v65:
+- Added Application Close Date in Admin > Universities.
+- Application status is now automatically calculated from dates:
+  - Today before open date = Application Opens Soon
+  - Today between open and close dates = Application Open
+  - Today after close date = Application Closed
+- The saved Application_Status is updated automatically when Admin saves the university.
