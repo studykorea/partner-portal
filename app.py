@@ -2358,6 +2358,15 @@ button[kind="primary"]:hover {
     -webkit-text-fill-color:#374151 !important;
 }
 
+
+/* v64 program badges for university detail area */
+.program-badge-v64 {
+    background:#EEF5FF !important;
+    color:#002B5B !important;
+    border:1px solid #CFE0FF !important;
+    -webkit-text-fill-color:#002B5B !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3173,25 +3182,54 @@ def _location_value_v62(row):
     return " / ".join(parts)
 
 
-def _application_status_v63_from_row(row):
+
+def _parse_date_v64(value):
+    try:
+        s = str(value or "").strip()
+        if not s or s.lower() in ["nan", "none", "null", "<na>"]:
+            return None
+        return pd.to_datetime(s).date()
+    except Exception:
+        return None
+
+
+def _application_status_v64_from_row(row):
     """
-    Application status priority:
-    1) Use Application_Status column if it exists.
-    2) Otherwise infer from Intake text.
+    Supports admin-managed Application_Status and Application_Open_Date.
+    If status is 'Application Opens Soon' and open date has arrived, it displays as Application Open.
     """
     raw = str(row.get("Application_Status", "") or row.get("Application Status", "") or "").strip().lower()
     intake = str(row.get("Intake", "") or "").strip().lower()
+    open_date = _parse_date_v64(row.get("Application_Open_Date", "") or row.get("Application Open Date", ""))
 
-    source = raw if raw else intake
+    today = datetime.now().date()
 
+    if any(x in raw for x in ["closed", "close", "not open", "not opened"]):
+        return "Application Closed"
+    if any(x in raw for x in ["soon", "upcoming", "coming"]):
+        if open_date and open_date <= today:
+            return "Application Open"
+        return "Application Opens Soon"
+    if any(x in raw for x in ["open", "opened"]):
+        return "Application Open"
+
+    if open_date:
+        return "Application Opens Soon" if open_date > today else "Application Open"
+
+    source = intake
     if any(x in source for x in ["closed", "close", "not open", "not opened"]):
         return "Application Closed"
     if any(x in source for x in ["soon", "upcoming", "coming"]):
         return "Application Opens Soon"
-    if any(x in source for x in ["open", "opened", "march", "september", "spring", "fall"]):
+    if any(x in source for x in ["march", "september", "spring", "fall", "open", "opened"]):
         return "Application Open"
 
     return "Application Status Not Provided"
+
+
+def _application_status_v63_from_row(row):
+    # Backward-compatible name used by v63 code.
+    return _application_status_v64_from_row(row)
 
 
 def _application_status_class_v63(status):
@@ -3206,7 +3244,6 @@ def _application_status_class_v63(status):
 
 
 def _intake_is_open_v62(value):
-    # Backward compatible helper for old calls.
     s = str(value or "").strip().lower()
     if not s:
         return False
@@ -3216,8 +3253,28 @@ def _intake_is_open_v62(value):
 
 
 def _application_status_v62(value):
-    # Backward compatible helper for old calls.
     return "Application Open" if _intake_is_open_v62(value) else "Application Status Not Provided"
+
+
+def _program_badges_html_v64(university):
+    crit = criteria()
+    labels = []
+    if crit is not None and len(crit) and "University" in crit.columns and "Program" in crit.columns:
+        rows = crit[crit["University"].astype(str).str.strip() == str(university).strip()]
+        ptext = " ".join(rows["Program"].dropna().astype(str).str.lower().tolist())
+
+        if "undergraduate" in ptext:
+            labels.append("Undergraduate")
+        if "graduate" in ptext or "master" in ptext or "ph.d" in ptext or "phd" in ptext:
+            labels.append("Graduate (Masters/Ph.D.)")
+        if "korean language" in ptext or "klp" in ptext or "eap" in ptext or "language program" in ptext:
+            labels.append("KLP/EAP")
+
+    if not labels:
+        # Fallback badges requested for the university detail/status area.
+        labels = ["Undergraduate", "Graduate (Masters/Ph.D.)", "KLP/EAP"]
+
+    return "\n".join([f'<span class="program-badge-v64">{_safe_html_v62(x)}</span>' for x in labels])
 
 
 def _safe_html_v62(value):
@@ -3230,9 +3287,10 @@ def _render_university_detail_v62(u):
     max_sch = float(u.get("_Max_Scholarship", 0) or 0)
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info available after rule update"
     intake_text = display_clean_v50(u.get("Intake", ""))
-    location_text = display_clean_v50(u.get("Location", "")) or display_clean_v50(u.get("Region", ""))
-    status_text = _application_status_v63_from_row(u)
+    open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
+    status_text = _application_status_v64_from_row(u)
     status_class = _application_status_class_v63(status_text)
+    program_badges = _program_badges_html_v64(u.get("University", ""))
 
     detail_html = f'''<div class="uni-card-v32 detail-card-v62">
 {image_html}
@@ -3243,10 +3301,9 @@ def _render_university_detail_v62(u):
 <p class="uni-overview-v32">{_safe_html_v62(u.get("Overview", ""))}</p>
 </div>
 <div class="uni-badges-v61">
-<span>{_safe_html_v62(location_text)}</span>
-<span>{_safe_html_v62(intake_text if intake_text else "Intake not provided")}</span>
+{program_badges}
 <span class="{status_class}">{_safe_html_v62(status_text)}</span>
-<span>{_safe_html_v62(max_sch_text)}</span>
+<span>{_safe_html_v62("Open date: " + open_date_text) if open_date_text else "Open date not set"}</span>
 </div>
 </div>
 <div class="info-grid-v32">
@@ -3271,9 +3328,10 @@ def _render_university_summary_v62(u, key_suffix):
     max_sch = float(u.get("_Max_Scholarship", 0) or 0)
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info not updated"
     intake_text = display_clean_v50(u.get("Intake", ""))
-    status_text = _application_status_v63_from_row(u)
+    open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
+    status_text = _application_status_v64_from_row(u)
     status_class = _application_status_class_v63(status_text)
-    location_text = display_clean_v50(u.get("Location", "")) or display_clean_v50(u.get("Region", ""))
+    program_badges_inline = _program_badges_html_v64(u.get("University", ""))
 
     summary_html = f'''<div class="uni-summary-card-v62">
 {image_html}
@@ -3281,10 +3339,9 @@ def _render_university_summary_v62(u, key_suffix):
 <h3>{_safe_html_v62(u.get("University", ""))}</h3>
 <p>{_safe_html_v62(u.get("Overview", ""))}</p>
 <div class="uni-summary-meta-v62">
-<span>Location: {_safe_html_v62(location_text)}</span>
-<span>Intake: {_safe_html_v62(intake_text if intake_text else "Intake not provided")}</span>
+{program_badges_inline}
 <span class="{status_class}">Status: {_safe_html_v62(status_text)}</span>
-<span>Scholarship: {_safe_html_v62(max_sch_text)}</span>
+<span>Open Date: {_safe_html_v62(open_date_text if open_date_text else "Not set")}</span>
 </div>
 </div>
 </div>'''
@@ -3316,7 +3373,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Overview", "Image", "Homepage", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Homepage", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -3384,7 +3441,7 @@ def universities_page(public=False):
     if intake_filter != "All":
         if intake_filter in ["Application Open", "Application Closed", "Application Opens Soon"]:
             filtered = filtered[
-                filtered.apply(lambda r: _application_status_v63_from_row(r) == intake_filter, axis=1)
+                filtered.apply(lambda r: _application_status_v64_from_row(r) == intake_filter, axis=1)
             ]
         elif intake_filter == "March Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("march", na=False)]
@@ -4254,7 +4311,7 @@ def admin_university_management_v49():
     df = read_csv(uni_file)
     required_cols = [
         "University","Location","Total_Students","International_Students","Top_Majors",
-        "Intake","Tuition_Range","Scholarship_Info","Overview","Image",
+        "Intake","Application_Status","Application_Open_Date","Tuition_Range","Scholarship_Info","Overview","Image",
         "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -4278,6 +4335,12 @@ def admin_university_management_v49():
                 address = st.text_area("Address", height=92)
                 overview = st.text_area("Overview", height=120)
                 intake = st.text_input("Intake", value="March, September")
+                application_status = st.selectbox(
+                    "Application Status",
+                    ["Application Open", "Application Closed", "Application Opens Soon"],
+                    key="add_application_status_v64"
+                )
+                application_open_date = st.date_input("Application Open Date", value=None, key="add_application_open_date_v64")
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
@@ -4298,6 +4361,8 @@ def admin_university_management_v49():
                         "International_Students": intl_students.strip(),
                         "Top_Majors": top_majors.strip(),
                         "Intake": intake.strip(),
+                        "Application_Status": application_status,
+                        "Application_Open_Date": str(application_open_date) if application_open_date else "",
                         "Tuition_Range": tuition_range.strip(),
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
@@ -4340,6 +4405,16 @@ def admin_university_management_v49():
                     address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92)
                     overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120)
                     intake = st.text_input("Intake", value=display_clean_v50(row.get("Intake", "")))
+                    status_options_v64 = ["Application Open", "Application Closed", "Application Opens Soon"]
+                    current_status_v64 = display_clean_v50(row.get("Application_Status", "")) or "Application Open"
+                    application_status = st.selectbox(
+                        "Application Status",
+                        status_options_v64,
+                        index=status_options_v64.index(current_status_v64) if current_status_v64 in status_options_v64 else 0,
+                        key="edit_application_status_v64"
+                    )
+                    current_open_date_v64 = _parse_date_v64(row.get("Application_Open_Date", ""))
+                    application_open_date = st.date_input("Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
@@ -4364,6 +4439,8 @@ def admin_university_management_v49():
                     df.loc[idx, "International_Students"] = intl_students.strip()
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
+                    df.loc[idx, "Application_Status"] = application_status
+                    df.loc[idx, "Application_Open_Date"] = str(application_open_date) if application_open_date else ""
                     df.loc[idx, "Tuition_Range"] = tuition_range.strip()
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()

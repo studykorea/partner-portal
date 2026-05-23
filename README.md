@@ -385,3 +385,10 @@ v63:
   - Closed = red with white text
   - Opens Soon = yellow with black text
 - Supports optional Admin/DB column named Application_Status. If absent, status is inferred from Intake.
+
+
+v64:
+- Added Application Status and Application Open Date fields in Admin > Universities.
+- Application status supports Open, Closed, and Opens Soon.
+- If Opens Soon has a future open date, it stays Opens Soon; when date arrives it displays Open.
+- Replaced right-side university detail badges with Undergraduate, Graduate (Masters/Ph.D.), and KLP/EAP program badges plus application status/open date.
