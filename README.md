@@ -419,17 +419,10 @@ v67:
 - Status display uses the date-linked v66 calculation.
 
 
-v69:
-- Rebuilt home hero to match the reference image more closely.
-- Text is forced to white using color and -webkit-text-fill-color.
-- Buttons are real HTML hero buttons placed inside the hero area.
-- Apply for Partner Access is blue with white text.
-- Explore Universities is outline/transparent with white text.
-- Added query routing so hero buttons still navigate correctly.
-
-
-v70:
-- Updated home hero background to match the provided reference image more closely.
-- Forced hero title/subtitle to white.
-- Styled top navigation closer to the reference: clean white header, outline Login, blue Partner Sign Up with white text.
-- Kept Apply for Partner Access as blue with white text and Explore Universities as white outline.
+v71:
+- Fixed the top navigation style using the actual header classes.
+- Login is an outline button.
+- Partner Sign Up is a blue button with white text.
+- Replaced hero background with a clean building-only crop from the reference image.
+- Prevented the reference screenshot's buttons/text from appearing inside the hero image.
+- Hero title/subtitle/buttons match the reference more closely.

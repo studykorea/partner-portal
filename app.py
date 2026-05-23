@@ -340,8 +340,8 @@ def restore_login_from_query_v60():
 restore_login_from_query_v60()
 
 
-# v69: HTML hero buttons use query parameters, so this connects them to Streamlit pages.
-def handle_home_query_navigation_v69():
+# v71: HTML hero buttons use query parameters for navigation.
+def handle_home_query_navigation_v71():
     try:
         go = st.query_params.get("go", "")
     except Exception:
@@ -361,7 +361,7 @@ def handle_home_query_navigation_v69():
         except Exception:
             pass
 
-handle_home_query_navigation_v69()
+handle_home_query_navigation_v71()
 
 
 
@@ -2430,49 +2430,110 @@ button[kind="primary"]:hover {
 }
 
 
-/* v69 reference-style home hero */
-.hero-reference-v69 {
-    min-height: 500px !important;
-    background-color: #002B5B !important;
-    background-size: cover !important;
-    background-position: center right !important;
-    position: relative !important;
-    overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
+/* v71 header and reference hero */
+.header-align-v47 {
+    background:#FFFFFF !important;
+    border-bottom:1px solid #E7EEF8 !important;
+    padding:14px 26px 12px 26px !important;
+    margin:0 !important;
+    display:block !important;
 }
-.hero-reference-v69::before {
+.site-title-v47 {
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:950 !important;
+    line-height:1.08 !important;
+}
+.nav-button-wrap-v47 {
+    display:flex !important;
+    align-items:center !important;
+    height:50px !important;
+}
+.nav-button-wrap-v47 .stButton > button,
+.nav-button-wrap-v47 div[data-testid="stButton"] > button {
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:850 !important;
+    height:46px !important;
+    border-radius:0 !important;
+    padding:0 8px !important;
+}
+.nav-button-wrap-v47 .stButton > button:hover,
+.nav-button-wrap-v47 div[data-testid="stButton"] > button:hover {
+    background:transparent !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+}
+/* Login button = outline */
+.header-align-v47 div[data-testid="column"]:nth-child(8) .stButton > button {
+    background:#FFFFFF !important;
+    border:1px solid #BFCBDD !important;
+    border-radius:8px !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    height:48px !important;
+    box-shadow:none !important;
+}
+/* Partner Sign Up button = blue */
+.header-align-v47 div[data-testid="column"]:nth-child(9) .stButton > button {
+    background:#005BDB !important;
+    border:1px solid #005BDB !important;
+    border-radius:8px !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    height:48px !important;
+    box-shadow:0 8px 18px rgba(0,91,219,.20) !important;
+}
+.header-align-v47 div[data-testid="column"]:nth-child(9) .stButton > button * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+
+.hero-reference-v71 {
+    min-height:500px !important;
+    background-color:#002B5B !important;
+    background-size:cover !important;
+    background-position:center right !important;
+    position:relative !important;
+    overflow:hidden !important;
+    display:flex !important;
+    align-items:center !important;
+    margin:0 !important;
+    border-radius:0 !important;
+}
+.hero-reference-v71::before {
     content:"";
     position:absolute;
     inset:0;
     background:
-      radial-gradient(circle at 22% 16%, rgba(0,91,219,.22), transparent 28%),
-      linear-gradient(90deg, rgba(0,30,70,.78), rgba(0,30,70,.28) 62%, rgba(0,30,70,.05));
+      radial-gradient(circle at 23% 15%, rgba(0,91,219,.24), transparent 28%),
+      linear-gradient(90deg, rgba(0,27,64,.74), rgba(0,27,64,.25) 62%, rgba(0,27,64,.02));
     z-index:1;
     pointer-events:none;
 }
-.hero-dots-v69 {
+.hero-dots-v71 {
     position:absolute;
-    left: 420px;
-    top: 22px;
-    width: 390px;
-    height: 210px;
+    left:410px;
+    top:26px;
+    width:390px;
+    height:210px;
     opacity:.22;
-    background-image: radial-gradient(rgba(255,255,255,.85) 1.35px, transparent 1.35px);
-    background-size: 13px 13px;
-    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    background-image:radial-gradient(rgba(255,255,255,.86) 1.35px, transparent 1.35px);
+    background-size:13px 13px;
+    mask-image:radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    -webkit-mask-image:radial-gradient(ellipse at center, #000 45%, transparent 76%);
     z-index:2;
 }
-.hero-inner-v69 {
+.hero-inner-v71 {
     position:relative !important;
     z-index:3 !important;
     margin-left:56px !important;
     width:min(720px, 52vw) !important;
 }
-.hero-step-v69 {
+.hero-step-v71 {
     display:inline-flex !important;
     align-items:center !important;
     gap:10px !important;
@@ -2483,7 +2544,7 @@ button[kind="primary"]:hover {
     margin-bottom:18px !important;
     backdrop-filter:blur(4px);
 }
-.hero-step-v69 span {
+.hero-step-v71 span {
     background:rgba(255,255,255,.18) !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
@@ -2492,26 +2553,27 @@ button[kind="primary"]:hover {
     font-size:12px !important;
     font-weight:900 !important;
 }
-.hero-step-v69 b {
+.hero-step-v71 b {
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
     font-size:13px !important;
     letter-spacing:.2px !important;
 }
-.hero-reference-v69 h1,
-.hero-reference-v69 h1 *,
-.hero-inner-v69 h1,
-.hero-inner-v69 h1 * {
+.hero-reference-v71 h1,
+.hero-reference-v71 h1 *,
+.hero-inner-v71 h1,
+.hero-inner-v71 h1 * {
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
+    opacity:1 !important;
     font-size:54px !important;
     line-height:1.14 !important;
     font-weight:950 !important;
     margin:0 0 20px 0 !important;
     letter-spacing:-.65px !important;
-    text-shadow:0 3px 20px rgba(0,0,0,.28) !important;
+    text-shadow:0 3px 20px rgba(0,0,0,.38) !important;
 }
-.hero-lead-v69 {
+.hero-lead-v71 {
     color:rgba(255,255,255,.96) !important;
     -webkit-text-fill-color:rgba(255,255,255,.96) !important;
     font-size:17px !important;
@@ -2520,14 +2582,14 @@ button[kind="primary"]:hover {
     margin:0 0 18px 0 !important;
     text-shadow:0 2px 12px rgba(0,0,0,.22) !important;
 }
-.hero-buttons-v69 {
+.hero-buttons-v71 {
     display:flex !important;
     gap:18px !important;
     align-items:center !important;
     margin:18px 0 16px 0 !important;
     flex-wrap:wrap !important;
 }
-.hero-buttons-v69 a {
+.hero-buttons-v71 a {
     display:inline-flex !important;
     align-items:center !important;
     justify-content:center !important;
@@ -2540,24 +2602,24 @@ button[kind="primary"]:hover {
     box-shadow:0 14px 28px rgba(0,0,0,.18) !important;
     transition:all .16s ease !important;
 }
-.hero-btn-primary-v69 {
+.hero-btn-primary-v71 {
     background:#005BDB !important;
     border:1px solid #005BDB !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
 }
-.hero-btn-outline-v69 {
+.hero-btn-outline-v71 {
     background:rgba(255,255,255,.07) !important;
     border:1px solid rgba(255,255,255,.76) !important;
     color:#FFFFFF !important;
     -webkit-text-fill-color:#FFFFFF !important;
     backdrop-filter:blur(3px);
 }
-.hero-buttons-v69 a:hover {
+.hero-buttons-v71 a:hover {
     transform:translateY(-1px) !important;
     filter:brightness(1.07) !important;
 }
-.hero-lock-v69 {
+.hero-lock-v71 {
     color:rgba(255,255,255,.95) !important;
     -webkit-text-fill-color:rgba(255,255,255,.95) !important;
     font-size:14px !important;
@@ -2565,127 +2627,29 @@ button[kind="primary"]:hover {
     margin:0 !important;
     text-shadow:0 2px 10px rgba(0,0,0,.25) !important;
 }
-.featured-v32 {
-    padding-top: 28px !important;
-}
 @media(max-width:1000px){
-    .hero-reference-v69 {
+    .hero-reference-v71 {
         min-height:560px !important;
         background-position:center !important;
     }
-    .hero-inner-v69 {
+    .hero-inner-v71 {
         margin-left:28px !important;
         margin-right:28px !important;
         width:auto !important;
     }
-    .hero-reference-v69 h1,
-    .hero-inner-v69 h1 {
+    .hero-reference-v71 h1,
+    .hero-inner-v71 h1 {
         font-size:40px !important;
     }
-    .hero-buttons-v69 {
+    .hero-buttons-v71 {
         flex-direction:column !important;
         align-items:stretch !important;
         max-width:320px !important;
     }
-    .hero-buttons-v69 a {
+    .hero-buttons-v71 a {
         width:100% !important;
         min-width:0 !important;
     }
-}
-
-
-/* v70 reference-style header and hero image/text fix */
-.header-box {
-    background:#FFFFFF !important;
-    border-bottom:1px solid #E7EEF8 !important;
-    padding:14px 28px 12px 28px !important;
-    margin-bottom:0 !important;
-    box-shadow:0 1px 0 rgba(16,24,40,.03) !important;
-}
-.header-box .stButton > button,
-.header-box div[data-testid="stButton"] > button {
-    background:transparent !important;
-    border:0 !important;
-    box-shadow:none !important;
-    color:#0F172A !important;
-    -webkit-text-fill-color:#0F172A !important;
-    font-weight:800 !important;
-    height:44px !important;
-    border-radius:0 !important;
-    padding:0 10px !important;
-}
-.header-box .stButton > button:hover,
-.header-box div[data-testid="stButton"] > button:hover {
-    color:#005BDB !important;
-    -webkit-text-fill-color:#005BDB !important;
-    background:transparent !important;
-}
-.header-box div[data-testid="column"]:nth-last-child(2) .stButton > button {
-    background:#FFFFFF !important;
-    border:1px solid #C9D4E5 !important;
-    border-radius:8px !important;
-    color:#0F172A !important;
-    -webkit-text-fill-color:#0F172A !important;
-    height:48px !important;
-    box-shadow:none !important;
-}
-.header-box div[data-testid="column"]:last-child .stButton > button {
-    background:#005BDB !important;
-    border:1px solid #005BDB !important;
-    border-radius:8px !important;
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-    height:48px !important;
-    box-shadow:0 8px 18px rgba(0,91,219,.18) !important;
-}
-.header-box div[data-testid="column"]:last-child .stButton > button * {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-}
-
-/* Make hero almost identical to the reference sample */
-.hero-reference-v69 {
-    min-height:500px !important;
-    background-size:cover !important;
-    background-position:center right !important;
-}
-.hero-reference-v69::before {
-    background:
-      linear-gradient(90deg, rgba(0,30,70,.96) 0%, rgba(0,43,91,.86) 43%, rgba(0,55,115,.38) 68%, rgba(0,31,72,.03) 100%) !important;
-}
-.hero-reference-v69 h1,
-.hero-reference-v69 h1 *,
-.hero-inner-v69 h1,
-.hero-inner-v69 h1 * {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-    opacity:1 !important;
-    text-shadow:0 3px 18px rgba(0,0,0,.38) !important;
-}
-.hero-lead-v69,
-.hero-lock-v69,
-.hero-lead-v69 *,
-.hero-lock-v69 * {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-    opacity:1 !important;
-}
-.hero-btn-primary-v69 {
-    background:#005BDB !important;
-    border-color:#005BDB !important;
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-}
-.hero-btn-primary-v69 *,
-.hero-btn-outline-v69 * {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-}
-.hero-btn-outline-v69 {
-    color:#FFFFFF !important;
-    -webkit-text-fill-color:#FFFFFF !important;
-    border:1px solid rgba(255,255,255,.86) !important;
-    background:rgba(255,255,255,.06) !important;
 }
 
 </style>
@@ -3047,27 +3011,27 @@ def chunk_records_v53(records, size=5):
 
 def home():
     header()
-    hero_img = asset_img_url("assets/home_hero_reference_v70.jpg") or asset_img_url("assets/home_hero.jpg")
+    hero_img = asset_img_url("assets/home_hero_building_v71.jpg") or asset_img_url("assets/home_hero.jpg")
     bg = ""
     if hero_img:
         bg = (
             "background-image:"
-            "linear-gradient(90deg, rgba(0,31,72,.98) 0%, rgba(0,43,91,.92) 43%, rgba(0,55,115,.58) 70%, rgba(0,31,72,.16) 100%),"
+            "linear-gradient(90deg, rgba(0,31,72,.99) 0%, rgba(0,43,91,.94) 42%, rgba(0,55,115,.62) 67%, rgba(0,31,72,.18) 100%),"
             "url('" + hero_img + "');"
         )
 
     st.markdown(f"""
-    <section class="hero-reference-v69" style="{bg}">
-      <div class="hero-dots-v69"></div>
-      <div class="hero-inner-v69">
-        <div class="hero-step-v69"><span>Step 1</span><b>Home Page</b></div>
+    <section class="hero-reference-v71" style="{bg}">
+      <div class="hero-dots-v71"></div>
+      <div class="hero-inner-v71">
+        <div class="hero-step-v71"><span>Step 1</span><b>Home Page</b></div>
         <h1>Partner Portal for<br>University Recruitment</h1>
-        <p class="hero-lead-v69">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
-        <div class="hero-buttons-v69">
-          <a class="hero-btn-primary-v69" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
-          <a class="hero-btn-outline-v69" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
+        <p class="hero-lead-v71">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
+        <div class="hero-buttons-v71">
+          <a class="hero-btn-primary-v71" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
+          <a class="hero-btn-outline-v71" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
         </div>
-        <p class="hero-lock-v69">🔒 Detailed information is available only for approved partners.</p>
+        <p class="hero-lock-v71">🔒 Detailed information is available only for approved partners.</p>
       </div>
     </section>
     """, unsafe_allow_html=True)
