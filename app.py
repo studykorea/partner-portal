@@ -2331,6 +2331,33 @@ button[kind="primary"]:hover {
     margin-top:14px!important;
 }
 
+
+/* v63 application status badge colors */
+.app-status-open-v63 {
+    background:#16A34A !important;
+    color:#FFFFFF !important;
+    border-color:#15803D !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-closed-v63 {
+    background:#DC2626 !important;
+    color:#FFFFFF !important;
+    border-color:#B91C1C !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-soon-v63 {
+    background:#FACC15 !important;
+    color:#111827 !important;
+    border-color:#EAB308 !important;
+    -webkit-text-fill-color:#111827 !important;
+}
+.app-status-none-v63 {
+    background:#E5E7EB !important;
+    color:#374151 !important;
+    border-color:#D1D5DB !important;
+    -webkit-text-fill-color:#374151 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3146,7 +3173,40 @@ def _location_value_v62(row):
     return " / ".join(parts)
 
 
+def _application_status_v63_from_row(row):
+    """
+    Application status priority:
+    1) Use Application_Status column if it exists.
+    2) Otherwise infer from Intake text.
+    """
+    raw = str(row.get("Application_Status", "") or row.get("Application Status", "") or "").strip().lower()
+    intake = str(row.get("Intake", "") or "").strip().lower()
+
+    source = raw if raw else intake
+
+    if any(x in source for x in ["closed", "close", "not open", "not opened"]):
+        return "Application Closed"
+    if any(x in source for x in ["soon", "upcoming", "coming"]):
+        return "Application Opens Soon"
+    if any(x in source for x in ["open", "opened", "march", "september", "spring", "fall"]):
+        return "Application Open"
+
+    return "Application Status Not Provided"
+
+
+def _application_status_class_v63(status):
+    s = str(status or "").lower()
+    if "closed" in s:
+        return "app-status-closed-v63"
+    if "soon" in s:
+        return "app-status-soon-v63"
+    if "open" in s:
+        return "app-status-open-v63"
+    return "app-status-none-v63"
+
+
 def _intake_is_open_v62(value):
+    # Backward compatible helper for old calls.
     s = str(value or "").strip().lower()
     if not s:
         return False
@@ -3156,7 +3216,8 @@ def _intake_is_open_v62(value):
 
 
 def _application_status_v62(value):
-    return "Application Opened" if _intake_is_open_v62(value) else "Application Status Not Provided"
+    # Backward compatible helper for old calls.
+    return "Application Open" if _intake_is_open_v62(value) else "Application Status Not Provided"
 
 
 def _safe_html_v62(value):
@@ -3170,6 +3231,8 @@ def _render_university_detail_v62(u):
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info available after rule update"
     intake_text = display_clean_v50(u.get("Intake", ""))
     location_text = display_clean_v50(u.get("Location", "")) or display_clean_v50(u.get("Region", ""))
+    status_text = _application_status_v63_from_row(u)
+    status_class = _application_status_class_v63(status_text)
 
     detail_html = f'''<div class="uni-card-v32 detail-card-v62">
 {image_html}
@@ -3182,6 +3245,7 @@ def _render_university_detail_v62(u):
 <div class="uni-badges-v61">
 <span>{_safe_html_v62(location_text)}</span>
 <span>{_safe_html_v62(intake_text if intake_text else "Intake not provided")}</span>
+<span class="{status_class}">{_safe_html_v62(status_text)}</span>
 <span>{_safe_html_v62(max_sch_text)}</span>
 </div>
 </div>
@@ -3207,7 +3271,8 @@ def _render_university_summary_v62(u, key_suffix):
     max_sch = float(u.get("_Max_Scholarship", 0) or 0)
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info not updated"
     intake_text = display_clean_v50(u.get("Intake", ""))
-    status_text = _application_status_v62(u.get("Intake", ""))
+    status_text = _application_status_v63_from_row(u)
+    status_class = _application_status_class_v63(status_text)
     location_text = display_clean_v50(u.get("Location", "")) or display_clean_v50(u.get("Region", ""))
 
     summary_html = f'''<div class="uni-summary-card-v62">
@@ -3218,7 +3283,7 @@ def _render_university_summary_v62(u, key_suffix):
 <div class="uni-summary-meta-v62">
 <span>Location: {_safe_html_v62(location_text)}</span>
 <span>Intake: {_safe_html_v62(intake_text if intake_text else "Intake not provided")}</span>
-<span>Status: {_safe_html_v62(status_text)}</span>
+<span class="{status_class}">Status: {_safe_html_v62(status_text)}</span>
 <span>Scholarship: {_safe_html_v62(max_sch_text)}</span>
 </div>
 </div>
@@ -3239,7 +3304,7 @@ def universities_page(public=False):
         st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
 
     st.title("Universities Information")
-    st.caption("Filter universities by location/city, application intake status, and scholarship level.")
+    st.caption("Filter universities by location/city, application status, intake, and scholarship level.")
 
     df = universities().copy()
     if df is None or len(df) == 0:
@@ -3251,7 +3316,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Overview", "Image", "Homepage", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Overview", "Image", "Homepage", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -3276,8 +3341,8 @@ def universities_page(public=False):
         location_filter = st.selectbox("Location / City", ["All"] + location_values)
     with f3:
         intake_filter = st.selectbox(
-            "Application / Intake",
-            ["All", "Application Opened", "March Intake", "September Intake", "Spring Intake", "Fall Intake"]
+            "Application Status / Intake",
+            ["All", "Application Open", "Application Closed", "Application Opens Soon", "March Intake", "September Intake", "Spring Intake", "Fall Intake"]
         )
     with f4:
         sort_filter = st.selectbox(
@@ -3317,8 +3382,10 @@ def universities_page(public=False):
         ]
 
     if intake_filter != "All":
-        if intake_filter == "Application Opened":
-            filtered = filtered[filtered["Intake"].apply(_intake_is_open_v62)]
+        if intake_filter in ["Application Open", "Application Closed", "Application Opens Soon"]:
+            filtered = filtered[
+                filtered.apply(lambda r: _application_status_v63_from_row(r) == intake_filter, axis=1)
+            ]
         elif intake_filter == "March Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("march", na=False)]
         elif intake_filter == "September Intake":
@@ -3338,7 +3405,7 @@ def universities_page(public=False):
     st.markdown(
         f'''<div class="filter-summary-v61">
 Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
-<span>· Application Opened means an intake period is registered in the database. Scholarship sort uses the highest scholarship percentage in Scholarship Rules.</span>
+<span>· Application status can be managed as Open, Closed, or Opens Soon. Scholarship sort uses the highest scholarship percentage in Scholarship Rules.</span>
 </div>''',
         unsafe_allow_html=True,
     )

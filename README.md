@@ -376,3 +376,12 @@ v62:
 - Added Back to List button after opening details.
 - Clarified Application Opened filter text.
 - Cleaned university details rendering to avoid Markdown code-block behavior.
+
+
+v63:
+- Added Application Status filter options: Application Open, Application Closed, Application Opens Soon.
+- Added color badges:
+  - Open = green with white text
+  - Closed = red with white text
+  - Opens Soon = yellow with black text
+- Supports optional Admin/DB column named Application_Status. If absent, status is inferred from Intake.
