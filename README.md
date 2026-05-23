@@ -368,3 +368,11 @@ v61:
 - Filter by application/intake status: opened, March, September, Spring, Fall.
 - Sort universities by scholarship high-to-low or low-to-high.
 - Scholarship sorting uses the highest percentage found in Scholarship Rules.
+
+
+v62:
+- Fixed raw HTML showing as a black code block on university details.
+- Added View Details button for each filtered university result.
+- Added Back to List button after opening details.
+- Clarified Application Opened filter text.
+- Cleaned university details rendering to avoid Markdown code-block behavior.
