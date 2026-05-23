@@ -2225,6 +2225,63 @@ button[kind="primary"]:hover {
     border: 1px solid #94A3B8 !important;
 }
 
+
+/* v61 University filter panel */
+.filter-panel-v61 {
+    background: #FFFFFF;
+    border: 1px solid #DCE6F4;
+    border-radius: 18px;
+    padding: 18px 18px 6px 18px;
+    margin: 16px 0 18px 0;
+    box-shadow: 0 10px 26px rgba(16,24,40,.05);
+}
+.filter-summary-v61 {
+    background: #F6F8FC;
+    border: 1px solid #E3EAF5;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 10px 0 18px 0;
+    color: #101828 !important;
+}
+.filter-summary-v61 span {
+    color: #667085 !important;
+    margin-left: 8px;
+}
+.uni-title-row-v61 {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+.uni-badges-v61 {
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.uni-badges-v61 span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: #EEF5FF;
+    color: #002B5B !important;
+    border: 1px solid #CFE0FF;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-weight: 800;
+    font-size: 13px;
+    text-align: center;
+}
+@media(max-width:900px){
+    .uni-title-row-v61 {
+        flex-direction: column;
+    }
+    .uni-badges-v61 {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -2982,6 +3039,76 @@ def partner_dashboard():
 
 
 
+
+def _scholarship_percent_to_number_v61(value):
+    """Extract scholarship percentage from 30, 0.3, '30%', or '30% of Tuition fee'."""
+    s = str(value or "").strip()
+    if not s or s.lower() in ["nan", "none", "null", "<na>"]:
+        return 0.0
+    try:
+        x = float(s)
+        if 0 < x <= 1:
+            return x * 100
+        return x
+    except Exception:
+        pass
+    m = re.search(r"(\d+(?:\.\d+)?)\s*%", s)
+    if m:
+        try:
+            return float(m.group(1))
+        except Exception:
+            return 0.0
+    m = re.search(r"\b0\.(\d+)\b", s)
+    if m:
+        try:
+            return float("0." + m.group(1)) * 100
+        except Exception:
+            return 0.0
+    return 0.0
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def university_max_scholarship_map_v61():
+    sch = scholarship_rules()
+    if sch is None or len(sch) == 0 or "University" not in sch.columns:
+        return {}
+
+    # Pick the highest scholarship percentage for each university.
+    values = {}
+    for _, r in sch.iterrows():
+        uni = str(r.get("University", "")).strip()
+        if not uni:
+            continue
+        pct_candidates = [
+            _scholarship_percent_to_number_v61(r.get("Scholarship_Percent", "")),
+            _scholarship_percent_to_number_v61(r.get("Scholarship_Text", "")),
+            _scholarship_percent_to_number_v61(r.get("Language_Criteria", "")),
+        ]
+        pct = max(pct_candidates)
+        values[uni] = max(values.get(uni, 0.0), pct)
+    return values
+
+
+def _location_value_v61(row):
+    parts = []
+    for col in ["Location", "Region"]:
+        v = display_clean_v50(row.get(col, ""))
+        if v:
+            parts.append(v)
+    return " / ".join(parts)
+
+
+def _intake_is_open_v61(value):
+    # In the current dataset, "Application opened" is interpreted as having intake/application information.
+    # If an explicit Open/Closed value is added later, this also supports it.
+    s = str(value or "").strip().lower()
+    if not s:
+        return False
+    if any(x in s for x in ["closed", "not open", "not opened"]):
+        return False
+    return True
+
+
 def universities_page(public=False):
     if public:
         header()
@@ -2989,22 +3116,141 @@ def universities_page(public=False):
     else:
         dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
         st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
+
     st.title("Universities Information")
-    search = st.text_input("Search universities by name, location, or major")
-    df = universities()
+    st.caption("Filter universities by location/city, application intake status, and scholarship level.")
+
+    df = universities().copy()
+    if df is None or len(df) == 0:
+        st.info("No university data found.")
+        st.markdown('</div>', unsafe_allow_html=True)
+        if public:
+            footer()
+        else:
+            close_shell()
+        return
+
+    for col in ["University", "Location", "Region", "Intake", "Overview", "Image", "Homepage", "Address", "School_Size",
+                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
+        if col not in df.columns:
+            df[col] = ""
+
+    scholarship_map = university_max_scholarship_map_v61()
+    df["_Max_Scholarship"] = df["University"].astype(str).map(lambda x: scholarship_map.get(x.strip(), 0.0))
+    df["_Location_Filter"] = df.apply(_location_value_v61, axis=1)
+
+    st.markdown('<div class="filter-panel-v61">', unsafe_allow_html=True)
+    f1, f2, f3, f4 = st.columns([1.25, 1.0, 1.25, 1.55], gap="medium")
+
+    with f1:
+        search = st.text_input("Search", placeholder="University, city, major, keyword")
+    with f2:
+        location_values = sorted([
+            x for x in set(
+                list(df["Location"].dropna().astype(str).str.strip()) +
+                list(df["Region"].dropna().astype(str).str.strip())
+            )
+            if x and x.lower() not in ["nan", "none", "null"]
+        ])
+        location_filter = st.selectbox("Location / City", ["All"] + location_values)
+    with f3:
+        intake_filter = st.selectbox(
+            "Application / Intake",
+            ["All", "Application Opened", "March Intake", "September Intake", "Spring Intake", "Fall Intake"]
+        )
+    with f4:
+        sort_filter = st.selectbox(
+            "Sort",
+            ["Default", "Scholarship High to Low", "Scholarship Low to High", "University Name A-Z"]
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    filtered = df.copy()
+
     if search:
         s = search.lower()
-        df = df[df.apply(lambda r: s in " ".join(map(str, r.values)).lower(), axis=1)]
+        # Include major/program information in search by joining the criteria table.
+        crit = criteria()
+        major_text = {}
+        if crit is not None and len(crit) and "University" in crit.columns:
+            for uni, group in crit.groupby("University"):
+                major_text[str(uni)] = " ".join(map(str, group.values.flatten())).lower()
 
-    for _, u in df.iterrows():
+        filtered = filtered[
+            filtered.apply(
+                lambda r: (
+                    s in " ".join(map(str, r.values)).lower()
+                    or s in major_text.get(str(r.get("University", "")), "")
+                ),
+                axis=1
+            )
+        ]
+
+    if location_filter != "All":
+        lf = location_filter.lower()
+        filtered = filtered[
+            filtered.apply(
+                lambda r: lf in str(r.get("Location", "")).lower() or lf in str(r.get("Region", "")).lower(),
+                axis=1
+            )
+        ]
+
+    if intake_filter != "All":
+        if intake_filter == "Application Opened":
+            filtered = filtered[filtered["Intake"].apply(_intake_is_open_v61)]
+        elif intake_filter == "March Intake":
+            filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("march", na=False)]
+        elif intake_filter == "September Intake":
+            filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("september", na=False)]
+        elif intake_filter == "Spring Intake":
+            filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("spring|march", regex=True, na=False)]
+        elif intake_filter == "Fall Intake":
+            filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("fall|september", regex=True, na=False)]
+
+    if sort_filter == "Scholarship High to Low":
+        filtered = filtered.sort_values(["_Max_Scholarship", "University"], ascending=[False, True])
+    elif sort_filter == "Scholarship Low to High":
+        filtered = filtered.sort_values(["_Max_Scholarship", "University"], ascending=[True, True])
+    elif sort_filter == "University Name A-Z":
+        filtered = filtered.sort_values("University", ascending=True)
+
+    st.markdown(
+        f"""
+        <div class="filter-summary-v61">
+            Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
+            <span>· Scholarship sort uses the highest scholarship percentage registered in Scholarship Rules.</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if len(filtered) == 0:
+        st.warning("No universities match the selected filters. Please adjust the filter options.")
+
+    for _, u in filtered.iterrows():
         image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
         programs_html = program_list_html_for_university(u['University'])
+        max_sch = float(u.get("_Max_Scholarship", 0) or 0)
+        max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info available after rule update"
+        intake_text = display_clean_v50(u.get("Intake", ""))
+
         st.markdown(f"""
         <div class="uni-card-v32">
           {image_html}
           <div class="uni-body-v32">
-            <h2>{u['University']}</h2>
-            <p class="uni-overview-v32">{u.get('Overview', '')}</p>
+            <div class="uni-title-row-v61">
+                <div>
+                    <h2>{u['University']}</h2>
+                    <p class="uni-overview-v32">{u.get('Overview', '')}</p>
+                </div>
+                <div class="uni-badges-v61">
+                    <span>{display_clean_v50(u.get('Location', '')) or display_clean_v50(u.get('Region', ''))}</span>
+                    <span>{intake_text if intake_text else "Intake not provided"}</span>
+                    <span>{max_sch_text}</span>
+                </div>
+            </div>
+
             <div class="info-grid-v32">
               <div class="info-box-v32"><b>Homepage</b><span>{u.get('Homepage', '')}</span></div>
               <div class="info-box-v32"><b>Region</b><span>{u.get('Region', '')}</span></div>

@@ -360,3 +360,11 @@ v60:
 - Added refresh-safe login using a signed auth token in the URL query parameter.
 - Logout clears the auth token.
 - Added Streamlit Cloud button color CSS fix inside the existing style block.
+
+
+v61:
+- Added university filters on Universities page.
+- Filter by location/city.
+- Filter by application/intake status: opened, March, September, Spring, Fall.
+- Sort universities by scholarship high-to-low or low-to-high.
+- Scholarship sorting uses the highest percentage found in Scholarship Rules.
