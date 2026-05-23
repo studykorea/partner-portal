@@ -2367,6 +2367,27 @@ button[kind="primary"]:hover {
     -webkit-text-fill-color:#002B5B !important;
 }
 
+
+/* v66 auto-linked application date/status helper */
+.app-status-open-v63 {
+    background:#16A34A !important;
+    color:#FFFFFF !important;
+    border-color:#15803D !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-closed-v63 {
+    background:#DC2626 !important;
+    color:#FFFFFF !important;
+    border-color:#B91C1C !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-soon-v63 {
+    background:#FACC15 !important;
+    color:#111827 !important;
+    border-color:#EAB308 !important;
+    -webkit-text-fill-color:#111827 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3224,7 +3245,7 @@ def _application_status_v64_from_row(row):
     Supports admin-managed Application_Status, Application_Open_Date, and Application_Close_Date.
     Dates have priority so the website status changes automatically.
     """
-    raw = str(row.get("Application_Status", "") or row.get("Application Status", "") or "").strip()
+    raw = str(row.get("Application_Status", "") or row.get("Application Status Auto Calculated", "") or "").strip()
     intake = str(row.get("Intake", "") or "").strip().lower()
     open_date = row.get("Application_Open_Date", "") or row.get("Application Open Date", "")
     close_date = row.get("Application_Close_Date", "") or row.get("Application Close Date", "")
@@ -3244,9 +3265,61 @@ def _application_status_v64_from_row(row):
     return "Application Status Not Provided"
 
 
-def _application_status_v63_from_row(row):
-    # Backward-compatible name used by v63 code.
-    return _application_status_v64_from_row(row)
+
+def _parse_date_v66(value):
+    """Parse common date formats from admin fields."""
+    s = str(value or "").strip()
+    if not s or s.lower() in ["nan", "none", "null", "<na>"]:
+        return None
+    for fmt in ["%Y/%m/%d", "%Y-%m-%d", "%Y.%m.%d", "%m/%d/%Y", "%d/%m/%Y"]:
+        try:
+            return datetime.strptime(s, fmt).date()
+        except Exception:
+            pass
+    try:
+        return pd.to_datetime(s, errors="coerce").date()
+    except Exception:
+        return None
+
+
+def _format_date_v66(value):
+    d = _parse_date_v66(value)
+    return d.strftime("%Y/%m/%d") if d else ""
+
+
+def _calculate_application_status_v66(open_date_value, close_date_value="", fallback_status=""):
+    """
+    Status is directly linked with dates:
+    - today < open date: Application Opens Soon
+    - open date <= today <= close date: Application Open
+    - today > close date: Application Closed
+    If no dates are entered, fallback status can still be used.
+    """
+    today = datetime.now().date()
+    open_d = _parse_date_v66(open_date_value)
+    close_d = _parse_date_v66(close_date_value)
+
+    if open_d and today < open_d:
+        return "Application Opens Soon"
+    if close_d and today > close_d:
+        return "Application Closed"
+    if open_d and today >= open_d:
+        return "Application Open"
+    if close_d and today <= close_d:
+        return "Application Open"
+
+    fs = str(fallback_status or "").strip()
+    if fs in ["Application Open", "Application Closed", "Application Opens Soon"]:
+        return fs
+    return "Application Status Not Provided"
+
+
+def _application_status_v66_from_row(row):
+    return _calculate_application_status_v66(
+        row.get("Application_Open_Date", row.get("Application Open Date", "")),
+        row.get("Application_Close_Date", row.get("Application Close Date", "")),
+        row.get("Application_Status", row.get("Application Status Auto Calculated", "")),
+    )
 
 
 def _application_status_class_v63(status):
@@ -3271,27 +3344,6 @@ def _intake_is_open_v62(value):
 
 def _application_status_v62(value):
     return "Application Open" if _intake_is_open_v62(value) else "Application Status Not Provided"
-
-
-def _program_badges_html_v64(university):
-    crit = criteria()
-    labels = []
-    if crit is not None and len(crit) and "University" in crit.columns and "Program" in crit.columns:
-        rows = crit[crit["University"].astype(str).str.strip() == str(university).strip()]
-        ptext = " ".join(rows["Program"].dropna().astype(str).str.lower().tolist())
-
-        if "undergraduate" in ptext:
-            labels.append("Undergraduate")
-        if "graduate" in ptext or "master" in ptext or "ph.d" in ptext or "phd" in ptext:
-            labels.append("Graduate (Masters/Ph.D.)")
-        if "korean language" in ptext or "klp" in ptext or "eap" in ptext or "language program" in ptext:
-            labels.append("KLP/EAP")
-
-    if not labels:
-        # Fallback badges requested for the university detail/status area.
-        labels = ["Undergraduate", "Graduate (Masters/Ph.D.)", "KLP/EAP"]
-
-    return "\n".join([f'<span class="program-badge-v64">{_safe_html_v62(x)}</span>' for x in labels])
 
 
 def _safe_html_v62(value):
@@ -4353,13 +4405,13 @@ def admin_university_management_v49():
                 overview = st.text_area("Overview", height=120)
                 intake = st.text_input("Intake", value="March, September")
                 application_status = st.selectbox(
-                    "Application Status",
+                    "Application Status Auto Calculated",
                     ["Application Open", "Application Closed", "Application Opens Soon"],
                     key="add_application_status_v64"
                 )
                 application_open_date = st.date_input("Application Open Date", value=None, key="add_application_open_date_v64")
                 application_close_date = st.date_input("Application Close Date", value=None, key="add_application_close_date_v65")
-                st.caption("Status will be calculated automatically: before open date = Opens Soon, between open/close dates = Open, after close date = Closed.")
+                st.caption("Application status is directly linked with the dates. Before Open Date = Opens Soon, between Open/Close Date = Open, after Close Date = Closed.")
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
@@ -4429,7 +4481,7 @@ def admin_university_management_v49():
                     status_options_v64 = ["Application Open", "Application Closed", "Application Opens Soon"]
                     current_status_v64 = _application_status_v64_from_row(row) if _application_status_v64_from_row(row) in status_options_v64 else (display_clean_v50(row.get("Application_Status", "")) or "Application Open")
                     application_status = st.selectbox(
-                        "Application Status",
+                        "Application Status Auto Calculated",
                         status_options_v64,
                         index=status_options_v64.index(current_status_v64) if current_status_v64 in status_options_v64 else 0,
                         key="edit_application_status_v64"
@@ -4438,7 +4490,7 @@ def admin_university_management_v49():
                     current_close_date_v65 = _parse_date_v64(row.get("Application_Close_Date", ""))
                     application_open_date = st.date_input("Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
                     application_close_date = st.date_input("Application Close Date", value=current_close_date_v65, key="edit_application_close_date_v65")
-                    st.caption("Status will be calculated automatically: before open date = Opens Soon, between open/close dates = Open, after close date = Closed.")
+                    st.caption("Application status is directly linked with the dates. Before Open Date = Opens Soon, between Open/Close Date = Open, after Close Date = Closed.")
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)

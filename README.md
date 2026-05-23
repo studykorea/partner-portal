@@ -401,3 +401,12 @@ v65:
   - Today between open and close dates = Application Open
   - Today after close date = Application Closed
 - The saved Application_Status is updated automatically when Admin saves the university.
+
+
+v66:
+- Application Status is directly linked with Application Open Date and Application Close Date.
+- Before open date: Application Opens Soon.
+- Between open date and close date: Application Open.
+- After close date: Application Closed.
+- University cards/details show calculated status and date badges.
+- Admin note clarifies that status is auto-calculated from dates.
