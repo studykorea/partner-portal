@@ -419,9 +419,10 @@ v67:
 - Status display uses the date-linked v66 calculation.
 
 
-v68:
-- Redesigned the home hero section in a premium style similar to the provided reference.
-- Moved Apply for Partner Access and Explore Universities into the hero area.
-- Apply button is blue with white text.
-- Explore button is transparent/outline with white text.
-- Added step pill and better hero overlay.
+v69:
+- Rebuilt home hero to match the reference image more closely.
+- Text is forced to white using color and -webkit-text-fill-color.
+- Buttons are real HTML hero buttons placed inside the hero area.
+- Apply for Partner Access is blue with white text.
+- Explore Universities is outline/transparent with white text.
+- Added query routing so hero buttons still navigate correctly.

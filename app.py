@@ -340,6 +340,31 @@ def restore_login_from_query_v60():
 restore_login_from_query_v60()
 
 
+# v69: HTML hero buttons use query parameters, so this connects them to Streamlit pages.
+def handle_home_query_navigation_v69():
+    try:
+        go = st.query_params.get("go", "")
+    except Exception:
+        go = ""
+    if isinstance(go, list):
+        go = go[0] if go else ""
+    if go == "signup":
+        st.session_state.page = "Partner Sign Up"
+        try:
+            del st.query_params["go"]
+        except Exception:
+            pass
+    elif go == "universities":
+        st.session_state.page = "Universities"
+        try:
+            del st.query_params["go"]
+        except Exception:
+            pass
+
+handle_home_query_navigation_v69()
+
+
+
 st.markdown("""
 <style>
 :root {--navy:#002B5B;--navy2:#053B7A;--blue:#005BDB;--black:#101828;--muted:#667085;--light:#F6F8FC;--border:#D9E2F1;}
@@ -2405,9 +2430,9 @@ button[kind="primary"]:hover {
 }
 
 
-/* v68 premium home hero */
-.hero-premium-v68 {
-    min-height: 570px !important;
+/* v69 reference-style home hero */
+.hero-reference-v69 {
+    min-height: 500px !important;
     background-color: #002B5B !important;
     background-size: cover !important;
     background-position: center right !important;
@@ -2418,153 +2443,153 @@ button[kind="primary"]:hover {
     margin: 0 !important;
     border-radius: 0 !important;
 }
-.hero-premium-v68::after {
-    content: "";
-    position: absolute;
-    inset: 0;
+.hero-reference-v69::before {
+    content:"";
+    position:absolute;
+    inset:0;
     background:
-      radial-gradient(circle at 18% 28%, rgba(0,91,219,.28), transparent 28%),
-      linear-gradient(180deg, rgba(0,20,48,.15), rgba(0,20,48,.42));
-    pointer-events: none;
+      radial-gradient(circle at 22% 16%, rgba(0,91,219,.22), transparent 28%),
+      linear-gradient(90deg, rgba(0,30,70,.78), rgba(0,30,70,.28) 62%, rgba(0,30,70,.05));
+    z-index:1;
+    pointer-events:none;
 }
-.hero-map-dots-v68 {
-    position: absolute;
-    left: 395px;
-    top: 36px;
-    width: 360px;
-    height: 190px;
-    opacity: .20;
-    background-image: radial-gradient(rgba(255,255,255,.85) 1.4px, transparent 1.4px);
+.hero-dots-v69 {
+    position:absolute;
+    left: 420px;
+    top: 22px;
+    width: 390px;
+    height: 210px;
+    opacity:.22;
+    background-image: radial-gradient(rgba(255,255,255,.85) 1.35px, transparent 1.35px);
     background-size: 13px 13px;
-    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
-    z-index: 1;
+    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 76%);
+    z-index:2;
 }
-.hero-content-v68 {
-    position: relative !important;
-    z-index: 2 !important;
-    width: min(760px, 52vw) !important;
-    margin-left: 58px !important;
-    margin-top: -12px !important;
+.hero-inner-v69 {
+    position:relative !important;
+    z-index:3 !important;
+    margin-left:56px !important;
+    width:min(720px, 52vw) !important;
 }
-.hero-step-v68 {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    background: rgba(255,255,255,.13) !important;
-    border: 1px solid rgba(255,255,255,.24) !important;
-    border-radius: 999px !important;
-    padding: 7px 14px !important;
-    color: #FFFFFF !important;
-    margin-bottom: 18px !important;
-    backdrop-filter: blur(5px);
+.hero-step-v69 {
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    background:rgba(255,255,255,.13) !important;
+    border:1px solid rgba(255,255,255,.24) !important;
+    border-radius:999px !important;
+    padding:7px 15px !important;
+    margin-bottom:18px !important;
+    backdrop-filter:blur(4px);
 }
-.hero-step-v68 span {
-    background: rgba(255,255,255,.18) !important;
-    color: #FFFFFF !important;
-    border-radius: 999px !important;
-    padding: 2px 9px !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
+.hero-step-v69 span {
+    background:rgba(255,255,255,.18) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border-radius:999px !important;
+    padding:2px 10px !important;
+    font-size:12px !important;
+    font-weight:900 !important;
 }
-.hero-step-v68 b {
-    color: #FFFFFF !important;
-    font-size: 13px !important;
-    letter-spacing: .2px !important;
+.hero-step-v69 b {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:13px !important;
+    letter-spacing:.2px !important;
 }
-.hero-content-v68 h1 {
-    color: #FFFFFF !important;
-    font-size: 58px !important;
-    line-height: 1.12 !important;
-    font-weight: 950 !important;
-    margin: 0 0 22px 0 !important;
-    letter-spacing: -.8px !important;
-    text-shadow: 0 3px 20px rgba(0,0,0,.35) !important;
+.hero-reference-v69 h1,
+.hero-reference-v69 h1 *,
+.hero-inner-v69 h1,
+.hero-inner-v69 h1 * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:54px !important;
+    line-height:1.14 !important;
+    font-weight:950 !important;
+    margin:0 0 20px 0 !important;
+    letter-spacing:-.65px !important;
+    text-shadow:0 3px 20px rgba(0,0,0,.28) !important;
 }
-.hero-lead-v68 {
-    color: rgba(255,255,255,.94) !important;
-    font-size: 18px !important;
-    line-height: 1.6 !important;
-    max-width: 680px !important;
-    margin: 0 !important;
-    text-shadow: 0 2px 12px rgba(0,0,0,.25) !important;
+.hero-lead-v69 {
+    color:rgba(255,255,255,.96) !important;
+    -webkit-text-fill-color:rgba(255,255,255,.96) !important;
+    font-size:17px !important;
+    line-height:1.55 !important;
+    max-width:640px !important;
+    margin:0 0 18px 0 !important;
+    text-shadow:0 2px 12px rgba(0,0,0,.22) !important;
 }
-.hero-actions-premium-v68 {
-    margin-top: -250px !important;
-    margin-left: 58px !important;
-    margin-bottom: 22px !important;
-    max-width: 650px !important;
-    position: relative !important;
-    z-index: 100 !important;
+.hero-buttons-v69 {
+    display:flex !important;
+    gap:18px !important;
+    align-items:center !important;
+    margin:18px 0 16px 0 !important;
+    flex-wrap:wrap !important;
 }
-.hero-actions-premium-v68 .stButton > button {
-    height: 58px !important;
-    border-radius: 8px !important;
-    font-weight: 900 !important;
-    font-size: 15px !important;
-    box-shadow: 0 14px 28px rgba(0,0,0,.18) !important;
-    transition: all .16s ease !important;
+.hero-buttons-v69 a {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    min-width:235px !important;
+    height:54px !important;
+    border-radius:7px !important;
+    font-weight:900 !important;
+    font-size:15px !important;
+    text-decoration:none !important;
+    box-shadow:0 14px 28px rgba(0,0,0,.18) !important;
+    transition:all .16s ease !important;
 }
-.hero-actions-premium-v68 div[data-testid="column"]:first-child .stButton > button {
-    background: #005BDB !important;
-    border: 1px solid #005BDB !important;
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
+.hero-btn-primary-v69 {
+    background:#005BDB !important;
+    border:1px solid #005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
 }
-.hero-actions-premium-v68 div[data-testid="column"]:first-child .stButton > button * {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
+.hero-btn-outline-v69 {
+    background:rgba(255,255,255,.07) !important;
+    border:1px solid rgba(255,255,255,.76) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    backdrop-filter:blur(3px);
 }
-.hero-actions-premium-v68 div[data-testid="column"]:nth-child(2) .stButton > button {
-    background: rgba(255,255,255,.08) !important;
-    border: 1px solid rgba(255,255,255,.74) !important;
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    backdrop-filter: blur(3px);
+.hero-buttons-v69 a:hover {
+    transform:translateY(-1px) !important;
+    filter:brightness(1.07) !important;
 }
-.hero-actions-premium-v68 div[data-testid="column"]:nth-child(2) .stButton > button * {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-.hero-actions-premium-v68 .stButton > button:hover {
-    transform: translateY(-1px) !important;
-    filter: brightness(1.05) !important;
-}
-.hero-note-premium-v68 {
-    margin-left: 58px !important;
-    margin-top: 0 !important;
-    margin-bottom: 145px !important;
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    font-size: 15px !important;
-    position: relative !important;
-    z-index: 100 !important;
-    text-shadow: 0 2px 10px rgba(0,0,0,.28) !important;
+.hero-lock-v69 {
+    color:rgba(255,255,255,.95) !important;
+    -webkit-text-fill-color:rgba(255,255,255,.95) !important;
+    font-size:14px !important;
+    font-weight:800 !important;
+    margin:0 !important;
+    text-shadow:0 2px 10px rgba(0,0,0,.25) !important;
 }
 .featured-v32 {
-    padding-top: 20px !important;
+    padding-top: 28px !important;
 }
 @media(max-width:1000px){
-    .hero-premium-v68 {
-        min-height: 540px !important;
-        background-position: center !important;
+    .hero-reference-v69 {
+        min-height:560px !important;
+        background-position:center !important;
     }
-    .hero-content-v68 {
-        width: auto !important;
-        margin-left: 28px !important;
-        margin-right: 28px !important;
+    .hero-inner-v69 {
+        margin-left:28px !important;
+        margin-right:28px !important;
+        width:auto !important;
     }
-    .hero-content-v68 h1 {
-        font-size: 42px !important;
+    .hero-reference-v69 h1,
+    .hero-inner-v69 h1 {
+        font-size:40px !important;
     }
-    .hero-actions-premium-v68 {
-        margin-left: 28px !important;
-        margin-right: 28px !important;
-        margin-top: -230px !important;
+    .hero-buttons-v69 {
+        flex-direction:column !important;
+        align-items:stretch !important;
+        max-width:320px !important;
     }
-    .hero-note-premium-v68 {
-        margin-left: 28px !important;
-        margin-bottom: 120px !important;
+    .hero-buttons-v69 a {
+        width:100% !important;
+        min-width:0 !important;
     }
 }
 
@@ -2932,33 +2957,25 @@ def home():
     if hero_img:
         bg = (
             "background-image:"
-            "linear-gradient(90deg, rgba(0,28,68,.98) 0%, rgba(0,43,91,.90) 42%, rgba(0,65,130,.58) 68%, rgba(0,43,91,.22) 100%),"
-            "radial-gradient(circle at 30% 16%, rgba(0,91,219,.26), rgba(0,91,219,0) 35%),"
+            "linear-gradient(90deg, rgba(0,31,72,.98) 0%, rgba(0,43,91,.92) 43%, rgba(0,55,115,.58) 70%, rgba(0,31,72,.16) 100%),"
             "url('" + hero_img + "');"
         )
 
     st.markdown(f"""
-    <div class="hero-premium-v68" style="{bg}">
-      <div class="hero-map-dots-v68"></div>
-      <div class="hero-content-v68">
-        <div class="hero-step-v68"><span>Step 1</span><b>Home Page</b></div>
+    <section class="hero-reference-v69" style="{bg}">
+      <div class="hero-dots-v69"></div>
+      <div class="hero-inner-v69">
+        <div class="hero-step-v69"><span>Step 1</span><b>Home Page</b></div>
         <h1>Partner Portal for<br>University Recruitment</h1>
-        <p class="hero-lead-v68">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
+        <p class="hero-lead-v69">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
+        <div class="hero-buttons-v69">
+          <a class="hero-btn-primary-v69" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
+          <a class="hero-btn-outline-v69" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
+        </div>
+        <p class="hero-lock-v69">🔒 Detailed information is available only for approved partners.</p>
       </div>
-    </div>
+    </section>
     """, unsafe_allow_html=True)
-
-    st.markdown('<div class="hero-actions-premium-v68">', unsafe_allow_html=True)
-    a1, a2, a3 = st.columns([1.25, 1.25, 5.5])
-    with a1:
-        if st.button("👤  Apply for Partner Access", key="hero_apply_real", use_container_width=True):
-            set_page("Partner Sign Up")
-    with a2:
-        if st.button("🏛️  Explore Universities", key="hero_explore_real", use_container_width=True):
-            set_page("Universities")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="hero-note-premium-v68">🔒 Detailed information is available only for approved partners.</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section featured-v32"><h2>Featured Universities</h2>', unsafe_allow_html=True)
     unis = universities().reset_index(drop=True)
