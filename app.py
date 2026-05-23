@@ -2593,6 +2593,101 @@ button[kind="primary"]:hover {
     }
 }
 
+
+/* v70 reference-style header and hero image/text fix */
+.header-box {
+    background:#FFFFFF !important;
+    border-bottom:1px solid #E7EEF8 !important;
+    padding:14px 28px 12px 28px !important;
+    margin-bottom:0 !important;
+    box-shadow:0 1px 0 rgba(16,24,40,.03) !important;
+}
+.header-box .stButton > button,
+.header-box div[data-testid="stButton"] > button {
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:800 !important;
+    height:44px !important;
+    border-radius:0 !important;
+    padding:0 10px !important;
+}
+.header-box .stButton > button:hover,
+.header-box div[data-testid="stButton"] > button:hover {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    background:transparent !important;
+}
+.header-box div[data-testid="column"]:nth-last-child(2) .stButton > button {
+    background:#FFFFFF !important;
+    border:1px solid #C9D4E5 !important;
+    border-radius:8px !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    height:48px !important;
+    box-shadow:none !important;
+}
+.header-box div[data-testid="column"]:last-child .stButton > button {
+    background:#005BDB !important;
+    border:1px solid #005BDB !important;
+    border-radius:8px !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    height:48px !important;
+    box-shadow:0 8px 18px rgba(0,91,219,.18) !important;
+}
+.header-box div[data-testid="column"]:last-child .stButton > button * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+
+/* Make hero almost identical to the reference sample */
+.hero-reference-v69 {
+    min-height:500px !important;
+    background-size:cover !important;
+    background-position:center right !important;
+}
+.hero-reference-v69::before {
+    background:
+      linear-gradient(90deg, rgba(0,30,70,.96) 0%, rgba(0,43,91,.86) 43%, rgba(0,55,115,.38) 68%, rgba(0,31,72,.03) 100%) !important;
+}
+.hero-reference-v69 h1,
+.hero-reference-v69 h1 *,
+.hero-inner-v69 h1,
+.hero-inner-v69 h1 * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    opacity:1 !important;
+    text-shadow:0 3px 18px rgba(0,0,0,.38) !important;
+}
+.hero-lead-v69,
+.hero-lock-v69,
+.hero-lead-v69 *,
+.hero-lock-v69 * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    opacity:1 !important;
+}
+.hero-btn-primary-v69 {
+    background:#005BDB !important;
+    border-color:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-btn-primary-v69 *,
+.hero-btn-outline-v69 * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-btn-outline-v69 {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border:1px solid rgba(255,255,255,.86) !important;
+    background:rgba(255,255,255,.06) !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -2952,7 +3047,7 @@ def chunk_records_v53(records, size=5):
 
 def home():
     header()
-    hero_img = asset_img_url("assets/home_hero.jpg")
+    hero_img = asset_img_url("assets/home_hero_reference_v70.jpg") or asset_img_url("assets/home_hero.jpg")
     bg = ""
     if hero_img:
         bg = (

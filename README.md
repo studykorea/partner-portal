@@ -426,3 +426,10 @@ v69:
 - Apply for Partner Access is blue with white text.
 - Explore Universities is outline/transparent with white text.
 - Added query routing so hero buttons still navigate correctly.
+
+
+v70:
+- Updated home hero background to match the provided reference image more closely.
+- Forced hero title/subtitle to white.
+- Styled top navigation closer to the reference: clean white header, outline Login, blue Partner Sign Up with white text.
+- Kept Apply for Partner Access as blue with white text and Explore Universities as white outline.
