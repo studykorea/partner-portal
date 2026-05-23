@@ -410,3 +410,10 @@ v66:
 - After close date: Application Closed.
 - University cards/details show calculated status and date badges.
 - Admin note clarifies that status is auto-calculated from dates.
+
+
+v67:
+- Fixed NameError: _program_badges_html_v64 was not defined.
+- Program badges now show Undergraduate, Graduate (Masters/Ph.D.), and KLP/EAP.
+- University cards/details load without the red error block.
+- Status display uses the date-linked v66 calculation.

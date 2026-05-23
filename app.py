@@ -2388,6 +2388,22 @@ button[kind="primary"]:hover {
     -webkit-text-fill-color:#111827 !important;
 }
 
+
+/* v67 program badges */
+.program-badge-v64 {
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    background:#EEF5FF;
+    color:#002B5B !important;
+    border:1px solid #CFE0FF;
+    border-radius:999px;
+    padding:8px 12px;
+    font-weight:800;
+    font-size:13px;
+    text-align:center;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3350,6 +3366,42 @@ def _safe_html_v62(value):
     return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+
+def _program_badges_html_v64(university_name):
+    """
+    Build program badges for university cards/details.
+    Prevents NameError and shows program availability instead of location/intake/scholarship badges.
+    """
+    try:
+        crit = criteria()
+        uni = str(university_name or "").strip()
+        subset = pd.DataFrame()
+        if crit is not None and len(crit) and "University" in crit.columns:
+            subset = crit[crit["University"].astype(str).str.strip() == uni]
+
+        text_blob = " ".join(map(str, subset.values.flatten())).lower() if len(subset) else ""
+
+        badges = []
+        if "undergraduate" in text_blob or "bachelor" in text_blob:
+            badges.append("Undergraduate")
+        if "graduate" in text_blob or "master" in text_blob or "ph.d" in text_blob or "phd" in text_blob:
+            badges.append("Graduate (Masters/Ph.D.)")
+        if "korean language" in text_blob or "klp" in text_blob or "eap" in text_blob:
+            badges.append("KLP/EAP")
+
+        # If criteria text is incomplete, keep the three requested program categories visible.
+        if not badges:
+            badges = ["Undergraduate", "Graduate (Masters/Ph.D.)", "KLP/EAP"]
+
+        return "".join([f'<span class="program-badge-v64">{_safe_html_v62(b)}</span>' for b in badges])
+    except Exception:
+        return (
+            '<span class="program-badge-v64">Undergraduate</span>'
+            '<span class="program-badge-v64">Graduate (Masters/Ph.D.)</span>'
+            '<span class="program-badge-v64">KLP/EAP</span>'
+        )
+
+
 def _render_university_detail_v62(u):
     image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
     programs_html = program_list_html_for_university(u.get("University", ""))
@@ -3357,7 +3409,7 @@ def _render_university_detail_v62(u):
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info available after rule update"
     intake_text = display_clean_v50(u.get("Intake", ""))
     open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
-    status_text = _application_status_v64_from_row(u)
+    status_text = _application_status_v66_from_row(u)
     status_class = _application_status_class_v63(status_text)
     program_badges = _program_badges_html_v64(u.get("University", ""))
 
@@ -3398,7 +3450,7 @@ def _render_university_summary_v62(u, key_suffix):
     max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info not updated"
     intake_text = display_clean_v50(u.get("Intake", ""))
     open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
-    status_text = _application_status_v64_from_row(u)
+    status_text = _application_status_v66_from_row(u)
     status_class = _application_status_class_v63(status_text)
     program_badges_inline = _program_badges_html_v64(u.get("University", ""))
 
@@ -3510,7 +3562,7 @@ def universities_page(public=False):
     if intake_filter != "All":
         if intake_filter in ["Application Open", "Application Closed", "Application Opens Soon"]:
             filtered = filtered[
-                filtered.apply(lambda r: _application_status_v64_from_row(r) == intake_filter, axis=1)
+                filtered.apply(lambda r: _application_status_v66_from_row(r) == intake_filter, axis=1)
             ]
         elif intake_filter == "March Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("march", na=False)]
