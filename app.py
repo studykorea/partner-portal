@@ -2404,6 +2404,170 @@ button[kind="primary"]:hover {
     text-align:center;
 }
 
+
+/* v68 premium home hero */
+.hero-premium-v68 {
+    min-height: 570px !important;
+    background-color: #002B5B !important;
+    background-size: cover !important;
+    background-position: center right !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+.hero-premium-v68::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 28%, rgba(0,91,219,.28), transparent 28%),
+      linear-gradient(180deg, rgba(0,20,48,.15), rgba(0,20,48,.42));
+    pointer-events: none;
+}
+.hero-map-dots-v68 {
+    position: absolute;
+    left: 395px;
+    top: 36px;
+    width: 360px;
+    height: 190px;
+    opacity: .20;
+    background-image: radial-gradient(rgba(255,255,255,.85) 1.4px, transparent 1.4px);
+    background-size: 13px 13px;
+    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 75%);
+    z-index: 1;
+}
+.hero-content-v68 {
+    position: relative !important;
+    z-index: 2 !important;
+    width: min(760px, 52vw) !important;
+    margin-left: 58px !important;
+    margin-top: -12px !important;
+}
+.hero-step-v68 {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: rgba(255,255,255,.13) !important;
+    border: 1px solid rgba(255,255,255,.24) !important;
+    border-radius: 999px !important;
+    padding: 7px 14px !important;
+    color: #FFFFFF !important;
+    margin-bottom: 18px !important;
+    backdrop-filter: blur(5px);
+}
+.hero-step-v68 span {
+    background: rgba(255,255,255,.18) !important;
+    color: #FFFFFF !important;
+    border-radius: 999px !important;
+    padding: 2px 9px !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+}
+.hero-step-v68 b {
+    color: #FFFFFF !important;
+    font-size: 13px !important;
+    letter-spacing: .2px !important;
+}
+.hero-content-v68 h1 {
+    color: #FFFFFF !important;
+    font-size: 58px !important;
+    line-height: 1.12 !important;
+    font-weight: 950 !important;
+    margin: 0 0 22px 0 !important;
+    letter-spacing: -.8px !important;
+    text-shadow: 0 3px 20px rgba(0,0,0,.35) !important;
+}
+.hero-lead-v68 {
+    color: rgba(255,255,255,.94) !important;
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+    max-width: 680px !important;
+    margin: 0 !important;
+    text-shadow: 0 2px 12px rgba(0,0,0,.25) !important;
+}
+.hero-actions-premium-v68 {
+    margin-top: -250px !important;
+    margin-left: 58px !important;
+    margin-bottom: 22px !important;
+    max-width: 650px !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+.hero-actions-premium-v68 .stButton > button {
+    height: 58px !important;
+    border-radius: 8px !important;
+    font-weight: 900 !important;
+    font-size: 15px !important;
+    box-shadow: 0 14px 28px rgba(0,0,0,.18) !important;
+    transition: all .16s ease !important;
+}
+.hero-actions-premium-v68 div[data-testid="column"]:first-child .stButton > button {
+    background: #005BDB !important;
+    border: 1px solid #005BDB !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+.hero-actions-premium-v68 div[data-testid="column"]:first-child .stButton > button * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+.hero-actions-premium-v68 div[data-testid="column"]:nth-child(2) .stButton > button {
+    background: rgba(255,255,255,.08) !important;
+    border: 1px solid rgba(255,255,255,.74) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    backdrop-filter: blur(3px);
+}
+.hero-actions-premium-v68 div[data-testid="column"]:nth-child(2) .stButton > button * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+.hero-actions-premium-v68 .stButton > button:hover {
+    transform: translateY(-1px) !important;
+    filter: brightness(1.05) !important;
+}
+.hero-note-premium-v68 {
+    margin-left: 58px !important;
+    margin-top: 0 !important;
+    margin-bottom: 145px !important;
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    font-size: 15px !important;
+    position: relative !important;
+    z-index: 100 !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,.28) !important;
+}
+.featured-v32 {
+    padding-top: 20px !important;
+}
+@media(max-width:1000px){
+    .hero-premium-v68 {
+        min-height: 540px !important;
+        background-position: center !important;
+    }
+    .hero-content-v68 {
+        width: auto !important;
+        margin-left: 28px !important;
+        margin-right: 28px !important;
+    }
+    .hero-content-v68 h1 {
+        font-size: 42px !important;
+    }
+    .hero-actions-premium-v68 {
+        margin-left: 28px !important;
+        margin-right: 28px !important;
+        margin-top: -230px !important;
+    }
+    .hero-note-premium-v68 {
+        margin-left: 28px !important;
+        margin-bottom: 120px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -2760,28 +2924,41 @@ def chunk_records_v53(records, size=5):
         yield records[i:i+size]
 
 
+
 def home():
     header()
     hero_img = asset_img_url("assets/home_hero.jpg")
     bg = ""
     if hero_img:
-        bg = "background-image: linear-gradient(90deg, rgba(0,43,91,.98) 0%, rgba(0,43,91,.88) 36%, rgba(0,43,91,.42) 68%, rgba(0,43,91,.08) 100%), url('" + hero_img + "');"
+        bg = (
+            "background-image:"
+            "linear-gradient(90deg, rgba(0,28,68,.98) 0%, rgba(0,43,91,.90) 42%, rgba(0,65,130,.58) 68%, rgba(0,43,91,.22) 100%),"
+            "radial-gradient(circle at 30% 16%, rgba(0,91,219,.26), rgba(0,91,219,0) 35%),"
+            "url('" + hero_img + "');"
+        )
+
     st.markdown(f"""
-    <div class="hero-v32" style="{bg}">
-      <div class="hero-text-v32">
-        <h1 style="color:#FFFFFF!important;">Partner Portal for<br>University Recruitment</h1>
-        <p>Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
-        <p class="lock-v32">🔒 Detailed information is available only for approved partners.</p>
+    <div class="hero-premium-v68" style="{bg}">
+      <div class="hero-map-dots-v68"></div>
+      <div class="hero-content-v68">
+        <div class="hero-step-v68"><span>Step 1</span><b>Home Page</b></div>
+        <h1>Partner Portal for<br>University Recruitment</h1>
+        <p class="hero-lead-v68">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
       </div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown('<div class="hero-buttons-v32">', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1.22, 1.08, 5.4])
-    with c1:
-        if st.button("Apply for Partner Access", key="hero_apply_real", use_container_width=True): set_page("Partner Sign Up")
-    with c2:
-        if st.button("Explore Universities", key="hero_explore_real", use_container_width=True): set_page("Universities")
+
+    st.markdown('<div class="hero-actions-premium-v68">', unsafe_allow_html=True)
+    a1, a2, a3 = st.columns([1.25, 1.25, 5.5])
+    with a1:
+        if st.button("👤  Apply for Partner Access", key="hero_apply_real", use_container_width=True):
+            set_page("Partner Sign Up")
+    with a2:
+        if st.button("🏛️  Explore Universities", key="hero_explore_real", use_container_width=True):
+            set_page("Universities")
     st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="hero-note-premium-v68">🔒 Detailed information is available only for approved partners.</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section featured-v32"><h2>Featured Universities</h2>', unsafe_allow_html=True)
     unis = universities().reset_index(drop=True)

@@ -417,3 +417,11 @@ v67:
 - Program badges now show Undergraduate, Graduate (Masters/Ph.D.), and KLP/EAP.
 - University cards/details load without the red error block.
 - Status display uses the date-linked v66 calculation.
+
+
+v68:
+- Redesigned the home hero section in a premium style similar to the provided reference.
+- Moved Apply for Partner Access and Explore Universities into the hero area.
+- Apply button is blue with white text.
+- Explore button is transparent/outline with white text.
+- Added step pill and better hero overlay.
