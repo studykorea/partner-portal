@@ -3101,6 +3101,42 @@ div[data-testid="stFormSubmitButton"] button * {
     .admin-stats-grid-v73,.admin-bottom-features-v73{grid-template-columns:1fr;}
 }
 
+
+/* v74 university-wise admin rule editor */
+.university-filter-panel-v74 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:16px;
+    padding:16px 18px 6px 18px;
+    box-shadow:0 8px 20px rgba(16,24,40,.05);
+    margin:16px 0 14px 0;
+}
+.selected-university-banner-v74 {
+    background:#EEF5FF;
+    border:1px solid #CFE0FF;
+    border-radius:14px;
+    padding:14px 16px;
+    margin:12px 0 16px 0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+.selected-university-banner-v74 b {
+    color:#002B5B !important;
+    font-size:20px !important;
+    font-weight:950 !important;
+}
+.selected-university-banner-v74 span {
+    color:#475467 !important;
+    font-weight:700 !important;
+}
+/* Make data editor easier to read where browser theme turns it too dark */
+div[data-testid="stDataFrame"],
+div[data-testid="stDataEditor"] {
+    border-radius:14px !important;
+    overflow:hidden !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -5179,30 +5215,138 @@ def safe_write_csv_v48(path, df):
     write_csv(path, df)
     clear_data_cache_v48()
 
+
 def editable_table_v48(title, path, key, help_text=""):
+    """
+    v74: Edit rules by selected university instead of showing every university at once.
+    Used by Eligibility Rules, Tuition Rules, and Scholarship Rules.
+    """
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
     st.subheader(title)
     if help_text:
         st.caption(help_text)
+
     df = read_csv(path)
     if len(df) == 0:
         st.warning("No data found. A blank table will be created after you add rows.")
+        if "University" not in df.columns:
+            df["University"] = ""
+
+    if "University" not in df.columns:
+        df["University"] = ""
+
+    # Build university options from the university table first, then the rule table.
+    try:
+        uni_df = read_csv(UNIS)
+        university_options = sorted([x for x in uni_df.get("University", pd.Series(dtype=str)).dropna().astype(str).str.strip().unique().tolist() if x])
+    except Exception:
+        university_options = []
+
+    rule_unis = sorted([x for x in df["University"].dropna().astype(str).str.strip().unique().tolist() if x])
+    for u in rule_unis:
+        if u not in university_options:
+            university_options.append(u)
+
+    if not university_options:
+        selected_uni = st.text_input("University", key=f"{key}_manual_university_v74")
+        if not selected_uni:
+            st.info("Please enter a university name first.")
+            close_shell()
+            return
+    else:
+        st.markdown('<div class="university-filter-panel-v74">', unsafe_allow_html=True)
+        selected_uni = st.selectbox(
+            "Select University to Manage",
+            university_options,
+            key=f"{key}_university_filter_v74"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    selected_uni = str(selected_uni).strip()
+
+    # Filter the working table to only the selected university.
+    mask = df["University"].astype(str).str.strip() == selected_uni
+    subset = df[mask].copy().reset_index(drop=True)
+
+    st.markdown(
+        f"""
+        <div class="selected-university-banner-v74">
+            <b>{selected_uni}</b>
+            <span>Editing only this university's records. Other universities will not be shown or changed.</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if len(subset) == 0:
+        st.info("No records found for this university yet. Add a new row in the table below and click Save Changes.")
+        # Keep the same columns as the source table and give one blank starter row.
+        subset = pd.DataFrame(columns=df.columns)
+        blank = {c: "" for c in df.columns}
+        blank["University"] = selected_uni
+        subset = pd.DataFrame([blank])
+
+    # Make sure University column is first and pre-filled.
+    cols = list(subset.columns)
+    if "University" in cols:
+        cols = ["University"] + [c for c in cols if c != "University"]
+        subset = subset[cols]
+    subset["University"] = subset["University"].replace("", selected_uni).fillna(selected_uni)
+
     edited = st.data_editor(
-        df,
+        subset,
         num_rows="dynamic",
         use_container_width=True,
         hide_index=True,
-        key=key
+        key=key,
+        column_config={
+            "University": st.column_config.TextColumn(
+                "University",
+                help="This page saves only the selected university records.",
+                disabled=True,
+            )
+        } if "University" in subset.columns else None
     )
+
     c1, c2 = st.columns([1, 4])
     with c1:
         if st.button("Save Changes", key=f"save_{key}", use_container_width=True):
-            safe_write_csv_v48(path, edited)
-            st.success("Saved successfully. The website data has been updated.")
+            edited = edited.copy()
+            if "University" not in edited.columns:
+                edited["University"] = selected_uni
+            edited["University"] = selected_uni
+
+            # Remove completely blank rows except the University column.
+            non_uni_cols = [c for c in edited.columns if c != "University"]
+            if non_uni_cols:
+                edited = edited[
+                    edited[non_uni_cols].astype(str).apply(
+                        lambda row: any(str(v).strip() not in ["", "nan", "None", "<NA>"] for v in row),
+                        axis=1
+                    )
+                ].copy()
+
+            # Merge back: keep every other university unchanged, replace selected university records only.
+            remaining = df[df["University"].astype(str).str.strip() != selected_uni].copy()
+            merged = pd.concat([remaining, edited], ignore_index=True)
+
+            # Preserve original column order where possible, add any new columns at the end.
+            original_cols = list(df.columns)
+            new_cols = [c for c in merged.columns if c not in original_cols]
+            merged = merged[original_cols + new_cols]
+
+            safe_write_csv_v48(path, merged)
+            reload_data_v49()
+            st.success(f"{title} saved for {selected_uni}.")
             st.rerun()
     with c2:
-        st.info("You can edit cells directly, add new rows, or delete rows in the table above. Click Save Changes when finished.")
+        st.info("Only the selected university is shown here. You can edit cells, add rows, or delete rows for this university only.")
+
+    st.markdown("### Preview of Selected University Records")
+    st.dataframe(clean_df_v50(edited), use_container_width=True, hide_index=True)
+
     close_shell()
+
 
 def admin_universities_edit_v48():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
@@ -5265,7 +5409,7 @@ def admin_criteria_edit_v48():
         "Eligibility Criteria / Program & Major Management",
         CRITERIA,
         "criteria_editor_v48",
-        "Edit university, program level, major, GPA, language criteria, application fee, admission fee, and tuition fee."
+        "Select one university first, then edit only that university's program level, major, GPA, and language criteria."
     )
 
 def admin_scholarship_edit_v48():
@@ -5273,7 +5417,7 @@ def admin_scholarship_edit_v48():
         "Scholarship Rules Management",
         SCHOLARSHIPS,
         "scholarship_editor_v48",
-        "Edit scholarship criteria by university and program. Decimal values such as 0.4 should be written as 40% of Tuition fee for clearer display."
+        "Select one university first, then edit only that university's scholarship criteria by program and IELTS range."
     )
 
 def admin_tuition_edit_v48():
@@ -5281,7 +5425,7 @@ def admin_tuition_edit_v48():
         "Tuition Rules Management",
         CRITERIA,
         "tuition_editor_v48",
-        "Tuition values are stored in the criteria database. Edit Application_Fee_KRW, Admission_Fee_KRW, Tuition_KRW, and Tuition_Fee_Per_Semester_KRW here."
+        "Select one university first, then edit only that university's application fee, admission fee, and tuition fee values."
     )
 
 

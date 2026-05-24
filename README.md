@@ -454,3 +454,10 @@ v73:
 - Added Step pill, metric cards, approval panel, right-side partner approval status panel, quick admin action panel, and bottom feature strip.
 - Fixed approval/reject button loop to avoid duplicate/undefined key issues.
 - Blue admin action buttons with bold white text preserved.
+
+
+v74:
+- Eligibility Rules, Tuition Rules, and Scholarship Rules are now edited university-by-university.
+- Admin selects one university first, then sees only that university's rows.
+- Saving replaces only the selected university's rows and keeps all other universities unchanged.
+- New rows are automatically assigned to the selected university.
