@@ -7105,140 +7105,57 @@ def timeline_status_icon_v121(state, index):
     return "□"
 
 def render_application_status_timeline_v116(row):
+    """v122: clean one-line HTML timeline so Streamlit does not render raw HTML/code blocks."""
     uni_name = display_clean_v50(row.get("University", ""))
     uni_row = university_row_by_name_v120(uni_name)
-    logo_html = university_logo_html_v88(uni_row.get("University_Logo", ""), uni_name or "University")
+    logo_path = display_clean_v50(uni_row.get("University_Logo", "")) if uni_row else ""
+    logo_b64 = b64(logo_path) if logo_path else ""
+    if logo_b64:
+        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="{_safe_html_v62(uni_name)} logo">'
+    else:
+        initials = "".join([x[:1].upper() for x in str(uni_name or "U").split()[:2]]) or "U"
+        logo_html = f'<div class="status-logo-fallback-v122">{_safe_html_v62(initials)}</div>'
+
     applicant = application_display_name_v116(row)
     program_name = display_clean_v50(row.get("Desired_Major", "")) or display_clean_v50(row.get("Major", "")) or "Program not selected"
     chip_text, chip_cls = status_chip_text_v120(row)
     steps = application_timeline_steps_v120(row)
-
-    timeline_items = []
+    css = '<style>.status-page-v122{max-width:980px;margin:0 auto 32px auto;padding:8px 0;font-family:inherit}.status-title-v122{text-align:center;font-size:34px;font-weight:950;color:#101828;margin:8px 0 22px}.status-summary-v122{background:#fff;border:1px solid #e6eaf2;border-radius:26px;padding:22px 24px;box-shadow:0 12px 32px rgba(16,24,40,.08);margin-bottom:34px}.status-summary-grid-v122{display:grid;grid-template-columns:126px 1fr;gap:26px;align-items:center}.status-logo-v122{width:118px;height:118px;border-radius:26px;background:#f8fafc;border:1px solid #e4eaf3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(16,24,40,.04)}.status-logo-v122 img{max-width:98px;max-height:98px;object-fit:contain}.status-logo-fallback-v122{font-size:28px;font-weight:950;color:#005BDB}.status-table-v122{display:grid;grid-template-columns:160px 1fr}.status-label-v122,.status-value-v122{padding:13px 0;border-bottom:1px solid #edf2f7;font-size:17px}.status-label-v122{color:#667085;font-weight:750}.status-value-v122{color:#0f172a;font-weight:900}.status-chip-v122{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;font-size:15px;font-weight:950}.status-chip-v122.progress{background:#ddf8ef;color:#0b8b68}.status-chip-v122.success{background:#dcfce7;color:#15803d}.status-chip-v122.danger{background:#fee2e2;color:#b91c1c}.status-chip-v122.draft{background:#fef3c7;color:#b45309}.status-chip-v122.neutral{background:#e5e7eb;color:#374151}.timeline-v122{position:relative}.tl-row-v122{display:grid;grid-template-columns:70px 1fr;gap:18px;align-items:stretch}.tl-left-v122{display:flex;flex-direction:column;align-items:center}.tl-dot-v122{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:950;background:#fff;color:#98a2b3;border:2px solid #d0d5dd;z-index:2;box-shadow:0 8px 20px rgba(16,24,40,.08)}.tl-line-v122{width:4px;flex:1;min-height:40px;background:#d0d5dd;border-radius:999px;margin-top:6px}.tl-card-v122{background:#fff;border:1px solid transparent;border-radius:22px;padding:18px 20px;margin-bottom:20px}.tl-inner-v122{display:grid;grid-template-columns:1fr 145px;gap:18px;align-items:start}.tl-title-v122{font-size:20px;font-weight:950;color:#101828;margin-bottom:6px;line-height:1.25}.tl-desc-v122{font-size:16px;font-weight:650;color:#667085;line-height:1.5}.tl-date-v122{text-align:right;color:#475467;font-size:16px;font-weight:800;line-height:1.6;white-space:nowrap}.tl-current-v122{display:inline-flex;margin-top:14px;padding:9px 18px;border-radius:11px;background:#005bdb;color:#fff;font-size:14px;font-weight:950}.tl-row-v122.completed .tl-dot-v122,.tl-row-v122.passed .tl-dot-v122,.tl-row-v122.visa-issued .tl-dot-v122{background:#10a878;color:#fff;border-color:#10a878}.tl-row-v122.completed .tl-line-v122,.tl-row-v122.passed .tl-line-v122,.tl-row-v122.visa-issued .tl-line-v122{background:#10a878}.tl-row-v122.current .tl-dot-v122{background:#0f6bff;color:#fff;border:10px solid #eaf2ff;width:58px;height:58px;box-sizing:border-box;font-size:22px}.tl-row-v122.current .tl-line-v122{background:#0f6bff}.tl-row-v122.current .tl-card-v122{background:#f7fbff;border-color:#bfd7ff;box-shadow:0 10px 28px rgba(0,91,219,.11)}.tl-row-v122.current .tl-title-v122{color:#0b4fc5}.tl-row-v122.pending .tl-dot-v122{font-size:18px;color:#667085;background:#fff}.tl-row-v122.failed .tl-dot-v122,.tl-row-v122.visa-rejected .tl-dot-v122{background:#e53935;color:#fff;border-color:#e53935}.tl-row-v122.failed .tl-line-v122,.tl-row-v122.visa-rejected .tl-line-v122{background:#e53935}.tl-row-v122.failed .tl-card-v122,.tl-row-v122.visa-rejected .tl-card-v122{background:#fef2f2;border-color:#fca5a5}.tl-row-v122:last-child .tl-line-v122{display:none}.full-status-btn-v122{margin:26px 0 24px 88px;background:#0067e6;color:#fff;border-radius:14px;text-align:center;padding:18px 22px;font-size:21px;font-weight:950;box-shadow:0 12px 24px rgba(0,103,230,.22)}.help-box-v122{margin-left:88px;border-top:1px solid #edf2f7;padding:18px 0;display:flex;gap:14px;align-items:center}.help-icon-v122{width:48px;height:48px;border-radius:50%;background:#eef5ff;color:#005bdb;display:flex;align-items:center;justify-content:center;font-weight:950}.help-title-v122{font-weight:950;color:#101828;font-size:17px}.help-sub-v122{color:#667085;font-weight:650;font-size:15px}@media(max-width:820px){.status-summary-grid-v122{grid-template-columns:1fr}.status-table-v122{grid-template-columns:115px 1fr}.tl-row-v122{grid-template-columns:58px 1fr;gap:12px}.tl-dot-v122{width:50px;height:50px}.tl-inner-v122{grid-template-columns:1fr}.tl-date-v122{text-align:left}.full-status-btn-v122,.help-box-v122{margin-left:0}.tl-title-v122{font-size:18px}}</style>'
+    rows_html = []
     for i, step in enumerate(steps, start=1):
         state = step.get("state", "pending")
         date_text, time_text = application_step_date_time_v121(step.get("value", ""))
-        current_badge = '<div class="timeline-current-tag-v121">Current Step</div>' if state == 'current' else ''
+        if state == "pending" and (not date_text or date_text == "-"):
+            date_text, time_text = "-", ""
         icon = timeline_status_icon_v121(state, i)
-        date_html = f'<div>{_safe_html_v62(date_text)}</div>'
-        time_html = f'<div>{_safe_html_v62(time_text)}</div>' if time_text else ''
-        item_html = f"""
-<div class="timeline-item-v121 {state}">
-  <div class="timeline-left-v121">
-    <div class="timeline-dot-v121">{icon}</div>
-    <div class="timeline-line-v121"></div>
-  </div>
-  <div class="timeline-card-v121 {'highlight' if state == 'current' else ''}">
-    <div class="timeline-content-v121">
-      <div class="timeline-main-v121">
-        <div class="timeline-step-title-v121">{i}. {_safe_html_v62(step.get('title',''))}</div>
-        <div class="timeline-step-desc-v121">{_safe_html_v62(step.get('desc',''))}</div>
-        {current_badge}
-      </div>
-      <div class="timeline-date-v121">{date_html}{time_html}</div>
-    </div>
-  </div>
-</div>
-"""
-        timeline_items.append(textwrap.dedent(item_html).strip())
-    timeline_html = "".join(timeline_items)
-
-    page_html = f"""
-<style>
-.app-status-wrap-v121 {{max-width:980px;margin:0 auto;padding:10px 0 32px 0 !important;}}
-.app-status-title-v121 {{font-size:34px;font-weight:950;text-align:center;color:#0F172A;margin:8px 0 22px 0;}}
-.app-status-summary-v121 {{background:#FFFFFF;border:1px solid #E5EAF3;border-radius:26px;padding:22px 24px;box-shadow:0 12px 32px rgba(16,24,40,.08);margin:8px 0 30px 0;}}
-.app-status-summary-grid-v121 {{display:grid;grid-template-columns:130px minmax(0,1fr);gap:26px;align-items:center;}}
-.app-logo-box-v121 {{width:118px;height:118px;border-radius:28px;background:#F8FAFC;border:1px solid #E4EAF3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(16,24,40,.04);}}
-.app-logo-box-v121 img {{max-width:98px !important;max-height:98px !important;object-fit:contain !important;}}
-.app-meta-table-v121 {{display:grid;grid-template-columns:160px minmax(0,1fr);gap:0;}}
-.app-meta-label-v121,.app-meta-value-v121 {{padding:14px 0;border-bottom:1px solid #EDF2F7;font-size:17px;}}
-.app-meta-label-v121 {{color:#667085;font-weight:750;}}
-.app-meta-value-v121 {{color:#0F172A;font-weight:900;}}
-.status-chip-v121 {{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;font-size:15px;font-weight:950;}}
-.status-chip-v121.progress {{background:#DDF8EF;color:#0B8B68;}}
-.status-chip-v121.success {{background:#DCFCE7;color:#15803D;}}
-.status-chip-v121.danger {{background:#FEE2E2;color:#B91C1C;}}
-.status-chip-v121.draft {{background:#FEF3C7;color:#B45309;}}
-.status-chip-v121.neutral {{background:#E5E7EB;color:#374151;}}
-.timeline-shell-v121 {{padding:8px 0 8px 0;}}
-.timeline-item-v121 {{display:grid;grid-template-columns:70px minmax(0,1fr);gap:18px;align-items:stretch;}}
-.timeline-left-v121 {{display:flex;flex-direction:column;align-items:center;height:100%;}}
-.timeline-dot-v121 {{width:58px;height:58px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:950;background:#FFFFFF;color:#98A2B3;border:2px solid #D0D5DD;position:relative;z-index:2;box-shadow:0 8px 20px rgba(16,24,40,.08);}}
-.timeline-line-v121 {{width:4px;flex:1;min-height:34px;background:#D0D5DD;border-radius:999px;margin-top:6px;}}
-.timeline-card-v121 {{background:#FFFFFF;border:1px solid transparent;border-radius:22px;padding:18px 20px;margin-bottom:20px;}}
-.timeline-card-v121.highlight {{background:#F5F9FF;border-color:#BBD3FF;box-shadow:0 10px 30px rgba(0,91,219,.10);}}
-.timeline-content-v121 {{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:18px;align-items:start;}}
-.timeline-step-title-v121 {{color:#0F172A;font-size:20px;font-weight:950;margin:0 0 8px 0;line-height:1.25;}}
-.timeline-step-desc-v121 {{color:#667085;font-size:16px;font-weight:650;line-height:1.55;}}
-.timeline-date-v121 {{color:#475467;font-size:16px;font-weight:800;white-space:nowrap;text-align:right;line-height:1.65;}}
-.timeline-current-tag-v121 {{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;padding:9px 20px;border-radius:10px;background:#005BDB;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;font-size:15px;font-weight:950;}}
-.timeline-item-v121.completed .timeline-dot-v121, .timeline-item-v121.passed .timeline-dot-v121, .timeline-item-v121.visa-issued .timeline-dot-v121 {{background:#009B72;color:#FFFFFF;border-color:#009B72;}}
-.timeline-item-v121.completed .timeline-line-v121, .timeline-item-v121.passed .timeline-line-v121, .timeline-item-v121.visa-issued .timeline-line-v121 {{background:#009B72;}}
-.timeline-item-v121.current .timeline-dot-v121 {{background:#005BDB;color:#FFFFFF;border-color:#DCEBFF;box-shadow:0 0 0 12px #EAF2FF,0 10px 24px rgba(0,91,219,.22);font-size:30px;}}
-.timeline-item-v121.current .timeline-line-v121 {{background:#005BDB;}}
-.timeline-item-v121.current ~ .timeline-item-v121 .timeline-line-v121 {{background:#D0D5DD;}}
-.timeline-item-v121.pending .timeline-dot-v121 {{background:#FFFFFF;color:#667085;border-color:#D0D5DD;font-size:21px;}}
-.timeline-item-v121.pending .timeline-line-v121 {{background:#D0D5DD;border-left:0;}}
-.timeline-item-v121.failed .timeline-dot-v121, .timeline-item-v121.visa-rejected .timeline-dot-v121 {{background:#DC2626;color:#FFFFFF;border-color:#DC2626;}}
-.timeline-item-v121.failed .timeline-line-v121, .timeline-item-v121.visa-rejected .timeline-line-v121 {{background:#DC2626;}}
-.timeline-item-v121.failed .timeline-card-v121, .timeline-item-v121.visa-rejected .timeline-card-v121 {{border-color:#FCA5A5;background:#FEF2F2;}}
-.timeline-item-v121.passed .timeline-card-v121, .timeline-item-v121.visa-issued .timeline-card-v121 {{border-color:#86EFAC;background:#F0FDF4;}}
-.timeline-item-v121:last-child .timeline-line-v121 {{display:none;}}
-.view-full-status-v121 {{margin:28px 0 22px 70px;background:#005BDB;border-radius:16px;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;text-align:center;padding:18px 26px;font-size:22px;font-weight:950;box-shadow:0 14px 30px rgba(0,91,219,.20);}}
-.status-help-v121 {{display:flex;align-items:center;gap:16px;margin:18px 0 8px 70px;border-top:1px solid #EDF2F7;padding-top:20px;color:#475467;font-weight:700;}}
-.status-help-icon-v121 {{width:44px;height:44px;border-radius:999px;background:#EEF5FF;color:#005BDB;display:flex;align-items:center;justify-content:center;font-weight:950;}}
-.visa-congrats-v121 {{margin-top:24px;background:linear-gradient(135deg,#0FA958,#35C66F);border-radius:26px;color:#FFFFFF;text-align:center;padding:44px 24px;box-shadow:0 18px 36px rgba(34,197,94,.24);}}
-.visa-congrats-v121 h1,.visa-congrats-v121 p,.visa-rejected-v121 h1,.visa-rejected-v121 p {{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;}}
-.visa-rejected-v121 {{margin-top:24px;background:linear-gradient(135deg,#DC2626,#EF4444);border-radius:24px;color:#FFFFFF;text-align:center;padding:40px 24px;box-shadow:0 18px 36px rgba(220,38,38,.22);}}
-@media (max-width: 820px) {{
-  .app-status-wrap-v121 {{max-width:100%;}}
-  .app-status-title-v121 {{font-size:28px;}}
-  .app-status-summary-grid-v121 {{grid-template-columns:1fr;}}
-  .app-meta-table-v121 {{grid-template-columns:120px minmax(0,1fr);}}
-  .timeline-item-v121 {{grid-template-columns:58px minmax(0,1fr);gap:12px;}}
-  .timeline-dot-v121 {{width:48px;height:48px;font-size:22px;}}
-  .timeline-content-v121 {{grid-template-columns:1fr;gap:8px;}}
-  .timeline-date-v121 {{text-align:left;font-size:14px;}}
-  .timeline-step-title-v121 {{font-size:17px;}}
-  .timeline-step-desc-v121 {{font-size:14px;}}
-  .view-full-status-v121,.status-help-v121 {{margin-left:0;}}
-}}
-</style>
-<div class="app-status-wrap-v121">
-  <div class="app-status-title-v121">Application Status</div>
-  <div class="app-status-summary-v121">
-    <div class="app-status-summary-grid-v121">
-      <div class="app-logo-box-v121">{logo_html}</div>
-      <div class="app-meta-table-v121">
-        <div class="app-meta-label-v121">Applicant</div><div class="app-meta-value-v121">{_safe_html_v62(applicant)}</div>
-        <div class="app-meta-label-v121">University</div><div class="app-meta-value-v121">{_safe_html_v62(uni_name)}</div>
-        <div class="app-meta-label-v121">Program</div><div class="app-meta-value-v121">{_safe_html_v62(program_name)}</div>
-        <div class="app-meta-label-v121">Status</div><div class="app-meta-value-v121"><span class="status-chip-v121 {chip_cls}">{_safe_html_v62(chip_text)}</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="timeline-shell-v121">{timeline_html}</div>
-  <div class="view-full-status-v121">▣ &nbsp; View Full Status</div>
-  <div class="status-help-v121"><div class="status-help-icon-v121">?</div><div><b>Need Help?</b><br><span>Contact our support team</span></div></div>
-</div>
-"""
-    st.markdown(textwrap.dedent(page_html).strip(), unsafe_allow_html=True)
+        current_badge = '<div class="tl-current-v122">Current Step</div>' if state == "current" else ""
+        date_html = f'<div>{_safe_html_v62(date_text)}</div>' + (f'<div>{_safe_html_v62(time_text)}</div>' if time_text else "")
+        rows_html.append(
+            f'<div class="tl-row-v122 {state}">'
+            f'<div class="tl-left-v122"><div class="tl-dot-v122">{icon}</div><div class="tl-line-v122"></div></div>'
+            f'<div class="tl-card-v122"><div class="tl-inner-v122"><div><div class="tl-title-v122">{i}. {_safe_html_v62(step.get("title", ""))}</div><div class="tl-desc-v122">{_safe_html_v62(step.get("desc", ""))}</div>{current_badge}</div><div class="tl-date-v122">{date_html}</div></div></div>'
+            '</div>'
+        )
+    html = (
+        css + '<div class="status-page-v122">' + '<div class="status-title-v122">Application Status</div>' +
+        '<div class="status-summary-v122"><div class="status-summary-grid-v122">' + f'<div class="status-logo-v122">{logo_html}</div>' +
+        '<div class="status-table-v122">' +
+        f'<div class="status-label-v122">Applicant</div><div class="status-value-v122">{_safe_html_v62(applicant)}</div>' +
+        f'<div class="status-label-v122">University</div><div class="status-value-v122">{_safe_html_v62(uni_name)}</div>' +
+        f'<div class="status-label-v122">Program</div><div class="status-value-v122">{_safe_html_v62(program_name)}</div>' +
+        f'<div class="status-label-v122">Status</div><div class="status-value-v122"><span class="status-chip-v122 {chip_cls}">{_safe_html_v62(chip_text)}</span></div>' +
+        '</div></div></div>' + '<div class="timeline-v122">' + ''.join(rows_html) + '</div>' +
+        '<div class="full-status-btn-v122">▣ &nbsp; View Full Status</div>' +
+        '<div class="help-box-v122"><div class="help-icon-v122">◇</div><div><div class="help-title-v122">Need Help?</div><div class="help-sub-v122">Contact our support team</div></div></div>' +
+        '</div>'
+    )
+    st.markdown(html, unsafe_allow_html=True)
 
     visa_result = application_stage_value_v116(row, "Visa_Result").lower()
     if "issued" in visa_result or "approved" in visa_result:
-        st.markdown(textwrap.dedent("""
-            <div class="visa-congrats-v121">
-                <h1>🎉 Congratulations!</h1>
-                <p>Your visa has been issued.</p>
-            </div>
-        """).strip(), unsafe_allow_html=True)
+        st.markdown('<div style="margin:24px auto;max-width:980px;background:linear-gradient(135deg,#0FA958,#35C66F);border-radius:26px;color:#fff;text-align:center;padding:44px 24px;box-shadow:0 18px 36px rgba(34,197,94,.24)"><h1 style="color:#fff">🎉 Congratulations!</h1><p style="color:#fff;font-size:20px;font-weight:800">Your visa has been issued.</p></div>', unsafe_allow_html=True)
     elif "reject" in visa_result or "denied" in visa_result:
-        st.markdown(textwrap.dedent("""
-            <div class="visa-rejected-v121">
-                <h1>Visa Rejected</h1>
-                <p>Your visa has been rejected.</p>
-            </div>
-        """).strip(), unsafe_allow_html=True)
+        st.markdown('<div style="margin:24px auto;max-width:980px;background:linear-gradient(135deg,#DC2626,#EF4444);border-radius:24px;color:#fff;text-align:center;padding:40px 24px;box-shadow:0 18px 36px rgba(220,38,38,.22)"><h1 style="color:#fff">Visa Rejected</h1><p style="color:#fff;font-size:20px;font-weight:800">Your visa has been rejected.</p></div>', unsafe_allow_html=True)
 
 def render_application_status_page_v116():
     dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])

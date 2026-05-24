@@ -818,3 +818,10 @@ v121:
 - Timeline now shows date and time as separate right-side lines.
 - Added larger green completed circles, blue current step circle, gray pending circles, and a blue Current Step tag.
 - Added View Full Status style button and Need Help section.
+
+
+v122:
+- Fixed status timeline raw HTML/code box by using minified one-line HTML rendering.
+- Timeline now stays in a straight connected vertical line.
+- Date and time display on the right side for each step.
+- Improved mobile-style design closer to the reference sample.
