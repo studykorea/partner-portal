@@ -4890,6 +4890,13 @@ div[data-testid="stFormSubmitButton"] button:hover {
     border-color:#0047AB !important;
 }
 
+
+/* v113 application page display */
+.application-start-panel-v112 {
+    margin-top:14px !important;
+    border-left:6px solid #005BDB !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7088,7 +7095,7 @@ def render_application_start_form_v109(u, program_slug, application_type):
 
     st.markdown(f"""
     <div class="application-start-panel-v109 application-start-panel-v112">
-        <h3>Application Step 1</h3>
+        <h3>Application Page · Step 1</h3>
         <p>You are starting: <b>{_safe_html_v62(application_type)}</b> for <b>{_safe_html_v62(u.get("University", ""))}</b>.</p>
         <small>Only registered and approved staff/partner accounts can submit student applications.</small>
     </div>
@@ -7291,6 +7298,18 @@ def render_program_detail_page_v109(u, program_slug):
     </div>
     """, unsafe_allow_html=True)
 
+    # v113: If an application option was selected, show the application form as the next page.
+    app_type = st.session_state.get("application_type_v109", "")
+    if app_type:
+        c_back_apply_v113, c_space_apply_v113 = st.columns([1, 4])
+        with c_back_apply_v113:
+            if st.button("← Back to Program Options", key=f"back_to_program_options_v113_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = ""
+                st.session_state.application_page_open_v113 = False
+                st.rerun()
+        render_application_start_form_v109(u, program_slug, app_type)
+        return
+
     # Timeline cards and application options
     if program_slug == "undergraduate":
         timeline_html = (
@@ -7302,10 +7321,12 @@ def render_program_detail_page_v109(u, program_slug):
         with c1:
             if st.button("Apply as New Student", key=f"apply_new_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate New Student Application"
+                st.session_state.application_page_open_v113 = True
                 st.rerun()
         with c2:
             if st.button("Apply as Transfer Student", key=f"apply_transfer_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate Transfer Application"
+                st.session_state.application_page_open_v113 = True
                 st.rerun()
     elif program_slug == "graduate":
         timeline_html = program_timeline_card_v109(u, "graduate", "Graduate Application", "graduate")
@@ -7314,6 +7335,7 @@ def render_program_detail_page_v109(u, program_slug):
         with c1:
             if st.button("Apply for Graduate", key=f"apply_grad_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Graduate Application"
+                st.session_state.application_page_open_v113 = True
                 st.rerun()
     elif program_slug == "language":
         timeline_html = (
@@ -7325,15 +7347,13 @@ def render_program_detail_page_v109(u, program_slug):
         with c1:
             if st.button("Apply for KLP", key=f"apply_klp_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "KLP Application"
+                st.session_state.application_page_open_v113 = True
                 st.rerun()
         with c2:
             if st.button("Apply for EAP", key=f"apply_eap_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "EAP Application"
+                st.session_state.application_page_open_v113 = True
                 st.rerun()
-
-    app_type = st.session_state.get("application_type_v109", "")
-    if app_type:
-        render_application_start_form_v109(u, program_slug, app_type)
 
     st.markdown(f"""
     <div class="program-major-section-v109">
@@ -7954,9 +7974,18 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
         prog_query_v109 = prog_query_v109[0] if prog_query_v109 else ""
     if uni_query_v109 and prog_query_v109:
         from urllib.parse import unquote_plus
-        st.session_state.selected_uni_v62 = unquote_plus(str(uni_query_v109))
-        st.session_state.selected_program_v109 = unquote_plus(str(prog_query_v109))
-        st.session_state.application_type_v109 = ""
+        new_uni_v109 = unquote_plus(str(uni_query_v109))
+        new_prog_v109 = unquote_plus(str(prog_query_v109))
+        # v113: only clear application form when user changes university/program.
+        # Do not clear it on normal rerun after clicking Apply.
+        if (
+            st.session_state.get("selected_uni_v62", "") != new_uni_v109
+            or st.session_state.get("selected_program_v109", "") != new_prog_v109
+        ):
+            st.session_state.application_type_v109 = ""
+            st.session_state.application_page_open_v113 = False
+        st.session_state.selected_uni_v62 = new_uni_v109
+        st.session_state.selected_program_v109 = new_prog_v109
 
     selected = st.session_state.get("selected_uni_v62", "")
     program_selected_v109 = st.session_state.get("selected_program_v109", "")
@@ -7970,6 +7999,7 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
                     if program_selected_v109:
                         st.session_state.selected_program_v109 = ""
                         st.session_state.application_type_v109 = ""
+                        st.session_state.application_page_open_v113 = False
                     else:
                         st.session_state.selected_uni_v62 = ""
                     try:

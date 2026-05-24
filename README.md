@@ -749,3 +749,10 @@ v112:
 - Added financial fields: bank certificate owner and amount in USD.
 - Added 500-word self introduction and 500-word study plan fields.
 - Added blue Next button that saves Step 1 to data/student_applications.csv.
+
+
+v113:
+- Fixed Apply as New Student button not opening the application page.
+- Cause: program query handler reset application_type_v109 on every rerun.
+- Apply buttons now open a separate application page view immediately.
+- Added Back to Program Options button on the application page.
