@@ -196,7 +196,13 @@ def find_user(username):
 
 
 def normalize_agency_id(name):
-    base = re.sub(r"[^a-z0-9]+", "_", str(name).lower()).strip("_")
+    raw = str(name or "").lower().strip()
+    # v76: aliases so Realize / Realize Education and KIEC variants match correctly.
+    if "realize" in raw:
+        return "realize_education"
+    if "kiec" in raw:
+        return "kiec"
+    base = re.sub(r"[^a-z0-9]+", "_", raw).strip("_")
     return base or "unknown_agency"
 
 def read_agencies():
@@ -230,8 +236,15 @@ def current_agency_id():
 
 def approved_reps_for_agency_v75(agency_id):
     reps = []
+    target = normalize_agency_id(agency_id)
     for u in read_json(USERS):
-        if str(u.get("agency_id", "")) == str(agency_id) and str(u.get("role", "")) == "agency_rep" and str(u.get("status", "")) == "approved":
+        user_agency_id = normalize_agency_id(u.get("agency_id", u.get("agency_name", "")))
+        user_agency_name_id = normalize_agency_id(u.get("agency_name", ""))
+        if (
+            (user_agency_id == target or user_agency_name_id == target)
+            and str(u.get("role", "")) == "agency_rep"
+            and str(u.get("status", "")) == "approved"
+        ):
             reps.append(u)
     return reps
 
@@ -243,7 +256,63 @@ def approval_authority_text_v75(user):
     return "the portal super admin"
 
 
-def set_pending_session_v75(user):
+
+def _make_pending_token_v76(user):
+    """Signed token for preserving pending-user message across top-nav clicks."""
+    try:
+        data = f'{user.get("username","")}|{user.get("password_hash","")}|{user.get("status","")}|{user.get("agency_id","")}|{user.get("email","")}'
+        secret = get_database_url()
+        sig = hmac.new(secret.encode("utf-8"), data.encode("utf-8"), hashlib.sha256).hexdigest()[:40]
+        return f'{user.get("username","")}:{sig}'
+    except Exception:
+        return ""
+
+def _verify_pending_token_v76(token):
+    try:
+        username, sig = str(token).split(":", 1)
+        user = find_user(username)
+        if not user or str(user.get("status","")) == "approved":
+            return None
+        expected = _make_pending_token_v76(user).split(":", 1)[1]
+        if hmac.compare_digest(sig, expected):
+            return user
+    except Exception:
+        return None
+    return None
+
+def _current_pending_token_v76():
+    token = ""
+    try:
+        token = st.query_params.get("pending", "")
+    except Exception:
+        token = ""
+    if isinstance(token, list):
+        token = token[0] if token else ""
+    if token:
+        return token
+    username = st.session_state.get("pending_username", "")
+    if username:
+        user = find_user(username)
+        if user:
+            return _make_pending_token_v76(user)
+    return ""
+
+def restore_pending_from_query_v76():
+    if st.session_state.get("pending_username"):
+        return
+    try:
+        token = st.query_params.get("pending", "")
+    except Exception:
+        token = ""
+    if isinstance(token, list):
+        token = token[0] if token else ""
+    if token:
+        user = _verify_pending_token_v76(token)
+        if user:
+            set_pending_session_v75(user, update_query=False)
+
+
+def set_pending_session_v75(user, update_query=True):
     st.session_state.pending_username = user.get("username", "")
     st.session_state.pending_full_name = user.get("full_name", user.get("username", ""))
     st.session_state.pending_agency_name = user.get("agency_name", user.get("partner_group", ""))
@@ -251,6 +320,11 @@ def set_pending_session_v75(user):
     st.session_state.pending_role = user.get("role", "")
     st.session_state.pending_account_type = user.get("account_type", "")
     st.session_state.pending_approval_by = approval_authority_text_v75(user)
+    if update_query:
+        try:
+            st.query_params["pending"] = _make_pending_token_v76(user)
+        except Exception:
+            pass
 
 
 def pending_user_from_session_v75():
@@ -357,6 +431,8 @@ if "agency_name" not in st.session_state: st.session_state.agency_name = None
 if "full_name" not in st.session_state: st.session_state.full_name = None
 if "agency_id" not in st.session_state: st.session_state.agency_id = None
 if "account_type" not in st.session_state: st.session_state.account_type = None
+restore_pending_from_query_v76()
+
 
 
 def _set_login_session_from_user_v60(user):
@@ -432,6 +508,7 @@ handle_home_query_navigation_v69()
 
 # v70: Top navigation uses HTML links styled like the reference image.
 def handle_top_nav_query_v70():
+    restore_pending_from_query_v76()
     try:
         nav = st.query_params.get("nav", "")
     except Exception:
@@ -3222,6 +3299,40 @@ div[data-testid="stDataEditor"] {
 .staff-request-card-v75 h3 {color:#002B5B!important;margin:0 0 8px 0!important;font-weight:950!important;}
 .staff-request-card-v75 p {color:#101828!important;margin:5px 0!important;}
 
+
+/* v76 pending approval personalized message */
+.pending-access-card-v75 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:18px;
+    padding:32px 34px;
+    margin:34px 52px 22px 52px;
+    box-shadow:0 12px 30px rgba(16,24,40,.08);
+}
+.pending-access-card-v75 h1 {
+    color:#002B5B !important;
+    font-size:36px !important;
+    font-weight:950 !important;
+    margin:10px 0 14px 0 !important;
+}
+.pending-access-card-v75 p {
+    color:#101828 !important;
+    font-size:17px !important;
+    line-height:1.55 !important;
+}
+.pending-pill-v75 {
+    display:inline-flex;
+    background:#FFF4D6;
+    color:#B54708 !important;
+    -webkit-text-fill-color:#B54708 !important;
+    border-radius:999px;
+    padding:8px 14px;
+    font-weight:950;
+}
+.pending-muted-v75 {
+    color:#667085 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3236,25 +3347,31 @@ def set_page(p):
 
 
 
+
 def header():
     current = st.session_state.get("page", "Home")
+    pending_token = _current_pending_token_v76()
+    pending_suffix = f"&pending={pending_token}" if pending_token else ""
 
     def active_cls(target):
         return " active" if current == target else ""
 
+    def nav_href(nav_key):
+        return f"?nav={nav_key}{pending_suffix}"
+
     nav_html = f"""
     <div class="top-nav-reference-v70">
       <div class="nav-left-v70">
-        <a class="nav-link-v70{active_cls('Home')}" href="?nav=home">Home</a>
-        <a class="nav-link-v70{active_cls('Universities')}" href="?nav=universities">Universities</a>
-        <a class="nav-link-v70{active_cls('Eligibility Check')}" href="?nav=eligibility">Eligibility Check</a>
-        <a class="nav-link-v70{active_cls('Tuition & Scholarship')}" href="?nav=tuition">Tuition Fees</a>
-        <a class="nav-link-v70{active_cls('Contact Us')}" href="?nav=contact">Contact Us</a>
-        <a class="nav-link-v70" href="?nav=mou">MoU Contact</a>
+        <a class="nav-link-v70{active_cls('Home')}" href="{nav_href('home')}">Home</a>
+        <a class="nav-link-v70{active_cls('Universities')}" href="{nav_href('universities')}">Universities</a>
+        <a class="nav-link-v70{active_cls('Eligibility Check')}" href="{nav_href('eligibility')}">Eligibility Check</a>
+        <a class="nav-link-v70{active_cls('Tuition & Scholarship')}" href="{nav_href('tuition')}">Tuition Fees</a>
+        <a class="nav-link-v70{active_cls('Contact Us')}" href="{nav_href('contact')}">Contact Us</a>
+        <a class="nav-link-v70" href="{nav_href('mou')}">MoU Contact</a>
       </div>
       <div class="nav-right-v70">
-        <a class="nav-login-v70" href="?nav=login">Login</a>
-        <a class="nav-signup-v70" href="?nav=signup">👥&nbsp;&nbsp;Partner Sign Up</a>
+        <a class="nav-login-v70" href="{nav_href('login')}">Login</a>
+        <a class="nav-signup-v70" href="{nav_href('signup')}">👥&nbsp;&nbsp;Partner Sign Up</a>
       </div>
     </div>
     """
@@ -3921,8 +4038,13 @@ def partner_dashboard():
     if st.session_state.role == "agency_rep":
         users_all_v75 = pd.DataFrame(read_json(USERS)).fillna("")
         if len(users_all_v75):
+            current_key_v76 = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
             pending_staff_v75 = users_all_v75[
-                (users_all_v75.get("agency_id", "") == current_agency_id())
+                (
+                    users_all_v75.get("agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                    | users_all_v75.get("agency_name", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                    | users_all_v75.get("partner_group", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                )
                 & (users_all_v75.get("role", "") == "agency_staff")
                 & (users_all_v75.get("status", "") == "pending")
             ].copy()
@@ -3949,7 +4071,7 @@ def partner_dashboard():
                     if st.button("Approve Staff", key=_unique_admin_key_v72("agency_staff_approve", req_idx, req), use_container_width=True):
                         all_users = read_json(USERS)
                         for u in all_users:
-                            if str(u.get("username", "")) == str(req.get("username", "")) and str(u.get("agency_id", "")) == str(current_agency_id()):
+                            if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
                                 u["status"] = "approved"
                                 u["approved_by"] = st.session_state.username
                                 u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -3960,7 +4082,7 @@ def partner_dashboard():
                     if st.button("Reject Staff", key=_unique_admin_key_v72("agency_staff_reject", req_idx, req), use_container_width=True):
                         all_users = read_json(USERS)
                         for u in all_users:
-                            if str(u.get("username", "")) == str(req.get("username", "")) and str(u.get("agency_id", "")) == str(current_agency_id()):
+                            if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
                                 u["status"] = "rejected"
                                 u["approved_by"] = st.session_state.username
                                 u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -6057,6 +6179,7 @@ if not st.session_state.logged_in:
     elif st.session_state.page == "Universities": universities_page(public=True)
     elif st.session_state.page == "Contact Us": contact()
     elif st.session_state.page in ["Eligibility Check","Tuition & Scholarship"]:
+        restore_pending_from_query_v76()
         if st.session_state.get("pending_username"):
             pending_access_required_v75(st.session_state.page)
         else:

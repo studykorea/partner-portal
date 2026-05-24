@@ -468,3 +468,12 @@ v75:
 - Super admin can still approve/reject all pending users.
 - Pending users see a personalized approval message when trying to use protected features.
 - Signup stores approval_scope so Realize/KIEC representative approvals can work.
+
+
+v76:
+- Fixed pending users seeing generic Partner Access Required after clicking Eligibility/Tuition.
+- Pending user state is now preserved with a signed pending token in the URL.
+- Top navigation preserves pending token while moving between pages.
+- Pending users now see the personalized message on protected services.
+- Agency representative approval matching now supports Realize / Realize Education aliases and KIEC aliases.
+- Realize Education representatives can see pending staff even if the staff selected Realize or Realize Education.
