@@ -579,3 +579,10 @@ v89:
 - Added Image_Gallery column support using pipe-separated image paths.
 - University card hero image now auto-changes/slides through uploaded photos.
 - If no slideshow images are uploaded, the main university photo is used as fallback.
+
+
+v90:
+- Fixed Admin > Universities > Edit Existing Universities form state issue.
+- When selecting a different university, all fields and upload widgets now refresh for that selected university only.
+- File uploader keys are now university-specific, so Jeonbuk uploaded files will not remain when editing another university.
+- Saving now correctly stores Image_Gallery for the selected university.

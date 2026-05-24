@@ -7014,61 +7014,81 @@ def admin_university_management_v49():
         if len(df) == 0:
             st.info("No universities found.")
         else:
-            selected = st.selectbox("Select University to Edit", df["University"].dropna().tolist(), key="edit_uni_select_v49")
-            idx = df.index[df["University"] == selected][0]
+            university_list_v90 = df["University"].dropna().astype(str).tolist()
+            selected = st.selectbox(
+                "Select University to Edit",
+                university_list_v90,
+                key="edit_uni_select_v90"
+            )
+            # v90 important: every field key includes the selected university.
+            # This prevents Jeonbuk values/files from remaining when admin selects another university.
+            selected_key_v90 = safe_slug_v49(selected)
+            idx = df.index[df["University"].astype(str) == str(selected)][0]
             row = df.loc[idx]
 
-            with st.form("edit_university_v49"):
+            st.markdown(
+                f"""
+                <div class="selected-university-banner-v74">
+                    <b>Editing: {selected}</b>
+                    <span>The form below is refreshed for this university only. Uploaded files are also separated by university.</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            with st.form(f"edit_university_v90_{selected_key_v90}"):
                 c1, c2 = st.columns(2)
                 with c1:
-                    university = st.text_input("University Name", value=display_clean_v50(row.get("University", "")))
-                    location = st.text_input("Location", value=display_clean_v50(row.get("Location", "")))
-                    region = st.text_input("Region", value=display_clean_v50(row.get("Region", "")))
-                    homepage = st.text_input("Homepage", value=display_clean_v50(row.get("Homepage", "")))
-                    phone = st.text_input("Representative Phone", value=display_clean_v50(row.get("Representative_Phone", "")))
-                    fax = st.text_input("Representative Fax", value=display_clean_v50(row.get("Representative_Fax", "")))
-                    school_size = st.text_input("School Size", value=display_clean_v50(row.get("School_Size", "")))
-                    intl_students = st.text_input("Foreign / International Students", value=display_clean_v50(row.get("International_Students", "")))
+                    university = st.text_input("University Name", value=display_clean_v50(row.get("University", "")), key=f"edit_uni_name_{selected_key_v90}")
+                    location = st.text_input("Location", value=display_clean_v50(row.get("Location", "")), key=f"edit_uni_location_{selected_key_v90}")
+                    region = st.text_input("Region", value=display_clean_v50(row.get("Region", "")), key=f"edit_uni_region_{selected_key_v90}")
+                    homepage = st.text_input("Homepage", value=display_clean_v50(row.get("Homepage", "")), key=f"edit_uni_homepage_{selected_key_v90}")
+                    phone = st.text_input("Representative Phone", value=display_clean_v50(row.get("Representative_Phone", "")), key=f"edit_uni_phone_{selected_key_v90}")
+                    fax = st.text_input("Representative Fax", value=display_clean_v50(row.get("Representative_Fax", "")), key=f"edit_uni_fax_{selected_key_v90}")
+                    school_size = st.text_input("School Size", value=display_clean_v50(row.get("School_Size", "")), key=f"edit_uni_school_size_{selected_key_v90}")
+                    intl_students = st.text_input("Foreign / International Students", value=display_clean_v50(row.get("International_Students", "")), key=f"edit_uni_intl_students_{selected_key_v90}")
                 with c2:
-                    address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92)
-                    overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120)
-                    intake = st.text_input("Intake", value=display_clean_v50(row.get("Intake", "")))
+                    address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92, key=f"edit_uni_address_{selected_key_v90}")
+                    overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120, key=f"edit_uni_overview_{selected_key_v90}")
+                    intake = st.text_input("Intake", value=display_clean_v50(row.get("Intake", "")), key=f"edit_uni_intake_{selected_key_v90}")
                     status_options_v64 = ["Application Open", "Application Closed", "Application Opens Soon"]
                     current_status_v64 = _application_status_v64_from_row(row) if _application_status_v64_from_row(row) in status_options_v64 else (display_clean_v50(row.get("Application_Status", "")) or "Application Open")
                     application_status = st.selectbox(
                         "Application Status Auto Calculated",
                         status_options_v64,
                         index=status_options_v64.index(current_status_v64) if current_status_v64 in status_options_v64 else 0,
-                        key="edit_application_status_v64"
+                        key=f"edit_application_status_v90_{selected_key_v90}"
                     )
                     current_open_date_v64 = _parse_date_v64(row.get("Application_Open_Date", ""))
                     current_close_date_v65 = _parse_date_v64(row.get("Application_Close_Date", ""))
                     st.markdown("##### General Application Period")
-                    application_open_date = st.date_input("General Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
-                    application_close_date = st.date_input("General Application Close Date", value=current_close_date_v65, key="edit_application_close_date_v65")
+                    application_open_date = st.date_input("General Application Open Date", value=current_open_date_v64, key=f"edit_application_open_date_v90_{selected_key_v90}")
+                    application_close_date = st.date_input("General Application Close Date", value=current_close_date_v65, key=f"edit_application_close_date_v90_{selected_key_v90}")
 
                     st.markdown("##### Program-Specific Application Periods")
                     d1, d2 = st.columns(2)
                     with d1:
-                        ug_open_date = st.date_input("Undergraduate Open Date", value=_parse_date_v64(row.get("UG_Open_Date", "")), key="edit_ug_open_date_v71")
-                        grad_open_date = st.date_input("Graduate (Masters/Ph.D.) Open Date", value=_parse_date_v64(row.get("Graduate_Open_Date", "")), key="edit_grad_open_date_v71")
-                        klp_open_date = st.date_input("KLP/EAP Open Date", value=_parse_date_v64(row.get("KLP_EAP_Open_Date", "")), key="edit_klp_open_date_v71")
+                        ug_open_date = st.date_input("Undergraduate Open Date", value=_parse_date_v64(row.get("UG_Open_Date", "")), key=f"edit_ug_open_date_v90_{selected_key_v90}")
+                        grad_open_date = st.date_input("Graduate (Masters/Ph.D.) Open Date", value=_parse_date_v64(row.get("Graduate_Open_Date", "")), key=f"edit_grad_open_date_v90_{selected_key_v90}")
+                        klp_open_date = st.date_input("KLP/EAP Open Date", value=_parse_date_v64(row.get("KLP_EAP_Open_Date", "")), key=f"edit_klp_open_date_v90_{selected_key_v90}")
                     with d2:
-                        ug_close_date = st.date_input("Undergraduate Close Date", value=_parse_date_v64(row.get("UG_Close_Date", "")), key="edit_ug_close_date_v71")
-                        grad_close_date = st.date_input("Graduate (Masters/Ph.D.) Close Date", value=_parse_date_v64(row.get("Graduate_Close_Date", "")), key="edit_grad_close_date_v71")
-                        klp_close_date = st.date_input("KLP/EAP Close Date", value=_parse_date_v64(row.get("KLP_EAP_Close_Date", "")), key="edit_klp_close_date_v71")
+                        ug_close_date = st.date_input("Undergraduate Close Date", value=_parse_date_v64(row.get("UG_Close_Date", "")), key=f"edit_ug_close_date_v90_{selected_key_v90}")
+                        grad_close_date = st.date_input("Graduate (Masters/Ph.D.) Close Date", value=_parse_date_v64(row.get("Graduate_Close_Date", "")), key=f"edit_grad_close_date_v90_{selected_key_v90}")
+                        klp_close_date = st.date_input("KLP/EAP Close Date", value=_parse_date_v64(row.get("KLP_EAP_Close_Date", "")), key=f"edit_klp_close_date_v90_{selected_key_v90}")
 
                     st.caption("Each program status is calculated from its own open/close dates. If a program date is empty, the general application period is used as fallback.")
-                    tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
-                    scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
-                    top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
-                    current_img = st.text_input("Current Main Photo Path", value=display_clean_v50(row.get("Image", "")))
-                    current_gallery = st.text_area("Current Slideshow Image Paths", value=display_clean_v50(row.get("Image_Gallery", "")), height=70)
-                    current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")))
-                    photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key="edit_uni_photo_v49")
-                    gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="edit_uni_gallery_v89")
-                    logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key="edit_uni_logo_v88")
-                    st.caption("If you upload new slideshow images, they will replace the previous slideshow image paths.")
+                    tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")), key=f"edit_uni_tuition_{selected_key_v90}")
+                    scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")), key=f"edit_uni_scholarship_{selected_key_v90}")
+                    top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80, key=f"edit_uni_top_majors_{selected_key_v90}")
+
+                    current_img = st.text_input("Current Main Photo Path", value=display_clean_v50(row.get("Image", "")), key=f"edit_current_img_{selected_key_v90}")
+                    current_gallery = st.text_area("Current Slideshow Image Paths", value=display_clean_v50(row.get("Image_Gallery", "")), height=70, key=f"edit_current_gallery_{selected_key_v90}")
+                    current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")), key=f"edit_current_logo_{selected_key_v90}")
+
+                    photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key=f"edit_uni_photo_v90_{selected_key_v90}")
+                    gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key=f"edit_uni_gallery_v90_{selected_key_v90}")
+                    logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key=f"edit_uni_logo_v90_{selected_key_v90}")
+                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images.")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)
@@ -7081,6 +7101,7 @@ def admin_university_management_v49():
                         image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university) if logo else current_logo
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
+
                     df.loc[idx, "University"] = university.strip()
                     df.loc[idx, "Location"] = location.strip()
                     df.loc[idx, "Region"] = region.strip()
@@ -7106,14 +7127,16 @@ def admin_university_management_v49():
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()
                     df.loc[idx, "Image"] = image_path
+                    df.loc[idx, "Image_Gallery"] = gallery_path
                     df.loc[idx, "University_Logo"] = logo_path
+
                     write_csv(uni_file, df)
                     reload_data_v49()
-                    st.success("University information saved.")
+                    st.success(f"{university.strip()} information saved.")
                     st.rerun()
 
                 if delete_clicked:
-                    df = df[df["University"] != selected].copy()
+                    df = df[df["University"].astype(str) != str(selected)].copy()
                     write_csv(uni_file, df)
                     reload_data_v49()
                     st.warning(f"{selected} has been deleted.")
