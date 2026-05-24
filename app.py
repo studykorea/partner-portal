@@ -4731,7 +4731,16 @@ def _find_user_activity_row_v85(username, staff_users, partner_users, elig_df, t
 
 
 def partner_dashboard():
-    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    # v86: Avoid rendering dash_shell twice on separate detail pages.
+    # In v85, partner_dashboard() rendered dash_shell first, and then the separate
+    # partner/staff/activity pages also rendered dash_shell, causing StreamlitDuplicateElementKey.
+    current_view_pre_v86 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
+    is_separate_page_v86 = (
+        st.session_state.get("role") in ["agency_rep", "agency_partner"]
+        and current_view_pre_v86 in ["partners", "staff", "activity", "staff_activity", "partner_activity"]
+    )
+    if not is_separate_page_v86:
+        dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
 
     e = read_csv(ELIG_LOGS)
     t = read_csv(TUIT_LOGS)

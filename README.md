@@ -549,3 +549,9 @@ v85:
 - Each staff row has a blue Activity button to open that staff member's performance/activity log.
 - Partner agency list page also has Activity buttons for each partner agency.
 - Activity page shows eligibility check logs, tuition estimate logs, and summary counts.
+
+
+v86:
+- Fixed StreamlitDuplicateElementKey on Partner Agency / Staff / Activity detail pages.
+- The error was caused by rendering the partner dashboard shell twice.
+- Separate detail pages now render their own shell only once.
