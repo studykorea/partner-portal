@@ -855,3 +855,20 @@ v125:
 - Super admin can download all uploaded applicant files from Document_Paths_JSON.
 - Super admin can update applicant status fields: university received, application number, interview date/done/result, offer/invoice, COA, visa type, visa application number, and visa result.
 - Status updates are saved in student_applications.csv and automatically appear in the submitting staff/partner dashboard.
+
+
+v126:
+- Fixed admin applicant detail page where some applicant information appeared as raw HTML/black code blocks.
+- Rebuilt applicant information cards without indented HTML so Streamlit renders them correctly.
+- Improved uploaded document parsing from Document_Paths_JSON.
+- Added robust file path resolver for uploaded documents.
+- Added clearer document cards and download buttons for passport photo, passport copy, certificates, bank certificate, consent form, etc.
+- If a file path is saved but the physical file is missing, admin now sees a clear file-not-found message with the saved path.
+
+
+v127:
+- Rebuilt Application Form PDF generation using reportlab.
+- Application form PDF now includes Step 1 applicant information, intended study information, academic background, financial information, self introduction, study plan, submission information, and document checklist.
+- Passport size photo from Step 2 is placed in the application form when available.
+- Added Download Full Application Packet ZIP containing the generated application form PDF plus all uploaded applicant files.
+- Added reportlab and Pillow to requirements.txt for PDF/image support.

@@ -5575,6 +5575,46 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v126 admin applicant detail and document download fix */
+.admin-doc-card-v126,
+.admin-doc-missing-v126 {
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:16px !important;
+    padding:14px 16px !important;
+    margin:8px 0 10px 0 !important;
+}
+.admin-doc-card-v126 b,
+.admin-doc-missing-v126 b {
+    display:block !important;
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:950 !important;
+    margin-bottom:5px !important;
+}
+.admin-doc-card-v126 span,
+.admin-doc-missing-v126 span,
+.admin-doc-missing-v126 small {
+    display:block !important;
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+    font-weight:650 !important;
+    word-break:break-all !important;
+}
+.admin-doc-missing-v126 {
+    border-color:#FCA5A5 !important;
+    background:#FEF2F2 !important;
+}
+.admin-app-info-grid-v125 {
+    align-items:stretch !important;
+}
+.admin-app-info-card-v125,
+.admin-app-textbox-v125 {
+    overflow:hidden !important;
+    word-break:break-word !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11623,38 +11663,175 @@ def admin_app_logo_html_v125(uni_name):
     return university_logo_html_v88(uni_row.get("University_Logo", ""), uni_name or "University")
 
 def application_form_pdf_bytes_v125(row):
-    try:
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import A4
-        import io
-        buffer = io.BytesIO()
-        c = canvas.Canvas(buffer, pagesize=A4)
-        width, height = A4
-        y = height - 50
-        c.setFont("Helvetica-Bold", 17)
-        c.drawString(50, y, "Student Application Form")
-        y -= 30
-        c.setFont("Helvetica", 9)
-        c.drawString(50, y, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        y -= 24
+    """
+    v127: Generate a real downloadable PDF application form.
+    Includes:
+    - Applicant step 1 information
+    - Self introduction and study plan
+    - Submitted agency/staff information
+    - Passport size photo from Step 2, when uploaded
+    """
+    def _val(key, default="-"):
+        v = display_clean_v50(row.get(key, ""))
+        return v if v else default
 
-        fields = [
-            ("Application ID", "Application_ID"),
-            ("Applicant Name", "Full_Name_As_Passport"),
+    def _doc_path_from_row(doc_key):
+        try:
+            docs = parse_document_paths_v125(row)
+            rel = docs.get(doc_key, "")
+            p = resolve_uploaded_doc_path_v126(rel)
+            return p
+        except Exception:
+            return None
+
+    try:
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.platypus import (
+            SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+            Image as RLImage, PageBreak
+        )
+        from reportlab.lib.enums import TA_CENTER
+        import io
+
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=18 * mm,
+            leftMargin=18 * mm,
+            topMargin=16 * mm,
+            bottomMargin=16 * mm,
+            title="Student Application Form"
+        )
+
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(
+            name="AppTitle",
+            parent=styles["Title"],
+            fontName="Helvetica-Bold",
+            fontSize=20,
+            leading=24,
+            textColor=colors.HexColor("#002B5B"),
+            alignment=TA_CENTER,
+            spaceAfter=8,
+        ))
+        styles.add(ParagraphStyle(
+            name="SectionTitle",
+            parent=styles["Heading2"],
+            fontName="Helvetica-Bold",
+            fontSize=12,
+            leading=15,
+            textColor=colors.HexColor("#005BDB"),
+            spaceBefore=10,
+            spaceAfter=6,
+        ))
+        styles.add(ParagraphStyle(
+            name="SmallText",
+            parent=styles["BodyText"],
+            fontSize=8.5,
+            leading=11,
+            textColor=colors.HexColor("#475467"),
+        ))
+        styles.add(ParagraphStyle(
+            name="BodySmall",
+            parent=styles["BodyText"],
+            fontSize=9,
+            leading=12,
+            textColor=colors.HexColor("#111827"),
+        ))
+
+        story = []
+        story.append(Paragraph("Student Application Form", styles["AppTitle"]))
+        story.append(Paragraph(
+            f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            styles["SmallText"]
+        ))
+        story.append(Spacer(1, 6))
+
+        # Header with photo
+        photo_path = _doc_path_from_row("passport_size_photo")
+        photo_cell = Paragraph("Passport<br/>Photo", styles["SmallText"])
+        if photo_path and photo_path.exists():
+            try:
+                photo_cell = RLImage(str(photo_path), width=32 * mm, height=40 * mm)
+            except Exception:
+                photo_cell = Paragraph("Passport photo<br/>uploaded", styles["SmallText"])
+
+        header_data = [
+            [
+                photo_cell,
+                Table([
+                    ["Applicant Name", _val("Full_Name_As_Passport")],
+                    ["University", _val("University")],
+                    ["Application Type", _val("Application_Type")],
+                    ["Desired Major / Program", _val("Desired_Major")],
+                    ["Status", inferred_application_status_v119(row)],
+                ], colWidths=[42 * mm, 100 * mm])
+            ]
+        ]
+        header_table = Table(header_data, colWidths=[38 * mm, 136 * mm])
+        header_table.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("BOX", (0, 0), (-1, -1), 0.7, colors.HexColor("#DCE6F4")),
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+            ("INNERGRID", (1, 0), (1, 0), 0.25, colors.HexColor("#E5E7EB")),
+            ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ]))
+        story.append(header_table)
+
+        def add_section(title, rows):
+            story.append(Paragraph(title, styles["SectionTitle"]))
+            table_data = []
+            for label, key in rows:
+                table_data.append([
+                    Paragraph(f"<b>{label}</b>", styles["BodySmall"]),
+                    Paragraph(_safe_html_v62(_val(key)), styles["BodySmall"])
+                ])
+            t = Table(table_data, colWidths=[55 * mm, 119 * mm])
+            t.setStyle(TableStyle([
+                ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#DCE6F4")),
+                ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#E5E7EB")),
+                ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#EEF5FF")),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ]))
+            story.append(t)
+
+        add_section("1. Personal Information", [
+            ("Full Name as in Passport", "Full_Name_As_Passport"),
             ("First Name", "First_Name"),
             ("Middle Name", "Middle_Name"),
             ("Last Name", "Last_Name"),
             ("Passport Number", "Passport_Number"),
+            ("Passport Issue Year", "Passport_Issue_Year"),
             ("Nationality", "Nationality"),
             ("Date of Birth", "Date_of_Birth"),
-            ("Email", "Email"),
-            ("Contact Number", "Applicant_Contact"),
+            ("Applicant Contact Number", "Applicant_Contact"),
+            ("Email Address", "Email"),
             ("Parents Full Name", "Parents_Full_Name"),
+            ("Parents / Guardian Contact", "Guardian_Contact"),
             ("Home Country Address", "Home_Country_Address"),
-            ("Guardian Contact", "Guardian_Contact"),
+        ])
+
+        add_section("2. Intended Study Information", [
             ("University", "University"),
+            ("Program Category", "Program_Category"),
             ("Application Type", "Application_Type"),
-            ("Desired Major", "Desired_Major"),
+            ("Desired Major / Program", "Desired_Major"),
+        ])
+
+        add_section("3. Academic Background", [
             ("High School Name", "High_School_Name"),
             ("High School Passout Year", "High_School_Passout_Year"),
             ("High School Enroll Start", "High_School_Enroll_Start"),
@@ -11663,77 +11840,187 @@ def application_form_pdf_bytes_v125(row):
             ("Middle School Name", "Middle_School_Name"),
             ("Middle School Enrolled Year", "Middle_School_Enrolled_Year"),
             ("Middle School Location", "Middle_School_Location"),
+        ])
+
+        add_section("4. Financial Information", [
             ("Bank Certificate Owner", "Bank_Certificate_Owner"),
-            ("Bank Amount USD", "Bank_Amount_USD"),
+            ("Bank Amount in USD", "Bank_Amount_USD"),
+        ])
+
+        add_section("5. Submission Information", [
             ("Submitted By", "Submitted_By"),
             ("Agency", "Agency"),
-            ("Status", "Status"),
-        ]
-        for label, key in fields:
-            if y < 70:
-                c.showPage()
-                y = height - 50
-                c.setFont("Helvetica", 9)
-            val = display_clean_v50(row.get(key, ""))
-            c.setFont("Helvetica-Bold", 9)
-            c.drawString(50, y, f"{label}:")
-            c.setFont("Helvetica", 9)
-            text = str(val)[:95]
-            c.drawString(190, y, text)
-            y -= 16
+            ("Submitted At", "Submitted_At"),
+            ("Last Updated", "Last_Updated"),
+            ("Application ID", "Application_ID"),
+        ])
 
-        for long_label, key in [("Self Introduction", "Self_Introduction"), ("Study Plan", "Study_Plan")]:
-            val = display_clean_v50(row.get(key, ""))
-            if val:
-                if y < 110:
-                    c.showPage()
-                    y = height - 50
-                c.setFont("Helvetica-Bold", 10)
-                c.drawString(50, y, long_label)
-                y -= 16
-                c.setFont("Helvetica", 8)
-                words = str(val).split()
-                line = ""
-                for w in words:
-                    if len(line + " " + w) > 95:
-                        c.drawString(50, y, line)
-                        y -= 12
-                        line = w
-                        if y < 50:
-                            c.showPage()
-                            y = height - 50
-                            c.setFont("Helvetica", 8)
-                    else:
-                        line = (line + " " + w).strip()
-                if line:
-                    c.drawString(50, y, line)
-                    y -= 18
+        story.append(Paragraph("6. Self Introduction", styles["SectionTitle"]))
+        story.append(Table([[Paragraph(_safe_html_v62(_val("Self_Introduction")), styles["BodySmall"])]],
+                           colWidths=[174 * mm],
+                           style=TableStyle([
+                               ("BOX", (0,0), (-1,-1), 0.6, colors.HexColor("#DCE6F4")),
+                               ("BACKGROUND", (0,0), (-1,-1), colors.white),
+                               ("LEFTPADDING", (0,0), (-1,-1), 8),
+                               ("RIGHTPADDING", (0,0), (-1,-1), 8),
+                               ("TOPPADDING", (0,0), (-1,-1), 8),
+                               ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+                           ])))
 
-        c.save()
+        story.append(Paragraph("7. Study Plan", styles["SectionTitle"]))
+        story.append(Table([[Paragraph(_safe_html_v62(_val("Study_Plan")), styles["BodySmall"])]],
+                           colWidths=[174 * mm],
+                           style=TableStyle([
+                               ("BOX", (0,0), (-1,-1), 0.6, colors.HexColor("#DCE6F4")),
+                               ("BACKGROUND", (0,0), (-1,-1), colors.white),
+                               ("LEFTPADDING", (0,0), (-1,-1), 8),
+                               ("RIGHTPADDING", (0,0), (-1,-1), 8),
+                               ("TOPPADDING", (0,0), (-1,-1), 8),
+                               ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+                           ])))
+
+        docs = parse_document_paths_v125(row)
+        if docs:
+            story.append(Paragraph("8. Uploaded Document Checklist", styles["SectionTitle"]))
+            checklist = []
+            label_map = {doc_key: label for label, doc_key, _, _ in APPLICATION_DOC_TYPES_V114}
+            for doc_key, rel_path in docs.items():
+                p = resolve_uploaded_doc_path_v126(rel_path)
+                checklist.append([
+                    Paragraph(f"<b>{label_map.get(doc_key, doc_key.replace('_',' ').title())}</b>", styles["BodySmall"]),
+                    Paragraph("Uploaded" if p else "Saved path not found", styles["BodySmall"]),
+                    Paragraph(Path(str(rel_path)).name, styles["SmallText"]),
+                ])
+            t = Table(checklist, colWidths=[70 * mm, 35 * mm, 69 * mm])
+            t.setStyle(TableStyle([
+                ("BOX", (0,0), (-1,-1), 0.6, colors.HexColor("#DCE6F4")),
+                ("INNERGRID", (0,0), (-1,-1), 0.25, colors.HexColor("#E5E7EB")),
+                ("BACKGROUND", (0,0), (0,-1), colors.HexColor("#F8FAFC")),
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("LEFTPADDING", (0,0), (-1,-1), 6),
+                ("RIGHTPADDING", (0,0), (-1,-1), 6),
+                ("TOPPADDING", (0,0), (-1,-1), 5),
+                ("BOTTOMPADDING", (0,0), (-1,-1), 5),
+            ]))
+            story.append(t)
+
+        doc.build(story)
         return buffer.getvalue()
-    except Exception:
-        lines = ["Student Application Form", ""]
-        for k, v in dict(row).items():
-            lines.append(f"{k}: {display_clean_v50(v)}")
-        return "\n".join(lines).encode("utf-8")
+
+    except Exception as e:
+        # Last-resort valid basic PDF fallback using reportlab may not be installed yet.
+        # This fallback creates a readable plain-text PDF using minimal PDF syntax.
+        text_lines = [
+            "Student Application Form",
+            f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "",
+            f"Applicant: {_val('Full_Name_As_Passport')}",
+            f"University: {_val('University')}",
+            f"Application Type: {_val('Application_Type')}",
+            f"Desired Major: {_val('Desired_Major')}",
+            f"Passport Number: {_val('Passport_Number')}",
+            f"Nationality: {_val('Nationality')}",
+            f"Email: {_val('Email')}",
+            f"Contact: {_val('Applicant_Contact')}",
+            "",
+            "Self Introduction:",
+            _val("Self_Introduction"),
+            "",
+            "Study Plan:",
+            _val("Study_Plan"),
+            "",
+            f"PDF generation note: {str(e)[:120]}",
+        ]
+        # Escape PDF characters
+        def esc(s):
+            return str(s).replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+        content = "BT /F1 10 Tf 50 800 Td "
+        y_count = 0
+        for line in text_lines:
+            parts = [line[i:i+85] for i in range(0, len(str(line)), 85)] or [""]
+            for part in parts:
+                if y_count > 55:
+                    break
+                content += f"({esc(part)}) Tj 0 -14 Td "
+                y_count += 1
+        content += "ET"
+        objects = []
+        objects.append("1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj")
+        objects.append("2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj")
+        objects.append("3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj")
+        objects.append("4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj")
+        objects.append(f"5 0 obj << /Length {len(content.encode('latin-1', 'ignore'))} >> stream\n{content}\nendstream endobj")
+        pdf = "%PDF-1.4\n"
+        offsets = [0]
+        for obj in objects:
+            offsets.append(len(pdf.encode("latin-1")))
+            pdf += obj + "\n"
+        xref_pos = len(pdf.encode("latin-1"))
+        pdf += f"xref\n0 {len(objects)+1}\n0000000000 65535 f \n"
+        for off in offsets[1:]:
+            pdf += f"{off:010d} 00000 n \n"
+        pdf += f"trailer << /Size {len(objects)+1} /Root 1 0 R >>\nstartxref\n{xref_pos}\n%%EOF"
+        return pdf.encode("latin-1", "ignore")
 
 def parse_document_paths_v125(row):
-    raw = display_clean_v50(row.get("Document_Paths_JSON", ""))
-    if not raw:
+    raw = row.get("Document_Paths_JSON", "")
+    if raw is None:
+        return {}
+    raw = str(raw).strip()
+    if not raw or raw.lower() in ["nan", "none", "null", "<na>", "{}", "[]"]:
         return {}
     try:
         data = json.loads(raw)
-        return data if isinstance(data, dict) else {}
+        if isinstance(data, dict):
+            return {str(k): str(v) for k, v in data.items() if str(v).strip()}
     except Exception:
-        return {}
+        pass
+    # fallback for older/dirty CSV rows where quotes may have been changed
+    try:
+        import ast
+        data = ast.literal_eval(raw)
+        if isinstance(data, dict):
+            return {str(k): str(v) for k, v in data.items() if str(v).strip()}
+    except Exception:
+        pass
+    return {}
+
+def resolve_uploaded_doc_path_v126(rel_path):
+    if not rel_path:
+        return None
+    raw = str(rel_path).strip().replace("\\", "/")
+    candidates = []
+    p = Path(raw)
+    if p.is_absolute():
+        candidates.append(p)
+    candidates.extend([
+        BASE / raw,
+        Path.cwd() / raw,
+        DATA.parent / raw,
+        BASE / "assets" / "application_documents" / Path(raw).name,
+        BASE / "assets" / Path(raw).name,
+    ])
+    for c in candidates:
+        try:
+            if c.exists() and c.is_file():
+                return c
+        except Exception:
+            pass
+    return None
 
 def admin_download_document_button_v125(doc_key, rel_path, idx):
-    if not rel_path:
+    label = doc_key.replace("_", " ").title()
+    path = resolve_uploaded_doc_path_v126(rel_path)
+    if path is None:
+        st.markdown(f"""
+        <div class="admin-doc-missing-v126">
+            <b>{_safe_html_v62(label)}</b>
+            <span>File path saved but file was not found.</span>
+            <small>{_safe_html_v62(str(rel_path))}</small>
+        </div>
+        """, unsafe_allow_html=True)
         return
-    path = BASE / str(rel_path)
-    if not path.exists():
-        st.warning(f"{doc_key}: file not found ({rel_path})")
-        return
+
     data = path.read_bytes()
     name = path.name
     mime = "application/octet-stream"
@@ -11743,14 +12030,41 @@ def admin_download_document_button_v125(doc_key, rel_path, idx):
         mime = "image/jpeg"
     elif path.suffix.lower() == ".png":
         mime = "image/png"
+
+    st.markdown(f"""
+    <div class="admin-doc-card-v126">
+        <b>{_safe_html_v62(label)}</b>
+        <span>{_safe_html_v62(name)}</span>
+    </div>
+    """, unsafe_allow_html=True)
     st.download_button(
-        f"Download {doc_key.replace('_',' ').title()}",
+        f"Download {label}",
         data=data,
         file_name=name,
         mime=mime,
-        key=f"download_doc_v125_{idx}_{safe_slug_v49(doc_key)}",
+        key=f"download_doc_v126_{idx}_{safe_slug_v49(doc_key)}",
         use_container_width=True
     )
+
+
+def application_packet_zip_bytes_v127(row):
+    """Create a zip containing the generated application form PDF and every uploaded document."""
+    import io, zipfile
+    applicant = safe_slug_v49(application_display_name_v116(row) or "applicant")
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr(f"{applicant}_application_form.pdf", application_form_pdf_bytes_v125(row))
+        docs = parse_document_paths_v125(row)
+        label_map = {doc_key: label for label, doc_key, _, _ in APPLICATION_DOC_TYPES_V114}
+        for doc_key, rel_path in docs.items():
+            p = resolve_uploaded_doc_path_v126(rel_path)
+            if p and p.exists():
+                label = safe_slug_v49(label_map.get(doc_key, doc_key))
+                z.write(p, arcname=f"uploaded_documents/{label}{p.suffix.lower()}")
+            else:
+                z.writestr(f"missing_files/{safe_slug_v49(doc_key)}.txt", f"Saved path not found:\n{rel_path}")
+    buffer.seek(0)
+    return buffer.getvalue()
 
 def update_application_status_from_admin_v125(app_id, updates):
     df = applications_df_v116()
@@ -11799,14 +12113,26 @@ def admin_application_detail_page_v125(app_id):
     </div>
     """, unsafe_allow_html=True)
 
-    st.download_button(
-        "Download Application Form PDF",
-        data=application_form_pdf_bytes_v125(row),
-        file_name=f"{safe_slug_v49(applicant)}_application_form.pdf",
-        mime="application/pdf",
-        use_container_width=True,
-        key=f"download_app_form_v125_{safe_slug_v49(app_id)}"
-    )
+    st.caption("Download the applicant's full application form generated from Step 1 information and Step 2 passport photo.")
+    dcol1_v127, dcol2_v127 = st.columns(2)
+    with dcol1_v127:
+        st.download_button(
+            "Download Application Form PDF",
+            data=application_form_pdf_bytes_v125(row),
+            file_name=f"{safe_slug_v49(applicant)}_application_form.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+            key=f"download_app_form_v127_{safe_slug_v49(app_id)}"
+        )
+    with dcol2_v127:
+        st.download_button(
+            "Download Full Application Packet ZIP",
+            data=application_packet_zip_bytes_v127(row),
+            file_name=f"{safe_slug_v49(applicant)}_application_packet.zip",
+            mime="application/zip",
+            use_container_width=True,
+            key=f"download_app_packet_v127_{safe_slug_v49(app_id)}"
+        )
 
     st.markdown("### Applicant Information")
     info_fields = [
@@ -11829,37 +12155,38 @@ def admin_application_detail_page_v125(app_id):
         ("Agency", "Agency"),
         ("Submitted At", "Submitted_At"),
     ]
-    cards = ""
-    for label, key in info_fields:
-        cards += f"""
-        <div class="admin-app-info-card-v125">
-            <b>{_safe_html_v62(label)}</b>
-            <span>{_safe_html_v62(display_clean_v50(row.get(key, "")) or "-")}</span>
-        </div>
-        """
-    st.markdown(f'<div class="admin-app-info-grid-v125">{cards}</div>', unsafe_allow_html=True)
+    cards = "".join([
+        '<div class="admin-app-info-card-v125">'
+        f'<b>{_safe_html_v62(label)}</b>'
+        f'<span>{_safe_html_v62(display_clean_v50(row.get(key, "")) or "-")}</span>'
+        '</div>'
+        for label, key in info_fields
+    ])
+    st.markdown('<div class="admin-app-info-grid-v125">' + cards + '</div>', unsafe_allow_html=True)
 
     st.markdown("### Academic / Financial / Statement Information")
+    academic_html = (
+        '<div class="admin-app-textbox-v125">'
+        '<b>Academic Background</b>'
+        f'<p><b>High School:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Name","")) or "-")}</p>'
+        f'<p><b>Passout Year:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Passout_Year","")) or "-")}</p>'
+        f'<p><b>High School Location:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Location","")) or "-")}</p>'
+        f'<p><b>Middle School:</b> {_safe_html_v62(display_clean_v50(row.get("Middle_School_Name","")) or "-")}</p>'
+        '</div>'
+    )
+    financial_html = (
+        '<div class="admin-app-textbox-v125">'
+        '<b>Financial Information</b>'
+        f'<p><b>Bank Certificate Owner:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Certificate_Owner","")) or "-")}</p>'
+        f'<p><b>Amount USD:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Amount_USD","")) or "-")}</p>'
+        f'<p><b>Status:</b> {_safe_html_v62(status)}</p>'
+        '</div>'
+    )
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown(f"""
-        <div class="admin-app-textbox-v125">
-            <b>Academic Background</b>
-            <p><b>High School:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Name","")) or "-")}</p>
-            <p><b>Passout Year:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Passout_Year","")) or "-")}</p>
-            <p><b>High School Location:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Location","")) or "-")}</p>
-            <p><b>Middle School:</b> {_safe_html_v62(display_clean_v50(row.get("Middle_School_Name","")) or "-")}</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(academic_html, unsafe_allow_html=True)
     with c2:
-        st.markdown(f"""
-        <div class="admin-app-textbox-v125">
-            <b>Financial Information</b>
-            <p><b>Bank Certificate Owner:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Certificate_Owner","")) or "-")}</p>
-            <p><b>Amount USD:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Amount_USD","")) or "-")}</p>
-            <p><b>Status:</b> {_safe_html_v62(status)}</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(financial_html, unsafe_allow_html=True)
 
     st.markdown("#### Self Introduction")
     st.write(display_clean_v50(row.get("Self_Introduction", "")) or "-")
@@ -11869,8 +12196,12 @@ def admin_application_detail_page_v125(app_id):
     st.markdown("### Uploaded Documents")
     docs = parse_document_paths_v125(row)
     if not docs:
-        st.info("No uploaded documents found for this application.")
+        st.info("No uploaded documents found for this application. This usually means the application was saved before document upload, or the document JSON was not saved.")
+        raw_doc_v126 = display_clean_v50(row.get("Document_Paths_JSON", ""))
+        if raw_doc_v126:
+            st.caption("Saved document data was found but could not be read. Please check the Document_Paths_JSON column.")
     else:
+        st.caption(f"{len(docs)} uploaded document(s) found. Click each button to download.")
         doc_cols = st.columns(3)
         for idx, (doc_key, rel_path) in enumerate(docs.items()):
             with doc_cols[idx % 3]:
