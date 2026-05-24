@@ -533,6 +533,7 @@ if "agency_name" not in st.session_state: st.session_state.agency_name = None
 if "full_name" not in st.session_state: st.session_state.full_name = None
 if "agency_id" not in st.session_state: st.session_state.agency_id = None
 if "account_type" not in st.session_state: st.session_state.account_type = None
+if "auth_token" not in st.session_state: st.session_state.auth_token = ""
 restore_pending_from_query_v76()
 
 
@@ -545,6 +546,10 @@ def _set_login_session_from_user_v60(user):
     st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
     st.session_state.full_name = user.get("full_name", "")
     st.session_state.account_type = user.get("account_type", user.get("role", ""))
+    try:
+        st.session_state.auth_token = _make_auth_token_v60(user)
+    except Exception:
+        st.session_state.auth_token = ""
 
 def _make_auth_token_v60(user):
     data = f'{user.get("username","")}|{user.get("password_hash","")}|{user.get("status","")}|{user.get("role","")}'
@@ -565,7 +570,12 @@ def _verify_auth_token_v60(token):
         return None
     return None
 
+
 def restore_login_from_query_v60():
+    """
+    v104: Restore login from auth query parameter or saved session token.
+    This prevents users/admin from being logged out when clicking HTML navigation links.
+    """
     if st.session_state.get("logged_in"):
         return
     try:
@@ -574,12 +584,19 @@ def restore_login_from_query_v60():
         token = ""
     if isinstance(token, list):
         token = token[0] if token else ""
+    if not token:
+        token = st.session_state.get("auth_token", "") or ""
     if token:
         user = _verify_auth_token_v60(token)
         if user:
             _set_login_session_from_user_v60(user)
+            try:
+                st.query_params["auth"] = _make_auth_token_v60(user)
+            except Exception:
+                pass
             if st.session_state.page in ["Home", "Login", "Partner Sign Up"]:
                 st.session_state.page = "Admin Dashboard" if user["role"] == "admin" else "Dashboard"
+
 
 restore_login_from_query_v60()
 
@@ -629,7 +646,10 @@ def handle_top_nav_query_v70():
         "signup": "Partner Sign Up",
     }
     if nav in nav_map:
-        st.session_state.page = nav_map[nav]
+        requested_page = nav_map[nav]
+        if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
+            requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
+        st.session_state.page = requested_page
         try:
             del st.query_params["nav"]
         except Exception:
@@ -637,6 +657,19 @@ def handle_top_nav_query_v70():
 
 handle_top_nav_query_v70()
 
+
+
+def auth_query_suffix_v104(prefix="&"):
+    """Append auth token to HTML links when logged in."""
+    try:
+        token = st.session_state.get("auth_token", "") or st.query_params.get("auth", "")
+    except Exception:
+        token = st.session_state.get("auth_token", "")
+    if isinstance(token, list):
+        token = token[0] if token else ""
+    if st.session_state.get("logged_in") and token:
+        return f"{prefix}auth={token}"
+    return ""
 
 
 # v96: Dashboard navigation uses HTML links so the active page can be styled blue.
@@ -652,7 +685,7 @@ def handle_dash_nav_query_v96():
         return
 
     if dashnav == "Logout":
-        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type"]:
+        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token"]:
             st.session_state[k] = False if k == "logged_in" else None
         try:
             st.query_params.clear()
@@ -675,6 +708,7 @@ def handle_dash_nav_query_v96():
     ]
     if dashnav in allowed_pages:
         st.session_state.page = dashnav
+        # keep auth query param, remove only dashnav
         try:
             del st.query_params["dashnav"]
         except Exception:
@@ -4409,6 +4443,28 @@ h3.uni-name-accent-v93 span {
     }
 }
 
+
+/* v104 admin university tabs note + persistent-login nav helpers */
+.admin-university-tabs-note-v104 {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:16px !important;
+    background:#EEF5FF !important;
+    border:1px solid #BBD3FF !important;
+    border-radius:14px !important;
+    padding:16px 18px !important;
+    margin:18px 0 12px 0 !important;
+}
+.admin-university-tabs-note-v104 b {
+    color:#002B5B !important;
+    font-weight:950 !important;
+}
+.admin-university-tabs-note-v104 span {
+    color:#344054 !important;
+    font-weight:700 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4433,7 +4489,8 @@ def header():
         return " active" if current == target else ""
 
     def nav_href(nav_key):
-        return f"?nav={nav_key}{pending_suffix}"
+        auth_suffix = auth_query_suffix_v104("&")
+        return f"?nav={nav_key}{pending_suffix}{auth_suffix}"
 
     nav_html = f"""
     <div class="top-nav-reference-v70">
@@ -5464,7 +5521,7 @@ def login():
                         st.session_state.pop(k, None)
                     _set_login_session_from_user_v60(user)
                     try:
-                        st.query_params["auth"] = _make_auth_token_v60(user)
+                        st.query_params["auth"] = st.session_state.get("auth_token", "") or _make_auth_token_v60(user)
                     except Exception:
                         pass
                     set_page("Admin Dashboard" if user["role"] == "admin" else "Dashboard")
@@ -5495,7 +5552,8 @@ def dash_shell(items):
         return icon_map.get(item, "•")
 
     def _dash_href_v96(item):
-        return "?dashnav=" + str(item).replace(" ", "%20").replace("&", "%26")
+        auth_suffix = auth_query_suffix_v104("&")
+        return "?dashnav=" + str(item).replace(" ", "%20").replace("&", "%26") + auth_suffix
 
     st.markdown('<div class="dash">', unsafe_allow_html=True)
     st.markdown('<div class="side navy"><h2>Partner Portal</h2></div>', unsafe_allow_html=True)
@@ -7922,6 +7980,13 @@ def admin_university_management_v49():
     ]
     df = ensure_columns_v49(df, required_cols)
 
+    st.markdown("""
+    <div class="admin-university-tabs-note-v104">
+        <b>University Editing Options</b>
+        <span>Use the two tabs below: <b>Add New University</b> or <b>Edit Existing Universities</b>.</span>
+    </div>
+    """, unsafe_allow_html=True)
+
     tab_add, tab_edit = st.tabs(["Add New University", "Edit Existing Universities"])
 
     with tab_add:
@@ -7933,6 +7998,12 @@ def admin_university_management_v49():
                 location = st.text_input("Location")
                 region = st.text_input("Region")
                 homepage = st.text_input("Homepage")
+                language_school_homepage = st.text_input("Language School Homepage (optional)")
+                promotional_materials = st.text_input("Promotional Materials Link (optional)")
+                facebook_link = st.text_input("Facebook Link (optional)")
+                instagram_link = st.text_input("Instagram Link (optional)")
+                youtube_link = st.text_input("YouTube Link (optional)")
+                sns_information = st.text_area("SNS Information / Notes (optional)", height=70)
                 phone = st.text_input("Representative Phone")
                 fax = st.text_input("Representative Fax")
                 school_size = st.text_input("School Size")
@@ -7970,6 +8041,13 @@ def admin_university_management_v49():
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
                 st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned.")
 
+            # v104 safe optional university link defaults
+            language_school_homepage = locals().get("language_school_homepage", "")
+            promotional_materials = locals().get("promotional_materials", "")
+            facebook_link = locals().get("facebook_link", "")
+            instagram_link = locals().get("instagram_link", "")
+            youtube_link = locals().get("youtube_link", "")
+            sns_information = locals().get("sns_information", "")
             submitted = st.form_submit_button("Add University", use_container_width=True)
             if submitted:
                 if not university.strip():

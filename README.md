@@ -678,3 +678,11 @@ v103:
 - Admin can enter these fields in Add/Edit University; all are optional.
 - If admin enters a link, it appears in University View Details as a clickable card with icon and external-link marker.
 - Blank optional links are not shown on the public details page.
+
+
+v104:
+- Fixed admin/user login persistence across navigation links.
+- Dashboard and top navigation links now keep the auth token, so users stay logged in until they click Logout.
+- If a logged-in user/admin clicks Home/Login/Sign Up, they are redirected back to their dashboard instead of appearing logged out.
+- Fixed Admin > Universities Add New University optional link fields that were referenced but not visible.
+- Added a clear note above Add/Edit University tabs so admins can easily find Add New University and Edit Existing Universities.
