@@ -766,3 +766,10 @@ v114:
 - Added Super Admin Application Samples page.
 - Super admin can upload sample images by nationality + program category + document type.
 - Applicant Step 2 automatically shows sample images based on applicant nationality and application type.
+
+
+v115:
+- Changed Application Sample Management flow.
+- Super admin now first chooses Undergraduate, Graduate, or Language (EAP/KLP).
+- After choosing a category, a new page opens where admin selects nationality and uploads samples for each document type.
+- Admin can save all uploaded sample images at once.

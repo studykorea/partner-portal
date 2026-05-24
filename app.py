@@ -4953,6 +4953,39 @@ div[data-testid="stFormSubmitButton"] button:hover {
     margin-top:6px !important;
 }
 
+
+/* v115 application sample management by program */
+.sample-program-grid-v115 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:18px !important;
+    margin-top:22px !important;
+}
+.sample-program-card-v115 {
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:20px !important;
+    padding:24px !important;
+    min-height:140px !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.05) !important;
+}
+.sample-program-card-v115 h3 {
+    color:#002B5B !important;
+    font-weight:950 !important;
+    font-size:23px !important;
+    margin:0 0 10px 0 !important;
+}
+.sample-program-card-v115 p {
+    color:#667085 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+@media(max-width:900px){
+    .sample-program-grid-v115 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10117,66 +10150,137 @@ def admin_scholarship_management_v49():
 
 
 
+
 def admin_application_samples_v114():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("Application Document Sample Management")
-    st.caption("Super admin can upload sample images for each nationality, program category, and required document. Applicants will see the correct sample automatically based on their nationality and application type.")
+    st.caption("First choose the application program type. Then choose nationality and upload all sample images for that program/country.")
+
+    if "sample_program_page_v115" not in st.session_state:
+        st.session_state.sample_program_page_v115 = ""
+
+    if not st.session_state.sample_program_page_v115:
+        st.markdown("""
+        <div class="admin-university-tabs-note-v104 sample-intro-v115">
+            <b>Choose Application Type</b>
+            <span>Select one category below. Each category has its own nationality-based sample document settings.</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button("Undergraduate", key="sample_choose_undergraduate_v115", use_container_width=True):
+                st.session_state.sample_program_page_v115 = "Undergraduate"
+                st.rerun()
+        with c2:
+            if st.button("Graduate", key="sample_choose_graduate_v115", use_container_width=True):
+                st.session_state.sample_program_page_v115 = "Graduate"
+                st.rerun()
+        with c3:
+            if st.button("Language (EAP/KLP)", key="sample_choose_language_v115", use_container_width=True):
+                st.session_state.sample_program_page_v115 = "Language"
+                st.rerun()
+
+        st.markdown("""
+        <div class="sample-program-grid-v115">
+            <div class="sample-program-card-v115"><h3>Undergraduate</h3><p>Sample documents for undergraduate new/transfer applicants.</p></div>
+            <div class="sample-program-card-v115"><h3>Graduate</h3><p>Sample documents for master’s and Ph.D. applicants.</p></div>
+            <div class="sample-program-card-v115"><h3>Language (EAP/KLP)</h3><p>Sample documents for language program applicants.</p></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        close_shell()
+        return
+
+    selected_program = st.session_state.sample_program_page_v115
+    display_program = "Language (EAP/KLP)" if selected_program == "Language" else selected_program
+
+    b1, b2 = st.columns([1, 6])
+    with b1:
+        if st.button("← Back", key="sample_back_v115", use_container_width=True):
+            st.session_state.sample_program_page_v115 = ""
+            st.rerun()
+    with b2:
+        st.markdown(f"### {display_program} Sample Images")
 
     df = read_application_samples_v114()
 
-    st.markdown("""
+    st.markdown(f"""
     <div class="admin-university-tabs-note-v104">
-        <b>How this works</b>
-        <span>Select nationality + program category + document type, upload a sample image, then save. Example: Nepal + Undergraduate + Bank Certificate.</span>
+        <b>{_safe_html_v62(display_program)} Sample Setup</b>
+        <span>Choose nationality once, then upload sample images for each required document below. These samples will appear automatically for applicants from that nationality.</span>
     </div>
     """, unsafe_allow_html=True)
 
-    with st.form("application_sample_upload_v114"):
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            nationality = st.selectbox("Nationality", nationality_options_v112(), key="sample_nationality_v114")
-        with c2:
-            program_category = st.selectbox("Program Category", APPLICATION_PROGRAM_OPTIONS_V114, key="sample_program_v114")
-        with c3:
-            doc_label = st.selectbox("Document Type", [x[0] for x in APPLICATION_DOC_TYPES_V114], key="sample_doc_type_v114")
+    nationality = st.selectbox("Choose Nationality", nationality_options_v112(), key=f"sample_nationality_bulk_v115_{selected_program}")
 
-        selected_doc = next((x for x in APPLICATION_DOC_TYPES_V114 if x[0] == doc_label), APPLICATION_DOC_TYPES_V114[0])
-        uploaded_sample = st.file_uploader("Upload Sample Image", type=["png", "jpg", "jpeg", "webp"], key="sample_image_upload_v114")
-        st.caption("Upload a clear sample image. This sample will appear beside the applicant document upload field.")
+    st.markdown("#### Upload sample images for this nationality")
+    st.caption("You do not need to upload all samples at once. Upload only the samples you want to update, then click Save All Sample Images.")
 
-        save_sample = st.form_submit_button("Save Sample Image", use_container_width=True)
-        if save_sample:
+    uploads = {}
+    existing_preview_items = []
+
+    for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+        current_path = get_application_sample_path_v114(nationality, selected_program, doc_key)
+        existing_preview_items.append((label, doc_key, current_path))
+
+        st.markdown(f'<div class="doc-upload-row-title-v114">{_safe_html_v62(label)}</div>', unsafe_allow_html=True)
+        c_upload, c_preview = st.columns([1.15, .85])
+        with c_upload:
+            uploads[doc_key] = st.file_uploader(
+                f"Upload sample image for {label}",
+                type=["png", "jpg", "jpeg", "webp"],
+                key=f"bulk_sample_upload_v115_{safe_slug_v49(selected_program)}_{safe_slug_v49(nationality)}_{safe_slug_v49(doc_key)}"
+            )
+            st.caption("Sample image only. PNG/JPG/WEBP recommended.")
+        with c_preview:
+            st.markdown(sample_preview_html_v114(current_path, label), unsafe_allow_html=True)
+
+    if st.button("Save All Sample Images", key=f"save_bulk_samples_v115_{safe_slug_v49(selected_program)}_{safe_slug_v49(nationality)}", use_container_width=True):
+        saved_count = 0
+        for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+            uploaded_sample = uploads.get(doc_key)
             if uploaded_sample is None:
-                st.error("Please upload a sample image.")
-            else:
-                sample_path = save_application_sample_v114(uploaded_sample, nationality, program_category, selected_doc[1])
-                mask = (
-                    (df["Nationality"].astype(str).str.strip().str.lower() == str(nationality).strip().lower())
-                    & (df["Program_Category"].astype(str).str.strip().str.lower() == str(program_category).strip().lower())
-                    & (df["Document_Key"].astype(str).str.strip().str.lower() == str(selected_doc[1]).strip().lower())
-                )
-                new_row = {
-                    "Nationality": nationality,
-                    "Program_Category": program_category,
-                    "Document_Key": selected_doc[1],
-                    "Document_Label": selected_doc[0],
-                    "Sample_Path": sample_path,
-                    "Updated_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                }
-                if len(df) and mask.any():
-                    for k, v in new_row.items():
-                        df.loc[mask, k] = v
-                else:
-                    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-                write_application_samples_v114(df)
-                st.success("Sample image saved successfully.")
-                st.rerun()
+                continue
 
-    st.markdown("### Current Sample Images")
-    if len(df) == 0:
-        st.info("No sample images have been uploaded yet.")
+            sample_path = save_application_sample_v114(uploaded_sample, nationality, selected_program, doc_key)
+            mask = (
+                (df["Nationality"].astype(str).str.strip().str.lower() == str(nationality).strip().lower())
+                & (df["Program_Category"].astype(str).str.strip().str.lower() == str(selected_program).strip().lower())
+                & (df["Document_Key"].astype(str).str.strip().str.lower() == str(doc_key).strip().lower())
+            )
+            new_row = {
+                "Nationality": nationality,
+                "Program_Category": selected_program,
+                "Document_Key": doc_key,
+                "Document_Label": label,
+                "Sample_Path": sample_path,
+                "Updated_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            if len(df) and mask.any():
+                for k, v in new_row.items():
+                    df.loc[mask, k] = v
+            else:
+                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            saved_count += 1
+
+        if saved_count == 0:
+            st.warning("No new sample image was selected. Please upload at least one sample image.")
+        else:
+            write_application_samples_v114(df)
+            st.success(f"{saved_count} sample image(s) saved for {nationality} · {display_program}.")
+            st.rerun()
+
+    st.markdown("### Current Saved Samples")
+    current = df[
+        (df["Program_Category"].astype(str).str.strip().str.lower() == str(selected_program).strip().lower())
+        & (df["Nationality"].astype(str).str.strip().str.lower() == str(nationality).strip().lower())
+    ].copy() if len(df) else pd.DataFrame()
+
+    if len(current) == 0:
+        st.info(f"No saved samples yet for {nationality} · {display_program}.")
     else:
-        st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
+        st.dataframe(clean_df_v50(current), use_container_width=True, hide_index=True)
 
     close_shell()
 
