@@ -726,3 +726,9 @@ v109:
 - Program details show available majors/programs from Eligibility Rules.
 - Added optional separate date fields for Undergraduate New Student, Undergraduate Transfer, KLP, and EAP timelines.
 - Added a simple application request form that saves to data/student_applications.csv.
+
+
+v110:
+- Fixed issue where clicking View Details & Apply on Undergraduate/Graduate/KLP-EAP cards redirected to Home.
+- Program card links now explicitly route to the Universities page.
+- Added a global query handler that reads uni/programdetail parameters before page routing.

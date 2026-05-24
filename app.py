@@ -538,6 +538,31 @@ if "auth_token" not in st.session_state: st.session_state.auth_token = ""
 restore_pending_from_query_v76()
 
 
+# v110: If a user clicks a university program card link, keep them on Universities page.
+# Without this, the app can route to Home after query-param navigation.
+def handle_program_detail_query_v110():
+    try:
+        uni_q = st.query_params.get("uni", "")
+        prog_q = st.query_params.get("programdetail", "")
+    except Exception:
+        uni_q, prog_q = "", ""
+    if isinstance(uni_q, list):
+        uni_q = uni_q[0] if uni_q else ""
+    if isinstance(prog_q, list):
+        prog_q = prog_q[0] if prog_q else ""
+    if uni_q and prog_q:
+        try:
+            from urllib.parse import unquote_plus
+            st.session_state.selected_uni_v62 = unquote_plus(str(uni_q))
+            st.session_state.selected_program_v109 = unquote_plus(str(prog_q))
+        except Exception:
+            st.session_state.selected_uni_v62 = str(uni_q)
+            st.session_state.selected_program_v109 = str(prog_q)
+        st.session_state.page = "Universities"
+
+handle_program_detail_query_v110()
+
+
 
 def _set_login_session_from_user_v60(user):
     st.session_state.logged_in = True
@@ -648,6 +673,8 @@ def handle_top_nav_query_v70():
     }
     if nav in nav_map:
         requested_page = nav_map[nav]
+        # v110: Program detail links use nav=Universities + uni/programdetail.
+        # Keep the page as Universities and let handle_program_detail_query_v110 select the program.
         if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
             requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
         st.session_state.page = requested_page
@@ -6805,7 +6832,7 @@ def program_detail_href_v109(row, label):
         auth = auth_query_suffix_v104("&")
     except Exception:
         auth = ""
-    return f"?uni={uni}&programdetail={program}{auth}"
+    return f"?nav=Universities&uni={uni}&programdetail={program}{auth}"
 
 def _program_specific_application_badges_v71(row):
     """
@@ -6836,7 +6863,7 @@ def _program_specific_application_badges_v71(row):
             f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
             f'<small>Open: {_safe_html_v62(open_txt)}</small>'
             f'<small>Close: {_safe_html_v62(close_txt)}</small>'
-            f'<em>View details & apply →</em>'
+            f'<em>View Details & Apply →</em>'
             f'</a>'
         )
     return html
