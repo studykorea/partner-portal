@@ -6926,13 +6926,30 @@ def program_major_list_html_v109(university, program_slug):
         return '<p class="program-muted-v109">No program or major information has been registered yet.</p>'
 
     ps = str(program_slug or "").lower()
+
+    # v111 fix:
+    # "undergraduate" contains the text "graduate", so the old graduate filter accidentally
+    # included undergraduate rows. Use explicit category detection instead.
     if "Program" in sub.columns:
+        program_text = sub["Program"].astype(str).str.strip().str.lower()
+
+        is_undergraduate = (
+            program_text.str.contains(r"\bundergraduate\b|\bbachelor\b|\bba\b|\bbs\b|\bbba\b", regex=True, na=False)
+            & ~program_text.str.contains(r"\bgraduate\b|\bmaster\b|\bmasters\b|\bph\.?d\b|\bdoctoral\b", regex=True, na=False)
+        )
+        is_graduate = (
+            program_text.str.contains(r"\bgraduate\b|\bmaster\b|\bmasters\b|\bph\.?d\b|\bdoctoral\b|\bms\b|\bma\b|\bmba\b", regex=True, na=False)
+            & ~program_text.str.contains(r"\bundergraduate\b|\bbachelor\b", regex=True, na=False)
+        )
+        is_language = program_text.str.contains(r"\blanguage\b|\bklp\b|\beap\b|\bkorean\b", regex=True, na=False)
+
         if ps == "undergraduate":
-            sub = sub[sub["Program"].astype(str).str.lower().str.contains("undergraduate|bachelor", regex=True, na=False)]
+            sub = sub[is_undergraduate]
         elif ps == "graduate":
-            sub = sub[sub["Program"].astype(str).str.lower().str.contains("graduate|master|ph|ph.d|phd", regex=True, na=False)]
+            sub = sub[is_graduate]
         elif ps == "language":
-            sub = sub[sub["Program"].astype(str).str.lower().str.contains("language|klp|eap|korean", regex=True, na=False)]
+            sub = sub[is_language]
+
     if len(sub) == 0:
         return '<p class="program-muted-v109">No specific major list is available for this category yet.</p>'
 

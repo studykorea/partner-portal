@@ -732,3 +732,10 @@ v110:
 - Fixed issue where clicking View Details & Apply on Undergraduate/Graduate/KLP-EAP cards redirected to Home.
 - Program card links now explicitly route to the Universities page.
 - Added a global query handler that reads uni/programdetail parameters before page routing.
+
+
+v111:
+- Fixed Graduate Program Details page showing Undergraduate majors.
+- Cause: the previous filter searched for the word 'graduate', which is inside 'undergraduate'.
+- Graduate page now excludes Undergraduate/Bachelor rows.
+- Undergraduate page now excludes Graduate/Master/Ph.D. rows.
