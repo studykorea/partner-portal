@@ -729,6 +729,7 @@ def handle_dash_nav_query_v96():
         "Eligibility Rules",
         "Tuition Rules",
         "Scholarship Rules",
+        "Applications",
         "Application Samples",
         "Dashboard",
         "Eligibility Check",
@@ -5411,6 +5412,169 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v125 super admin applications management */
+.admin-app-university-grid-v125 {
+    margin-top:18px !important;
+}
+.admin-app-university-card-v125 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:24px !important;
+    padding:22px !important;
+    box-shadow:0 12px 30px rgba(16,24,40,.07) !important;
+    margin-top:18px !important;
+}
+.uni-head-v125 {
+    display:flex !important;
+    gap:18px !important;
+    align-items:center !important;
+}
+.uni-logo-v125 {
+    width:86px !important;
+    height:86px !important;
+    border-radius:18px !important;
+    background:#F8FAFC !important;
+    border:1px solid #E4EAF3 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+}
+.uni-logo-v125 img {
+    max-width:74px !important;
+    max-height:74px !important;
+    object-fit:contain !important;
+}
+.admin-app-university-card-v125 h2 {
+    font-size:26px !important;
+    font-weight:950 !important;
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    margin:0 0 6px 0 !important;
+}
+.admin-app-university-card-v125 p {
+    color:#667085 !important;
+    font-weight:750 !important;
+    margin:0 !important;
+}
+.admin-app-program-hero-v125,
+.admin-app-detail-hero-v125 {
+    display:flex !important;
+    gap:22px !important;
+    align-items:center !important;
+    background:linear-gradient(135deg,#EEF5FF,#FFFFFF) !important;
+    border:1px solid #BFD7FF !important;
+    border-radius:26px !important;
+    padding:26px !important;
+    margin:18px 0 24px 0 !important;
+}
+.admin-app-program-hero-v125 img,
+.admin-app-detail-hero-v125 img {
+    max-width:96px !important;
+    max-height:96px !important;
+    object-fit:contain !important;
+}
+.admin-app-program-hero-v125 span,
+.admin-app-detail-hero-v125 span {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-weight:950 !important;
+    text-transform:uppercase !important;
+    font-size:13px !important;
+    letter-spacing:.04em !important;
+}
+.admin-app-program-hero-v125 h1,
+.admin-app-detail-hero-v125 h1 {
+    font-size:34px !important;
+    font-weight:950 !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    margin:6px 0 !important;
+}
+.admin-app-program-hero-v125 p,
+.admin-app-detail-hero-v125 p {
+    color:#667085 !important;
+    font-weight:750 !important;
+    margin:0 0 10px 0 !important;
+}
+.admin-app-detail-logo-v125 {
+    width:120px !important;
+    height:120px !important;
+    border-radius:22px !important;
+    background:white !important;
+    border:1px solid #E4EAF3 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+}
+.admin-app-row-v125 {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    gap:18px !important;
+    align-items:center !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    padding:18px 20px !important;
+    box-shadow:0 8px 20px rgba(16,24,40,.05) !important;
+    margin-top:14px !important;
+}
+.admin-app-row-v125 h3 {
+    font-size:22px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+    color:#101828 !important;
+}
+.admin-app-row-v125 p {
+    color:#667085 !important;
+    font-size:14px !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.admin-app-info-grid-v125 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:14px !important;
+    margin:16px 0 24px 0 !important;
+}
+.admin-app-info-card-v125,
+.admin-app-textbox-v125 {
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:16px !important;
+    padding:16px !important;
+}
+.admin-app-info-card-v125 b,
+.admin-app-textbox-v125 b {
+    display:block !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    margin-bottom:6px !important;
+}
+.admin-app-info-card-v125 span,
+.admin-app-textbox-v125 p {
+    color:#101828 !important;
+    font-weight:750 !important;
+    margin:4px 0 !important;
+}
+@media(max-width:900px){
+    .admin-app-info-grid-v125 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-program-hero-v125,
+    .admin-app-detail-hero-v125 {
+        flex-direction:column !important;
+        align-items:flex-start !important;
+    }
+    .admin-app-row-v125 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9965,7 +10129,7 @@ def _unique_admin_key_v72(prefix, idx, user):
 
 
 def admin():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
 
     users_list = read_json(USERS)
     users = pd.DataFrame(users_list)
@@ -10196,7 +10360,7 @@ def add_user_record_v58(new_row):
 
 
 def admin_partner_management_v58():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("Partner Management")
     st.caption("Edit, approve/reject, or delete partner users. Admin account cannot be deleted here for safety.")
 
@@ -10317,7 +10481,7 @@ def admin_partner_management_v58():
     close_shell()
 
 def admin_table(title, df):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader(title)
     st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
     st.info("Later, we can add Add/Edit/Delete forms here.")
@@ -10347,7 +10511,7 @@ def editable_table_v48(title, path, key, help_text=""):
     Used by Eligibility Rules, Tuition Rules, and Scholarship Rules.
     Shows university name with logo, selected-university-only records, Add New Rule, search, filters, and clean table format.
     """
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
 
     is_eligibility = "eligibility" in str(title).lower() or "criteria" in str(title).lower()
     is_tuition = "tuition" in str(title).lower()
@@ -10594,7 +10758,7 @@ def editable_table_v48(title, path, key, help_text=""):
 
 
 def admin_universities_edit_v48():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("Universities Management")
     st.caption("Edit school information directly. Uploading a photo will update the selected school's image path automatically.")
 
@@ -10675,7 +10839,7 @@ def admin_tuition_edit_v48():
 
 
 def admin_university_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("University Management")
     st.caption("Add, edit, or update university information. New universities will appear on the Home and Universities pages. To appear in Eligibility, add at least one major in Eligibility Rules after adding the university.")
 
@@ -11053,7 +11217,7 @@ def admin_university_management_v49():
 
 
 def admin_criteria_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("Eligibility Criteria / Program & Major Management")
     st.caption("Select one university first, then edit only that university’s program level, major, GPA, and language criteria.")
 
@@ -11187,7 +11351,7 @@ def admin_criteria_management_v49():
 
 
 def admin_scholarship_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("Scholarship Rule Management")
     st.caption("Add or edit scholarship rules by university and program.")
 
@@ -11306,7 +11470,7 @@ def admin_scholarship_management_v49():
 
 
 def admin_application_samples_v114():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     st.subheader("Application Document Sample Management")
     st.caption("First choose the application program type. Then choose nationality and upload all sample images for that program/country.")
 
@@ -11439,6 +11603,464 @@ def admin_application_samples_v114():
     close_shell()
 
 
+
+# v125 Super Admin Application Management
+def admin_app_program_category_v125(row):
+    val = display_clean_v50(row.get("Program_Category", "")) or display_clean_v50(row.get("Application_Type", ""))
+    label = application_program_label_v114(val, row.get("Application_Type", ""))
+    if label == "Language":
+        return "Language"
+    return label
+
+def admin_apps_visible_df_v125():
+    df = applications_df_v116()
+    if len(df) == 0:
+        return df
+    return dedupe_application_rows_v119(df)
+
+def admin_app_logo_html_v125(uni_name):
+    uni_row = university_row_by_name_v120(uni_name)
+    return university_logo_html_v88(uni_row.get("University_Logo", ""), uni_name or "University")
+
+def application_form_pdf_bytes_v125(row):
+    try:
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import A4
+        import io
+        buffer = io.BytesIO()
+        c = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        y = height - 50
+        c.setFont("Helvetica-Bold", 17)
+        c.drawString(50, y, "Student Application Form")
+        y -= 30
+        c.setFont("Helvetica", 9)
+        c.drawString(50, y, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        y -= 24
+
+        fields = [
+            ("Application ID", "Application_ID"),
+            ("Applicant Name", "Full_Name_As_Passport"),
+            ("First Name", "First_Name"),
+            ("Middle Name", "Middle_Name"),
+            ("Last Name", "Last_Name"),
+            ("Passport Number", "Passport_Number"),
+            ("Nationality", "Nationality"),
+            ("Date of Birth", "Date_of_Birth"),
+            ("Email", "Email"),
+            ("Contact Number", "Applicant_Contact"),
+            ("Parents Full Name", "Parents_Full_Name"),
+            ("Home Country Address", "Home_Country_Address"),
+            ("Guardian Contact", "Guardian_Contact"),
+            ("University", "University"),
+            ("Application Type", "Application_Type"),
+            ("Desired Major", "Desired_Major"),
+            ("High School Name", "High_School_Name"),
+            ("High School Passout Year", "High_School_Passout_Year"),
+            ("High School Enroll Start", "High_School_Enroll_Start"),
+            ("High School Enroll End", "High_School_Enroll_End"),
+            ("High School Location", "High_School_Location"),
+            ("Middle School Name", "Middle_School_Name"),
+            ("Middle School Enrolled Year", "Middle_School_Enrolled_Year"),
+            ("Middle School Location", "Middle_School_Location"),
+            ("Bank Certificate Owner", "Bank_Certificate_Owner"),
+            ("Bank Amount USD", "Bank_Amount_USD"),
+            ("Submitted By", "Submitted_By"),
+            ("Agency", "Agency"),
+            ("Status", "Status"),
+        ]
+        for label, key in fields:
+            if y < 70:
+                c.showPage()
+                y = height - 50
+                c.setFont("Helvetica", 9)
+            val = display_clean_v50(row.get(key, ""))
+            c.setFont("Helvetica-Bold", 9)
+            c.drawString(50, y, f"{label}:")
+            c.setFont("Helvetica", 9)
+            text = str(val)[:95]
+            c.drawString(190, y, text)
+            y -= 16
+
+        for long_label, key in [("Self Introduction", "Self_Introduction"), ("Study Plan", "Study_Plan")]:
+            val = display_clean_v50(row.get(key, ""))
+            if val:
+                if y < 110:
+                    c.showPage()
+                    y = height - 50
+                c.setFont("Helvetica-Bold", 10)
+                c.drawString(50, y, long_label)
+                y -= 16
+                c.setFont("Helvetica", 8)
+                words = str(val).split()
+                line = ""
+                for w in words:
+                    if len(line + " " + w) > 95:
+                        c.drawString(50, y, line)
+                        y -= 12
+                        line = w
+                        if y < 50:
+                            c.showPage()
+                            y = height - 50
+                            c.setFont("Helvetica", 8)
+                    else:
+                        line = (line + " " + w).strip()
+                if line:
+                    c.drawString(50, y, line)
+                    y -= 18
+
+        c.save()
+        return buffer.getvalue()
+    except Exception:
+        lines = ["Student Application Form", ""]
+        for k, v in dict(row).items():
+            lines.append(f"{k}: {display_clean_v50(v)}")
+        return "\n".join(lines).encode("utf-8")
+
+def parse_document_paths_v125(row):
+    raw = display_clean_v50(row.get("Document_Paths_JSON", ""))
+    if not raw:
+        return {}
+    try:
+        data = json.loads(raw)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+def admin_download_document_button_v125(doc_key, rel_path, idx):
+    if not rel_path:
+        return
+    path = BASE / str(rel_path)
+    if not path.exists():
+        st.warning(f"{doc_key}: file not found ({rel_path})")
+        return
+    data = path.read_bytes()
+    name = path.name
+    mime = "application/octet-stream"
+    if path.suffix.lower() == ".pdf":
+        mime = "application/pdf"
+    elif path.suffix.lower() in [".jpg", ".jpeg"]:
+        mime = "image/jpeg"
+    elif path.suffix.lower() == ".png":
+        mime = "image/png"
+    st.download_button(
+        f"Download {doc_key.replace('_',' ').title()}",
+        data=data,
+        file_name=name,
+        mime=mime,
+        key=f"download_doc_v125_{idx}_{safe_slug_v49(doc_key)}",
+        use_container_width=True
+    )
+
+def update_application_status_from_admin_v125(app_id, updates):
+    df = applications_df_v116()
+    if len(df) == 0:
+        return False
+    mask = df["Application_ID"].astype(str).str.strip() == str(app_id).strip()
+    if not mask.any():
+        return False
+    for k, v in updates.items():
+        if k not in df.columns:
+            df[k] = ""
+        df.loc[mask, k] = v
+    df.loc[mask, "Last_Updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    write_applications_df_v116(df)
+    return True
+
+def admin_application_detail_page_v125(app_id):
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    if st.button("← Back to Applications", key="admin_app_detail_back_v125", use_container_width=False):
+        st.session_state.admin_app_selected_id_v125 = ""
+        st.session_state.admin_app_view_v125 = "program"
+        st.rerun()
+
+    df = applications_df_v116()
+    match = df[df["Application_ID"].astype(str).str.strip() == str(app_id).strip()]
+    if len(match) == 0:
+        st.error("Application not found.")
+        close_shell()
+        return
+    row = match.iloc[-1].to_dict()
+    applicant = application_display_name_v116(row)
+    uni = display_clean_v50(row.get("University", ""))
+    major = display_clean_v50(row.get("Desired_Major", "")) or "Not selected"
+    program_cat = admin_app_program_category_v125(row)
+    status = inferred_application_status_v119(row)
+
+    st.markdown(f"""
+    <div class="admin-app-detail-hero-v125">
+        <div class="admin-app-detail-logo-v125">{admin_app_logo_html_v125(uni)}</div>
+        <div>
+            <span>Application Detail</span>
+            <h1>{_safe_html_v62(applicant)}</h1>
+            <p>{_safe_html_v62(uni)} · {_safe_html_v62(program_cat)} · {_safe_html_v62(major)}</p>
+            {application_status_badge_v116(status)}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.download_button(
+        "Download Application Form PDF",
+        data=application_form_pdf_bytes_v125(row),
+        file_name=f"{safe_slug_v49(applicant)}_application_form.pdf",
+        mime="application/pdf",
+        use_container_width=True,
+        key=f"download_app_form_v125_{safe_slug_v49(app_id)}"
+    )
+
+    st.markdown("### Applicant Information")
+    info_fields = [
+        ("Full Name as in Passport", "Full_Name_As_Passport"),
+        ("First Name", "First_Name"),
+        ("Middle Name", "Middle_Name"),
+        ("Last Name", "Last_Name"),
+        ("Passport Number", "Passport_Number"),
+        ("Nationality", "Nationality"),
+        ("Date of Birth", "Date_of_Birth"),
+        ("Email", "Email"),
+        ("Contact Number", "Applicant_Contact"),
+        ("Parents Full Name", "Parents_Full_Name"),
+        ("Guardian Contact", "Guardian_Contact"),
+        ("Home Country Address", "Home_Country_Address"),
+        ("University", "University"),
+        ("Application Type", "Application_Type"),
+        ("Desired Major", "Desired_Major"),
+        ("Submitted By", "Submitted_By"),
+        ("Agency", "Agency"),
+        ("Submitted At", "Submitted_At"),
+    ]
+    cards = ""
+    for label, key in info_fields:
+        cards += f"""
+        <div class="admin-app-info-card-v125">
+            <b>{_safe_html_v62(label)}</b>
+            <span>{_safe_html_v62(display_clean_v50(row.get(key, "")) or "-")}</span>
+        </div>
+        """
+    st.markdown(f'<div class="admin-app-info-grid-v125">{cards}</div>', unsafe_allow_html=True)
+
+    st.markdown("### Academic / Financial / Statement Information")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f"""
+        <div class="admin-app-textbox-v125">
+            <b>Academic Background</b>
+            <p><b>High School:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Name","")) or "-")}</p>
+            <p><b>Passout Year:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Passout_Year","")) or "-")}</p>
+            <p><b>High School Location:</b> {_safe_html_v62(display_clean_v50(row.get("High_School_Location","")) or "-")}</p>
+            <p><b>Middle School:</b> {_safe_html_v62(display_clean_v50(row.get("Middle_School_Name","")) or "-")}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"""
+        <div class="admin-app-textbox-v125">
+            <b>Financial Information</b>
+            <p><b>Bank Certificate Owner:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Certificate_Owner","")) or "-")}</p>
+            <p><b>Amount USD:</b> {_safe_html_v62(display_clean_v50(row.get("Bank_Amount_USD","")) or "-")}</p>
+            <p><b>Status:</b> {_safe_html_v62(status)}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("#### Self Introduction")
+    st.write(display_clean_v50(row.get("Self_Introduction", "")) or "-")
+    st.markdown("#### Study Plan")
+    st.write(display_clean_v50(row.get("Study_Plan", "")) or "-")
+
+    st.markdown("### Uploaded Documents")
+    docs = parse_document_paths_v125(row)
+    if not docs:
+        st.info("No uploaded documents found for this application.")
+    else:
+        doc_cols = st.columns(3)
+        for idx, (doc_key, rel_path) in enumerate(docs.items()):
+            with doc_cols[idx % 3]:
+                admin_download_document_button_v125(doc_key, rel_path, idx)
+
+    st.markdown("### Update Application Status")
+    st.caption("Only super admin / university admin should update these fields. Changes are saved to the same application record and will automatically appear in the staff or partner dashboard.")
+
+    with st.form(f"admin_update_status_v125_{safe_slug_v49(app_id)}"):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            university_received = st.text_input("University Received Your Application", value=display_clean_v50(row.get("University_Received", "")), placeholder="YYYY-MM-DD HH:MM or note")
+            application_number = st.text_input("Application Number Issued", value=display_clean_v50(row.get("Application_Number", "")))
+            interview_date = st.text_input("Interview Date / Time", value=display_clean_v50(row.get("Interview_Date", "")), placeholder="YYYY-MM-DD HH:MM")
+        with c2:
+            interview_done = st.text_input("Interview Done", value=display_clean_v50(row.get("Interview_Done", "")), placeholder="YYYY-MM-DD HH:MM or Done")
+            interview_result = st.selectbox(
+                "Interview Result",
+                ["", "Passed", "Failed"],
+                index=["", "Passed", "Failed"].index(display_clean_v50(row.get("Interview_Result", ""))) if display_clean_v50(row.get("Interview_Result", "")) in ["", "Passed", "Failed"] else 0
+            )
+            offer_invoice = st.text_input("Issued Offer Letter and Invoice", value=display_clean_v50(row.get("Offer_Invoice_Issued", "")))
+        with c3:
+            coa_issued = st.text_input("COA Issue", value=display_clean_v50(row.get("COA_Issued", "")))
+            visa_mode = st.selectbox(
+                "Visa Application Type",
+                ["", "Embassy", "Korean Immigration E-visa", "Visa Issuance Number"],
+                index=["", "Embassy", "Korean Immigration E-visa", "Visa Issuance Number"].index(display_clean_v50(row.get("Visa_Mode", ""))) if display_clean_v50(row.get("Visa_Mode", "")) in ["", "Embassy", "Korean Immigration E-visa", "Visa Issuance Number"] else 0
+            )
+            visa_number = st.text_input("Visa Application Number Issued", value=display_clean_v50(row.get("Visa_Application_Number", "")))
+            visa_result = st.selectbox(
+                "Visa Result",
+                ["", "Issued", "Rejected"],
+                index=["", "Issued", "Rejected"].index(display_clean_v50(row.get("Visa_Result", ""))) if display_clean_v50(row.get("Visa_Result", "")) in ["", "Issued", "Rejected"] else 0
+            )
+
+        save_status = st.form_submit_button("Save Applicant Status", use_container_width=True)
+        if save_status:
+            updates = {
+                "University_Received": university_received,
+                "Application_Number": application_number,
+                "Interview_Date": interview_date,
+                "Interview_Done": interview_done,
+                "Interview_Result": interview_result,
+                "Offer_Invoice_Issued": offer_invoice,
+                "COA_Issued": coa_issued,
+                "Visa_Mode": visa_mode,
+                "Visa_Application_Number": visa_number,
+                "Visa_Result": visa_result,
+            }
+            # Keep current main status simple for partner dashboard.
+            if visa_result:
+                updates["Status"] = f"Visa {visa_result}"
+            elif interview_result:
+                updates["Status"] = f"Interview {interview_result}"
+            elif application_number:
+                updates["Status"] = "Application Number Issued"
+            elif university_received:
+                updates["Status"] = "University Received"
+            else:
+                updates["Status"] = inferred_application_status_v119(row)
+
+            if update_application_status_from_admin_v125(app_id, updates):
+                st.success("Applicant status updated successfully. Partner/staff dashboard will show the updated status automatically.")
+                st.rerun()
+            else:
+                st.error("Could not update application status.")
+
+    close_shell()
+
+def admin_applications_page_v125():
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    st.subheader("Applications Management")
+    st.caption("Review submitted student applications by university and program. Open an applicant to download the application form and uploaded files, and update application status.")
+
+    if "admin_app_view_v125" not in st.session_state:
+        st.session_state.admin_app_view_v125 = "home"
+    if "admin_app_selected_uni_v125" not in st.session_state:
+        st.session_state.admin_app_selected_uni_v125 = ""
+    if "admin_app_selected_program_v125" not in st.session_state:
+        st.session_state.admin_app_selected_program_v125 = ""
+    if "admin_app_selected_id_v125" not in st.session_state:
+        st.session_state.admin_app_selected_id_v125 = ""
+
+    if st.session_state.admin_app_selected_id_v125:
+        admin_application_detail_page_v125(st.session_state.admin_app_selected_id_v125)
+        return
+
+    df = admin_apps_visible_df_v125()
+    if len(df) == 0:
+        st.info("No applications have been submitted yet.")
+        close_shell()
+        return
+
+    if st.session_state.admin_app_view_v125 == "program" and st.session_state.admin_app_selected_uni_v125:
+        uni = st.session_state.admin_app_selected_uni_v125
+        program = st.session_state.admin_app_selected_program_v125
+        if st.button("← Back to Universities", key="admin_apps_back_unis_v125", use_container_width=False):
+            st.session_state.admin_app_view_v125 = "home"
+            st.session_state.admin_app_selected_uni_v125 = ""
+            st.session_state.admin_app_selected_program_v125 = ""
+            st.rerun()
+
+        sub = df[df["University"].astype(str).str.strip().str.lower() == uni.strip().lower()].copy()
+        if program:
+            sub["_cat"] = sub.apply(admin_app_program_category_v125, axis=1)
+            sub = sub[sub["_cat"].astype(str).str.strip().str.lower() == program.strip().lower()]
+
+        st.markdown(f"""
+        <div class="admin-app-program-hero-v125">
+            <div>{admin_app_logo_html_v125(uni)}</div>
+            <div>
+                <span>{_safe_html_v62(program)} Applications</span>
+                <h1>{_safe_html_v62(uni)}</h1>
+                <p>{len(sub)} applicant(s)</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if len(sub) == 0:
+            st.info("No applications found in this category.")
+        else:
+            for idx, (_, row) in enumerate(sub.iterrows()):
+                app_id = display_clean_v50(row.get("Application_ID", ""))
+                applicant = application_display_name_v116(row)
+                major = display_clean_v50(row.get("Desired_Major", "")) or "Not selected"
+                status = inferred_application_status_v119(row)
+                st.markdown(f"""
+                <div class="admin-app-row-v125">
+                    <div>
+                        <h3>{_safe_html_v62(applicant)}</h3>
+                        <p><b>Major:</b> {_safe_html_v62(major)} · <b>Passport:</b> {_safe_html_v62(display_clean_v50(row.get("Passport_Number","")) or "-")} · <b>Agency:</b> {_safe_html_v62(display_clean_v50(row.get("Agency","")) or "-")}</p>
+                    </div>
+                    <div>{application_status_badge_v116(status)}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                if st.button("Open Applicant Details", key=f"open_app_detail_v125_{idx}_{safe_slug_v49(app_id)}", use_container_width=True):
+                    st.session_state.admin_app_selected_id_v125 = app_id
+                    st.rerun()
+        close_shell()
+        return
+
+    # Home: university cards with counts
+    df["_cat"] = df.apply(admin_app_program_category_v125, axis=1)
+    university_names = sorted([x for x in df["University"].dropna().astype(str).unique().tolist() if x.strip()])
+
+    st.markdown('<div class="admin-app-university-grid-v125">', unsafe_allow_html=True)
+    for idx, uni in enumerate(university_names):
+        sub = df[df["University"].astype(str).str.strip().str.lower() == uni.strip().lower()]
+        ug = len(sub[sub["_cat"] == "Undergraduate"])
+        grad = len(sub[sub["_cat"] == "Graduate"])
+        lang = len(sub[sub["_cat"] == "Language"])
+
+        st.markdown(f"""
+        <div class="admin-app-university-card-v125">
+            <div class="uni-head-v125">
+                <div class="uni-logo-v125">{admin_app_logo_html_v125(uni)}</div>
+                <div>
+                    <h2>{_safe_html_v62(uni)}</h2>
+                    <p>Total applications: {len(sub)}</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button(f"Undergraduate · {ug}", key=f"admin_app_ug_{idx}", use_container_width=True):
+                st.session_state.admin_app_view_v125 = "program"
+                st.session_state.admin_app_selected_uni_v125 = uni
+                st.session_state.admin_app_selected_program_v125 = "Undergraduate"
+                st.rerun()
+        with c2:
+            if st.button(f"Graduate · {grad}", key=f"admin_app_grad_{idx}", use_container_width=True):
+                st.session_state.admin_app_view_v125 = "program"
+                st.session_state.admin_app_selected_uni_v125 = uni
+                st.session_state.admin_app_selected_program_v125 = "Graduate"
+                st.rerun()
+        with c3:
+            if st.button(f"Language · {lang}", key=f"admin_app_lang_{idx}", use_container_width=True):
+                st.session_state.admin_app_view_v125 = "program"
+                st.session_state.admin_app_selected_uni_v125 = uni
+                st.session_state.admin_app_selected_program_v125 = "Language"
+                st.rerun()
+        st.divider()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    close_shell()
+
+
 # Routing
 if not st.session_state.logged_in:
     if st.session_state.page == "Partner Sign Up": signup()
@@ -11473,6 +12095,8 @@ else:
             admin_tuition_edit_v48()
         elif st.session_state.page == "Scholarship Rules":
             admin_scholarship_edit_v48()
+        elif st.session_state.page == "Applications":
+            admin_applications_page_v125()
         elif st.session_state.page == "Application Samples":
             admin_application_samples_v114()
         else:

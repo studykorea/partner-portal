@@ -844,3 +844,14 @@ v124:
 - Visa result still appears automatically:
   - If issued: Congratulations on your visa! Your visa has been issued.
   - If rejected: Sorry, your visa has been rejected.
+
+
+v125:
+- Added separate Applications tab in the super admin dashboard.
+- Applications page groups submitted applications by university with university logo and counts for Undergraduate, Graduate, and Language.
+- Clicking a program count opens all applications for that university/program category.
+- Clicking an applicant opens a detailed application form/CV-style page.
+- Super admin can download the generated application form PDF.
+- Super admin can download all uploaded applicant files from Document_Paths_JSON.
+- Super admin can update applicant status fields: university received, application number, interview date/done/result, offer/invoice, COA, visa type, visa application number, and visa result.
+- Status updates are saved in student_applications.csv and automatically appear in the submitting staff/partner dashboard.
