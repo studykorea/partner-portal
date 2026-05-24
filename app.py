@@ -5617,6 +5617,138 @@ div[data-testid="stFormSubmitButton"] button:hover {
     word-break:break-word !important;
 }
 
+
+/* v130 super admin official/partner agency drill-down */
+.network-shortcut-grid-v130 {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:18px !important;
+    margin:26px 0 12px 0 !important;
+}
+.network-shortcut-card-v130,
+.network-page-head-v130,
+.network-agency-card-v130,
+.network-detail-hero-v130,
+.network-staff-card-v130,
+.network-app-row-v130 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    box-shadow:0 10px 28px rgba(16,24,40,.06) !important;
+}
+.network-shortcut-card-v130 {
+    padding:24px !important;
+}
+.network-shortcut-card-v130 h2,
+.network-page-head-v130 h2,
+.network-detail-hero-v130 h2 {
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.network-shortcut-card-v130 p,
+.network-page-head-v130 p,
+.network-detail-hero-v130 p,
+.network-agency-card-v130 p,
+.network-staff-card-v130 p,
+.network-app-row-v130 p {
+    color:#667085 !important;
+    font-weight:700 !important;
+    margin:4px 0 !important;
+}
+.network-page-head-v130 {
+    padding:24px !important;
+    margin:20px 0 !important;
+    background:linear-gradient(135deg,#EEF5FF,#FFFFFF) !important;
+}
+.network-agency-card-v130 {
+    display:flex !important;
+    align-items:center !important;
+    gap:18px !important;
+    padding:20px !important;
+    margin:16px 0 10px 0 !important;
+}
+.agency-logo-v130 {
+    border-radius:18px !important;
+    background:#F8FAFC !important;
+    border:1px solid #E4EAF3 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    flex:0 0 auto !important;
+}
+.agency-logo-v130 img {
+    max-width:88% !important;
+    max-height:88% !important;
+    object-fit:contain !important;
+}
+.logo-fallback-v130 {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+}
+.network-agency-card-v130 h3,
+.network-staff-card-v130 h3,
+.network-app-row-v130 h4 {
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.official-star-v130 {
+    display:inline-flex !important;
+    padding:6px 10px !important;
+    border-radius:999px !important;
+    background:#FEF3C7 !important;
+    color:#92400E !important;
+    -webkit-text-fill-color:#92400E !important;
+    font-size:12px !important;
+    font-weight:950 !important;
+    margin-left:8px !important;
+}
+.network-detail-hero-v130 {
+    display:flex !important;
+    align-items:center !important;
+    gap:22px !important;
+    padding:26px !important;
+    margin:22px 0 !important;
+    background:linear-gradient(135deg,#EEF5FF,#FFFFFF) !important;
+}
+.network-detail-hero-v130 span {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-weight:950 !important;
+    text-transform:uppercase !important;
+    font-size:13px !important;
+}
+.network-staff-card-v130,
+.network-app-row-v130 {
+    padding:18px 20px !important;
+    margin:14px 0 !important;
+}
+.network-app-row-v130 {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    gap:16px !important;
+    align-items:center !important;
+}
+@media(max-width:900px){
+    .network-shortcut-grid-v130 {
+        grid-template-columns:1fr !important;
+    }
+    .network-agency-card-v130,
+    .network-detail-hero-v130 {
+        flex-direction:column !important;
+        align-items:flex-start !important;
+    }
+    .network-app-row-v130 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10222,6 +10354,331 @@ def _unique_admin_key_v72(prefix, idx, user):
     return re.sub(r"[^A-Za-z0-9_]+", "_", raw)[:180]
 
 
+
+# v130 Super Admin partner/agency drill-down helpers
+def agency_display_name_v130(item):
+    return display_clean_v50(
+        item.get("agency_name", "")
+        or item.get("company_name", "")
+        or item.get("partner_group", "")
+        or item.get("full_name", "")
+        or item.get("username", "")
+    )
+
+def agency_id_from_item_v130(item):
+    return normalize_agency_id(
+        item.get("agency_id", "")
+        or item.get("agency_name", "")
+        or item.get("company_name", "")
+        or item.get("partner_group", "")
+    )
+
+def agency_logo_path_v130(agency_name_or_id):
+    target = normalize_agency_id(agency_name_or_id)
+    try:
+        for a in read_agencies():
+            if normalize_agency_id(a.get("agency_id", a.get("agency_name", ""))) == target or normalize_agency_id(a.get("agency_name", "")) == target:
+                for key in ["agency_logo", "logo", "Logo", "company_logo"]:
+                    if display_clean_v50(a.get(key, "")):
+                        return display_clean_v50(a.get(key, ""))
+    except Exception:
+        pass
+    try:
+        for u in read_json(USERS):
+            if normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == target or normalize_agency_id(u.get("agency_name", "")) == target or normalize_agency_id(u.get("company_name", "")) == target:
+                for key in ["agency_logo", "logo", "Logo", "company_logo"]:
+                    if display_clean_v50(u.get(key, "")):
+                        return display_clean_v50(u.get(key, ""))
+    except Exception:
+        pass
+    return ""
+
+def agency_logo_html_v130(agency_name_or_id, size=72):
+    logo = agency_logo_path_v130(agency_name_or_id)
+    encoded = b64(logo)
+    if encoded:
+        return f'<div class="agency-logo-v130" style="width:{size}px;height:{size}px"><img src="data:image/png;base64,{encoded}"></div>'
+    initials = "".join([x[:1].upper() for x in str(agency_name_or_id or "A").split()[:2]]) or "A"
+    return f'<div class="agency-logo-v130 logo-fallback-v130" style="width:{size}px;height:{size}px">{_safe_html_v62(initials)}</div>'
+
+def is_official_rep_user_v130(u):
+    role = str(u.get("role", "")).strip()
+    account_type = str(u.get("account_type", "")).lower()
+    return role == "agency_rep" or "official representative" in account_type
+
+def is_partner_agency_user_v130(u):
+    role = str(u.get("role", "")).strip()
+    account_type = str(u.get("account_type", "")).lower()
+    return role in ["agency_partner", "partner"] or "partner agency" in account_type
+
+def is_staff_user_v130(u):
+    role = str(u.get("role", "")).strip()
+    account_type = str(u.get("account_type", "")).lower()
+    return role == "agency_staff" or "staff" in account_type
+
+def approved_users_v130():
+    return [u for u in read_json(USERS) if str(u.get("status", "")).strip().lower() == "approved"]
+
+def official_representatives_v130():
+    reps = []
+    users = approved_users_v130()
+    seen = set()
+    # from approved users
+    for u in users:
+        if is_official_rep_user_v130(u):
+            aid = agency_id_from_item_v130(u)
+            if aid and aid not in seen:
+                seen.add(aid)
+                reps.append({
+                    "agency_id": aid,
+                    "agency_name": agency_display_name_v130(u),
+                    "email": display_clean_v50(u.get("email", "")),
+                    "phone": display_clean_v50(u.get("phone", "") or u.get("contact_number", "")),
+                    "country": display_clean_v50(u.get("country", "")),
+                    "created_at": display_clean_v50(u.get("created_at", "")),
+                    "source": "user",
+                })
+    # from agencies defaults/active list, excluding UniQuest
+    for a in read_agencies():
+        aid = normalize_agency_id(a.get("agency_id", a.get("agency_name", "")))
+        name = display_clean_v50(a.get("agency_name", ""))
+        if not name or aid == "uniquest":
+            continue
+        # defaults/active agencies are official reps unless they have partner-only approved_by_agency field
+        if aid not in seen and str(a.get("status", "")).lower() in ["active", "approved"]:
+            seen.add(aid)
+            reps.append({
+                "agency_id": aid,
+                "agency_name": name,
+                "email": display_clean_v50(a.get("email", "")),
+                "phone": display_clean_v50(a.get("phone", "")),
+                "country": display_clean_v50(a.get("country", "")),
+                "created_at": display_clean_v50(a.get("created_at", "")),
+                "source": "agency",
+            })
+    return reps
+
+def partner_agencies_v130():
+    partners = []
+    users = approved_users_v130()
+    seen = set()
+    for u in users:
+        if is_partner_agency_user_v130(u):
+            aid = agency_id_from_item_v130(u)
+            if aid and aid not in seen:
+                seen.add(aid)
+                partners.append({
+                    "agency_id": aid,
+                    "agency_name": agency_display_name_v130(u),
+                    "email": display_clean_v50(u.get("email", "")),
+                    "phone": display_clean_v50(u.get("phone", "") or u.get("contact_number", "")),
+                    "country": display_clean_v50(u.get("country", "")),
+                    "created_at": display_clean_v50(u.get("created_at", "")),
+                    "recommended_by": display_clean_v50(u.get("approved_by_agency", "") or u.get("official_representative", "") or u.get("sponsor_agency_id", "") or u.get("partner_group", "")),
+                })
+    # add partner agencies from agencies.json if approved_by agency exists
+    for a in read_agencies():
+        aid = normalize_agency_id(a.get("agency_id", a.get("agency_name", "")))
+        if aid in seen or aid == "uniquest":
+            continue
+        rec = display_clean_v50(a.get("approved_by_agency", "") or a.get("official_representative", "") or a.get("recommended_by", ""))
+        if rec:
+            partners.append({
+                "agency_id": aid,
+                "agency_name": display_clean_v50(a.get("agency_name", "")),
+                "email": display_clean_v50(a.get("email", "")),
+                "phone": display_clean_v50(a.get("phone", "")),
+                "country": display_clean_v50(a.get("country", "")),
+                "created_at": display_clean_v50(a.get("created_at", "")),
+                "recommended_by": rec,
+            })
+    return partners
+
+def users_under_agency_v130(agency_id, include_partners=False):
+    aid = normalize_agency_id(agency_id)
+    out = []
+    for u in approved_users_v130():
+        user_aid = normalize_agency_id(u.get("agency_id", u.get("agency_name", "")))
+        user_agency_name = normalize_agency_id(u.get("agency_name", ""))
+        user_company = normalize_agency_id(u.get("company_name", ""))
+        sponsor = normalize_agency_id(u.get("sponsor_agency_id", "") or u.get("official_representative", "") or u.get("approved_by_agency", "") or u.get("partner_group", ""))
+        if user_aid == aid or user_agency_name == aid or user_company == aid or (include_partners and sponsor == aid):
+            out.append(u)
+    return out
+
+def staff_under_agency_v130(agency_id):
+    return [u for u in users_under_agency_v130(agency_id, include_partners=False) if is_staff_user_v130(u)]
+
+def applications_for_agency_v130(agency_id):
+    df = applications_df_v116()
+    if df is None or len(df) == 0:
+        return pd.DataFrame()
+    aid = normalize_agency_id(agency_id)
+    users = users_under_agency_v130(agency_id, include_partners=True)
+    usernames = [str(u.get("username", "")).strip().lower() for u in users if str(u.get("username", "")).strip()]
+    agency_names = [agency_display_name_v130(u).strip().lower() for u in users if agency_display_name_v130(u).strip()]
+    agency_names += [str(agency_id).strip().lower()]
+    mask = pd.Series([False] * len(df))
+    if "Submitted_By" in df.columns and usernames:
+        mask = mask | df["Submitted_By"].astype(str).str.strip().str.lower().isin(usernames)
+    if "Agency" in df.columns:
+        mask = mask | df["Agency"].astype(str).str.strip().str.lower().isin(agency_names)
+        mask = mask | df["Agency"].astype(str).apply(lambda x: normalize_agency_id(x) == aid)
+    return df[mask].copy()
+
+def applications_for_user_v130(username):
+    df = applications_df_v116()
+    if df is None or len(df) == 0:
+        return pd.DataFrame()
+    return df[df.get("Submitted_By", "").astype(str).str.strip().str.lower() == str(username).strip().lower()].copy()
+
+def admin_open_application_detail_v130(app_id):
+    st.session_state.page = "Applications"
+    st.session_state.admin_app_view_v125 = "program"
+    st.session_state.admin_app_selected_id_v125 = str(app_id)
+    st.rerun()
+
+def render_application_list_for_admin_network_v130(df, key_prefix):
+    if df is None or len(df) == 0:
+        st.info("No applications submitted yet.")
+        return
+    df = dedupe_application_rows_v119(df)
+    for idx, (_, app_row) in enumerate(df.iterrows()):
+        app_id = display_clean_v50(app_row.get("Application_ID", ""))
+        applicant = application_display_name_v116(app_row.to_dict())
+        uni = display_clean_v50(app_row.get("University", ""))
+        major = display_clean_v50(app_row.get("Desired_Major", "")) or "Not selected"
+        status = inferred_application_status_v119(app_row.to_dict())
+        st.markdown(
+            '<div class="network-app-row-v130">'
+            f'<div><h4>{_safe_html_v62(applicant)}</h4>'
+            f'<p><b>University:</b> {_safe_html_v62(uni)} · <b>Major:</b> {_safe_html_v62(major)} · <b>Submitted by:</b> {_safe_html_v62(display_clean_v50(app_row.get("Submitted_By","")) or "-")}</p></div>'
+            f'<div>{application_status_badge_v116(status)}</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+        if st.button("Open Application Details", key=f"{key_prefix}_open_app_{idx}_{safe_slug_v49(app_id)}", use_container_width=True):
+            admin_open_application_detail_v130(app_id)
+
+def render_admin_network_page_v130():
+    view = st.session_state.get("admin_network_view_v130", "")
+    selected_id = st.session_state.get("admin_network_selected_id_v130", "")
+    selected_type = st.session_state.get("admin_network_selected_type_v130", "")
+
+    if st.button("← Back to Admin Dashboard", key="admin_network_back_home_v130", use_container_width=False):
+        st.session_state.admin_network_view_v130 = ""
+        st.session_state.admin_network_selected_id_v130 = ""
+        st.session_state.admin_network_selected_type_v130 = ""
+        st.rerun()
+
+    if view == "official_list":
+        reps = official_representatives_v130()
+        st.markdown('<div class="network-page-head-v130"><h2>Official Representative / Partners</h2><p>Click any official representative to see staff, applications, and submitted applicant records.</p></div>', unsafe_allow_html=True)
+        if not reps:
+            st.info("No official representative agencies found.")
+            return
+        for idx, rep in enumerate(reps):
+            apps = applications_for_agency_v130(rep["agency_id"])
+            staff_count = len(staff_under_agency_v130(rep["agency_id"]))
+            st.markdown(
+                '<div class="network-agency-card-v130">'
+                f'{agency_logo_html_v130(rep["agency_id"], 82)}'
+                f'<div><h3>{_safe_html_v62(rep["agency_name"])} <span class="official-star-v130">⭐ Official Representative</span></h3>'
+                f'<p><b>Email:</b> {_safe_html_v62(rep.get("email","") or "-")} · <b>Phone:</b> {_safe_html_v62(rep.get("phone","") or "-")} · <b>Country:</b> {_safe_html_v62(rep.get("country","") or "-")}</p>'
+                f'<p><b>Registered staff:</b> {staff_count} · <b>Applications submitted:</b> {len(apps)}</p></div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            if st.button("View Official Partner Details", key=f"view_rep_v130_{idx}_{rep['agency_id']}", use_container_width=True):
+                st.session_state.admin_network_view_v130 = "agency_detail"
+                st.session_state.admin_network_selected_id_v130 = rep["agency_id"]
+                st.session_state.admin_network_selected_type_v130 = "official"
+                st.rerun()
+        return
+
+    if view == "partner_list":
+        partners = partner_agencies_v130()
+        st.markdown('<div class="network-page-head-v130"><h2>Other Partner Agencies</h2><p>Approved sub-partner companies and the official representative who recommended them.</p></div>', unsafe_allow_html=True)
+        if not partners:
+            st.info("No approved other partner agencies found.")
+            return
+        for idx, partner in enumerate(partners):
+            apps = applications_for_agency_v130(partner["agency_id"])
+            staff_count = len(staff_under_agency_v130(partner["agency_id"]))
+            rec = partner.get("recommended_by", "") or "Not provided"
+            st.markdown(
+                '<div class="network-agency-card-v130">'
+                f'{agency_logo_html_v130(partner["agency_id"], 82)}'
+                f'<div><h3>{_safe_html_v62(partner["agency_name"])}</h3>'
+                f'<p><b>Recommended by:</b> {_safe_html_v62(rec)} · <b>Registered:</b> {_safe_html_v62(partner.get("created_at","") or "-")}</p>'
+                f'<p><b>Email:</b> {_safe_html_v62(partner.get("email","") or "-")} · <b>Phone:</b> {_safe_html_v62(partner.get("phone","") or "-")} · <b>Staff:</b> {staff_count} · <b>Applications:</b> {len(apps)}</p></div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            if st.button("View Partner Agency Details", key=f"view_partner_v130_{idx}_{partner['agency_id']}", use_container_width=True):
+                st.session_state.admin_network_view_v130 = "agency_detail"
+                st.session_state.admin_network_selected_id_v130 = partner["agency_id"]
+                st.session_state.admin_network_selected_type_v130 = "partner"
+                st.rerun()
+        return
+
+    if view == "agency_detail" and selected_id:
+        agency_name = selected_id
+        all_agencies = official_representatives_v130() + partner_agencies_v130()
+        found = next((a for a in all_agencies if normalize_agency_id(a.get("agency_id","")) == normalize_agency_id(selected_id)), {})
+        display_name = found.get("agency_name", selected_id)
+        staff = staff_under_agency_v130(selected_id)
+        apps = applications_for_agency_v130(selected_id)
+        st.markdown(
+            '<div class="network-detail-hero-v130">'
+            f'{agency_logo_html_v130(selected_id, 108)}'
+            f'<div><span>{_safe_html_v62("Official Representative" if selected_type=="official" else "Partner Agency")}</span>'
+            f'<h2>{_safe_html_v62(display_name)}</h2>'
+            f'<p><b>Registered staff:</b> {len(staff)} · <b>Submitted applications:</b> {len(apps)}</p></div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("View Staff List", key="network_staff_list_v130", use_container_width=True):
+                st.session_state.admin_network_view_v130 = "staff_list"
+                st.rerun()
+        with c2:
+            if st.button("View Submitted Applications", key="network_app_list_v130", use_container_width=True):
+                st.session_state.admin_network_view_v130 = "app_list"
+                st.rerun()
+
+        st.markdown("### Recent Applications")
+        render_application_list_for_admin_network_v130(apps.head(5) if hasattr(apps, "head") else apps, f"detail_recent_{safe_slug_v49(selected_id)}")
+        return
+
+    if view == "staff_list" and selected_id:
+        staff = staff_under_agency_v130(selected_id)
+        st.markdown('<div class="network-page-head-v130"><h2>Registered Staff List</h2><p>Staff registered under this organization.</p></div>', unsafe_allow_html=True)
+        if not staff:
+            st.info("No registered staff found.")
+        for idx, u in enumerate(staff):
+            username = display_clean_v50(u.get("username", ""))
+            apps = applications_for_user_v130(username)
+            st.markdown(
+                '<div class="network-staff-card-v130">'
+                f'<div><h3>{_safe_html_v62(display_clean_v50(u.get("full_name","")) or username)}</h3>'
+                f'<p><b>Position:</b> {_safe_html_v62(display_clean_v50(u.get("position","")) or "-")} · <b>Email:</b> {_safe_html_v62(display_clean_v50(u.get("email","")) or "-")} · <b>Contact:</b> {_safe_html_v62(display_clean_v50(u.get("phone","") or u.get("contact_number","")) or "-")}</p>'
+                f'<p><b>Applications submitted:</b> {len(apps)}</p></div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            if len(apps):
+                with st.expander(f"Applications submitted by {display_clean_v50(u.get('full_name','')) or username}"):
+                    render_application_list_for_admin_network_v130(apps, f"staff_{idx}_{safe_slug_v49(username)}")
+        return
+
+    if view == "app_list" and selected_id:
+        apps = applications_for_agency_v130(selected_id)
+        st.markdown('<div class="network-page-head-v130"><h2>Submitted Applications</h2><p>Click any application to download files or update applicant status.</p></div>', unsafe_allow_html=True)
+        render_application_list_for_admin_network_v130(apps, f"agencyapps_{safe_slug_v49(selected_id)}")
+        return
+
 def admin():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
 
@@ -10229,7 +10686,7 @@ def admin():
     users = pd.DataFrame(users_list)
 
     if len(users):
-        partners = users[users["role"].isin(["agency_rep", "agency_staff", "partner"])].copy()
+        partners = users[users["role"].isin(["agency_rep", "agency_staff", "agency_partner", "partner"])].copy()
     else:
         partners = pd.DataFrame()
 
@@ -10245,6 +10702,7 @@ def admin():
     approved = len(approved_partners)
     rejected = len(rejected_partners)
     agency_reps = len(partners[partners["role"]=="agency_rep"]) if len(partners) and "role" in partners.columns else 0
+    other_partner_agencies = len(partners[partners["role"].isin(["agency_partner", "partner"])]) if len(partners) and "role" in partners.columns else 0
     agency_staff = len(partners[partners["role"]=="agency_staff"]) if len(partners) and "role" in partners.columns else 0
     total_checks = len(e)
     total_unis = len(unis_df)
@@ -10263,22 +10721,22 @@ def admin():
     st.markdown(f"""
     <div class="admin-stats-grid-v73">
         <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">👥</div>
-            <b>Total Partner Users</b>
-            <h2>{len(partners)}</h2>
-            <p>Registered agency users</p>
+            <div class="stat-icon-v73">⭐</div>
+            <b>Official Representative / Partners</b>
+            <h2>{len(official_representatives_v130())}</h2>
+            <p>Official partner organizations</p>
+        </div>
+        <div class="admin-stat-card-v73">
+            <div class="stat-icon-v73">🤝</div>
+            <b>Other Partner Agencies</b>
+            <h2>{len(partner_agencies_v130())}</h2>
+            <p>Approved sub-partner agencies</p>
         </div>
         <div class="admin-stat-card-v73 warning-v73">
             <div class="stat-icon-v73">⏳</div>
             <b>Pending Approval</b>
             <h2>{pending}</h2>
             <p>Waiting for admin action</p>
-        </div>
-        <div class="admin-stat-card-v73 success-v73">
-            <div class="stat-icon-v73">✅</div>
-            <b>Approved</b>
-            <h2>{approved}</h2>
-            <p>Active partner users</p>
         </div>
         <div class="admin-stat-card-v73">
             <div class="stat-icon-v73">🏛️</div>
@@ -10294,6 +10752,38 @@ def admin():
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # v130: if super admin is inside a partner/agency drill-down page, render it here.
+    if st.session_state.get("admin_network_view_v130", ""):
+        render_admin_network_page_v130()
+        close_shell()
+        return
+
+    st.markdown("""
+    <div class="network-shortcut-grid-v130">
+        <div class="network-shortcut-card-v130">
+            <h2>⭐ Official Representative / Partners</h2>
+            <p>View official partners, staff under each organization, and applications submitted through them.</p>
+        </div>
+        <div class="network-shortcut-card-v130">
+            <h2>🤝 Other Partner Agencies</h2>
+            <p>View approved sub-partner agencies, who recommended them, their staff, and submitted applications.</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    nc1_v130, nc2_v130, nc3_v130 = st.columns([1,1,3])
+    with nc1_v130:
+        if st.button("View Official Partners", key="admin_view_official_partners_v130", use_container_width=True):
+            st.session_state.admin_network_view_v130 = "official_list"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
+            st.rerun()
+    with nc2_v130:
+        if st.button("View Other Partner Agencies", key="admin_view_other_partners_v130", use_container_width=True):
+            st.session_state.admin_network_view_v130 = "partner_list"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
+            st.rerun()
 
     left, right = st.columns([1.55, .85], gap="large")
 
@@ -10387,7 +10877,8 @@ def admin():
             <div class="status-row-v73"><span class="dot green"></span><b>Approved</b><em>{approved}</em></div>
             <div class="status-row-v73"><span class="dot red"></span><b>Rejected</b><em>{rejected}</em></div>
             <hr>
-            <div class="status-row-v73"><span class="dot blue"></span><b>Agency Reps</b><em>{agency_reps}</em></div>
+            <div class="status-row-v73"><span class="dot blue"></span><b>Official Reps</b><em>{agency_reps}</em></div>
+            <div class="status-row-v73"><span class="dot blue"></span><b>Other Partner Agencies</b><em>{other_partner_agencies}</em></div>
             <div class="status-row-v73"><span class="dot blue"></span><b>Agency Staff</b><em>{agency_staff}</em></div>
         </div>
         """, unsafe_allow_html=True)

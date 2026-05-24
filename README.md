@@ -890,3 +890,12 @@ v129:
 - Notification recipients are the registered email of the staff/partner who submitted the application, with fallback to applicant email.
 - Sender defaults to uniqueststudy@gmail.com but can be changed through Streamlit Secrets using SMTP_SENDER_EMAIL or SUPER_ADMIN_EMAIL.
 - For Gmail sending, add SMTP_APP_PASSWORD or GMAIL_APP_PASSWORD in Streamlit Secrets.
+
+
+v130:
+- Super admin dashboard now separates partner overview into Official Representative / Partners and Other Partner Agencies.
+- Added clickable Official Partners page showing official partner list with logo, details, staff count, and submitted application count.
+- Added clickable Other Partner Agencies page showing company name, logo, registered date, and Recommended By official representative.
+- Clicking any agency opens a drill-down page with registered staff and submitted application count/list.
+- Staff list shows name, position, contact, email, and number of applications submitted.
+- Clicking any application from these pages sends super admin directly to the applicant detail page where application form/files can be downloaded and applicant status can be updated.
