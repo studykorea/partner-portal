@@ -6337,7 +6337,7 @@ def google_map_embed_html_v99(u):
         q = quote_plus(query)
         embed_url = f"https://www.google.com/maps?q={q}&output=embed"
         open_url = f"https://www.google.com/maps/search/?api=1&query={q}"
-        return f"""
+        return textwrap.dedent(f"""
         <div class="uni-map-card-v99">
             <div class="uni-map-header-v99">
                 <div>
@@ -6348,7 +6348,7 @@ def google_map_embed_html_v99(u):
             </div>
             <iframe class="uni-map-frame-v99" src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
-        """
+        """).strip()
     except Exception:
         return ""
 
@@ -6403,7 +6403,7 @@ def _render_university_detail_v62(u):
     </div>
 </div>
 """
-    st.markdown(detail_html, unsafe_allow_html=True)
+    st.markdown(textwrap.dedent(detail_html).strip(), unsafe_allow_html=True)
 
 
 def _render_university_summary_v62(u, key_suffix):

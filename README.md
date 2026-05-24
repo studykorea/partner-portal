@@ -653,3 +653,9 @@ v99:
 - Detail page now has a compact hero: campus image, logo, university name, overview, and application cards.
 - Added Google Maps embed based on university name/address/location.
 - Added Open in Google Maps button so users can quickly view the university location.
+
+
+v100:
+- Fixed University View Details page showing raw HTML code in a black block.
+- The issue was caused by indented multiline HTML being interpreted by Markdown as a code block.
+- Detail page HTML is now dedented before rendering.
