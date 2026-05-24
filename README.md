@@ -773,3 +773,13 @@ v115:
 - Super admin now first chooses Undergraduate, Graduate, or Language (EAP/KLP).
 - After choosing a category, a new page opens where admin selects nationality and uploads samples for each document type.
 - Admin can save all uploaded sample images at once.
+
+
+v116:
+- Added Ongoing Applications / Application Status option in staff and partner dashboards.
+- Step 1 now saves a draft record when the applicant moves to document upload.
+- Dashboard shows applicant name, university, major, application type, and status.
+- Draft applications show Continue / Resume / Finish Application.
+- Submitted applications show Check Status.
+- Added application status timeline page with steps from submitted to university receipt, application number, interview, offer/invoice, COA, visa application, and visa result.
+- Visa result shows green congratulations message when issued and red rejected message when rejected.

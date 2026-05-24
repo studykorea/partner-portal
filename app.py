@@ -4986,6 +4986,183 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v116 ongoing applications and status timeline */
+.application-row-v116 {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    gap:18px !important;
+    align-items:center !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    background:#FFFFFF !important;
+    padding:20px 22px !important;
+    box-shadow:0 8px 20px rgba(16,24,40,.05) !important;
+    margin-top:14px !important;
+}
+.application-row-v116 h3 {
+    color:#101828 !important;
+    font-size:22px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.application-row-v116 p {
+    color:#475467 !important;
+    font-size:14px !important;
+    margin:4px 0 !important;
+}
+.application-row-status-v116 {
+    text-align:right !important;
+}
+.app-status-badge-v116 {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:999px !important;
+    padding:8px 14px !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    white-space:nowrap !important;
+}
+.app-status-draft-v116 {
+    background:#FFF7E6 !important;
+    color:#9A5B00 !important;
+    -webkit-text-fill-color:#9A5B00 !important;
+}
+.app-status-submitted-v116 {
+    background:#EAF2FF !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+}
+.app-status-issued-v116 {
+    background:#16A34A !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-rejected-v116 {
+    background:#DC2626 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.app-status-neutral-v116 {
+    background:#F2F4F7 !important;
+    color:#344054 !important;
+    -webkit-text-fill-color:#344054 !important;
+}
+.application-status-hero-v116 {
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    background:linear-gradient(135deg,#EEF5FF,#FFFFFF) !important;
+    padding:28px 30px !important;
+    margin:18px 0 !important;
+}
+.application-status-hero-v116 h1 {
+    color:#101828 !important;
+    font-size:34px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.application-status-hero-v116 p {
+    color:#475467 !important;
+    font-size:16px !important;
+    font-weight:700 !important;
+    margin:0 0 14px 0 !important;
+}
+.timeline-wrap-v116 {
+    position:relative !important;
+    margin:26px 0 36px 0 !important;
+    padding-left:12px !important;
+}
+.timeline-item-v116 {
+    display:grid !important;
+    grid-template-columns:48px minmax(0,1fr) !important;
+    gap:16px !important;
+    margin-bottom:16px !important;
+}
+.timeline-dot-v116 {
+    width:42px !important;
+    height:42px !important;
+    border-radius:999px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-weight:950 !important;
+    background:#E5E7EB !important;
+    color:#344054 !important;
+}
+.timeline-content-v116 {
+    border:1px solid #E6ECF5 !important;
+    border-radius:16px !important;
+    background:#FFFFFF !important;
+    padding:14px 18px !important;
+}
+.timeline-content-v116 b {
+    display:block !important;
+    color:#101828 !important;
+    font-size:16px !important;
+    font-weight:950 !important;
+}
+.timeline-content-v116 span {
+    color:#667085 !important;
+    font-size:14px !important;
+    font-weight:700 !important;
+}
+.timeline-item-v116.completed .timeline-dot-v116,
+.timeline-item-v116.passed .timeline-dot-v116,
+.timeline-item-v116.visa-issued .timeline-dot-v116 {
+    background:#16A34A !important;
+    color:#FFFFFF !important;
+}
+.timeline-item-v116.failed .timeline-dot-v116,
+.timeline-item-v116.visa-rejected .timeline-dot-v116 {
+    background:#DC2626 !important;
+    color:#FFFFFF !important;
+}
+.timeline-item-v116.current .timeline-dot-v116 {
+    background:#005BDB !important;
+    color:#FFFFFF !important;
+}
+.timeline-item-v116.passed .timeline-content-v116 {
+    border-color:#16A34A !important;
+}
+.timeline-item-v116.failed .timeline-content-v116,
+.timeline-item-v116.visa-rejected .timeline-content-v116 {
+    border-color:#DC2626 !important;
+}
+.visa-congrats-v116 {
+    background:linear-gradient(135deg,#16A34A,#22C55E) !important;
+    border-radius:26px !important;
+    color:#FFFFFF !important;
+    text-align:center !important;
+    padding:42px 24px !important;
+    box-shadow:0 18px 36px rgba(34,197,94,.28) !important;
+}
+.visa-congrats-v116 h1,
+.visa-congrats-v116 p {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.visa-rejected-v116 {
+    background:#DC2626 !important;
+    border-radius:22px !important;
+    color:#FFFFFF !important;
+    text-align:center !important;
+    padding:34px 24px !important;
+}
+.visa-rejected-v116 h1,
+.visa-rejected-v116 p {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+@media(max-width:760px){
+    .application-row-v116 {
+        grid-template-columns:1fr !important;
+    }
+    .application-row-status-v116 {
+        text-align:left !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6391,6 +6568,322 @@ def _find_user_activity_row_v85(username, staff_users, partner_users, elig_df, t
     return {}, "User"
 
 
+
+# v116 Ongoing Application / Application Status helpers
+STUDENT_APPLICATIONS_FILE_V116 = DATA / "student_applications.csv"
+
+APPLICATION_STATUS_STEPS_V116 = [
+    "Submitted",
+    "University received your application",
+    "Application number issued",
+    "Interview dates",
+    "Interview done",
+    "Interview result",
+    "Issued offer letter and invoice",
+    "COA issue",
+    "Apply for visa",
+    "Visa application number issued",
+    "Visa result",
+]
+
+def application_columns_v116():
+    return [
+        "Application_ID", "Submitted_At", "Last_Updated", "University", "Program_Category", "Application_Type",
+        "Full_Name_As_Passport", "Applicant_Name", "First_Name", "Middle_Name", "Last_Name", "Passport_Number",
+        "Nationality", "Email", "Applicant_Contact", "Desired_Major", "Agency", "Submitted_By", "Status",
+        "Document_Paths_JSON", "University_Received", "Application_Number", "Interview_Date", "Interview_Done",
+        "Interview_Result", "Offer_Invoice_Issued", "COA_Issued", "Visa_Mode", "Visa_Application_Number", "Visa_Result"
+    ]
+
+def applications_df_v116():
+    df = read_csv(STUDENT_APPLICATIONS_FILE_V116)
+    df = ensure_columns_v49(df, application_columns_v116())
+    return clean_df_v50(df)
+
+def write_applications_df_v116(df):
+    df = ensure_columns_v49(df, application_columns_v116())
+    df.fillna("").replace(["nan", "NaN", "None", "null", "<NA>"], "").to_csv(STUDENT_APPLICATIONS_FILE_V116, index=False, encoding="utf-8-sig")
+
+def make_application_id_v116(passport_number="", university=""):
+    base = f"{passport_number}_{university}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    return safe_slug_v49(base)
+
+def application_owner_filter_v116(df):
+    if df is None or len(df) == 0:
+        return pd.DataFrame()
+    role = st.session_state.get("role", "")
+    username = str(st.session_state.get("username", ""))
+    agency = str(st.session_state.get("agency_name", ""))
+    if role == "admin":
+        return df.copy()
+    if role in ["agency_rep", "agency_partner"]:
+        return df[
+            (df.get("Agency", "").astype(str).str.strip().str.lower() == agency.strip().lower())
+            | (df.get("Submitted_By", "").astype(str).str.strip().str.lower() == username.strip().lower())
+        ].copy()
+    return df[df.get("Submitted_By", "").astype(str).str.strip().str.lower() == username.strip().lower()].copy()
+
+def application_display_name_v116(row):
+    for col in ["Full_Name_As_Passport", "Applicant_Name"]:
+        val = display_clean_v50(row.get(col, ""))
+        if val:
+            return val
+    first = display_clean_v50(row.get("First_Name", ""))
+    last = display_clean_v50(row.get("Last_Name", ""))
+    name = f"{first} {last}".strip()
+    return name or "Unnamed Applicant"
+
+def application_status_badge_v116(status):
+    s = str(status or "").strip()
+    sl = s.lower()
+    if "submitted" in sl and "draft" not in sl:
+        cls = "app-status-submitted-v116"
+    elif "draft" in sl or "pending" in sl or "documents" in sl:
+        cls = "app-status-draft-v116"
+    elif "rejected" in sl or "failed" in sl:
+        cls = "app-status-rejected-v116"
+    elif "issued" in sl or "passed" in sl:
+        cls = "app-status-issued-v116"
+    else:
+        cls = "app-status-neutral-v116"
+    return f'<span class="app-status-badge-v116 {cls}">{_safe_html_v62(s or "Draft")}</span>'
+
+def save_step1_draft_v116(step1, status="Draft - Documents Pending"):
+    df = applications_df_v116()
+    app_id = st.session_state.get("current_application_id_v116", "") or step1.get("Application_ID", "")
+    if not app_id:
+        app_id = make_application_id_v116(step1.get("Passport_Number", ""), step1.get("University", ""))
+        st.session_state.current_application_id_v116 = app_id
+    row = dict(step1)
+    row.update({
+        "Application_ID": app_id,
+        "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Submitted_At": row.get("Submitted_At", ""),
+        "Submitted_By": st.session_state.get("username", ""),
+        "Agency": st.session_state.get("agency_name", ""),
+        "Status": status,
+    })
+    if "Application_ID" in df.columns and len(df[df["Application_ID"].astype(str) == app_id]):
+        mask = df["Application_ID"].astype(str) == app_id
+        for k, v in row.items():
+            if k not in df.columns:
+                df[k] = ""
+            df.loc[mask, k] = v
+    else:
+        df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    write_applications_df_v116(df)
+    return app_id
+
+def update_application_submitted_v116(step1, saved_docs):
+    df = applications_df_v116()
+    app_id = st.session_state.get("current_application_id_v116", "") or step1.get("Application_ID", "")
+    if not app_id:
+        app_id = make_application_id_v116(step1.get("Passport_Number", ""), step1.get("University", ""))
+    row = dict(step1)
+    row.update({
+        "Application_ID": app_id,
+        "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Last_Updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Submitted_By": st.session_state.get("username", ""),
+        "Agency": st.session_state.get("agency_name", ""),
+        "Status": "Submitted",
+        "Document_Paths_JSON": json.dumps(saved_docs, ensure_ascii=False),
+    })
+    if len(df[df["Application_ID"].astype(str) == app_id]):
+        mask = df["Application_ID"].astype(str) == app_id
+        for k, v in row.items():
+            if k not in df.columns:
+                df[k] = ""
+            df.loc[mask, k] = v
+    else:
+        df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    write_applications_df_v116(df)
+    return app_id
+
+def resume_application_v116(row):
+    st.session_state.current_application_id_v116 = display_clean_v50(row.get("Application_ID", ""))
+    st.session_state.selected_uni_v62 = display_clean_v50(row.get("University", ""))
+    program_slug = display_clean_v50(row.get("Program_Category", "undergraduate")) or "undergraduate"
+    if program_slug.lower() in ["undergraduate", "graduate", "language"]:
+        st.session_state.selected_program_v109 = program_slug.lower()
+    else:
+        st.session_state.selected_program_v109 = program_slug
+    st.session_state.application_type_v109 = display_clean_v50(row.get("Application_Type", "")) or "Undergraduate New Student Application"
+    st.session_state.application_step1_data_v114 = row.to_dict()
+    status = display_clean_v50(row.get("Status", ""))
+    st.session_state.application_step_v114 = 2 if "document" in status.lower() or "draft" in status.lower() else 1
+    st.session_state.page = "Universities"
+    st.rerun()
+
+def application_stage_value_v116(row, col):
+    return display_clean_v50(row.get(col, ""))
+
+def render_application_status_timeline_v116(row):
+    program_category = str(row.get("Program_Category", "")).lower()
+    status = str(row.get("Status", "")).lower()
+    interview_result = application_stage_value_v116(row, "Interview_Result").lower()
+    visa_result = application_stage_value_v116(row, "Visa_Result").lower()
+
+    steps = []
+    steps.append(("Submitted", "completed" if "submitted" in status or application_stage_value_v116(row, "Submitted_At") else "current", application_stage_value_v116(row, "Submitted_At")))
+    steps.append(("University received your application", "completed" if application_stage_value_v116(row, "University_Received") else "pending", application_stage_value_v116(row, "University_Received")))
+    steps.append(("Application number issued", "completed" if application_stage_value_v116(row, "Application_Number") else "pending", application_stage_value_v116(row, "Application_Number")))
+    steps.append(("Interview dates", "completed" if application_stage_value_v116(row, "Interview_Date") else "pending", application_stage_value_v116(row, "Interview_Date")))
+    steps.append(("Interview done", "completed" if application_stage_value_v116(row, "Interview_Done") else "pending", application_stage_value_v116(row, "Interview_Done")))
+
+    if "pass" in interview_result:
+        steps.append(("Interview result", "passed", "Passed"))
+    elif "fail" in interview_result:
+        steps.append(("Interview result", "failed", "Failed"))
+    else:
+        steps.append(("Interview result", "pending", "Waiting"))
+
+    steps.append(("Issued offer letter and invoice", "completed" if application_stage_value_v116(row, "Offer_Invoice_Issued") else "pending", application_stage_value_v116(row, "Offer_Invoice_Issued")))
+    steps.append(("COA issue", "completed" if application_stage_value_v116(row, "COA_Issued") else "pending", application_stage_value_v116(row, "COA_Issued")))
+
+    visa_label = "Apply for visa issuance number" if "language" in program_category else "Apply for visa"
+    visa_sub = application_stage_value_v116(row, "Visa_Mode")
+    if not visa_sub and "language" not in program_category:
+        visa_sub = "Embassy or Korean Immigration E-visa"
+    elif not visa_sub:
+        visa_sub = "Visa issuance number"
+    steps.append((visa_label, "completed" if application_stage_value_v116(row, "Visa_Mode") else "pending", visa_sub))
+    steps.append(("Visa application number issued", "completed" if application_stage_value_v116(row, "Visa_Application_Number") else "pending", application_stage_value_v116(row, "Visa_Application_Number")))
+
+    if "issued" in visa_result or "approved" in visa_result:
+        steps.append(("Visa result", "visa-issued", "Issued"))
+    elif "reject" in visa_result or "denied" in visa_result:
+        steps.append(("Visa result", "visa-rejected", "Rejected"))
+    else:
+        steps.append(("Visa result", "pending", "Waiting"))
+
+    items = ""
+    for i, (label, state, note) in enumerate(steps, start=1):
+        items += f"""
+        <div class="timeline-item-v116 {state}">
+            <div class="timeline-dot-v116">{i}</div>
+            <div class="timeline-content-v116">
+                <b>{_safe_html_v62(label)}</b>
+                <span>{_safe_html_v62(note if note else "Pending")}</span>
+            </div>
+        </div>
+        """
+
+    st.markdown(f"""
+    <div class="application-status-hero-v116">
+        <h1>{_safe_html_v62(application_display_name_v116(row))}</h1>
+        <p>{_safe_html_v62(row.get("University", ""))} · {_safe_html_v62(row.get("Desired_Major", ""))}</p>
+        {application_status_badge_v116(row.get("Status", ""))}
+    </div>
+    <div class="timeline-wrap-v116">{items}</div>
+    """, unsafe_allow_html=True)
+
+    if "issued" in visa_result or "approved" in visa_result:
+        st.markdown("""
+        <div class="visa-congrats-v116">
+            <h1>🎉 Congratulations!</h1>
+            <p>Your visa has been issued.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    elif "reject" in visa_result or "denied" in visa_result:
+        st.markdown("""
+        <div class="visa-rejected-v116">
+            <h1>Visa Rejected</h1>
+            <p>Your visa has been rejected.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+def render_application_status_page_v116():
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    if st.button("← Back to Ongoing Applications", key="back_to_ongoing_apps_v116", use_container_width=False):
+        st.session_state.partner_dashboard_view_v81 = "applications"
+        st.session_state.selected_application_id_v116 = ""
+        st.rerun()
+
+    df = applications_df_v116()
+    visible = application_owner_filter_v116(df)
+    app_id = st.session_state.get("selected_application_id_v116", "")
+    if not app_id or len(visible) == 0:
+        st.warning("Application record not found.")
+        close_shell()
+        return
+    match = visible[visible["Application_ID"].astype(str) == str(app_id)]
+    if len(match) == 0:
+        st.warning("Application record not found or not visible for your account.")
+        close_shell()
+        return
+    render_application_status_timeline_v116(match.iloc[-1].to_dict())
+    close_shell()
+
+def render_ongoing_applications_page_v116():
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    if st.button("← Back to Dashboard", key="back_to_dashboard_apps_v116", use_container_width=False):
+        st.session_state.partner_dashboard_view_v81 = "dashboard"
+        st.rerun()
+
+    st.markdown("""
+    <div class="v85-page-hero">
+        <span>Application Management</span>
+        <h1>Ongoing Applications / Application Status</h1>
+        <p>Continue unfinished applications, check submitted applications, and monitor each applicant's status.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    df = applications_df_v116()
+    visible = application_owner_filter_v116(df)
+    if len(visible) == 0:
+        st.info("No application records found yet. Start an application from a university program page.")
+        close_shell()
+        return
+
+    # Sort recent first
+    if "Last_Updated" in visible.columns:
+        visible = visible.sort_values("Last_Updated", ascending=False)
+    elif "Submitted_At" in visible.columns:
+        visible = visible.sort_values("Submitted_At", ascending=False)
+
+    for i, (_, row) in enumerate(visible.iterrows()):
+        app_id = display_clean_v50(row.get("Application_ID", "")) or f"legacy_{i}"
+        applicant_name = application_display_name_v116(row)
+        university = display_clean_v50(row.get("University", ""))
+        major = display_clean_v50(row.get("Desired_Major", ""))
+        app_type = display_clean_v50(row.get("Application_Type", ""))
+        status = display_clean_v50(row.get("Status", "")) or "Draft"
+
+        st.markdown(f"""
+        <div class="application-row-v116">
+            <div>
+                <h3>{_safe_html_v62(applicant_name)}</h3>
+                <p><b>University:</b> {_safe_html_v62(university)} &nbsp; | &nbsp; <b>Major:</b> {_safe_html_v62(major if major else "Not selected")}</p>
+                <p><b>Application Type:</b> {_safe_html_v62(app_type)}</p>
+            </div>
+            <div class="application-row-status-v116">
+                {application_status_badge_v116(status)}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2, c3 = st.columns([1.2, 1.2, 4])
+        status_l = status.lower()
+        with c1:
+            if "submitted" in status_l:
+                if st.button("Check Status", key=f"check_status_v116_{app_id}", use_container_width=True):
+                    st.session_state.selected_application_id_v116 = app_id
+                    st.session_state.partner_dashboard_view_v81 = "application_status"
+                    st.rerun()
+            else:
+                if st.button("Continue / Resume / Finish Application", key=f"resume_app_v116_{app_id}", use_container_width=True):
+                    resume_application_v116(row)
+        with c2:
+            if "submitted" in status_l:
+                st.caption("Submitted")
+            else:
+                st.caption("Not submitted yet")
+        st.divider()
+
+    close_shell()
+
+
 def partner_dashboard():
     # v86: Avoid rendering dash_shell twice on separate detail pages.
     # In v85, partner_dashboard() rendered dash_shell first, and then the separate
@@ -6398,7 +6891,7 @@ def partner_dashboard():
     current_view_pre_v86 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
     is_separate_page_v86 = (
         st.session_state.get("role") in ["agency_rep", "agency_partner"]
-        and current_view_pre_v86 in ["partners", "staff", "activity", "staff_activity"]
+        and current_view_pre_v86 in ["partners", "staff", "activity", "staff_activity", "applications", "application_status"]
     )
     if not is_separate_page_v86:
         dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
@@ -6423,6 +6916,12 @@ def partner_dashboard():
     # v85: separate detail pages for staff list, partner agency list, and activity.
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         current_view_v85 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
+        if current_view_v85 == "applications":
+            render_ongoing_applications_page_v116()
+            return
+        if current_view_v85 == "application_status":
+            render_application_status_page_v116()
+            return
         if current_view_v85 == "staff":
             _render_staff_list_page_v85(staff_users_v81, e, t)
             return
@@ -6463,6 +6962,15 @@ def partner_dashboard():
             st.warning("Partner agency activity is available only to the portal super admin.")
             st.rerun()
 
+    # v116: Staff also need access to their own ongoing applications/status page.
+    current_view_staff_v116 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
+    if st.session_state.role not in ["agency_rep", "agency_partner"]:
+        if current_view_staff_v116 == "applications":
+            render_ongoing_applications_page_v116()
+            return
+        if current_view_staff_v116 == "application_status":
+            render_application_status_page_v116()
+            return
 
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         portal_label = "Agency Representative Portal"
@@ -6517,7 +7025,7 @@ def partner_dashboard():
         </div>
         """, unsafe_allow_html=True)
 
-        b1, b2, b3, b4 = st.columns([1.1, 1.1, 1.2, 3.2])
+        b1, b2, b3, b4 = st.columns([1.1, 1.1, 1.2, 1.3])
         with b1:
             if st.button("View Partner Agencies", key="v81_view_partner_agencies", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "partners"
@@ -6529,6 +7037,10 @@ def partner_dashboard():
         with b3:
             if st.button("View Staff Activity", key="v81_view_all_activity", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "activity"
+                st.rerun()
+        with b4:
+            if st.button("Ongoing Applications / Status", key="v116_view_applications_rep", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "applications"
                 st.rerun()
     else:
         st.markdown(f"""
@@ -6555,6 +7067,10 @@ def partner_dashboard():
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        if st.button("Ongoing Applications / Application Status", key="v116_view_applications_staff", use_container_width=True):
+            st.session_state.partner_dashboard_view_v81 = "applications"
+            st.rerun()
 
     # Pending approval requests for official representative accounts
     if st.session_state.role in ["agency_rep", "agency_partner"]:
@@ -7340,22 +7856,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
                 for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
                     saved_docs[doc_key] = save_application_upload_v114(uploaded_paths[doc_key], applicant_key, doc_key)
 
-                app_file = DATA / "student_applications.csv"
-                existing = read_csv(app_file)
-
-                row = dict(step1)
-                row.update({
-                    "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "University": u.get("University", ""),
-                    "Program_Category": program_slug,
-                    "Application_Type": application_type,
-                    "Submitted_By": st.session_state.get("username", ""),
-                    "Agency": st.session_state.get("agency_name", ""),
-                    "Status": "Submitted",
-                    "Document_Paths_JSON": json.dumps(saved_docs, ensure_ascii=False),
-                })
-                existing = pd.concat([existing, pd.DataFrame([row])], ignore_index=True)
-                write_csv(app_file, existing)
+                update_application_submitted_v116(step1, saved_docs)
                 st.session_state.application_step_v114 = 3
                 st.success("Application submitted successfully.")
                 st.balloons()
@@ -7511,7 +8012,7 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 if required_missing:
                     st.error("Please complete/fix: " + ", ".join(required_missing))
                 else:
-                    st.session_state.application_step1_data_v114 = {
+                    draft_data_v116 = {
                         "University": u.get("University", ""),
                         "Program_Category": program_slug,
                         "Application_Type": application_type,
@@ -7542,6 +8043,10 @@ def render_application_start_form_v109(u, program_slug, application_type):
                         "Desired_Major": selected_major,
                         "Passport_Issue_Year": passport_issue_year,
                     }
+                    app_id_v116 = save_step1_draft_v116(draft_data_v116, status="Draft - Documents Pending")
+                    draft_data_v116["Application_ID"] = app_id_v116
+                    draft_data_v116["Status"] = "Draft - Documents Pending"
+                    st.session_state.application_step1_data_v114 = draft_data_v116
                     st.session_state.application_step_v114 = 2
                     st.success("Step 1 saved. Please upload applicant documents in Step 2.")
                     st.rerun()
@@ -7563,7 +8068,7 @@ def render_application_start_form_v109(u, program_slug, application_type):
             if not applicant_name.strip() or not email.strip() or not passport.strip():
                 st.error("Applicant name, email, and passport number are required.")
             else:
-                st.session_state.application_step1_data_v114 = {
+                draft_data_v116 = {
                     "Full_Name_As_Passport": applicant_name.strip(),
                     "Passport_Number": passport.strip(),
                     "Nationality": nationality,
@@ -7575,6 +8080,10 @@ def render_application_start_form_v109(u, program_slug, application_type):
                     "Program_Category": program_slug,
                     "Application_Type": application_type,
                 }
+                app_id_v116 = save_step1_draft_v116(draft_data_v116, status="Draft - Documents Pending")
+                draft_data_v116["Application_ID"] = app_id_v116
+                draft_data_v116["Status"] = "Draft - Documents Pending"
+                st.session_state.application_step1_data_v114 = draft_data_v116
                 st.session_state.application_step_v114 = 2
                 st.rerun()
 
@@ -7613,6 +8122,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = False
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
         render_application_start_form_v109(u, program_slug, app_type)
         return
@@ -7631,6 +8141,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
         with c2:
             if st.button("Apply as Transfer Student", key=f"apply_transfer_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
@@ -7638,6 +8149,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
     elif program_slug == "graduate":
         timeline_html = program_timeline_card_v109(u, "graduate", "Graduate Application", "graduate")
@@ -7649,6 +8161,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
     elif program_slug == "language":
         timeline_html = (
@@ -7663,6 +8176,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
         with c2:
             if st.button("Apply for EAP", key=f"apply_eap_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
@@ -7670,6 +8184,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.current_application_id_v116 = ""
                 st.rerun()
 
     st.markdown(f"""
