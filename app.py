@@ -2777,6 +2777,56 @@ button[kind="primary"]:hover {
     min-width: 210px !important;
 }
 
+
+/* v72 admin button color fix: blue boxes with bold white text */
+div[data-testid="stFormSubmitButton"] button,
+div[data-testid="stFormSubmitButton"] button[kind="secondary"],
+div[data-testid="stFormSubmitButton"] button[kind="primary"] {
+    background: #005BDB !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: 1px solid #005BDB !important;
+    border-radius: 10px !important;
+    font-weight: 900 !important;
+    box-shadow: 0 8px 18px rgba(0,91,219,.18) !important;
+}
+div[data-testid="stFormSubmitButton"] button *,
+div[data-testid="stFormSubmitButton"] button p,
+div[data-testid="stFormSubmitButton"] button span {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-weight: 900 !important;
+}
+div[data-testid="stFormSubmitButton"] button:hover {
+    background: #004FC0 !important;
+    border-color: #004FC0 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+
+/* v72 regular admin action buttons: keep readable */
+.admin-action-blue-v72 .stButton > button,
+div[data-testid="stButton"] button[title="Save Changes"],
+div[data-testid="stButton"] button[title="Delete University"] {
+    background: #005BDB !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-weight: 900 !important;
+}
+
+
+/* v72 upload button readability */
+section[data-testid="stFileUploader"] button {
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    font-weight: 800 !important;
+}
+section[data-testid="stFileUploader"] button * {
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4467,6 +4517,18 @@ def contact():
         st.markdown('</div>', unsafe_allow_html=True); footer()
 
 
+
+def _unique_admin_key_v72(prefix, idx, user):
+    """Create a safe unique key for repeated admin buttons."""
+    try:
+        username = str(user.get("username", "")).strip()
+        email = str(user.get("email", "")).strip()
+        agency = str(user.get("agency_name", "")).strip()
+    except Exception:
+        username, email, agency = "", "", ""
+    raw = f"{prefix}_{idx}_{username}_{email}_{agency}"
+    return re.sub(r"[^A-Za-z0-9_]+", "_", raw)[:180]
+
 def admin():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
 
@@ -4513,7 +4575,7 @@ def admin():
 
             c1, c2, c3 = st.columns([1,1,5])
             with c1:
-                if st.button("Approve", key=f"approve_{p.get('username','')}", use_container_width=True):
+                if st.button("Approve", key=_unique_admin_key_v72("approve", p_idx, p), use_container_width=True):
                     all_users = read_json(USERS)
                     for u in all_users:
                         if u.get("username") == p.get("username"):
@@ -4522,7 +4584,7 @@ def admin():
                     st.success(f"{p.get('username')} approved.")
                     st.rerun()
             with c2:
-                if st.button("Reject", key=f"reject_{p.get('username','')}", use_container_width=True):
+                if st.button("Reject", key=_unique_admin_key_v72("reject", p_idx, p), use_container_width=True):
                     all_users = read_json(USERS)
                     for u in all_users:
                         if u.get("username") == p.get("username"):
@@ -4551,7 +4613,7 @@ def admin():
 def update_user_record_v58(old_username, new_row):
     users = read_json(USERS)
     updated = []
-    for u in users:
+    for u_idx, u in enumerate(users):
         if str(u.get("username", "")).strip() == str(old_username).strip():
             # keep password if the editor leaves it blank
             existing_pw_hash = u.get("password_hash", "")

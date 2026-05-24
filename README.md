@@ -441,3 +441,9 @@ v71:
 - Admin Add/Edit University now has program-specific date fields.
 - University cards/details show program-specific application status and open/close dates.
 - If program-specific dates are empty, the general application period is used as fallback.
+
+
+v72:
+- Fixed StreamlitDuplicateElementKey in Admin Dashboard approval/reject buttons by generating unique keys.
+- Admin form submit buttons are now blue with bold white text.
+- Upload button text readability improved.
