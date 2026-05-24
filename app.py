@@ -3844,6 +3844,12 @@ button[kind="secondary"],
     border-radius:0 !important;
 }
 
+
+/* v91 university name color automatically follows uploaded logo accent */
+.uni-summary-text-v88 h3 {
+    transition: color .25s ease-in-out !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4139,6 +4145,69 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
     canvas = ImageEnhance.Sharpness(canvas).enhance(1.12)
     canvas.save(out_path, "PNG", optimize=True)
     return f"assets/university_logos/{slug}_logo.png"
+
+
+def university_logo_accent_color_v91(path, fallback="#002B5B"):
+    """
+    Automatically pick a strong representative color from the uploaded university logo.
+    It avoids white/black/gray background pixels and prefers saturated, visible colors.
+    """
+    try:
+        from PIL import Image
+        p = Path(str(path))
+        if not p.is_absolute():
+            p = BASE / p
+        if not p.exists():
+            return fallback
+
+        img = Image.open(p).convert("RGBA")
+        img.thumbnail((160, 160), Image.Resampling.LANCZOS)
+
+        pixels = []
+        for r, g, b, a in img.getdata():
+            if a < 120:
+                continue
+
+            maxc, minc = max(r, g, b), min(r, g, b)
+            saturation = maxc - minc
+            brightness = (r + g + b) / 3
+
+            # remove background / neutral colors
+            if brightness > 235 or brightness < 35:
+                continue
+            if saturation < 35:
+                continue
+
+            # quantize colors for stable grouping
+            qr = int(round(r / 24) * 24)
+            qg = int(round(g / 24) * 24)
+            qb = int(round(b / 24) * 24)
+
+            score = saturation + (255 - abs(150 - brightness)) * 0.35
+            pixels.append(((qr, qg, qb), score))
+
+        if not pixels:
+            return fallback
+
+        buckets = {}
+        for color, score in pixels:
+            buckets.setdefault(color, [0, 0.0])
+            buckets[color][0] += 1
+            buckets[color][1] += score
+
+        best = max(buckets.items(), key=lambda item: item[1][0] * 1.4 + item[1][1] * 0.08)[0]
+        r, g, b = best
+
+        # If too light, darken for readability on white cards.
+        brightness = (r + g + b) / 3
+        if brightness > 185:
+            factor = 0.72
+            r, g, b = int(r * factor), int(g * factor), int(b * factor)
+
+        return f"#{r:02X}{g:02X}{b:02X}"
+    except Exception:
+        return fallback
+
 
 def university_logo_html_v88(path, name="University"):
     encoded = b64(path)
@@ -5633,6 +5702,7 @@ def _program_specific_application_badges_v71(row):
 
 
 def _render_university_detail_v62(u):
+    detail_accent_color_v91 = university_logo_accent_color_v91(u.get("University_Logo", ""))
     image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
     programs_html = program_list_html_for_university(u.get("University", ""))
     max_sch = float(u.get("_Max_Scholarship", 0) or 0)
@@ -5676,6 +5746,7 @@ def _render_university_detail_v62(u):
 def _render_university_summary_v62(u, key_suffix):
     image_html = university_slideshow_html_v89(u, key_suffix)
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
+    name_accent_color_v91 = university_logo_accent_color_v91(u.get("University_Logo", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
 
     summary_html = f'''<div class="uni-summary-card-v88">
@@ -5686,7 +5757,7 @@ def _render_university_summary_v62(u, key_suffix):
     <div class="uni-summary-left-v88">
         <div class="uni-logo-box-v88">{logo_html}</div>
         <div class="uni-summary-text-v88">
-            <h3>{_safe_html_v62(u.get("University", ""))}</h3>
+            <h3 style="color:{name_accent_color_v91}!important;-webkit-text-fill-color:{name_accent_color_v91}!important;">{_safe_html_v62(u.get("University", ""))}</h3>
             <p>{_safe_html_v62(u.get("Overview", ""))}</p>
         </div>
     </div>

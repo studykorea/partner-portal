@@ -586,3 +586,11 @@ v90:
 - When selecting a different university, all fields and upload widgets now refresh for that selected university only.
 - File uploader keys are now university-specific, so Jeonbuk uploaded files will not remain when editing another university.
 - Saving now correctly stores Image_Gallery for the selected university.
+
+
+v91:
+- University name color now automatically follows the uploaded university logo accent color.
+- The system extracts a strong non-white/non-gray dominant color from the logo.
+- Kyungsung-style yellow/gold logos will produce a gold-toned university name.
+- Jeonbuk-style purple logos will produce a purple-toned university name.
+- Future uploaded university logos will automatically apply their matching accent color.
