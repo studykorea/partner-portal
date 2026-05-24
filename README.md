@@ -686,3 +686,8 @@ v104:
 - If a logged-in user/admin clicks Home/Login/Sign Up, they are redirected back to their dashboard instead of appearing logged out.
 - Fixed Admin > Universities Add New University optional link fields that were referenced but not visible.
 - Added a clear note above Add/Edit University tabs so admins can easily find Add New University and Edit Existing Universities.
+
+
+v105:
+- Updated Useful Links section to show official-style icons for Facebook, Instagram, and YouTube.
+- Kept Homepage, Language School Homepage, and Promotional Materials links intact.

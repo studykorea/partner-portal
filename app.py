@@ -4407,6 +4407,42 @@ h3.uni-name-accent-v93 span {
     font-weight:950 !important;
     flex:0 0 auto !important;
 }
+
+.uni-quick-icon-v103 svg {
+    width:20px !important;
+    height:20px !important;
+    display:block !important;
+}
+.uni-quick-icon-v103.facebook-link-v105 {
+    background:#E7F0FF !important;
+    color:#1877F2 !important;
+    -webkit-text-fill-color:#1877F2 !important;
+}
+.uni-quick-icon-v103.instagram-link-v105 {
+    background:#F4F0FF !important;
+    color:#962FBF !important;
+    -webkit-text-fill-color:#962FBF !important;
+}
+.uni-quick-icon-v103.youtube-link-v105 {
+    background:#FFF0F0 !important;
+    color:#FF0000 !important;
+    -webkit-text-fill-color:#FF0000 !important;
+}
+.uni-quick-icon-v103.home-link-v105,
+.uni-quick-icon-v103.language-link-v105,
+.uni-quick-icon-v103.promo-link-v105 {
+    font-size:16px !important;
+}
+.uni-emoji-icon-v105 {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:1 !important;
+}
+.sns-svg-v105 {
+    overflow:visible !important;
+}
+
 .uni-external-v103 {
     margin-left:auto !important;
     color:#667085 !important;
@@ -6486,26 +6522,60 @@ def normalize_url_v103(url):
     return "https://" + url
 
 def university_quick_links_html_v103(u):
-    """Optional university detail click links. Only shown when admin entered URLs/info."""
+    """Optional university detail click links. Only shown when admin entered URLs/info.
+    v105: use clearer official-style SNS icons for Facebook / Instagram / YouTube.
+    """
     links = []
 
-    def add_link(label, icon, value):
+    def add_link(label, icon_html, value, extra_cls=""):
         href = normalize_url_v103(value)
         if href:
             links.append(
-                f'<a class="uni-quick-link-v103" href="{href}" target="_blank" rel="noopener noreferrer">'
-                f'<span class="uni-quick-icon-v103">{icon}</span>'
+                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}" target="_blank" rel="noopener noreferrer">'
+                f'<span class="uni-quick-icon-v103 {extra_cls}">{icon_html}</span>'
                 f'<span>{_safe_html_v62(label)}</span>'
                 f'<span class="uni-external-v103">↗</span>'
                 f'</a>'
             )
 
-    add_link("Homepage", "🏠", u.get("Homepage", ""))
-    add_link("Language School Homepage", "🌐", u.get("Language_School_Homepage", ""))
-    add_link("Promotional Materials", "📄", u.get("Promotional_Materials", ""))
-    add_link("Facebook", "f", u.get("Facebook_Link", ""))
-    add_link("Instagram", "◎", u.get("Instagram_Link", ""))
-    add_link("YouTube", "▶", u.get("YouTube_Link", ""))
+    home_icon = '<span class="uni-emoji-icon-v105">🏠</span>'
+    globe_icon = '<span class="uni-emoji-icon-v105">🌐</span>'
+    doc_icon = '<span class="uni-emoji-icon-v105">📄</span>'
+
+    facebook_icon = """
+<svg viewBox="0 0 24 24" aria-hidden="true" class="sns-svg-v105 facebook-svg-v105">
+  <path fill="currentColor" d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.6 1.6-1.6h1.7V4.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V11H8v3h2.4v8h3.1z"/>
+</svg>
+"""
+    instagram_icon = """
+<svg viewBox="0 0 24 24" aria-hidden="true" class="sns-svg-v105 instagram-svg-v105">
+  <defs>
+    <linearGradient id="igGradientV105" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FEDA75"/>
+      <stop offset="30%" stop-color="#FA7E1E"/>
+      <stop offset="60%" stop-color="#D62976"/>
+      <stop offset="85%" stop-color="#962FBF"/>
+      <stop offset="100%" stop-color="#4F5BD5"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="18" height="18" rx="5" fill="url(#igGradientV105)"/>
+  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="1.9"/>
+  <circle cx="17.2" cy="6.9" r="1.1" fill="#fff"/>
+</svg>
+"""
+    youtube_icon = """
+<svg viewBox="0 0 24 24" aria-hidden="true" class="sns-svg-v105 youtube-svg-v105">
+  <rect x="2.2" y="5.5" width="19.6" height="13" rx="4.2" fill="#FF0000"/>
+  <path d="M10 9.1l5.2 2.9L10 14.9V9.1z" fill="#fff"/>
+</svg>
+"""
+
+    add_link("Homepage", home_icon, u.get("Homepage", ""), "home-link-v105")
+    add_link("Language School Homepage", globe_icon, u.get("Language_School_Homepage", ""), "language-link-v105")
+    add_link("Promotional Materials", doc_icon, u.get("Promotional_Materials", ""), "promo-link-v105")
+    add_link("Facebook", facebook_icon, u.get("Facebook_Link", ""), "facebook-link-v105")
+    add_link("Instagram", instagram_icon, u.get("Instagram_Link", ""), "instagram-link-v105")
+    add_link("YouTube", youtube_icon, u.get("YouTube_Link", ""), "youtube-link-v105")
 
     sns_text = display_clean_v50(u.get("SNS_Information", "")).strip()
 
