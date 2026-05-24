@@ -223,17 +223,21 @@ def find_agency_by_name(name):
 
 
 def official_agency_options_v77():
-    """Official representative agencies shown in signup."""
+    """
+    Organizations shown in signup.
+    v82: includes official representative agencies and approved sub-partner agencies,
+    so staff of Edukorea or other approved partner agencies can select their own organization.
+    """
     defaults = ["KIEC", "Realize Education"]
     try:
         users = read_json(USERS)
-        reps = []
+        orgs = []
         for u in users:
-            if str(u.get("role", "")) == "agency_rep" and str(u.get("status", "")) == "approved":
-                name = str(u.get("agency_name", "") or u.get("partner_group", "")).strip()
-                if name and name not in reps:
-                    reps.append(name)
-        for x in reps:
+            if str(u.get("status", "")) == "approved" and str(u.get("role", "")) in ["agency_rep", "agency_partner"]:
+                name = str(u.get("agency_name", "") or u.get("company_name", "") or u.get("partner_group", "")).strip()
+                if name and name not in orgs:
+                    orgs.append(name)
+        for x in orgs:
             if x not in defaults:
                 defaults.append(x)
     except Exception:
@@ -330,9 +334,10 @@ def approved_reps_for_agency_v75(agency_id):
     for u in read_json(USERS):
         user_agency_id = normalize_agency_id(u.get("agency_id", u.get("agency_name", "")))
         user_agency_name_id = normalize_agency_id(u.get("agency_name", ""))
+        user_company_id = normalize_agency_id(u.get("company_name", ""))
         if (
-            (user_agency_id == target or user_agency_name_id == target)
-            and str(u.get("role", "")) == "agency_rep"
+            (user_agency_id == target or user_agency_name_id == target or user_company_id == target)
+            and str(u.get("role", "")) in ["agency_rep", "agency_partner"]
             and str(u.get("status", "")) == "approved"
         ):
             reps.append(u)
@@ -3940,7 +3945,7 @@ def signup():
           <h1 style="font-size:44px;line-height:1.12;">Partner Sign Up /<br>Agency Registration</h1>
           <p style="font-size:17px;">Create the correct account type based on your relationship with an official representative agency.</p>
           <hr style="border-color:rgba(255,255,255,.25);">
-          <h3>⭐ Official Representative Agency</h3><p>KIEC, Realize Education, or other approved official representatives can approve their staff and sub-partner agencies.</p>
+          <h3>⭐ Official Representative Agency</h3><p>Approved official representatives and approved partner agencies can approve their own staff accounts.</p>
           <h3>👤 Staff Account</h3><p>For employees working inside an official representative agency.</p>
           <h3>🤝 Partner Agency Account</h3><p>For sub-partner companies recommended by an official representative agency.</p>
         </div>
@@ -3968,7 +3973,7 @@ def signup():
 
         st.markdown('<div class="signup-category-note-v78">', unsafe_allow_html=True)
         if account_category == "Staff of Official Representative Agency":
-            st.markdown("**Staff account**: Your organization, such as KIEC or Realize Education, will confirm your account.")
+            st.markdown("**Staff account**: Your organization will confirm your account.")
         elif account_category == "Partner Agency of Official Representative":
             st.markdown("**Partner agency account**: The official partner you select will review and approve your company account.")
         else:
@@ -4364,12 +4369,12 @@ def partner_dashboard():
     pass_count = len(visible_e[visible_e["result"] == "Eligible"]) if len(visible_e) and "result" in visible_e.columns else 0
     fail_count = len(visible_e[visible_e["result"] == "FAIL"]) if len(visible_e) and "result" in visible_e.columns else 0
 
-    partner_agencies_v81 = _agency_partner_users_v81(users_df, status="approved") if st.session_state.role == "agency_rep" else pd.DataFrame()
-    staff_users_v81 = _agency_staff_users_v81(users_df, status="approved") if st.session_state.role == "agency_rep" else pd.DataFrame()
+    partner_agencies_v81 = _agency_partner_users_v81(users_df, status="approved") if st.session_state.role in ["agency_rep", "agency_partner"] else pd.DataFrame()
+    staff_users_v81 = _agency_staff_users_v81(users_df, status="approved") if st.session_state.role in ["agency_rep", "agency_partner"] else pd.DataFrame()
     co_partner_count_v81 = len(partner_agencies_v81)
     staff_count_v81 = len(staff_users_v81)
 
-    if st.session_state.role == "agency_rep":
+    if st.session_state.role in ["agency_rep", "agency_partner"]:
         portal_label = "Agency Representative Portal"
         intro = "Monitor co-partner agencies, staff activity, eligibility checks, tuition estimates, and student application activity within your agency network."
     else:
@@ -4384,7 +4389,7 @@ def partner_dashboard():
     </div>
     """, unsafe_allow_html=True)
 
-    if st.session_state.role == "agency_rep":
+    if st.session_state.role in ["agency_rep", "agency_partner"]:
         st.markdown(f"""
         <div class="partner-stat-grid partner-stat-grid-v81">
             <div class="partner-stat-card clickable-stat-v81">
@@ -4452,7 +4457,7 @@ def partner_dashboard():
         """, unsafe_allow_html=True)
 
     # Pending approval requests for official representative accounts
-    if st.session_state.role == "agency_rep":
+    if st.session_state.role in ["agency_rep", "agency_partner"]:
         users_all_v75 = pd.DataFrame(read_json(USERS)).fillna("")
         if len(users_all_v75):
             current_key_v76 = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
@@ -4507,7 +4512,7 @@ def partner_dashboard():
                         st.rerun()
 
     # Detailed partner/staff panels for official representatives
-    if st.session_state.role == "agency_rep":
+    if st.session_state.role in ["agency_rep", "agency_partner"]:
         view_v81 = st.session_state.get("partner_dashboard_view_v81", "partners")
 
         if view_v81 == "partners":
@@ -4552,7 +4557,7 @@ def partner_dashboard():
             st.info("No eligibility checks yet.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.session_state.role == "agency_rep":
+        if st.session_state.role in ["agency_rep", "agency_partner"]:
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<div class="partner-panel">', unsafe_allow_html=True)
             st.subheader("Agency Staff & Partner Activity Summary")

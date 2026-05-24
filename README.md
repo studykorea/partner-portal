@@ -520,3 +520,11 @@ v81:
 - Staff list includes staff name, position, phone, email, username, status, eligibility checks, tuition estimates, and applications lodged.
 - Activity log summary combines staff and co-partner agency activity.
 - Applications Lodged count is prepared for future application tracking columns; it remains 0 until application lodging data is recorded.
+
+
+v82:
+- Removed example agency names from Staff account note.
+- Staff organization list now includes approved official representative agencies and approved sub-partner agencies.
+- If Edukorea is approved as a partner agency, Edukorea appears in the staff organization dropdown.
+- Staff who select Edukorea will be routed to Edukorea for approval when an approved Edukorea partner account exists.
+- Approved partner agency accounts can now access the agency-style dashboard and approve their own staff accounts.
