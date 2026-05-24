@@ -7041,15 +7041,15 @@ def editable_table_v48(title, path, key, help_text=""):
             blank = {c: "" for c in subset.columns}
             blank["University"] = selected_uni
             subset = pd.concat([subset, pd.DataFrame([blank])], ignore_index=True)
-            st.session_state[f"{key}_local_rows_v94"] = subset.to_dict("records")
+            st.session_state[f"{key}_local_rows_v95_{safe_slug_v49(selected_uni)}"] = subset.to_dict("records")
             st.rerun()
     with c_search:
         search_query = st.text_input("Search", placeholder=search_placeholder, label_visibility="collapsed", key=f"{key}_search_v94")
     with c_filter:
-        st.button("⚱ Filters", key=f"{key}_filter_btn_v94", use_container_width=True)
+        st.button("Filters", key=f"{key}_filter_btn_v94", use_container_width=True)
 
     # Use added rows from session for this selected university if present.
-    local_rows = st.session_state.get(f"{key}_local_rows_v94")
+    local_rows = st.session_state.get(f"{key}_local_rows_v95_{safe_slug_v49(selected_uni)}")
     if local_rows:
         try:
             local_df = pd.DataFrame(local_rows)
@@ -7082,6 +7082,10 @@ def editable_table_v48(title, path, key, help_text=""):
     if "Actions" not in display_subset.columns:
         display_subset["Actions"] = "✎  ⋮"
 
+    # v95 fix: Streamlit can raise StreamlitAPIException when TextColumn is applied
+    # to numeric/mixed dtype columns. Convert the editable view to strings first.
+    display_subset = display_subset.fillna("").astype(str)
+
     column_config = {}
     if "University" in display_subset.columns:
         column_config["University"] = st.column_config.TextColumn("University", disabled=True)
@@ -7108,7 +7112,7 @@ def editable_table_v48(title, path, key, help_text=""):
         num_rows="dynamic",
         use_container_width=True,
         hide_index=True,
-        key=f"{key}_editor_v94",
+        key=f"{key}_editor_v95_{safe_slug_v49(selected_uni)}",
         column_config=column_config
     )
     st.markdown('</div>', unsafe_allow_html=True)
@@ -7150,7 +7154,7 @@ def editable_table_v48(title, path, key, help_text=""):
             merged = pd.concat([remaining, edited[df.columns]], ignore_index=True)
             safe_write_csv_v48(path, merged)
             reload_data_v49()
-            st.session_state.pop(f"{key}_local_rows_v94", None)
+            st.session_state.pop(f"{key}_local_rows_v95_{safe_slug_v49(selected_uni)}", None)
             st.success(f"{table_title} saved for {selected_uni}.")
             st.rerun()
     with c2:

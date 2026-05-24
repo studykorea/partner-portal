@@ -617,3 +617,10 @@ v94:
 - Added Program & Major Eligibility Rules header and + Add New Rule button.
 - Added search box, filter button, clean table layout, and visual actions column.
 - The editor still saves only the selected university's records.
+
+
+v95:
+- Fixed StreamlitAPIException on Eligibility Rules/Tuition Rules/Scholarship Rules table.
+- The error was caused by applying TextColumn formatting to numeric/mixed columns in Streamlit data_editor.
+- Editable rule tables are now safely converted to text view before rendering.
+- Rule editor keys are now university-specific to prevent stale table state when switching universities.
