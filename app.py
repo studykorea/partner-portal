@@ -3554,6 +3554,100 @@ div[data-testid="stDataEditor"] {
     padding-bottom: 58px !important;
 }
 
+
+/* v85 separate staff/partner pages and activity buttons */
+.v85-page-hero {
+    background: linear-gradient(135deg, #002B5B, #1F3D7A);
+    color:#FFFFFF !important;
+    border-radius:24px;
+    padding:34px 38px;
+    margin:18px 0 24px 0;
+    box-shadow:0 18px 36px rgba(0,43,91,.16);
+}
+.v85-page-hero span {
+    display:inline-flex;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:999px;
+    padding:7px 13px;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:900;
+    margin-bottom:16px;
+}
+.v85-page-hero h1 {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:38px !important;
+    font-weight:950 !important;
+    margin:0 0 10px 0 !important;
+}
+.v85-page-hero p,
+.v85-page-hero b {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:16px !important;
+}
+.v85-list-card {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:18px;
+    padding:22px 26px;
+    margin:14px 0 8px 0;
+    box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+.v85-list-card h3 {
+    color:#002B5B !important;
+    font-size:25px !important;
+    font-weight:950 !important;
+    margin:0 0 10px 0 !important;
+}
+.v85-list-card p {
+    color:#344054 !important;
+    margin:6px 0 !important;
+    font-size:15px !important;
+}
+.v85-list-card b {
+    color:#101828 !important;
+    font-weight:900 !important;
+}
+.v85-mini-stat-grid {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;
+    margin:18px 0 24px 0;
+}
+.v85-mini-stat-grid div {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:18px;
+    padding:22px 24px;
+    box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+.v85-mini-stat-grid b {
+    display:block;
+    color:#005BDB !important;
+    font-size:34px !important;
+    font-weight:950 !important;
+    margin-bottom:5px;
+}
+.v85-mini-stat-grid span {
+    color:#475467 !important;
+    font-weight:800 !important;
+}
+button[kind="secondary"],
+.stButton > button {
+    font-weight:900 !important;
+}
+.stButton > button:has(p) {
+    border-radius:10px !important;
+}
+@media(max-width:900px){
+    .v85-mini-stat-grid {
+        grid-template-columns:1fr;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4460,6 +4554,182 @@ def _user_detail_table_v81(df, elig_df, tuition_df, kind="staff"):
 
 
 
+
+def _back_to_partner_dashboard_v85():
+    if st.button("← Back to Dashboard", key="v85_back_to_partner_dashboard", use_container_width=False):
+        st.session_state.partner_dashboard_view_v81 = "dashboard"
+        st.session_state.selected_activity_user_v85 = ""
+        st.rerun()
+
+
+def _activity_data_for_user_v85(username, elig_df, tuition_df):
+    uname = str(username or "")
+    elig = pd.DataFrame()
+    tuition = pd.DataFrame()
+
+    if elig_df is not None and len(elig_df) and "partner_username" in elig_df.columns:
+        elig = elig_df[elig_df["partner_username"].astype(str) == uname].copy()
+
+    if tuition_df is not None and len(tuition_df) and "partner_username" in tuition_df.columns:
+        tuition = tuition_df[tuition_df["partner_username"].astype(str) == uname].copy()
+
+    return elig, tuition
+
+
+def _render_single_activity_page_v85(user_row, elig_df, tuition_df, title_prefix="Staff"):
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    _back_to_partner_dashboard_v85()
+
+    username = str(user_row.get("Username", "") or user_row.get("username", ""))
+    name = str(user_row.get("Staff Name", "") or user_row.get("Partner Agency", "") or user_row.get("full_name", "") or username)
+    position = str(user_row.get("Position", "") or user_row.get("position", ""))
+    email = str(user_row.get("Email", "") or user_row.get("email", ""))
+    phone = str(user_row.get("Contact Number", "") or user_row.get("phone", ""))
+
+    elig, tuition = _activity_data_for_user_v85(username, elig_df, tuition_df)
+
+    st.markdown(f"""
+    <div class="v85-page-hero">
+        <span>Activity Performance</span>
+        <h1>{_safe_html_v62(name)}</h1>
+        <p><b>Position:</b> {_safe_html_v62(position if position else "Not provided")} &nbsp; | &nbsp;
+        <b>Email:</b> {_safe_html_v62(email if email else "Not provided")} &nbsp; | &nbsp;
+        <b>Contact:</b> {_safe_html_v62(phone if phone else "Not provided")}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    elig_count = len(elig)
+    tuition_count = len(tuition)
+    app_count = int(user_row.get("Applications Lodged", 0) or 0)
+
+    st.markdown(f"""
+    <div class="v85-mini-stat-grid">
+        <div><b>{elig_count}</b><span>Students Counselled / Eligibility Checks</span></div>
+        <div><b>{tuition_count}</b><span>Tuition Estimates</span></div>
+        <div><b>{app_count}</b><span>Applications Lodged</span></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### Eligibility Check Activity Log")
+    if len(elig):
+        show_cols = [c for c in elig.columns if c not in ["password_hash"]]
+        st.dataframe(elig[show_cols].sort_values("timestamp", ascending=False) if "timestamp" in elig.columns else elig[show_cols], use_container_width=True, hide_index=True)
+    else:
+        st.info("No eligibility check activity found for this user yet.")
+
+    st.markdown("### Tuition & Scholarship Activity Log")
+    if len(tuition):
+        show_cols = [c for c in tuition.columns if c not in ["password_hash"]]
+        st.dataframe(tuition[show_cols].sort_values("timestamp", ascending=False) if "timestamp" in tuition.columns else tuition[show_cols], use_container_width=True, hide_index=True)
+    else:
+        st.info("No tuition estimate activity found for this user yet.")
+
+    close_shell()
+
+
+def _render_staff_list_page_v85(staff_users, elig_df, tuition_df):
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    _back_to_partner_dashboard_v85()
+
+    staff_table = _user_detail_table_v81(staff_users, elig_df, tuition_df, kind="staff")
+    st.markdown("""
+    <div class="v85-page-hero">
+        <span>Staff Management</span>
+        <h1>Confirmed Staff List</h1>
+        <p>View staff contact information and open each staff member's activity/performance log.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if len(staff_table) == 0:
+        st.info("No approved staff accounts yet.")
+        close_shell()
+        return
+
+    for idx, row in staff_table.iterrows():
+        st.markdown(f"""
+        <div class="v85-list-card">
+            <div>
+                <h3>{_safe_html_v62(row.get("Staff Name", ""))}</h3>
+                <p><b>Position:</b> {_safe_html_v62(row.get("Position", ""))} &nbsp; | &nbsp;
+                <b>Email:</b> {_safe_html_v62(row.get("Email", ""))} &nbsp; | &nbsp;
+                <b>Contact:</b> {_safe_html_v62(row.get("Contact Number", ""))}</p>
+                <p><b>Username:</b> {_safe_html_v62(row.get("Username", ""))} &nbsp; | &nbsp;
+                <b>Status:</b> {_safe_html_v62(row.get("Status", ""))} &nbsp; | &nbsp;
+                <b>Eligibility Checks:</b> {row.get("Students Counselled / Eligibility Checks", 0)} &nbsp; | &nbsp;
+                <b>Applications Lodged:</b> {row.get("Applications Lodged", 0)}</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2 = st.columns([1, 5])
+        with c1:
+            if st.button("Activity", key=f"v85_staff_activity_{idx}_{row.get('Username','')}", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "staff_activity"
+                st.session_state.selected_activity_user_v85 = row.get("Username", "")
+                st.rerun()
+
+    close_shell()
+
+
+def _render_partner_agency_list_page_v85(partner_users, elig_df, tuition_df):
+    dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    _back_to_partner_dashboard_v85()
+
+    partner_table = _user_detail_table_v81(partner_users, elig_df, tuition_df, kind="partner")
+    st.markdown("""
+    <div class="v85-page-hero">
+        <span>Partner Agency Network</span>
+        <h1>Confirmed Co-Partner Agencies</h1>
+        <p>View approved partner agencies, their representatives, contact details, and activity.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if len(partner_table) == 0:
+        st.info("No approved co-partner agencies yet.")
+        close_shell()
+        return
+
+    for idx, row in partner_table.iterrows():
+        st.markdown(f"""
+        <div class="v85-list-card">
+            <div>
+                <h3>{_safe_html_v62(row.get("Partner Agency", ""))}</h3>
+                <p><b>CEO / Representative:</b> {_safe_html_v62(row.get("CEO / Representative", ""))} &nbsp; | &nbsp;
+                <b>Main Contact:</b> {_safe_html_v62(row.get("Main Contact", ""))} &nbsp; | &nbsp;
+                <b>Position:</b> {_safe_html_v62(row.get("Position", ""))}</p>
+                <p><b>Email:</b> {_safe_html_v62(row.get("Email", ""))} &nbsp; | &nbsp;
+                <b>Contact:</b> {_safe_html_v62(row.get("Contact Number", ""))} &nbsp; | &nbsp;
+                <b>Status:</b> {_safe_html_v62(row.get("Status", ""))}</p>
+                <p><b>Eligibility Checks:</b> {row.get("Students Counselled / Eligibility Checks", 0)} &nbsp; | &nbsp;
+                <b>Applications Lodged:</b> {row.get("Applications Lodged", 0)}</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2 = st.columns([1, 5])
+        with c1:
+            if st.button("Activity", key=f"v85_partner_activity_{idx}_{row.get('Username','')}", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "partner_activity"
+                st.session_state.selected_activity_user_v85 = row.get("Username", "")
+                st.rerun()
+
+    close_shell()
+
+
+def _find_user_activity_row_v85(username, staff_users, partner_users, elig_df, tuition_df):
+    staff_table = _user_detail_table_v81(staff_users, elig_df, tuition_df, kind="staff")
+    partner_table = _user_detail_table_v81(partner_users, elig_df, tuition_df, kind="partner")
+    if len(staff_table):
+        match = staff_table[staff_table["Username"].astype(str) == str(username)]
+        if len(match):
+            return match.iloc[0].to_dict(), "Staff"
+    if len(partner_table):
+        match = partner_table[partner_table["Username"].astype(str) == str(username)]
+        if len(match):
+            return match.iloc[0].to_dict(), "Partner Agency"
+    return {}, "User"
+
+
 def partner_dashboard():
     dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
 
@@ -4479,6 +4749,49 @@ def partner_dashboard():
     staff_users_v81 = _agency_staff_users_v81(users_df, status="approved") if st.session_state.role in ["agency_rep", "agency_partner"] else pd.DataFrame()
     co_partner_count_v81 = len(partner_agencies_v81)
     staff_count_v81 = len(staff_users_v81)
+
+    # v85: separate detail pages for staff list, partner agency list, and activity.
+    if st.session_state.role in ["agency_rep", "agency_partner"]:
+        current_view_v85 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
+        if current_view_v85 == "staff":
+            _render_staff_list_page_v85(staff_users_v81, e, t)
+            return
+        if current_view_v85 == "partners":
+            _render_partner_agency_list_page_v85(partner_agencies_v81, e, t)
+            return
+        if current_view_v85 == "activity":
+            dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+            _back_to_partner_dashboard_v85()
+            st.markdown("""
+            <div class="v85-page-hero">
+                <span>Agency Network Activity</span>
+                <h1>All Staff & Partner Activity</h1>
+                <p>Review performance summaries for approved staff and co-partner agencies.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            staff_table_v85 = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
+            partner_table_v85 = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
+            if len(staff_table_v85):
+                st.markdown("### Staff Activity Summary")
+                st.dataframe(staff_table_v85, use_container_width=True, hide_index=True)
+            if len(partner_table_v85):
+                st.markdown("### Co-Partner Agency Activity Summary")
+                st.dataframe(partner_table_v85, use_container_width=True, hide_index=True)
+            if not len(staff_table_v85) and not len(partner_table_v85):
+                st.info("No activity records yet.")
+            close_shell()
+            return
+        if current_view_v85 in ["staff_activity", "partner_activity"]:
+            selected_username_v85 = st.session_state.get("selected_activity_user_v85", "")
+            row_v85, kind_v85 = _find_user_activity_row_v85(selected_username_v85, staff_users_v81, partner_agencies_v81, e, t)
+            if row_v85:
+                _render_single_activity_page_v85(row_v85, e, t, kind_v85)
+                return
+            else:
+                st.session_state.partner_dashboard_view_v81 = "dashboard"
+                st.warning("The selected activity record could not be found.")
+                st.rerun()
+
 
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         portal_label = "Agency Representative Portal"
@@ -4537,12 +4850,15 @@ def partner_dashboard():
         with b1:
             if st.button("View Partner Agencies", key="v81_view_partner_agencies", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "partners"
+                st.rerun()
         with b2:
             if st.button("View Staff List", key="v81_view_staff_list", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "staff"
+                st.rerun()
         with b3:
             if st.button("View All Activity", key="v81_view_all_activity", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "activity"
+                st.rerun()
     else:
         st.markdown(f"""
         <div class="partner-stat-grid">

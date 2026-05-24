@@ -541,3 +541,11 @@ v84:
 - Increased partner/company logo display size on the dashboard.
 - Logo now appears larger, clearer, and more premium beside the company name.
 - Added extra hero spacing for the larger logo.
+
+
+v85:
+- View Partner Agencies and View Staff List now open separate pages instead of showing details under the dashboard.
+- Staff list page shows staff name, position, contact number, email, username, status, and activity summary.
+- Each staff row has a blue Activity button to open that staff member's performance/activity log.
+- Partner agency list page also has Activity buttons for each partner agency.
+- Activity page shows eligibility check logs, tuition estimate logs, and summary counts.
