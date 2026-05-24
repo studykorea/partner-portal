@@ -3648,6 +3648,17 @@ button[kind="secondary"],
     }
 }
 
+
+/* v87 staff-only activity privacy note */
+.v87-privacy-note {
+    background:#EEF5FF;
+    border:1px solid #CFE0FF;
+    border-radius:14px;
+    padding:14px 16px;
+    color:#002B5B !important;
+    font-weight:800 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4671,7 +4682,12 @@ def _render_staff_list_page_v85(staff_users, elig_df, tuition_df):
     close_shell()
 
 
+
 def _render_partner_agency_list_page_v85(partner_users, elig_df, tuition_df):
+    """
+    v87: Official representatives can see confirmed partner agency contact/list details only.
+    They cannot view partner agency activity/performance. Only super admin should access partner agency activity.
+    """
     dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
     _back_to_partner_dashboard_v85()
 
@@ -4680,7 +4696,7 @@ def _render_partner_agency_list_page_v85(partner_users, elig_df, tuition_df):
     <div class="v85-page-hero">
         <span>Partner Agency Network</span>
         <h1>Confirmed Co-Partner Agencies</h1>
-        <p>View approved partner agencies, their representatives, contact details, and activity.</p>
+        <p>View approved partner agencies and their contact details. Partner agency activity is visible only to the portal super admin.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -4689,44 +4705,32 @@ def _render_partner_agency_list_page_v85(partner_users, elig_df, tuition_df):
         close_shell()
         return
 
-    for idx, row in partner_table.iterrows():
-        st.markdown(f"""
-        <div class="v85-list-card">
-            <div>
-                <h3>{_safe_html_v62(row.get("Partner Agency", ""))}</h3>
-                <p><b>CEO / Representative:</b> {_safe_html_v62(row.get("CEO / Representative", ""))} &nbsp; | &nbsp;
-                <b>Main Contact:</b> {_safe_html_v62(row.get("Main Contact", ""))} &nbsp; | &nbsp;
-                <b>Position:</b> {_safe_html_v62(row.get("Position", ""))}</p>
-                <p><b>Email:</b> {_safe_html_v62(row.get("Email", ""))} &nbsp; | &nbsp;
-                <b>Contact:</b> {_safe_html_v62(row.get("Contact Number", ""))} &nbsp; | &nbsp;
-                <b>Status:</b> {_safe_html_v62(row.get("Status", ""))}</p>
-                <p><b>Eligibility Checks:</b> {row.get("Students Counselled / Eligibility Checks", 0)} &nbsp; | &nbsp;
-                <b>Applications Lodged:</b> {row.get("Applications Lodged", 0)}</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    # Hide activity/performance columns from official representative view.
+    hidden_activity_cols = [
+        "Students Counselled / Eligibility Checks",
+        "Tuition Estimates",
+        "Applications Lodged",
+        "Username"
+    ]
+    display_cols = [c for c in partner_table.columns if c not in hidden_activity_cols]
+    st.dataframe(partner_table[display_cols], use_container_width=True, hide_index=True)
 
-        c1, c2 = st.columns([1, 5])
-        with c1:
-            if st.button("Activity", key=f"v85_partner_activity_{idx}_{row.get('Username','')}", use_container_width=True):
-                st.session_state.partner_dashboard_view_v81 = "partner_activity"
-                st.session_state.selected_activity_user_v85 = row.get("Username", "")
-                st.rerun()
+    st.info("For privacy and role separation, partner agency performance/activity can be checked only by the portal super admin.")
 
     close_shell()
 
 
+
 def _find_user_activity_row_v85(username, staff_users, partner_users, elig_df, tuition_df):
+    """
+    v87: Activity lookup for official representative dashboards is staff-only.
+    Partner agency activity is reserved for super admin.
+    """
     staff_table = _user_detail_table_v81(staff_users, elig_df, tuition_df, kind="staff")
-    partner_table = _user_detail_table_v81(partner_users, elig_df, tuition_df, kind="partner")
     if len(staff_table):
         match = staff_table[staff_table["Username"].astype(str) == str(username)]
         if len(match):
             return match.iloc[0].to_dict(), "Staff"
-    if len(partner_table):
-        match = partner_table[partner_table["Username"].astype(str) == str(username)]
-        if len(match):
-            return match.iloc[0].to_dict(), "Partner Agency"
     return {}, "User"
 
 
@@ -4737,7 +4741,7 @@ def partner_dashboard():
     current_view_pre_v86 = st.session_state.get("partner_dashboard_view_v81", "dashboard")
     is_separate_page_v86 = (
         st.session_state.get("role") in ["agency_rep", "agency_partner"]
-        and current_view_pre_v86 in ["partners", "staff", "activity", "staff_activity", "partner_activity"]
+        and current_view_pre_v86 in ["partners", "staff", "activity", "staff_activity"]
     )
     if not is_separate_page_v86:
         dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
@@ -4773,24 +4777,20 @@ def partner_dashboard():
             _back_to_partner_dashboard_v85()
             st.markdown("""
             <div class="v85-page-hero">
-                <span>Agency Network Activity</span>
-                <h1>All Staff & Partner Activity</h1>
-                <p>Review performance summaries for approved staff and co-partner agencies.</p>
+                <span>Staff Activity</span>
+                <h1>All Staff Activity</h1>
+                <p>Review staff performance summaries, including student counselling, eligibility checks, tuition estimates, and application counts.</p>
             </div>
             """, unsafe_allow_html=True)
             staff_table_v85 = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
-            partner_table_v85 = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
             if len(staff_table_v85):
                 st.markdown("### Staff Activity Summary")
                 st.dataframe(staff_table_v85, use_container_width=True, hide_index=True)
-            if len(partner_table_v85):
-                st.markdown("### Co-Partner Agency Activity Summary")
-                st.dataframe(partner_table_v85, use_container_width=True, hide_index=True)
-            if not len(staff_table_v85) and not len(partner_table_v85):
-                st.info("No activity records yet.")
+            else:
+                st.info("No staff activity records yet.")
             close_shell()
             return
-        if current_view_v85 in ["staff_activity", "partner_activity"]:
+        if current_view_v85 == "staff_activity":
             selected_username_v85 = st.session_state.get("selected_activity_user_v85", "")
             row_v85, kind_v85 = _find_user_activity_row_v85(selected_username_v85, staff_users_v81, partner_agencies_v81, e, t)
             if row_v85:
@@ -4798,13 +4798,18 @@ def partner_dashboard():
                 return
             else:
                 st.session_state.partner_dashboard_view_v81 = "dashboard"
-                st.warning("The selected activity record could not be found.")
+                st.warning("The selected staff activity record could not be found.")
                 st.rerun()
+        if current_view_v85 == "partner_activity":
+            # v87: block old/deprecated partner activity route.
+            st.session_state.partner_dashboard_view_v81 = "partners"
+            st.warning("Partner agency activity is available only to the portal super admin.")
+            st.rerun()
 
 
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         portal_label = "Agency Representative Portal"
-        intro = "Monitor co-partner agencies, staff activity, eligibility checks, tuition estimates, and student application activity within your agency network."
+        intro = "Monitor co-partner agency lists, staff activity, eligibility checks, tuition estimates, and student application activity within your organization."
     else:
         portal_label = "Agency Staff Portal"
         intro = "Check student eligibility, estimate tuition and scholarship, and manage your own student records."
@@ -4865,7 +4870,7 @@ def partner_dashboard():
                 st.session_state.partner_dashboard_view_v81 = "staff"
                 st.rerun()
         with b3:
-            if st.button("View All Activity", key="v81_view_all_activity", use_container_width=True):
+            if st.button("View Staff Activity", key="v81_view_all_activity", use_container_width=True):
                 st.session_state.partner_dashboard_view_v81 = "activity"
                 st.rerun()
     else:
@@ -4998,22 +5003,15 @@ def partner_dashboard():
         if st.session_state.role in ["agency_rep", "agency_partner"]:
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<div class="partner-panel">', unsafe_allow_html=True)
-            st.subheader("Agency Staff & Partner Activity Summary")
+            st.subheader("Staff Activity Summary")
             staff_table = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
             partner_table = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
-            if len(staff_table) or len(partner_table):
-                summary_rows = []
-                if len(staff_table):
-                    temp = staff_table.copy()
-                    temp.insert(0, "Type", "Staff")
-                    summary_rows.append(temp)
-                if len(partner_table):
-                    temp = partner_table.copy()
-                    temp.insert(0, "Type", "Co-Partner Agency")
-                    summary_rows.append(temp)
-                st.dataframe(pd.concat(summary_rows, ignore_index=True), use_container_width=True, hide_index=True)
+            if len(staff_table):
+                temp = staff_table.copy()
+                temp.insert(0, "Type", "Staff")
+                st.dataframe(temp, use_container_width=True, hide_index=True)
             else:
-                st.info("No approved staff or co-partner agency accounts found yet.")
+                st.info("No approved staff accounts found yet.")
             st.markdown('</div>', unsafe_allow_html=True)
 
     with right:

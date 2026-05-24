@@ -555,3 +555,12 @@ v86:
 - Fixed StreamlitDuplicateElementKey on Partner Agency / Staff / Activity detail pages.
 - The error was caused by rendering the partner dashboard shell twice.
 - Separate detail pages now render their own shell only once.
+
+
+v87:
+- Official representatives and partner agencies can view activity/performance for staff only.
+- Removed partner agency Activity button from the co-partner agency list page.
+- Removed partner agency activity/performance counts from the official representative partner agency page.
+- View All Activity changed to staff-only activity.
+- Deprecated partner_activity route now redirects back to partner agency list and shows a warning.
+- Partner agency activity remains reserved for the portal super admin.
