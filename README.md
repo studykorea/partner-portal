@@ -825,3 +825,22 @@ v122:
 - Timeline now stays in a straight connected vertical line.
 - Date and time display on the right side for each step.
 - Improved mobile-style design closer to the reference sample.
+
+
+v123:
+- Removed the View Full Status button from the application timeline.
+- Removed automatic visa result message from the timeline page.
+- Added Check Result button that appears only after visa result is available.
+- Clicking Check Result opens a separate page showing only the final visa result in big text:
+  Congratulations on your visa / Your visa has been issued, or Sorry / Your visa has been rejected.
+
+
+v124:
+- Restored automatic big visa result message on the application status timeline page.
+- Removed the separate Check Result page behavior from v123.
+- Added automatic big interview result message:
+  - If passed: Congratulations! You have passed the interview.
+  - If failed: Sorry, you have not been selected.
+- Visa result still appears automatically:
+  - If issued: Congratulations on your visa! Your visa has been issued.
+  - If rejected: Sorry, your visa has been rejected.

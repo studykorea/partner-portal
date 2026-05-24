@@ -5247,6 +5247,170 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v123 visa result check page */
+.check-result-wrap-v123 {
+    max-width:980px !important;
+    margin:28px auto 34px auto !important;
+}
+.check-result-wrap-v123 + div button,
+.check-result-wrap-v123 button {
+    background:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border:0 !important;
+    border-radius:16px !important;
+    min-height:58px !important;
+    font-size:20px !important;
+    font-weight:950 !important;
+    box-shadow:0 14px 30px rgba(0,91,219,.22) !important;
+}
+.visa-result-page-v123 {
+    min-height:620px !important;
+    border-radius:32px !important;
+    padding:72px 40px !important;
+    margin:24px auto !important;
+    max-width:1180px !important;
+    text-align:center !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    box-shadow:0 24px 60px rgba(16,24,40,.14) !important;
+}
+.visa-result-icon-v123 {
+    font-size:82px !important;
+    margin-bottom:26px !important;
+}
+.visa-result-page-v123 h1 {
+    font-size:52px !important;
+    line-height:1.12 !important;
+    font-weight:950 !important;
+    margin:0 0 18px 0 !important;
+}
+.visa-result-page-v123 h2 {
+    font-size:28px !important;
+    line-height:1.35 !important;
+    font-weight:850 !important;
+    margin:0 0 34px 0 !important;
+}
+.visa-issued-v123 {
+    background:linear-gradient(135deg,#0FA958 0%,#22C55E 52%,#DCFCE7 100%) !important;
+}
+.visa-rejected-v123 {
+    background:linear-gradient(135deg,#DC2626 0%,#EF4444 58%,#FEE2E2 100%) !important;
+}
+.visa-waiting-v123 {
+    background:linear-gradient(135deg,#EEF5FF 0%,#FFFFFF 100%) !important;
+    border:1px solid #DCE6F4 !important;
+}
+.visa-issued-v123 h1,
+.visa-issued-v123 h2,
+.visa-rejected-v123 h1,
+.visa-rejected-v123 h2 {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-shadow:0 2px 12px rgba(0,0,0,.14) !important;
+}
+.visa-waiting-v123 h1,
+.visa-waiting-v123 h2 {
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+}
+.visa-result-summary-v123 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:14px !important;
+    width:100% !important;
+    max-width:980px !important;
+}
+.visa-result-summary-v123 span {
+    background:rgba(255,255,255,.94) !important;
+    border-radius:18px !important;
+    padding:18px 20px !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    font-weight:900 !important;
+    text-align:left !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.10) !important;
+}
+.visa-result-summary-v123 b {
+    display:block !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    text-transform:uppercase !important;
+    letter-spacing:.04em !important;
+    margin-bottom:7px !important;
+}
+@media(max-width:900px){
+    .visa-result-page-v123 h1 {
+        font-size:36px !important;
+    }
+    .visa-result-page-v123 h2 {
+        font-size:20px !important;
+    }
+    .visa-result-summary-v123 {
+        grid-template-columns:1fr !important;
+    }
+}
+
+
+/* v124 automatic interview and visa result messages */
+.auto-result-message-v124 {
+    max-width:980px !important;
+    margin:28px auto !important;
+    border-radius:28px !important;
+    padding:44px 28px !important;
+    text-align:center !important;
+    box-shadow:0 18px 42px rgba(16,24,40,.16) !important;
+}
+.auto-result-icon-v124 {
+    font-size:58px !important;
+    margin-bottom:14px !important;
+}
+.auto-result-message-v124 h1 {
+    font-size:42px !important;
+    line-height:1.15 !important;
+    font-weight:950 !important;
+    margin:0 0 12px 0 !important;
+}
+.auto-result-message-v124 p {
+    font-size:24px !important;
+    line-height:1.35 !important;
+    font-weight:850 !important;
+    margin:0 !important;
+}
+.interview-passed-v124,
+.visa-issued-auto-v124 {
+    background:linear-gradient(135deg,#16A34A,#22C55E) !important;
+}
+.interview-failed-v124,
+.visa-rejected-auto-v124 {
+    background:linear-gradient(135deg,#DC2626,#EF4444) !important;
+}
+.interview-passed-v124 h1,
+.interview-passed-v124 p,
+.visa-issued-auto-v124 h1,
+.visa-issued-auto-v124 p,
+.interview-failed-v124 h1,
+.interview-failed-v124 p,
+.visa-rejected-auto-v124 h1,
+.visa-rejected-auto-v124 p {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-shadow:0 2px 10px rgba(0,0,0,.12) !important;
+}
+@media(max-width:900px){
+    .auto-result-message-v124 h1 {
+        font-size:32px !important;
+    }
+    .auto-result-message-v124 p {
+        font-size:19px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7145,23 +7309,56 @@ def render_application_status_timeline_v116(row):
         f'<div class="status-label-v122">Program</div><div class="status-value-v122">{_safe_html_v62(program_name)}</div>' +
         f'<div class="status-label-v122">Status</div><div class="status-value-v122"><span class="status-chip-v122 {chip_cls}">{_safe_html_v62(chip_text)}</span></div>' +
         '</div></div></div>' + '<div class="timeline-v122">' + ''.join(rows_html) + '</div>' +
-        '<div class="full-status-btn-v122">▣ &nbsp; View Full Status</div>' +
-        '<div class="help-box-v122"><div class="help-icon-v122">◇</div><div><div class="help-title-v122">Need Help?</div><div class="help-sub-v122">Contact our support team</div></div></div>' +
+        
         '</div>'
     )
     st.markdown(html, unsafe_allow_html=True)
 
+    # v124: automatic big result messages on the timeline page
+    interview_result = application_stage_value_v116(row, "Interview_Result").lower()
     visa_result = application_stage_value_v116(row, "Visa_Result").lower()
+
+    if "pass" in interview_result:
+        st.markdown("""
+        <div class="auto-result-message-v124 interview-passed-v124">
+            <div class="auto-result-icon-v124">🎉</div>
+            <h1>Congratulations!</h1>
+            <p>You have passed the interview.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    elif "fail" in interview_result:
+        st.markdown("""
+        <div class="auto-result-message-v124 interview-failed-v124">
+            <div class="auto-result-icon-v124">⚠️</div>
+            <h1>Sorry</h1>
+            <p>You have not been selected.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     if "issued" in visa_result or "approved" in visa_result:
-        st.markdown('<div style="margin:24px auto;max-width:980px;background:linear-gradient(135deg,#0FA958,#35C66F);border-radius:26px;color:#fff;text-align:center;padding:44px 24px;box-shadow:0 18px 36px rgba(34,197,94,.24)"><h1 style="color:#fff">🎉 Congratulations!</h1><p style="color:#fff;font-size:20px;font-weight:800">Your visa has been issued.</p></div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="auto-result-message-v124 visa-issued-auto-v124">
+            <div class="auto-result-icon-v124">🎊</div>
+            <h1>Congratulations on your visa!</h1>
+            <p>Your visa has been issued.</p>
+        </div>
+        """, unsafe_allow_html=True)
     elif "reject" in visa_result or "denied" in visa_result:
-        st.markdown('<div style="margin:24px auto;max-width:980px;background:linear-gradient(135deg,#DC2626,#EF4444);border-radius:24px;color:#fff;text-align:center;padding:40px 24px;box-shadow:0 18px 36px rgba(220,38,38,.22)"><h1 style="color:#fff">Visa Rejected</h1><p style="color:#fff;font-size:20px;font-weight:800">Your visa has been rejected.</p></div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="auto-result-message-v124 visa-rejected-auto-v124">
+            <div class="auto-result-icon-v124">⚠️</div>
+            <h1>Sorry</h1>
+            <p>Your visa has been rejected.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
 
 def render_application_status_page_v116():
     dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
     if st.button("← Back to Ongoing Applications", key="back_to_ongoing_apps_v116", use_container_width=False):
         st.session_state.partner_dashboard_view_v81 = "applications"
         st.session_state.selected_application_id_v116 = ""
+        st.session_state.show_visa_result_page_v123 = False
         st.rerun()
 
     df = applications_df_v116()
@@ -7235,6 +7432,7 @@ def render_ongoing_applications_page_v116():
                 if st.button("Check Status", key=f"check_status_v116_{app_id}", use_container_width=True):
                     st.session_state.selected_application_id_v116 = app_id
                     st.session_state.partner_dashboard_view_v81 = "application_status"
+                    st.session_state.show_visa_result_page_v123 = False
                     st.rerun()
             else:
                 if st.button("Continue / Resume / Finish Application", key=f"resume_app_v116_{app_id}", use_container_width=True):
