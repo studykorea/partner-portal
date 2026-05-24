@@ -3518,25 +3518,40 @@ div[data-testid="stDataEditor"] {
 }
 
 
-/* v83 partner logo upload/display */
+/* v84 bigger and clearer partner logo */
 .partner-welcome-line-v83 {
     display:flex;
     align-items:center;
-    gap:18px;
+    gap:28px;
     flex-wrap:wrap;
 }
 .partner-welcome-line-v83 h1 {
     margin-bottom:0 !important;
 }
 .partner-logo-v83 {
-    width:76px !important;
-    height:76px !important;
+    width:140px !important;
+    height:140px !important;
     object-fit:contain !important;
     background:#FFFFFF !important;
-    border:1px solid rgba(255,255,255,.45) !important;
-    border-radius:18px !important;
-    padding:8px !important;
-    box-shadow:0 12px 26px rgba(0,0,0,.18) !important;
+    border:2px solid rgba(255,255,255,.72) !important;
+    border-radius:26px !important;
+    padding:14px !important;
+    box-shadow:0 18px 34px rgba(0,0,0,.22) !important;
+}
+@media(max-width:800px){
+    .partner-logo-v83 {
+        width:110px !important;
+        height:110px !important;
+        border-radius:22px !important;
+    }
+}
+
+
+/* v84 partner hero spacing for bigger logo */
+.partner-hero {
+    min-height: 330px !important;
+    padding-top: 58px !important;
+    padding-bottom: 58px !important;
 }
 
 </style>

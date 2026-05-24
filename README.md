@@ -535,3 +535,9 @@ v83:
 - Uploaded logo is saved in assets/partner_logos and stored in the user/agency record.
 - When a partner/official representative logs in, their logo appears beside the company name in the dashboard welcome hero.
 - Partner agency approval also updates the agency logo record when available.
+
+
+v84:
+- Increased partner/company logo display size on the dashboard.
+- Logo now appears larger, clearer, and more premium beside the company name.
+- Added extra hero spacing for the larger logo.
