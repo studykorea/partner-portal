@@ -3872,6 +3872,102 @@ h3.uni-name-accent-v93 span {
     transition:color .25s ease-in-out !important;
 }
 
+
+/* v94 admin rules UI matching sample */
+.admin-rule-title-v94 {
+    margin: 8px 0 16px 0;
+}
+.admin-rule-title-v94 h1 {
+    color:#101828 !important;
+    font-size:30px !important;
+    line-height:1.15 !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.admin-rule-title-v94 p {
+    color:#667085 !important;
+    font-size:15px !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.rule-selector-panel-v94 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:14px;
+    padding:16px 18px 10px 18px;
+    margin:12px 0 16px 0;
+    box-shadow:0 8px 22px rgba(16,24,40,.05);
+}
+.selected-rule-uni-card-v94 {
+    display:flex;
+    align-items:center;
+    gap:18px;
+    background:#F3F8FF;
+    border:1px solid #BBD3FF;
+    border-radius:14px;
+    padding:18px 22px;
+    margin:8px 0 22px 0;
+}
+.selected-rule-logo-v94 {
+    width:58px;
+    height:58px;
+    border-radius:999px;
+    background:#005BDB;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex:0 0 auto;
+    padding:7px;
+}
+.selected-rule-logo-v94 img,
+.selected-rule-logo-v94 .uni-logo-v88 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    background:#FFFFFF !important;
+    border-radius:999px !important;
+    padding:3px !important;
+}
+.selected-rule-logo-v94 .uni-logo-placeholder-v88 {
+    color:#FFFFFF !important;
+    font-size:10px !important;
+    line-height:1.05 !important;
+}
+.selected-rule-uni-card-v94 h2 {
+    color:#002B5B !important;
+    font-size:20px !important;
+    font-weight:950 !important;
+    margin:0 0 4px 0 !important;
+}
+.selected-rule-uni-card-v94 p {
+    color:#475467 !important;
+    font-size:14px !important;
+    margin:0 !important;
+    font-weight:650 !important;
+}
+.rules-table-heading-v94 {
+    color:#101828 !important;
+    font-size:20px !important;
+    font-weight:950 !important;
+    margin:7px 0 0 0 !important;
+}
+.rules-table-wrap-v94 {
+    background:#FFFFFF;
+    border:1px solid #EAECF0;
+    border-radius:16px;
+    padding:0;
+    margin-top:12px;
+    overflow:hidden;
+    box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+.rules-result-count-v94 {
+    color:#667085 !important;
+    font-size:14px !important;
+    margin:14px 0 0 0 !important;
+    font-weight:650 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6817,15 +6913,50 @@ def safe_write_csv_v48(path, df):
     clear_data_cache_v48()
 
 
+
 def editable_table_v48(title, path, key, help_text=""):
     """
-    v74: Edit rules by selected university instead of showing every university at once.
+    v94: Modern admin rules table UI.
     Used by Eligibility Rules, Tuition Rules, and Scholarship Rules.
+    Shows university name with logo, selected-university-only records, Add New Rule, search, filters, and clean table format.
     """
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
-    st.subheader(title)
-    if help_text:
-        st.caption(help_text)
+
+    is_eligibility = "eligibility" in str(title).lower() or "criteria" in str(title).lower()
+    is_tuition = "tuition" in str(title).lower()
+    is_scholarship = "scholarship" in str(title).lower()
+
+    if is_eligibility:
+        page_title = "Eligibility Criteria / Program & Major Management"
+        page_caption = "Select one university first, then edit only that university's program level, major, GPA, and language criteria."
+        table_title = "Program & Major Eligibility Rules"
+        add_label = "+ Add New Rule"
+        search_placeholder = "Search by major or program..."
+    elif is_tuition:
+        page_title = "Tuition Rules Management"
+        page_caption = "Select one university first, then edit only that university's application fee, admission fee, and tuition fee values."
+        table_title = "Tuition Fee Rules"
+        add_label = "+ Add New Tuition Rule"
+        search_placeholder = "Search by program or major..."
+    elif is_scholarship:
+        page_title = "Scholarship Rules Management"
+        page_caption = "Select one university first, then edit only that university's scholarship criteria by program and IELTS range."
+        table_title = "Scholarship Rules"
+        add_label = "+ Add New Scholarship Rule"
+        search_placeholder = "Search by program or criteria..."
+    else:
+        page_title = title
+        page_caption = help_text
+        table_title = "Rules"
+        add_label = "+ Add New Rule"
+        search_placeholder = "Search..."
+
+    st.markdown(f"""
+    <div class="admin-rule-title-v94">
+        <h1>{page_title}</h1>
+        <p>{page_caption}</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     df = read_csv(path)
     if len(df) == 0:
@@ -6836,88 +6967,171 @@ def editable_table_v48(title, path, key, help_text=""):
     if "University" not in df.columns:
         df["University"] = ""
 
-    # Build university options from the university table first, then the rule table.
+    # University options from university table first, then this rule table.
     try:
         uni_df = read_csv(UNIS)
         university_options = sorted([x for x in uni_df.get("University", pd.Series(dtype=str)).dropna().astype(str).str.strip().unique().tolist() if x])
     except Exception:
+        uni_df = pd.DataFrame()
         university_options = []
 
     rule_unis = sorted([x for x in df["University"].dropna().astype(str).str.strip().unique().tolist() if x])
-    for u in rule_unis:
-        if u not in university_options:
-            university_options.append(u)
+    for u_name in rule_unis:
+        if u_name not in university_options:
+            university_options.append(u_name)
 
     if not university_options:
-        selected_uni = st.text_input("University", key=f"{key}_manual_university_v74")
+        selected_uni = st.text_input("Select University to Manage", key=f"{key}_manual_university_v94")
         if not selected_uni:
             st.info("Please enter a university name first.")
             close_shell()
             return
     else:
-        st.markdown('<div class="university-filter-panel-v74">', unsafe_allow_html=True)
+        st.markdown('<div class="rule-selector-panel-v94">', unsafe_allow_html=True)
         selected_uni = st.selectbox(
             "Select University to Manage",
             university_options,
-            key=f"{key}_university_filter_v74"
+            key=f"{key}_university_filter_v94"
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
     selected_uni = str(selected_uni).strip()
 
-    # Filter the working table to only the selected university.
-    mask = df["University"].astype(str).str.strip() == selected_uni
-    subset = df[mask].copy().reset_index(drop=True)
-
+    # Selected university logo card.
+    logo_path = ""
+    if len(uni_df):
+        uni_match = uni_df[uni_df.get("University", pd.Series(dtype=str)).astype(str).str.strip() == selected_uni]
+        if len(uni_match):
+            logo_path = str(uni_match.iloc[0].get("University_Logo", "") or "")
+    logo_html = university_logo_html_v88(logo_path, selected_uni) if "university_logo_html_v88" in globals() else ""
     st.markdown(
         f"""
-        <div class="selected-university-banner-v74">
-            <b>{selected_uni}</b>
-            <span>Editing only this university's records. Other universities will not be shown or changed.</span>
+        <div class="selected-rule-uni-card-v94">
+            <div class="selected-rule-logo-v94">{logo_html}</div>
+            <div>
+                <h2>{_safe_html_v62(selected_uni)}</h2>
+                <p>Editing only this university's records. Other universities will not be shown or changed.</p>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
+    # Filter subset to selected university.
+    mask = df["University"].astype(str).str.strip() == selected_uni
+    subset = df[mask].copy().reset_index(drop=True)
+
     if len(subset) == 0:
-        st.info("No records found for this university yet. Add a new row in the table below and click Save Changes.")
-        # Keep the same columns as the source table and give one blank starter row.
-        subset = pd.DataFrame(columns=df.columns)
         blank = {c: "" for c in df.columns}
         blank["University"] = selected_uni
         subset = pd.DataFrame([blank])
 
-    # Make sure University column is first and pre-filled.
+    # Keep University first and prefilled.
     cols = list(subset.columns)
     if "University" in cols:
-        cols = ["University"] + [c for c in cols if c != "University"]
-        subset = subset[cols]
-    subset["University"] = subset["University"].replace("", selected_uni).fillna(selected_uni)
+        subset = subset[["University"] + [c for c in cols if c != "University"]]
+    subset["University"] = selected_uni
 
-    edited = st.data_editor(
-        subset,
+    # Add new row button state. Data editor itself remains dynamic too.
+    c_title, c_add, c_search, c_filter = st.columns([2.2, .9, 1.9, .75])
+    with c_title:
+        st.markdown(f'<h3 class="rules-table-heading-v94">{table_title}</h3>', unsafe_allow_html=True)
+    with c_add:
+        if st.button(add_label, key=f"{key}_add_row_v94", use_container_width=True):
+            blank = {c: "" for c in subset.columns}
+            blank["University"] = selected_uni
+            subset = pd.concat([subset, pd.DataFrame([blank])], ignore_index=True)
+            st.session_state[f"{key}_local_rows_v94"] = subset.to_dict("records")
+            st.rerun()
+    with c_search:
+        search_query = st.text_input("Search", placeholder=search_placeholder, label_visibility="collapsed", key=f"{key}_search_v94")
+    with c_filter:
+        st.button("⚱ Filters", key=f"{key}_filter_btn_v94", use_container_width=True)
+
+    # Use added rows from session for this selected university if present.
+    local_rows = st.session_state.get(f"{key}_local_rows_v94")
+    if local_rows:
+        try:
+            local_df = pd.DataFrame(local_rows)
+            if "University" in local_df.columns and len(local_df) and str(local_df["University"].iloc[0]).strip() == selected_uni:
+                subset = local_df.copy()
+        except Exception:
+            pass
+
+    display_subset = subset.copy()
+    if search_query:
+        q = str(search_query).lower().strip()
+        searchable_cols = [c for c in display_subset.columns if c.lower() in ["program", "major", "ielts_criteria", "gpa_criteria", "criteria", "scholarship_text"]]
+        if not searchable_cols:
+            searchable_cols = [c for c in display_subset.columns if c != "University"]
+        display_mask = display_subset[searchable_cols].astype(str).apply(lambda row: any(q in str(v).lower() for v in row), axis=1)
+        display_subset = display_subset[display_mask].copy()
+
+    # Column ordering/labels matching sample style.
+    preferred_cols = []
+    if is_eligibility:
+        preferred_cols = ["University", "Program", "Major", "IELTS_Criteria", "Minimum_IELTS", "GPA_Criteria", "Minimum_GPA", "Application_Fee_KRW"]
+    elif is_tuition:
+        preferred_cols = ["University", "Program", "Major", "Application_Fee_KRW", "Admission_Fee_KRW", "Tuition_Fee_Per_Semester_KRW"]
+    elif is_scholarship:
+        preferred_cols = ["University", "Program", "IELTS_Min", "IELTS_Max", "Scholarship_Percent", "Scholarship_Text", "Criteria"]
+    ordered_cols = [c for c in preferred_cols if c in display_subset.columns] + [c for c in display_subset.columns if c not in preferred_cols]
+    display_subset = display_subset[ordered_cols]
+
+    # Add fake action columns for visual similarity; real editing is directly inside table.
+    if "Actions" not in display_subset.columns:
+        display_subset["Actions"] = "✎  ⋮"
+
+    column_config = {}
+    if "University" in display_subset.columns:
+        column_config["University"] = st.column_config.TextColumn("University", disabled=True)
+    if "Actions" in display_subset.columns:
+        column_config["Actions"] = st.column_config.TextColumn("Actions", disabled=True, width="small")
+    for c in display_subset.columns:
+        label = c.replace("_", " ")
+        if c == "Minimum_IELTS":
+            label = "Minimum IELTS"
+        elif c == "Minimum_GPA":
+            label = "Minimum GPA"
+        elif c == "Application_Fee_KRW":
+            label = "Application Fee (KRW)"
+        elif c == "Tuition_Fee_Per_Semester_KRW":
+            label = "Tuition Fee / Semester (KRW)"
+        elif c == "Admission_Fee_KRW":
+            label = "Admission Fee (KRW)"
+        elif c not in column_config:
+            column_config[c] = st.column_config.TextColumn(label)
+
+    st.markdown('<div class="rules-table-wrap-v94">', unsafe_allow_html=True)
+    edited_display = st.data_editor(
+        display_subset,
         num_rows="dynamic",
         use_container_width=True,
         hide_index=True,
-        key=key,
-        column_config={
-            "University": st.column_config.TextColumn(
-                "University",
-                help="This page saves only the selected university records.",
-                disabled=True,
-            )
-        } if "University" in subset.columns else None
+        key=f"{key}_editor_v94",
+        column_config=column_config
     )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Remove visual-only Actions column before saving.
+    edited_to_save = edited_display.copy()
+    if "Actions" in edited_to_save.columns:
+        edited_to_save = edited_to_save.drop(columns=["Actions"])
+    edited_to_save["University"] = selected_uni
+
+    # Ensure any columns hidden by search are not lost: if searching, user should save visible filtered rows only.
+    # To avoid accidental deletion during search, warn and disable save while search is active.
+    if search_query:
+        st.warning("Search filter is active. Clear the search box before saving changes to avoid saving only filtered rows.")
 
     c1, c2 = st.columns([1, 4])
     with c1:
-        if st.button("Save Changes", key=f"save_{key}", use_container_width=True):
-            edited = edited.copy()
+        if st.button("Save Changes", key=f"save_{key}_v94", use_container_width=True, disabled=bool(search_query)):
+            edited = edited_to_save.copy()
             if "University" not in edited.columns:
                 edited["University"] = selected_uni
             edited["University"] = selected_uni
 
-            # Remove completely blank rows except the University column.
             non_uni_cols = [c for c in edited.columns if c != "University"]
             if non_uni_cols:
                 edited = edited[
@@ -6927,26 +7141,25 @@ def editable_table_v48(title, path, key, help_text=""):
                     )
                 ].copy()
 
-            # Merge back: keep every other university unchanged, replace selected university records only.
+            # Add missing original columns back if the edited display didn't include them.
+            for c in df.columns:
+                if c not in edited.columns:
+                    edited[c] = ""
+
             remaining = df[df["University"].astype(str).str.strip() != selected_uni].copy()
-            merged = pd.concat([remaining, edited], ignore_index=True)
-
-            # Preserve original column order where possible, add any new columns at the end.
-            original_cols = list(df.columns)
-            new_cols = [c for c in merged.columns if c not in original_cols]
-            merged = merged[original_cols + new_cols]
-
+            merged = pd.concat([remaining, edited[df.columns]], ignore_index=True)
             safe_write_csv_v48(path, merged)
             reload_data_v49()
-            st.success(f"{title} saved for {selected_uni}.")
+            st.session_state.pop(f"{key}_local_rows_v94", None)
+            st.success(f"{table_title} saved for {selected_uni}.")
             st.rerun()
     with c2:
-        st.info("Only the selected university is shown here. You can edit cells, add rows, or delete rows for this university only.")
+        st.info("You can edit cells directly, add new rows, or delete rows in the table above. Click Save Changes when finished.")
 
-    st.markdown("### Preview of Selected University Records")
-    st.dataframe(clean_df_v50(edited), use_container_width=True, hide_index=True)
+    st.markdown(f'<p class="rules-result-count-v94">Showing {len(display_subset)} of {len(subset)} results</p>', unsafe_allow_html=True)
 
     close_shell()
+
 
 
 def admin_universities_edit_v48():
@@ -7284,8 +7497,8 @@ def admin_university_management_v49():
 
 def admin_criteria_management_v49():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
-    st.subheader("Program, Eligibility Criteria & Tuition Management")
-    st.caption("Add or edit majors, criteria, application fee, admission fee, and tuition by university/program.")
+    st.subheader("Eligibility Criteria / Program & Major Management")
+    st.caption("Select one university first, then edit only that university’s program level, major, GPA, and language criteria.")
 
     criteria_file = DATA / "admission_criteria.csv"
     df = read_csv(criteria_file)

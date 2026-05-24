@@ -609,3 +609,11 @@ v93:
 - Jeonbuk National University name is forced to purple.
 - Other universities still use automatic logo accent extraction.
 - Added stronger inline style generation to prevent global CSS override.
+
+
+v94:
+- Updated Eligibility Rules, Tuition Rules, and Scholarship Rules admin pages to match the sample format.
+- Added selected university card with university logo and university name.
+- Added Program & Major Eligibility Rules header and + Add New Rule button.
+- Added search box, filter button, clean table layout, and visual actions column.
+- The editor still saves only the selected university's records.
