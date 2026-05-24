@@ -6338,18 +6338,19 @@ def google_map_embed_html_v99(u):
         q = quote_plus(query)
         embed_url = f"https://www.google.com/maps?q={q}&output=embed"
         open_url = f"https://www.google.com/maps/search/?api=1&query={q}"
-        return textwrap.dedent(f"""
-        <div class="uni-map-card-v99">
-            <div class="uni-map-header-v99">
-                <div>
-                    <h3>University Location</h3>
-                    <p>{_safe_html_v62(address if address else query)}</p>
-                </div>
-                <a class="uni-map-link-v99" href="{open_url}" target="_blank">Open in Google Maps</a>
-            </div>
-            <iframe class="uni-map-frame-v99" src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-        """).strip()
+        map_html_v102 = f"""
+<div class="uni-map-card-v99">
+<div class="uni-map-header-v99">
+<div>
+<h3>University Location</h3>
+<p>{_safe_html_v62(address if address else query)}</p>
+</div>
+<a class="uni-map-link-v99" href="{open_url}" target="_blank">Open in Google Maps</a>
+</div>
+<iframe class="uni-map-frame-v99" src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+"""
+        return map_html_v102.strip()
     except Exception:
         return ""
 
@@ -6404,7 +6405,10 @@ def _render_university_detail_v62(u):
     </div>
 </div>
 """
-    st.markdown(textwrap.dedent(detail_html).strip(), unsafe_allow_html=True)
+    clean_detail_html_v102 = "\n".join(
+        line.lstrip() for line in textwrap.dedent(detail_html).strip().splitlines()
+    )
+    st.markdown(clean_detail_html_v102, unsafe_allow_html=True)
 
 
 def _render_university_summary_v62(u, key_suffix):
