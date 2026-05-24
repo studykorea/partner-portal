@@ -739,3 +739,13 @@ v111:
 - Cause: the previous filter searched for the word 'graduate', which is inside 'undergraduate'.
 - Graduate page now excludes Undergraduate/Bachelor rows.
 - Undergraduate page now excludes Graduate/Master/Ph.D. rows.
+
+
+v112:
+- Undergraduate New Student Apply now opens a detailed Step 1 application form.
+- Only logged-in and approved registered staff, official representatives, partner agencies, or admin can start applications.
+- Added applicant fields: passport full name, first/middle/last name, passport number, nationality, parents name, address, contacts, DOB.
+- Added academic fields: high school name, passout year, enrolled period, location, middle school name/year/location.
+- Added financial fields: bank certificate owner and amount in USD.
+- Added 500-word self introduction and 500-word study plan fields.
+- Added blue Next button that saves Step 1 to data/student_applications.csv.

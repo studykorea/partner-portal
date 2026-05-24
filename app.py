@@ -4,7 +4,7 @@ import textwrap
 import pandas as pd
 import json, hashlib, base64, re, os, hmac, re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
 from io import BytesIO
 from sqlalchemy import create_engine, text
 
@@ -4836,6 +4836,60 @@ h3.uni-name-accent-v93 span {
     }
 }
 
+
+/* v112 undergraduate application Step 1 form */
+.application-locked-v112 {
+    background:#FFF7ED !important;
+    border:1px solid #FED7AA !important;
+    border-radius:18px !important;
+    padding:24px 28px !important;
+    margin:20px 0 !important;
+}
+.application-locked-v112 h3 {
+    color:#9A3412 !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.application-locked-v112 p {
+    color:#7C2D12 !important;
+    font-size:16px !important;
+    margin:0 !important;
+}
+.application-start-panel-v112 small {
+    display:block !important;
+    margin-top:8px !important;
+    color:#667085 !important;
+    font-weight:750 !important;
+}
+div[data-testid="stForm"] {
+    border:1px solid #DCE6F4 !important;
+    border-radius:20px !important;
+    padding:24px !important;
+    background:#FFFFFF !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.05) !important;
+}
+div[data-testid="stForm"] h3 {
+    color:#002B5B !important;
+    font-size:22px !important;
+    font-weight:950 !important;
+    margin-top:8px !important;
+}
+div[data-testid="stFormSubmitButton"] button {
+    background:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border:1px solid #005BDB !important;
+    border-radius:12px !important;
+    min-height:52px !important;
+    font-weight:950 !important;
+    font-size:17px !important;
+}
+div[data-testid="stFormSubmitButton"] button:hover {
+    background:#0047AB !important;
+    border-color:#0047AB !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6986,26 +7040,202 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
         f'</div>'
     )
 
+
+def user_can_apply_v112():
+    """Only logged-in approved partner/agency/staff/admin accounts can start applications."""
+    if not st.session_state.get("logged_in"):
+        return False, "Please login with an approved partner or staff account to start an application."
+    user = find_user(st.session_state.get("username", ""))
+    if not user:
+        return False, "Your login session could not be verified. Please login again."
+    if str(user.get("status", "")).lower() != "approved" and str(user.get("role", "")) != "admin":
+        return False, "Your account is not approved yet. You can start applications after your organization approves your account."
+    allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff"]
+    if str(user.get("role", "")) not in allowed_roles:
+        return False, "Only registered staff, official representatives, and partner agencies can start applications."
+    return True, ""
+
+def nationality_options_v112():
+    return [
+        "Nepal", "Bangladesh", "Vietnam", "Indonesia", "Pakistan", "India", "Sri Lanka",
+        "Mongolia", "Myanmar", "Uzbekistan", "China", "Philippines", "Other"
+    ]
+
+def year_options_v112(start=1980, extra_future=2):
+    current = datetime.now().year
+    return list(range(current + extra_future, start - 1, -1))
+
 def render_application_start_form_v109(u, program_slug, application_type):
+    """
+    v112: Application start page.
+    - Only registered/approved staff, official reps, partner agencies, or admin can apply.
+    - Undergraduate New Student Application has a detailed Step 1 applicant information form.
+    """
+    can_apply, reason = user_can_apply_v112()
+    if not can_apply:
+        st.markdown(f"""
+        <div class="application-locked-v112">
+            <h3>Partner Login Required</h3>
+            <p>{_safe_html_v62(reason)}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        c1, c2 = st.columns([1, 3])
+        with c1:
+            if st.button("Go to Login", key="go_login_apply_v112", use_container_width=True):
+                st.session_state.page = "Login"
+                st.rerun()
+        return
+
     st.markdown(f"""
-    <div class="application-start-panel-v109">
-        <h3>Start Application</h3>
+    <div class="application-start-panel-v109 application-start-panel-v112">
+        <h3>Application Step 1</h3>
         <p>You are starting: <b>{_safe_html_v62(application_type)}</b> for <b>{_safe_html_v62(u.get("University", ""))}</b>.</p>
+        <small>Only registered and approved staff/partner accounts can submit student applications.</small>
     </div>
     """, unsafe_allow_html=True)
 
+    is_undergraduate_new = (
+        str(program_slug).lower() == "undergraduate"
+        and "new" in str(application_type).lower()
+    )
+
+    if is_undergraduate_new:
+        form_key = f"ug_new_application_step1_v112_{safe_slug_v49(u.get('University',''))}"
+        with st.form(form_key):
+            st.markdown("### Applicant Personal Information")
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                passport_full_name = st.text_input("Full Name as in Passport *")
+                first_name = st.text_input("First Name *")
+                passport_number = st.text_input("Passport Number *")
+                nationality = st.selectbox("Nationality *", nationality_options_v112())
+                if nationality == "Other":
+                    nationality_other = st.text_input("Write Nationality")
+                else:
+                    nationality_other = ""
+            with c2:
+                middle_name = st.text_input("Middle Name")
+                last_name = st.text_input("Last Name *")
+                date_of_birth = st.date_input("Date of Birth *", value=None, min_value=date(1950, 1, 1), max_value=date(datetime.now().year, 12, 31))
+                applicant_contact = st.text_input("Applicant Contact Number *")
+            with c3:
+                applicant_email = st.text_input("Email Address *")
+                parents_full_name = st.text_input("Parents Full Name *")
+                guardian_contact = st.text_input("Parents / Guardian Contact Number *")
+                home_address = st.text_area("Home Country Address *", height=88)
+
+            st.markdown("### Academic Background")
+            c4, c5 = st.columns(2)
+            with c4:
+                high_school_name = st.text_input("High School Name *")
+                high_school_passout_year = st.selectbox("High School Passout Year *", year_options_v112(1990, 1))
+                high_school_enroll_start = st.date_input("High School Enrolled Period Start", value=None, key=f"{form_key}_hs_start")
+                high_school_enroll_end = st.date_input("High School Enrolled Period End", value=None, key=f"{form_key}_hs_end")
+                high_school_location = st.text_input("High School Location *")
+            with c5:
+                middle_school_name = st.text_input("Middle School Name")
+                middle_school_enroll_year = st.selectbox("Middle School Enrolled Year", [""] + year_options_v112(1990, 1))
+                middle_school_location = st.text_input("Middle School Location")
+                desired_major = st.text_input("Desired Major / Program")
+                passport_issue_year = st.selectbox("Passport Issue Year", [""] + year_options_v112(2000, 1))
+
+            st.markdown("### Financial Information")
+            c6, c7 = st.columns(2)
+            with c6:
+                bank_certificate_owner = st.selectbox("Financial / Bank Certificate Information *", ["Self", "Father", "Mother"])
+            with c7:
+                bank_amount_usd = st.number_input("Amount in USD *", min_value=0.0, step=100.0, format="%.2f")
+
+            st.markdown("### Written Statements")
+            self_intro = st.text_area("Self Introduction * (Max 500 words)", height=180)
+            study_plan = st.text_area("Study Plan * (Max 500 words)", height=180)
+
+            w1 = len(str(self_intro).split())
+            w2 = len(str(study_plan).split())
+            st.caption(f"Self Introduction word count: {w1}/500 · Study Plan word count: {w2}/500")
+
+            submitted_next = st.form_submit_button("Next", use_container_width=True)
+
+            if submitted_next:
+                required_missing = []
+                if not passport_full_name.strip(): required_missing.append("Full Name as in Passport")
+                if not first_name.strip(): required_missing.append("First Name")
+                if not last_name.strip(): required_missing.append("Last Name")
+                if not passport_number.strip(): required_missing.append("Passport Number")
+                if not applicant_contact.strip(): required_missing.append("Applicant Contact Number")
+                if not applicant_email.strip(): required_missing.append("Email Address")
+                if not parents_full_name.strip(): required_missing.append("Parents Full Name")
+                if not guardian_contact.strip(): required_missing.append("Parents / Guardian Contact Number")
+                if not home_address.strip(): required_missing.append("Home Country Address")
+                if not high_school_name.strip(): required_missing.append("High School Name")
+                if not high_school_location.strip(): required_missing.append("High School Location")
+                if bank_amount_usd <= 0: required_missing.append("Amount in USD")
+                if not self_intro.strip(): required_missing.append("Self Introduction")
+                if not study_plan.strip(): required_missing.append("Study Plan")
+                if w1 > 500: required_missing.append("Self Introduction must be 500 words or less")
+                if w2 > 500: required_missing.append("Study Plan must be 500 words or less")
+
+                if required_missing:
+                    st.error("Please complete/fix: " + ", ".join(required_missing))
+                else:
+                    selected_nationality = nationality_other.strip() if nationality == "Other" and nationality_other.strip() else nationality
+                    app_file = DATA / "student_applications.csv"
+                    existing = read_csv(app_file)
+                    new_row = {
+                        "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "University": u.get("University", ""),
+                        "Program_Category": program_slug,
+                        "Application_Type": application_type,
+                        "Full_Name_As_Passport": passport_full_name.strip(),
+                        "First_Name": first_name.strip(),
+                        "Middle_Name": middle_name.strip(),
+                        "Last_Name": last_name.strip(),
+                        "Passport_Number": passport_number.strip(),
+                        "Nationality": selected_nationality,
+                        "Date_of_Birth": str(date_of_birth) if date_of_birth else "",
+                        "Applicant_Contact": applicant_contact.strip(),
+                        "Email": applicant_email.strip(),
+                        "Parents_Full_Name": parents_full_name.strip(),
+                        "Home_Country_Address": home_address.strip(),
+                        "Guardian_Contact": guardian_contact.strip(),
+                        "High_School_Name": high_school_name.strip(),
+                        "High_School_Passout_Year": high_school_passout_year,
+                        "High_School_Enroll_Start": str(high_school_enroll_start) if high_school_enroll_start else "",
+                        "High_School_Enroll_End": str(high_school_enroll_end) if high_school_enroll_end else "",
+                        "High_School_Location": high_school_location.strip(),
+                        "Middle_School_Name": middle_school_name.strip(),
+                        "Middle_School_Enrolled_Year": middle_school_enroll_year,
+                        "Middle_School_Location": middle_school_location.strip(),
+                        "Bank_Certificate_Owner": bank_certificate_owner,
+                        "Bank_Amount_USD": bank_amount_usd,
+                        "Self_Introduction": self_intro.strip(),
+                        "Study_Plan": study_plan.strip(),
+                        "Desired_Major": desired_major.strip(),
+                        "Passport_Issue_Year": passport_issue_year,
+                        "Submitted_By": st.session_state.get("username", ""),
+                        "Agency": st.session_state.get("agency_name", ""),
+                        "Status": "Step 1 Completed",
+                    }
+                    existing = pd.concat([existing, pd.DataFrame([new_row])], ignore_index=True)
+                    write_csv(app_file, existing)
+                    st.session_state.application_step_v112 = 2
+                    st.success("Step 1 saved successfully. You can continue to the next page in the next step.")
+                    st.info("Next page will be for document upload and application review.")
+        return
+
+    # Other application types keep a shorter form for now.
     with st.form(f"application_start_v109_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
         c1, c2 = st.columns(2)
         with c1:
             applicant_name = st.text_input("Applicant Full Name")
             email = st.text_input("Email Address")
-            nationality = st.text_input("Nationality")
+            nationality = st.selectbox("Nationality", nationality_options_v112())
         with c2:
             phone = st.text_input("Phone / WhatsApp")
             passport = st.text_input("Passport Number")
             desired_major = st.text_input("Desired Major / Program")
         note = st.text_area("Additional Notes", height=90)
-        submitted = st.form_submit_button("Submit Application Request", use_container_width=True)
+        submitted = st.form_submit_button("Next", use_container_width=True)
         if submitted:
             if not applicant_name.strip() or not email.strip():
                 st.error("Applicant name and email are required.")
@@ -7021,19 +7251,19 @@ def render_application_start_form_v109(u, program_slug, application_type):
                         "Applicant_Name": applicant_name.strip(),
                         "Email": email.strip(),
                         "Phone": phone.strip(),
-                        "Nationality": nationality.strip(),
+                        "Nationality": nationality,
                         "Passport_Number": passport.strip(),
                         "Desired_Major": desired_major.strip(),
                         "Notes": note.strip(),
-                        "Submitted_By": st.session_state.get("username", "public"),
+                        "Submitted_By": st.session_state.get("username", ""),
                         "Agency": st.session_state.get("agency_name", ""),
-                        "Status": "New Request",
+                        "Status": "Step 1 Completed",
                     }
                     existing = pd.concat([existing, pd.DataFrame([new_row])], ignore_index=True)
                     write_csv(app_file, existing)
-                    st.success("Application request submitted. The portal team or partner agency can follow up with the applicant.")
+                    st.success("Step 1 saved successfully. You can continue to the next page in the next step.")
                 except Exception as e:
-                    st.success("Application request submitted.")
+                    st.success("Step 1 saved successfully.")
                     st.caption(f"Note: application log could not be saved automatically: {e}")
 
 def render_program_detail_page_v109(u, program_slug):
