@@ -2827,6 +2827,280 @@ section[data-testid="stFileUploader"] button * {
     -webkit-text-fill-color: #101828 !important;
 }
 
+
+/* v73 premium admin dashboard */
+.admin-title-row-v73 {
+    display:flex;
+    align-items:flex-start;
+    gap:18px;
+    margin: 6px 0 20px 0;
+}
+.admin-step-pill-v73 {
+    background:#005BDB;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border-radius:8px;
+    padding:13px 23px;
+    font-weight:950;
+    box-shadow:0 8px 18px rgba(0,91,219,.25);
+}
+.admin-title-row-v73 h1 {
+    margin:0 !important;
+    color:#101828 !important;
+    font-size:31px !important;
+    font-weight:950 !important;
+}
+.admin-title-row-v73 p {
+    margin:5px 0 0 0 !important;
+    color:#475467 !important;
+    font-weight:700 !important;
+}
+.admin-stats-grid-v73 {
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:14px;
+    margin:14px 0 22px 0;
+}
+.admin-stat-card-v73 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:14px;
+    padding:18px 18px 16px 18px;
+    box-shadow:0 8px 20px rgba(16,24,40,.05);
+}
+.admin-stat-card-v73 b {
+    color:#344054 !important;
+    font-size:13px;
+}
+.admin-stat-card-v73 h2 {
+    color:#005BDB !important;
+    margin:8px 0 3px 0 !important;
+    font-size:32px !important;
+    font-weight:950 !important;
+}
+.admin-stat-card-v73 p {
+    color:#667085 !important;
+    margin:0 !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+}
+.stat-icon-v73 {
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#EEF5FF;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+}
+.admin-stat-card-v73.warning-v73 h2 {color:#B54708 !important;}
+.admin-stat-card-v73.success-v73 h2 {color:#067647 !important;}
+.admin-panel-v73, .admin-side-panel-v73, .admin-rules-card-v73 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:16px;
+    padding:18px 20px;
+    box-shadow:0 10px 24px rgba(16,24,40,.06);
+    margin-bottom:14px;
+}
+.admin-panel-head-v73 {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+}
+.admin-panel-head-v73 h2, .admin-side-panel-v73 h2, .admin-rules-card-v73 h2 {
+    margin:0 0 5px 0 !important;
+    color:#101828 !important;
+    font-size:19px !important;
+    font-weight:950 !important;
+}
+.admin-panel-head-v73 p, .admin-side-panel-v73 p, .admin-rules-card-v73 p {
+    margin:0 !important;
+    color:#667085 !important;
+    font-weight:650 !important;
+}
+.admin-badge-yellow-v73 {
+    background:#FFF4D6;
+    color:#B54708 !important;
+    -webkit-text-fill-color:#B54708 !important;
+    border-radius:999px;
+    padding:8px 13px;
+    font-weight:950;
+}
+.approval-card-premium-v73 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:16px;
+    padding:18px 20px;
+    box-shadow:0 8px 20px rgba(16,24,40,.05);
+    margin:12px 0 10px 0;
+}
+.approval-card-top-v73 {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+}
+.approval-card-top-v73 h3 {
+    margin:0 !important;
+    color:#002B5B !important;
+    font-size:23px !important;
+    font-weight:950 !important;
+}
+.approval-grid-v73 {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+.approval-grid-v73 div {
+    background:#F6F8FC;
+    border:1px solid #E3EAF5;
+    border-radius:12px;
+    padding:12px 14px;
+}
+.approval-grid-v73 b {
+    display:block;
+    color:#002B5B !important;
+    margin-bottom:5px;
+    font-size:13px;
+}
+.approval-grid-v73 span {
+    color:#101828 !important;
+    font-weight:700;
+    word-break:break-word;
+}
+.approval-action-gap-v73 {
+    height:14px;
+}
+.admin-empty-card-v73 {
+    background:#FFFFFF;
+    border:1px dashed #C9D4E5;
+    border-radius:16px;
+    padding:26px;
+    margin:12px 0 20px 0;
+    text-align:center;
+}
+.admin-empty-card-v73 h3 {
+    color:#101828 !important;
+    margin:0 0 8px 0 !important;
+}
+.admin-empty-card-v73 p {
+    color:#667085 !important;
+    margin:0 !important;
+}
+.admin-panel-margin-v73 {
+    margin-top:22px;
+}
+.status-row-v73 {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#F6F8FC;
+    border:1px solid #E3EAF5;
+    border-radius:12px;
+    padding:12px 13px;
+    margin:10px 0;
+}
+.status-row-v73 b {
+    flex:1;
+    color:#101828 !important;
+}
+.status-row-v73 em {
+    font-style:normal;
+    background:#FFFFFF;
+    color:#002B5B !important;
+    border:1px solid #DCE6F4;
+    border-radius:8px;
+    padding:4px 9px;
+    font-weight:950;
+}
+.dot {
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    display:inline-block;
+}
+.dot.yellow {background:#F7C948;}
+.dot.green {background:#12B76A;}
+.dot.red {background:#F04438;}
+.dot.blue {background:#005BDB;}
+.quick-row-v73 {
+    background:#F6F8FC;
+    border:1px solid #E3EAF5;
+    border-radius:12px;
+    padding:12px 13px;
+    margin:9px 0;
+}
+.quick-row-v73 b {
+    display:block;
+    color:#002B5B !important;
+    margin-bottom:3px;
+}
+.quick-row-v73 span {
+    color:#667085 !important;
+    font-weight:650;
+}
+.admin-bottom-features-v73 {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+    margin:26px 0 4px 0;
+    background:#EEF5FF;
+    border:1px solid #DCE6F4;
+    border-radius:16px;
+    padding:18px 20px;
+}
+.admin-bottom-features-v73 div {
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+.admin-bottom-features-v73 span {
+    background:#FFFFFF;
+    color:#005BDB !important;
+    border-radius:50%;
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+.admin-bottom-features-v73 b {
+    display:block;
+    color:#101828 !important;
+}
+.admin-bottom-features-v73 p {
+    margin:2px 0 0 0 !important;
+    color:#667085 !important;
+    font-size:12px !important;
+}
+.main .stButton>button,
+div[data-testid="stFormSubmitButton"] button {
+    background:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    border:1px solid #005BDB !important;
+    border-radius:10px !important;
+    font-weight:950 !important;
+}
+.main .stButton>button *,
+div[data-testid="stFormSubmitButton"] button * {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+}
+@media(max-width:1100px){
+    .admin-stats-grid-v73,.admin-bottom-features-v73{grid-template-columns:1fr 1fr;}
+    .approval-grid-v73{grid-template-columns:1fr;}
+}
+@media(max-width:700px){
+    .admin-stats-grid-v73,.admin-bottom-features-v73{grid-template-columns:1fr;}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4529,10 +4803,13 @@ def _unique_admin_key_v72(prefix, idx, user):
     raw = f"{prefix}_{idx}_{username}_{email}_{agency}"
     return re.sub(r"[^A-Za-z0-9_]+", "_", raw)[:180]
 
+
 def admin():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
 
-    users = pd.DataFrame(read_json(USERS))
+    users_list = read_json(USERS)
+    users = pd.DataFrame(users_list)
+
     if len(users):
         partners = users[users["role"].isin(["agency_rep", "agency_staff", "partner"])].copy()
     else:
@@ -4540,72 +4817,193 @@ def admin():
 
     e = read_csv(ELIG_LOGS)
     inquiries = read_csv(INQUIRIES)
+    unis_df = universities()
 
-    pending = len(partners[partners["status"]=="pending"]) if len(partners) else 0
-    approved = len(partners[partners["status"]=="approved"]) if len(partners) else 0
-    agency_reps = len(partners[partners["role"]=="agency_rep"]) if len(partners) else 0
-    agency_staff = len(partners[partners["role"]=="agency_staff"]) if len(partners) else 0
+    pending_partners = partners[partners["status"]=="pending"].copy() if len(partners) and "status" in partners.columns else pd.DataFrame()
+    approved_partners = partners[partners["status"]=="approved"].copy() if len(partners) and "status" in partners.columns else pd.DataFrame()
+    rejected_partners = partners[partners["status"]=="rejected"].copy() if len(partners) and "status" in partners.columns else pd.DataFrame()
 
-    st.subheader("Admin Dashboard")
-    st.markdown(f"""
-    <div class="stats">
-      <div class="stat"><b>Total Partner Users</b><h2>{len(partners)}</h2></div>
-      <div class="stat"><b>Pending Approvals</b><h2>{pending}</h2></div>
-      <div class="stat"><b>Agency Representatives</b><h2>{agency_reps}</h2></div>
-      <div class="stat"><b>Agency Staff</b><h2>{agency_staff}</h2></div>
-      <div class="stat"><b>Eligibility Checks</b><h2>{len(e)}</h2></div>
+    pending = len(pending_partners)
+    approved = len(approved_partners)
+    rejected = len(rejected_partners)
+    agency_reps = len(partners[partners["role"]=="agency_rep"]) if len(partners) and "role" in partners.columns else 0
+    agency_staff = len(partners[partners["role"]=="agency_staff"]) if len(partners) and "role" in partners.columns else 0
+    total_checks = len(e)
+    total_unis = len(unis_df)
+    total_inquiries = len(inquiries)
+
+    st.markdown("""
+    <div class="admin-title-row-v73">
+        <div class="admin-step-pill-v73">Step 1</div>
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>Manage partner approvals, monitor platform activity, and review recent student records.</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.subheader("Partner Approval Requests")
-    pending_partners = partners[partners["status"]=="pending"] if len(partners) else pd.DataFrame()
+    st.markdown(f"""
+    <div class="admin-stats-grid-v73">
+        <div class="admin-stat-card-v73">
+            <div class="stat-icon-v73">👥</div>
+            <b>Total Partner Users</b>
+            <h2>{len(partners)}</h2>
+            <p>Registered agency users</p>
+        </div>
+        <div class="admin-stat-card-v73 warning-v73">
+            <div class="stat-icon-v73">⏳</div>
+            <b>Pending Approval</b>
+            <h2>{pending}</h2>
+            <p>Waiting for admin action</p>
+        </div>
+        <div class="admin-stat-card-v73 success-v73">
+            <div class="stat-icon-v73">✅</div>
+            <b>Approved</b>
+            <h2>{approved}</h2>
+            <p>Active partner users</p>
+        </div>
+        <div class="admin-stat-card-v73">
+            <div class="stat-icon-v73">🏛️</div>
+            <b>Universities</b>
+            <h2>{total_unis}</h2>
+            <p>University profiles</p>
+        </div>
+        <div class="admin-stat-card-v73">
+            <div class="stat-icon-v73">📋</div>
+            <b>Eligibility Checks</b>
+            <h2>{total_checks}</h2>
+            <p>Student check records</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    if len(pending_partners):
-        for idx, p in pending_partners.iterrows():
-            st.markdown(f"""
-            <div class="approval-card-v34">
+    left, right = st.columns([1.55, .85], gap="large")
+
+    with left:
+        st.markdown("""
+        <div class="admin-panel-v73">
+            <div class="admin-panel-head-v73">
                 <div>
-                    <h4>{p.get('agency_name','')}</h4>
-                    <p><b>Name:</b> {p.get('full_name','')} &nbsp; | &nbsp; <b>Username:</b> {p.get('username','')}</p>
-                    <p><b>Account Type:</b> {p.get('account_type', p.get('role',''))} &nbsp; | &nbsp; <b>Email:</b> {p.get('email','')}</p>
-                    <p><b>Country:</b> {p.get('country','')} &nbsp; | &nbsp; <b>Status:</b> <span class="status-pending">pending</span></p>
+                    <h2>Partner Approval Requests</h2>
+                    <p>Approve or reject new agency accounts.</p>
                 </div>
+                <span class="admin-badge-yellow-v73">Pending</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if len(pending_partners):
+            for p_idx, (_, p) in enumerate(pending_partners.iterrows()):
+                st.markdown(f"""
+                <div class="approval-card-premium-v73">
+                    <div class="approval-card-top-v73">
+                        <h3>{p.get('agency_name','')}</h3>
+                        <span class="status-pending">pending</span>
+                    </div>
+                    <div class="approval-grid-v73">
+                        <div><b>Name</b><span>{p.get('full_name','')}</span></div>
+                        <div><b>Username</b><span>{p.get('username','')}</span></div>
+                        <div><b>Account Type</b><span>{p.get('account_type', p.get('role',''))}</span></div>
+                        <div><b>Email</b><span>{p.get('email','')}</span></div>
+                        <div><b>Country</b><span>{p.get('country','')}</span></div>
+                        <div><b>Role</b><span>{p.get('role','')}</span></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                c1, c2, c3 = st.columns([1,1,4.5])
+                with c1:
+                    if st.button("Approve", key=_unique_admin_key_v72("approve", p_idx, p), use_container_width=True):
+                        all_users = read_json(USERS)
+                        for u in all_users:
+                            if u.get("username") == p.get("username") and u.get("email") == p.get("email"):
+                                u["status"] = "approved"
+                            elif u.get("username") == p.get("username") and not p.get("email"):
+                                u["status"] = "approved"
+                        write_json(USERS, all_users)
+                        st.success(f"{p.get('username')} approved.")
+                        st.rerun()
+                with c2:
+                    if st.button("Reject", key=_unique_admin_key_v72("reject", p_idx, p), use_container_width=True):
+                        all_users = read_json(USERS)
+                        for u in all_users:
+                            if u.get("username") == p.get("username") and u.get("email") == p.get("email"):
+                                u["status"] = "rejected"
+                            elif u.get("username") == p.get("username") and not p.get("email"):
+                                u["status"] = "rejected"
+                        write_json(USERS, all_users)
+                        st.warning(f"{p.get('username')} rejected.")
+                        st.rerun()
+                st.markdown('<div class="approval-action-gap-v73"></div>', unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="admin-empty-card-v73">
+                <h3>No pending partner approval requests</h3>
+                <p>New agency applications will appear here for review.</p>
             </div>
             """, unsafe_allow_html=True)
 
-            c1, c2, c3 = st.columns([1,1,5])
-            with c1:
-                if st.button("Approve", key=_unique_admin_key_v72("approve", p_idx, p), use_container_width=True):
-                    all_users = read_json(USERS)
-                    for u in all_users:
-                        if u.get("username") == p.get("username"):
-                            u["status"] = "approved"
-                    write_json(USERS, all_users)
-                    st.success(f"{p.get('username')} approved.")
-                    st.rerun()
-            with c2:
-                if st.button("Reject", key=_unique_admin_key_v72("reject", p_idx, p), use_container_width=True):
-                    all_users = read_json(USERS)
-                    for u in all_users:
-                        if u.get("username") == p.get("username"):
-                            u["status"] = "rejected"
-                    write_json(USERS, all_users)
-                    st.warning(f"{p.get('username')} rejected.")
-                    st.rerun()
-    else:
-        st.info("No pending partner approval requests.")
+        st.markdown("""
+        <div class="admin-panel-v73 admin-panel-margin-v73">
+            <div class="admin-panel-head-v73">
+                <div>
+                    <h2>Recent Eligibility Check History</h2>
+                    <p>Latest student eligibility activity from partner agencies.</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.subheader("Eligibility Check History")
-    if len(e):
-        st.dataframe(e.sort_values("timestamp", ascending=False), use_container_width=True, hide_index=True)
-    else:
-        st.info("No eligibility checks yet.")
+        if len(e):
+            e_display = e.sort_values("timestamp", ascending=False) if "timestamp" in e.columns else e
+            st.dataframe(e_display.head(15), use_container_width=True, hide_index=True)
+        else:
+            st.info("No eligibility checks yet.")
 
-    st.subheader("Recent Contact Inquiries")
-    if len(inquiries):
-        st.dataframe(inquiries.sort_values("timestamp", ascending=False), use_container_width=True, hide_index=True)
-    else:
-        st.info("No contact inquiries yet.")
+    with right:
+        st.markdown(f"""
+        <div class="admin-side-panel-v73">
+            <h2>Partner Approval Status</h2>
+            <p class="muted">Current account review summary</p>
+            <div class="status-row-v73"><span class="dot yellow"></span><b>Pending Approval</b><em>{pending}</em></div>
+            <div class="status-row-v73"><span class="dot green"></span><b>Approved</b><em>{approved}</em></div>
+            <div class="status-row-v73"><span class="dot red"></span><b>Rejected</b><em>{rejected}</em></div>
+            <hr>
+            <div class="status-row-v73"><span class="dot blue"></span><b>Agency Reps</b><em>{agency_reps}</em></div>
+            <div class="status-row-v73"><span class="dot blue"></span><b>Agency Staff</b><em>{agency_staff}</em></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="admin-rules-card-v73">
+            <h2>Quick Admin Actions</h2>
+            <p>Use the top menu to manage detailed data.</p>
+            <div class="quick-row-v73"><b>Universities</b><span>Add/edit university profiles</span></div>
+            <div class="quick-row-v73"><b>Eligibility Rules</b><span>Manage admission criteria</span></div>
+            <div class="quick-row-v73"><b>Tuition Rules</b><span>Manage fee information</span></div>
+            <div class="quick-row-v73"><b>Scholarship Rules</b><span>Manage scholarship ranges</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="admin-rules-card-v73">
+            <h2>Recent Contact Inquiries</h2>
+        </div>
+        """, unsafe_allow_html=True)
+        if len(inquiries):
+            inquiries_display = inquiries.sort_values("timestamp", ascending=False) if "timestamp" in inquiries.columns else inquiries
+            st.dataframe(inquiries_display.head(8), use_container_width=True, hide_index=True)
+        else:
+            st.info("No contact inquiries yet.")
+
+    st.markdown("""
+    <div class="admin-bottom-features-v73">
+      <div><span>🛡️</span><b>Trusted Partnerships</b><p>Work with verified universities</p></div>
+      <div><span>📄</span><b>Accurate Information</b><p>Up-to-date admission & fee details</p></div>
+      <div><span>✅</span><b>Eligibility Made Easy</b><p>Quick checks for better guidance</p></div>
+      <div><span>🎓</span><b>Scholarship Support</b><p>Maximize opportunities for students</p></div>
+    </div>
+    """, unsafe_allow_html=True)
 
     close_shell()
 

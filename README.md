@@ -447,3 +447,10 @@ v72:
 - Fixed StreamlitDuplicateElementKey in Admin Dashboard approval/reject buttons by generating unique keys.
 - Admin form submit buttons are now blue with bold white text.
 - Upload button text readability improved.
+
+
+v73:
+- Redesigned Admin Dashboard in a premium card-based layout similar to the provided sample.
+- Added Step pill, metric cards, approval panel, right-side partner approval status panel, quick admin action panel, and bottom feature strip.
+- Fixed approval/reject button loop to avoid duplicate/undefined key issues.
+- Blue admin action buttons with bold white text preserved.
