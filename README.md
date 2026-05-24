@@ -879,3 +879,14 @@ v128:
 - The dashboard now treats University Received, Application Number Issued, Interview Date, Interview Done, Interview Passed/Failed, Offer/Invoice, COA, and Visa statuses as active submitted applications.
 - Only Draft / Documents Pending applications show Continue / Resume / Finish Application.
 - Active applications show Check Status and the current status caption.
+
+
+v129:
+- Interview result big message now appears only at the interview-result stage.
+- If later stages such as offer letter/invoice, COA, visa application, visa application number, or visa result are updated, the interview congratulations/fail message will no longer appear.
+- Visa result big message still appears automatically when visa result is issued/rejected.
+- Added email notification system for super admin status updates.
+- Email notifications are triggered when the following fields change to a new value: university received, application number, interview date, interview result, offer/invoice, COA, visa application number, and visa result.
+- Notification recipients are the registered email of the staff/partner who submitted the application, with fallback to applicant email.
+- Sender defaults to uniqueststudy@gmail.com but can be changed through Streamlit Secrets using SMTP_SENDER_EMAIL or SUPER_ADMIN_EMAIL.
+- For Gmail sending, add SMTP_APP_PASSWORD or GMAIL_APP_PASSWORD in Streamlit Secrets.

@@ -2,10 +2,12 @@
 import streamlit as st
 import textwrap
 import pandas as pd
-import json, hashlib, base64, re, os, hmac, re
+import json, hashlib, base64, re, os, hmac, re, smtplib, ssl
 from pathlib import Path
 from datetime import datetime, date
 from io import BytesIO
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from sqlalchemy import create_engine, text
 
 st.set_page_config(page_title="Partner Portal Partner Portal", page_icon="🎓", layout="wide")
@@ -7560,26 +7562,36 @@ def render_application_status_timeline_v116(row):
     )
     st.markdown(html, unsafe_allow_html=True)
 
-    # v124: automatic big result messages on the timeline page
+    # v129: automatic big result messages on the timeline page
+    # Interview result message appears only while the application is still at the interview-result stage.
+    # Once later steps such as offer letter, COA, visa application, or visa result are updated, it will not appear again.
     interview_result = application_stage_value_v116(row, "Interview_Result").lower()
     visa_result = application_stage_value_v116(row, "Visa_Result").lower()
+    later_after_interview_v129 = any([
+        application_stage_value_v116(row, "Offer_Invoice_Issued"),
+        application_stage_value_v116(row, "COA_Issued"),
+        application_stage_value_v116(row, "Visa_Mode"),
+        application_stage_value_v116(row, "Visa_Application_Number"),
+        application_stage_value_v116(row, "Visa_Result"),
+    ])
 
-    if "pass" in interview_result:
-        st.markdown("""
-        <div class="auto-result-message-v124 interview-passed-v124">
-            <div class="auto-result-icon-v124">🎉</div>
-            <h1>Congratulations!</h1>
-            <p>You have passed the interview.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    elif "fail" in interview_result:
-        st.markdown("""
-        <div class="auto-result-message-v124 interview-failed-v124">
-            <div class="auto-result-icon-v124">⚠️</div>
-            <h1>Sorry</h1>
-            <p>You have not been selected.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    if not later_after_interview_v129:
+        if "pass" in interview_result:
+            st.markdown("""
+            <div class="auto-result-message-v124 interview-passed-v124">
+                <div class="auto-result-icon-v124">🎉</div>
+                <h1>Congratulations!</h1>
+                <p>You have passed the interview.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        elif "fail" in interview_result:
+            st.markdown("""
+            <div class="auto-result-message-v124 interview-failed-v124">
+                <div class="auto-result-icon-v124">⚠️</div>
+                <h1>Sorry</h1>
+                <p>You have not been selected.</p>
+            </div>
+            """, unsafe_allow_html=True)
 
     if "issued" in visa_result or "approved" in visa_result:
         st.markdown("""
@@ -12108,6 +12120,299 @@ def application_packet_zip_bytes_v127(row):
     buffer.seek(0)
     return buffer.getvalue()
 
+
+# v129 Email notification helpers
+def get_secret_or_env_v129(*keys, default=""):
+    for key in keys:
+        try:
+            val = st.secrets.get(key, "")
+            if val:
+                return str(val)
+        except Exception:
+            pass
+        val = os.getenv(key, "")
+        if val:
+            return str(val)
+    return default
+
+def notification_sender_email_v129():
+    return get_secret_or_env_v129(
+        "SMTP_SENDER_EMAIL",
+        "SUPER_ADMIN_EMAIL",
+        "GMAIL_USER",
+        "EMAIL_USER",
+        default="uniqueststudy@gmail.com"
+    )
+
+def notification_sender_password_v129():
+    return get_secret_or_env_v129(
+        "SMTP_APP_PASSWORD",
+        "GMAIL_APP_PASSWORD",
+        "EMAIL_APP_PASSWORD",
+        "SMTP_PASSWORD",
+        default=""
+    )
+
+def find_registered_email_for_username_v129(username):
+    username = str(username or "").strip().lower()
+    if not username:
+        return ""
+    try:
+        for u in read_json(USERS):
+            if str(u.get("username", "")).strip().lower() == username:
+                for key in ["email", "Email", "email_address", "Email Address"]:
+                    if display_clean_v50(u.get(key, "")):
+                        return display_clean_v50(u.get(key, ""))
+    except Exception:
+        pass
+    return ""
+
+def application_notification_recipients_v129(row):
+    recipients = []
+    submitter_email = find_registered_email_for_username_v129(row.get("Submitted_By", ""))
+    if submitter_email:
+        recipients.append(submitter_email)
+
+    # If submitter email is not found, fallback to the applicant email so the notification is not lost.
+    applicant_email = display_clean_v50(row.get("Email", ""))
+    if applicant_email and applicant_email not in recipients:
+        recipients.append(applicant_email)
+
+    # Optional: allow notification to agency-level email if stored in agencies data.
+    try:
+        agency_name = display_clean_v50(row.get("Agency", ""))
+        for a in read_agencies():
+            if str(a.get("agency_name", "")).strip().lower() == agency_name.strip().lower():
+                for key in ["email", "Email", "official_email", "contact_email"]:
+                    e = display_clean_v50(a.get(key, ""))
+                    if e and e not in recipients:
+                        recipients.append(e)
+    except Exception:
+        pass
+
+    return recipients
+
+def send_email_notification_v129(to_emails, subject, body):
+    to_emails = [e for e in to_emails if str(e).strip()]
+    if not to_emails:
+        return False, "No recipient email found."
+
+    sender = notification_sender_email_v129()
+    password = notification_sender_password_v129()
+
+    if not password:
+        return False, (
+            "SMTP app password is not configured. Add SMTP_APP_PASSWORD or GMAIL_APP_PASSWORD "
+            "in Streamlit Secrets. Sender email currently set to "
+            f"{sender}."
+        )
+
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = sender
+        msg["To"] = ", ".join(to_emails)
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+
+        smtp_server = get_secret_or_env_v129("SMTP_SERVER", default="smtp.gmail.com")
+        smtp_port = int(get_secret_or_env_v129("SMTP_PORT", default="587"))
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls(context=context)
+            server.login(sender, password)
+            server.sendmail(sender, to_emails, msg.as_string())
+
+        return True, f"Email sent to {', '.join(to_emails)}."
+    except Exception as e:
+        return False, f"Email could not be sent: {e}"
+
+def build_status_notifications_v129(old_row, updates):
+    applicant = application_display_name_v116(old_row)
+    university = display_clean_v50(old_row.get("University", ""))
+    major = display_clean_v50(old_row.get("Desired_Major", ""))
+    notifications = []
+
+    def changed_to_value(key):
+        old = display_clean_v50(old_row.get(key, ""))
+        new = display_clean_v50(updates.get(key, ""))
+        return bool(new) and old != new
+
+    if changed_to_value("University_Received"):
+        notifications.append((
+            "University received the application",
+            f"""Dear Partner,
+
+The university has received the application.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Status: University received the application
+Update: {display_clean_v50(updates.get("University_Received", ""))}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Application_Number"):
+        notifications.append((
+            "Application number issued",
+            f"""Dear Partner,
+
+An application number has been issued.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Application Number: {display_clean_v50(updates.get("Application_Number", ""))}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Interview_Date"):
+        notifications.append((
+            "Interview date announced",
+            f"""Dear Partner,
+
+The interview date has been announced.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Interview Date/Time: {display_clean_v50(updates.get("Interview_Date", ""))}
+
+Please check the portal and inform the applicant.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Interview_Result"):
+        result = display_clean_v50(updates.get("Interview_Result", ""))
+        if result.lower() == "passed":
+            headline = "Interview result: Passed"
+            message_line = "Congratulations. The applicant has passed the interview."
+        elif result.lower() == "failed":
+            headline = "Interview result: Failed"
+            message_line = "Sorry. The applicant has not been selected."
+        else:
+            headline = f"Interview result: {result}"
+            message_line = f"The interview result has been updated to {result}."
+
+        notifications.append((
+            headline,
+            f"""Dear Partner,
+
+{message_line}
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Interview Result: {result}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Offer_Invoice_Issued"):
+        notifications.append((
+            "Offer letter and invoice issued",
+            f"""Dear Partner,
+
+The offer letter and invoice status has been updated.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Update: {display_clean_v50(updates.get("Offer_Invoice_Issued", ""))}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("COA_Issued"):
+        notifications.append((
+            "COA issued",
+            f"""Dear Partner,
+
+The COA status has been updated.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Update: {display_clean_v50(updates.get("COA_Issued", ""))}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Visa_Application_Number"):
+        notifications.append((
+            "Visa application number issued",
+            f"""Dear Partner,
+
+The visa application number has been issued.
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Visa Application Number: {display_clean_v50(updates.get("Visa_Application_Number", ""))}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    if changed_to_value("Visa_Result"):
+        result = display_clean_v50(updates.get("Visa_Result", ""))
+        if result.lower() == "issued":
+            headline = "Visa result: Issued"
+            message_line = "Congratulations. The applicant's visa has been issued."
+        elif result.lower() == "rejected":
+            headline = "Visa result: Rejected"
+            message_line = "Sorry. The applicant's visa has been rejected."
+        else:
+            headline = f"Visa result: {result}"
+            message_line = f"The visa result has been updated to {result}."
+
+        notifications.append((
+            headline,
+            f"""Dear Partner,
+
+{message_line}
+
+Applicant: {applicant}
+University: {university}
+Major/Program: {major}
+Visa Result: {result}
+
+Please check the portal for full details.
+
+Partner Portal"""
+        ))
+
+    return notifications
+
+def send_status_update_notifications_v129(old_row, updates):
+    recipients = application_notification_recipients_v129(old_row)
+    notifications = build_status_notifications_v129(old_row, updates)
+
+    if not notifications:
+        return []
+
+    results = []
+    for subject, body in notifications:
+        ok, msg = send_email_notification_v129(recipients, subject, body)
+        results.append((ok, subject, msg))
+    return results
+
+
 def update_application_status_from_admin_v125(app_id, updates):
     df = applications_df_v116()
     if len(df) == 0:
@@ -12250,7 +12555,7 @@ def admin_application_detail_page_v125(app_id):
                 admin_download_document_button_v125(doc_key, rel_path, idx)
 
     st.markdown("### Update Application Status")
-    st.caption("Only super admin / university admin should update these fields. Changes are saved to the same application record and will automatically appear in the staff or partner dashboard.")
+    st.caption("Only super admin / university admin should update these fields. Changes are saved to the same application record and automatically appear in the staff or partner dashboard. Email notifications are sent when interview date/result, offer/COA, application number, or visa result fields are newly updated.")
 
     with st.form(f"admin_update_status_v125_{safe_slug_v49(app_id)}"):
         c1, c2, c3 = st.columns(3)
@@ -12307,7 +12612,14 @@ def admin_application_detail_page_v125(app_id):
                 updates["Status"] = inferred_application_status_v119(row)
 
             if update_application_status_from_admin_v125(app_id, updates):
+                email_results_v129 = send_status_update_notifications_v129(row, updates)
                 st.success("Applicant status updated successfully. Partner/staff dashboard will show the updated status automatically.")
+                if email_results_v129:
+                    for ok_v129, subject_v129, msg_v129 in email_results_v129:
+                        if ok_v129:
+                            st.success(f"Email notification sent: {subject_v129}")
+                        else:
+                            st.warning(f"Email notification not sent for '{subject_v129}': {msg_v129}")
                 st.rerun()
             else:
                 st.error("Could not update application status.")
