@@ -265,6 +265,52 @@ def user_approval_group_matches_v77(user, current_key):
     return any(normalize_agency_id(x) == normalize_agency_id(current_key) for x in candidates if str(x).strip())
 
 
+
+def approve_or_reject_partner_request_v80(req, new_status):
+    """
+    v80: Official representative approval fix.
+    For partner agencies, the applicant's own agency_id is their company name,
+    so we must approve by sponsor/official representative group, not by applicant agency_id.
+    """
+    current_key = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
+    req_username = str(req.get("username", "")).strip()
+    req_email = str(req.get("email", "")).strip()
+
+    all_users = read_json(USERS)
+    changed = False
+    affected_agency_ids = set()
+
+    for u in all_users:
+        same_user = (
+            str(u.get("username", "")).strip() == req_username
+            and (not req_email or str(u.get("email", "")).strip() == req_email)
+        )
+        if same_user and user_approval_group_matches_v77(u, current_key):
+            u["status"] = new_status
+            u["approved_by"] = st.session_state.get("username", "")
+            u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            u["approved_by_agency"] = st.session_state.get("agency_name", "")
+            changed = True
+            if str(u.get("role", "")) == "agency_partner":
+                affected_agency_ids.add(normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))))
+
+    write_json(USERS, all_users)
+
+    # If the request is a partner agency, also update the agency list status.
+    if affected_agency_ids:
+        agencies = read_agencies()
+        for a in agencies:
+            if normalize_agency_id(a.get("agency_id", a.get("agency_name", ""))) in affected_agency_ids:
+                a["status"] = new_status
+                a["approved_by"] = st.session_state.get("username", "")
+                a["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                a["approved_by_agency"] = st.session_state.get("agency_name", "")
+        write_agencies(agencies)
+
+    st.cache_data.clear()
+    return changed
+
+
 def get_current_user():
     if not st.session_state.get("username"):
         return None
@@ -4223,10 +4269,15 @@ def partner_dashboard():
                     users_all_v75.get("agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
                     | users_all_v75.get("agency_name", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
                     | users_all_v75.get("partner_group", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                    | users_all_v75.get("official_representative", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                    | users_all_v75.get("sponsor_agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
+                    | users_all_v75.get("requested_approver_agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
                 )
                 & (users_all_v75.get("role", "").isin(["agency_staff", "agency_partner"]))
                 & (users_all_v75.get("status", "") == "pending")
             ].copy()
+            if len(pending_staff_v75):
+                pending_staff_v75 = pending_staff_v75.drop_duplicates(subset=["username", "email"], keep="last")
         else:
             pending_staff_v75 = pd.DataFrame()
 
@@ -4248,25 +4299,19 @@ def partner_dashboard():
                 ac1, ac2, ac3 = st.columns([1,1,4])
                 with ac1:
                     if st.button("Approve Request", key=_unique_admin_key_v72("agency_staff_approve", req_idx, req), use_container_width=True):
-                        all_users = read_json(USERS)
-                        for u in all_users:
-                            if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
-                                u["status"] = "approved"
-                                u["approved_by"] = st.session_state.username
-                                u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        write_json(USERS, all_users)
-                        st.success(f"{req.get('full_name','Staff user')} approved.")
+                        changed = approve_or_reject_partner_request_v80(req, "approved")
+                        if changed:
+                            st.success(f"{req.get('agency_name','') or req.get('company_name','') or req.get('full_name','Request')} approved.")
+                        else:
+                            st.error("This request could not be approved. Please check whether this user selected your agency as the official representative.")
                         st.rerun()
                 with ac2:
                     if st.button("Reject Request", key=_unique_admin_key_v72("agency_staff_reject", req_idx, req), use_container_width=True):
-                        all_users = read_json(USERS)
-                        for u in all_users:
-                            if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
-                                u["status"] = "rejected"
-                                u["approved_by"] = st.session_state.username
-                                u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        write_json(USERS, all_users)
-                        st.warning(f"{req.get('full_name','Staff user')} rejected.")
+                        changed = approve_or_reject_partner_request_v80(req, "rejected")
+                        if changed:
+                            st.warning(f"{req.get('agency_name','') or req.get('company_name','') or req.get('full_name','Request')} rejected.")
+                        else:
+                            st.error("This request could not be rejected. Please check whether this user selected your agency as the official representative.")
                         st.rerun()
 
     left, right = st.columns([1.25, .9], gap="large")

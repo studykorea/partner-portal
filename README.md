@@ -501,3 +501,11 @@ v79:
 - Updated Partner Agency signup note to remove example agency names.
 - Changed user-facing labels from Create Eligibleword / Confirm Eligibleword to Create Password / Confirm Password.
 - Changed password mismatch error text to 'Passwords do not match.'
+
+
+v80:
+- Fixed Realize/KIEC official representative approval for Partner Agency requests.
+- Approval now matches by sponsor/official representative group, not by the applicant company's own agency ID.
+- When a Partner Agency is approved/rejected, the related agency record status is also updated.
+- Pending approval list now checks sponsor_agency_id, official_representative, and requested_approver_agency_id.
+- Duplicate pending cards are reduced by username/email.
