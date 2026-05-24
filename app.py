@@ -2741,6 +2741,42 @@ button[kind="primary"]:hover {
     }
 }
 
+
+/* v71 program-specific application date cards */
+.uni-badges-v61 {
+    min-width: 300px !important;
+}
+.program-date-card-v71 {
+    background:#F6F8FC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:14px !important;
+    padding:10px 12px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:6px !important;
+    color:#101828 !important;
+}
+.program-date-card-v71 b {
+    color:#002B5B !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+}
+.program-date-card-v71 span {
+    border-radius:999px !important;
+    padding:7px 10px !important;
+    text-align:center !important;
+    font-weight:900 !important;
+    font-size:12px !important;
+}
+.program-date-card-v71 small {
+    color:#475467 !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+}
+.uni-summary-meta-v62 .program-date-card-v71 {
+    min-width: 210px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3737,6 +3773,41 @@ def _program_badges_html_v64(university_name):
         )
 
 
+
+
+def _program_specific_application_badges_v71(row):
+    """
+    Shows Undergraduate, Graduate, and KLP/EAP with separate application status and open date.
+    If program-specific dates are not set, general Application_Open_Date / Application_Close_Date are used.
+    """
+    general_open = row.get("Application_Open_Date", "")
+    general_close = row.get("Application_Close_Date", "")
+
+    programs = [
+        ("Undergraduate", "UG_Open_Date", "UG_Close_Date"),
+        ("Graduate (Masters/Ph.D.)", "Graduate_Open_Date", "Graduate_Close_Date"),
+        ("KLP/EAP", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date"),
+    ]
+
+    html = ""
+    for label, open_col, close_col in programs:
+        open_date = row.get(open_col, "") or general_open
+        close_date = row.get(close_col, "") or general_close
+        status = _calculate_application_status_v66(open_date, close_date, row.get("Application_Status", ""))
+        status_class = _application_status_class_v63(status)
+        open_txt = _format_date_v66(open_date) or "Not set"
+        close_txt = _format_date_v66(close_date) or "Not set"
+        html += (
+            f'<div class="program-date-card-v71">'
+            f'<b>{_safe_html_v62(label)}</b>'
+            f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
+            f'<small>Open: {_safe_html_v62(open_txt)}</small>'
+            f'<small>Close: {_safe_html_v62(close_txt)}</small>'
+            f'</div>'
+        )
+    return html
+
+
 def _render_university_detail_v62(u):
     image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
     programs_html = program_list_html_for_university(u.get("University", ""))
@@ -3746,7 +3817,7 @@ def _render_university_detail_v62(u):
     open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
     status_text = _application_status_v66_from_row(u)
     status_class = _application_status_class_v63(status_text)
-    program_badges = _program_badges_html_v64(u.get("University", ""))
+    program_badges = _program_specific_application_badges_v71(u)
 
     detail_html = f'''<div class="uni-card-v32 detail-card-v62">
 {image_html}
@@ -3758,8 +3829,6 @@ def _render_university_detail_v62(u):
 </div>
 <div class="uni-badges-v61">
 {program_badges}
-<span class="{status_class}">{_safe_html_v62(status_text)}</span>
-<span>{_safe_html_v62("Open date: " + open_date_text) if open_date_text else "Open date not set"}</span>
 </div>
 </div>
 <div class="info-grid-v32">
@@ -3787,7 +3856,7 @@ def _render_university_summary_v62(u, key_suffix):
     open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
     status_text = _application_status_v66_from_row(u)
     status_class = _application_status_class_v63(status_text)
-    program_badges_inline = _program_badges_html_v64(u.get("University", ""))
+    program_badges_inline = _program_specific_application_badges_v71(u)
 
     summary_html = f'''<div class="uni-summary-card-v62">
 {image_html}
@@ -3796,8 +3865,6 @@ def _render_university_summary_v62(u, key_suffix):
 <p>{_safe_html_v62(u.get("Overview", ""))}</p>
 <div class="uni-summary-meta-v62">
 {program_badges_inline}
-<span class="{status_class}">Status: {_safe_html_v62(status_text)}</span>
-<span>Open Date: {_safe_html_v62(open_date_text if open_date_text else "Not set")}</span>
 </div>
 </div>
 </div>'''
@@ -4767,7 +4834,9 @@ def admin_university_management_v49():
     df = read_csv(uni_file)
     required_cols = [
         "University","Location","Total_Students","International_Students","Top_Majors",
-        "Intake","Application_Status","Application_Open_Date","Application_Close_Date","Tuition_Range","Scholarship_Info","Overview","Image",
+        "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
+        "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
+        "Tuition_Range","Scholarship_Info","Overview","Image",
         "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -4796,9 +4865,22 @@ def admin_university_management_v49():
                     ["Application Open", "Application Closed", "Application Opens Soon"],
                     key="add_application_status_v64"
                 )
-                application_open_date = st.date_input("Application Open Date", value=None, key="add_application_open_date_v64")
-                application_close_date = st.date_input("Application Close Date", value=None, key="add_application_close_date_v65")
-                st.caption("Application status is directly linked with the dates. Before Open Date = Opens Soon, between Open/Close Date = Open, after Close Date = Closed.")
+                st.markdown("##### General Application Period")
+                application_open_date = st.date_input("General Application Open Date", value=None, key="add_application_open_date_v64")
+                application_close_date = st.date_input("General Application Close Date", value=None, key="add_application_close_date_v65")
+
+                st.markdown("##### Program-Specific Application Periods")
+                d1, d2 = st.columns(2)
+                with d1:
+                    ug_open_date = st.date_input("Undergraduate Open Date", value=None, key="add_ug_open_date_v71")
+                    grad_open_date = st.date_input("Graduate (Masters/Ph.D.) Open Date", value=None, key="add_grad_open_date_v71")
+                    klp_open_date = st.date_input("KLP/EAP Open Date", value=None, key="add_klp_open_date_v71")
+                with d2:
+                    ug_close_date = st.date_input("Undergraduate Close Date", value=None, key="add_ug_close_date_v71")
+                    grad_close_date = st.date_input("Graduate (Masters/Ph.D.) Close Date", value=None, key="add_grad_close_date_v71")
+                    klp_close_date = st.date_input("KLP/EAP Close Date", value=None, key="add_klp_close_date_v71")
+
+                st.caption("Each program status is calculated from its own open/close dates. If a program date is empty, the general application period is used as fallback.")
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
@@ -4823,6 +4905,12 @@ def admin_university_management_v49():
                         "Application_Status": calculated_application_status,
                         "Application_Open_Date": str(application_open_date) if application_open_date else "",
                         "Application_Close_Date": str(application_close_date) if application_close_date else "",
+                        "UG_Open_Date": str(ug_open_date) if ug_open_date else "",
+                        "UG_Close_Date": str(ug_close_date) if ug_close_date else "",
+                        "Graduate_Open_Date": str(grad_open_date) if grad_open_date else "",
+                        "Graduate_Close_Date": str(grad_close_date) if grad_close_date else "",
+                        "KLP_EAP_Open_Date": str(klp_open_date) if klp_open_date else "",
+                        "KLP_EAP_Close_Date": str(klp_close_date) if klp_close_date else "",
                         "Tuition_Range": tuition_range.strip(),
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
@@ -4875,9 +4963,22 @@ def admin_university_management_v49():
                     )
                     current_open_date_v64 = _parse_date_v64(row.get("Application_Open_Date", ""))
                     current_close_date_v65 = _parse_date_v64(row.get("Application_Close_Date", ""))
-                    application_open_date = st.date_input("Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
-                    application_close_date = st.date_input("Application Close Date", value=current_close_date_v65, key="edit_application_close_date_v65")
-                    st.caption("Application status is directly linked with the dates. Before Open Date = Opens Soon, between Open/Close Date = Open, after Close Date = Closed.")
+                    st.markdown("##### General Application Period")
+                    application_open_date = st.date_input("General Application Open Date", value=current_open_date_v64, key="edit_application_open_date_v64")
+                    application_close_date = st.date_input("General Application Close Date", value=current_close_date_v65, key="edit_application_close_date_v65")
+
+                    st.markdown("##### Program-Specific Application Periods")
+                    d1, d2 = st.columns(2)
+                    with d1:
+                        ug_open_date = st.date_input("Undergraduate Open Date", value=_parse_date_v64(row.get("UG_Open_Date", "")), key="edit_ug_open_date_v71")
+                        grad_open_date = st.date_input("Graduate (Masters/Ph.D.) Open Date", value=_parse_date_v64(row.get("Graduate_Open_Date", "")), key="edit_grad_open_date_v71")
+                        klp_open_date = st.date_input("KLP/EAP Open Date", value=_parse_date_v64(row.get("KLP_EAP_Open_Date", "")), key="edit_klp_open_date_v71")
+                    with d2:
+                        ug_close_date = st.date_input("Undergraduate Close Date", value=_parse_date_v64(row.get("UG_Close_Date", "")), key="edit_ug_close_date_v71")
+                        grad_close_date = st.date_input("Graduate (Masters/Ph.D.) Close Date", value=_parse_date_v64(row.get("Graduate_Close_Date", "")), key="edit_grad_close_date_v71")
+                        klp_close_date = st.date_input("KLP/EAP Close Date", value=_parse_date_v64(row.get("KLP_EAP_Close_Date", "")), key="edit_klp_close_date_v71")
+
+                    st.caption("Each program status is calculated from its own open/close dates. If a program date is empty, the general application period is used as fallback.")
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
@@ -4906,6 +5007,12 @@ def admin_university_management_v49():
                     df.loc[idx, "Application_Status"] = calculated_application_status
                     df.loc[idx, "Application_Open_Date"] = str(application_open_date) if application_open_date else ""
                     df.loc[idx, "Application_Close_Date"] = str(application_close_date) if application_close_date else ""
+                    df.loc[idx, "UG_Open_Date"] = str(ug_open_date) if ug_open_date else ""
+                    df.loc[idx, "UG_Close_Date"] = str(ug_close_date) if ug_close_date else ""
+                    df.loc[idx, "Graduate_Open_Date"] = str(grad_open_date) if grad_open_date else ""
+                    df.loc[idx, "Graduate_Close_Date"] = str(grad_close_date) if grad_close_date else ""
+                    df.loc[idx, "KLP_EAP_Open_Date"] = str(klp_open_date) if klp_open_date else ""
+                    df.loc[idx, "KLP_EAP_Close_Date"] = str(klp_close_date) if klp_close_date else ""
                     df.loc[idx, "Tuition_Range"] = tuition_range.strip()
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()

@@ -434,3 +434,10 @@ v70:
 - Partner Sign Up is now a blue button with white text.
 - Active page is shown with blue text and underline.
 - Navigation uses HTML links with query-parameter routing.
+
+
+v71:
+- Added separate application open/close dates for Undergraduate, Graduate (Masters/Ph.D.), and KLP/EAP.
+- Admin Add/Edit University now has program-specific date fields.
+- University cards/details show program-specific application status and open/close dates.
+- If program-specific dates are empty, the general application period is used as fallback.
