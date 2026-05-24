@@ -4316,6 +4316,99 @@ h3.uni-name-accent-v93 span {
     }
 }
 
+
+/* v103 university detail quick links */
+.uni-quick-links-card-v103 {
+    margin:0 38px 28px 38px !important;
+    padding:24px 26px !important;
+    border:1px solid #E6ECF5 !important;
+    border-radius:18px !important;
+    background:#FFFFFF !important;
+    box-shadow:0 8px 20px rgba(16,24,40,.04) !important;
+}
+.uni-quick-links-card-v103 h3 {
+    color:#101828 !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+    margin:0 0 14px 0 !important;
+}
+.uni-quick-links-grid-v103 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:12px !important;
+}
+.uni-quick-link-v103 {
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    min-height:58px !important;
+    padding:14px 16px !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:14px !important;
+    background:#F8FAFC !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    text-decoration:none !important;
+    font-size:16px !important;
+    font-weight:900 !important;
+    transition:all .18s ease-in-out !important;
+}
+.uni-quick-link-v103:hover {
+    border-color:#005BDB !important;
+    background:#EEF5FF !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    transform:translateY(-1px) !important;
+}
+.uni-quick-icon-v103 {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:32px !important;
+    height:32px !important;
+    border-radius:999px !important;
+    background:#EAF2FF !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-weight:950 !important;
+    flex:0 0 auto !important;
+}
+.uni-external-v103 {
+    margin-left:auto !important;
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+    font-weight:950 !important;
+}
+.uni-sns-note-v103 {
+    margin-top:14px !important;
+    padding-top:14px !important;
+    border-top:1px dashed #D9E2F1 !important;
+}
+.uni-sns-note-v103 b {
+    color:#101828 !important;
+    font-size:17px !important;
+    font-weight:950 !important;
+}
+.uni-sns-note-v103 p {
+    color:#475467 !important;
+    font-size:15px !important;
+    line-height:1.6 !important;
+    margin:8px 0 0 0 !important;
+}
+@media(max-width:900px){
+    .uni-quick-links-grid-v103 {
+        grid-template-columns:1fr 1fr !important;
+    }
+}
+@media(max-width:640px){
+    .uni-quick-links-card-v103 {
+        margin:0 20px 24px 20px !important;
+    }
+    .uni-quick-links-grid-v103 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6324,6 +6417,58 @@ def _program_specific_application_badges_v71(row):
 
 
 
+
+def normalize_url_v103(url):
+    """Return a clickable URL. Adds https:// if admin typed only domain."""
+    url = display_clean_v50(url).strip()
+    if not url:
+        return ""
+    if url.lower().startswith(("http://", "https://", "mailto:", "tel:")):
+        return url
+    return "https://" + url
+
+def university_quick_links_html_v103(u):
+    """Optional university detail click links. Only shown when admin entered URLs/info."""
+    links = []
+
+    def add_link(label, icon, value):
+        href = normalize_url_v103(value)
+        if href:
+            links.append(
+                f'<a class="uni-quick-link-v103" href="{href}" target="_blank" rel="noopener noreferrer">'
+                f'<span class="uni-quick-icon-v103">{icon}</span>'
+                f'<span>{_safe_html_v62(label)}</span>'
+                f'<span class="uni-external-v103">↗</span>'
+                f'</a>'
+            )
+
+    add_link("Homepage", "🏠", u.get("Homepage", ""))
+    add_link("Language School Homepage", "🌐", u.get("Language_School_Homepage", ""))
+    add_link("Promotional Materials", "📄", u.get("Promotional_Materials", ""))
+    add_link("Facebook", "f", u.get("Facebook_Link", ""))
+    add_link("Instagram", "◎", u.get("Instagram_Link", ""))
+    add_link("YouTube", "▶", u.get("YouTube_Link", ""))
+
+    sns_text = display_clean_v50(u.get("SNS_Information", "")).strip()
+
+    if not links and not sns_text:
+        return ""
+
+    sns_html = ""
+    if sns_text:
+        sns_html = f'<div class="uni-sns-note-v103"><b>SNS Information</b><p>{_safe_html_v62(sns_text)}</p></div>'
+
+    return f"""
+<div class="uni-quick-links-card-v103">
+    <h3>Useful Links</h3>
+    <div class="uni-quick-links-grid-v103">
+        {''.join(links)}
+    </div>
+    {sns_html}
+</div>
+""".strip()
+
+
 def google_map_embed_html_v99(u):
     """Create a Google Maps embed and open-map button from university address/location."""
     try:
@@ -6363,6 +6508,7 @@ def _render_university_detail_v62(u):
     programs_html = program_list_html_for_university(u.get("University", ""))
     program_badges = _program_specific_application_badges_v71(u)
     map_html = google_map_embed_html_v99(u)
+    quick_links_html = university_quick_links_html_v103(u)
 
     detail_html = f"""
 <div class="detail-card-v99">
@@ -6385,6 +6531,8 @@ def _render_university_detail_v62(u):
             {program_badges}
         </div>
     </div>
+
+    {quick_links_html}
 
     <div class="detail-info-grid-v99">
         <div class="info-box-v32"><b>Homepage</b><span>{_safe_html_v62(u.get("Homepage", ""))}</span></div>
@@ -6464,7 +6612,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -7770,7 +7918,7 @@ def admin_university_management_v49():
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
         "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
-        "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
+        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
 
@@ -7858,6 +8006,12 @@ def admin_university_management_v49():
                         "Image_Gallery": gallery_path,
                         "University_Logo": logo_path,
                         "Homepage": homepage.strip(),
+                        "Language_School_Homepage": language_school_homepage.strip(),
+                        "Promotional_Materials": promotional_materials.strip(),
+                        "Facebook_Link": facebook_link.strip(),
+                        "Instagram_Link": instagram_link.strip(),
+                        "YouTube_Link": youtube_link.strip(),
+                        "SNS_Information": sns_information.strip(),
                         "Address": address.strip(),
                         "Representative_Phone": phone.strip(),
                         "Representative_Fax": fax.strip(),
@@ -7905,6 +8059,12 @@ def admin_university_management_v49():
                     location = st.text_input("Location", value=display_clean_v50(row.get("Location", "")), key=f"edit_uni_location_{selected_key_v90}")
                     region = st.text_input("Region", value=display_clean_v50(row.get("Region", "")), key=f"edit_uni_region_{selected_key_v90}")
                     homepage = st.text_input("Homepage", value=display_clean_v50(row.get("Homepage", "")), key=f"edit_uni_homepage_{selected_key_v90}")
+                    language_school_homepage = st.text_input("Language School Homepage (optional)", value=display_clean_v50(row.get("Language_School_Homepage", "")), key=f"edit_uni_language_homepage_{selected_key_v90}")
+                    promotional_materials = st.text_input("Promotional Materials Link (optional)", value=display_clean_v50(row.get("Promotional_Materials", "")), key=f"edit_uni_promo_materials_{selected_key_v90}")
+                    facebook_link = st.text_input("Facebook Link (optional)", value=display_clean_v50(row.get("Facebook_Link", "")), key=f"edit_uni_facebook_{selected_key_v90}")
+                    instagram_link = st.text_input("Instagram Link (optional)", value=display_clean_v50(row.get("Instagram_Link", "")), key=f"edit_uni_instagram_{selected_key_v90}")
+                    youtube_link = st.text_input("YouTube Link (optional)", value=display_clean_v50(row.get("YouTube_Link", "")), key=f"edit_uni_youtube_{selected_key_v90}")
+                    sns_information = st.text_area("SNS Information / Notes (optional)", value=display_clean_v50(row.get("SNS_Information", "")), height=70, key=f"edit_uni_sns_info_{selected_key_v90}")
                     phone = st.text_input("Representative Phone", value=display_clean_v50(row.get("Representative_Phone", "")), key=f"edit_uni_phone_{selected_key_v90}")
                     fax = st.text_input("Representative Fax", value=display_clean_v50(row.get("Representative_Fax", "")), key=f"edit_uni_fax_{selected_key_v90}")
                     school_size = st.text_input("School Size", value=display_clean_v50(row.get("School_Size", "")), key=f"edit_uni_school_size_{selected_key_v90}")
@@ -7968,6 +8128,12 @@ def admin_university_management_v49():
                     df.loc[idx, "Location"] = location.strip()
                     df.loc[idx, "Region"] = region.strip()
                     df.loc[idx, "Homepage"] = homepage.strip()
+                    df.loc[idx, "Language_School_Homepage"] = language_school_homepage.strip()
+                    df.loc[idx, "Promotional_Materials"] = promotional_materials.strip()
+                    df.loc[idx, "Facebook_Link"] = facebook_link.strip()
+                    df.loc[idx, "Instagram_Link"] = instagram_link.strip()
+                    df.loc[idx, "YouTube_Link"] = youtube_link.strip()
+                    df.loc[idx, "SNS_Information"] = sns_information.strip()
                     df.loc[idx, "Address"] = address.strip()
                     df.loc[idx, "Representative_Phone"] = phone.strip()
                     df.loc[idx, "Representative_Fax"] = fax.strip()

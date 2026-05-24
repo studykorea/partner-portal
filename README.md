@@ -671,3 +671,10 @@ v102:
 - Fixed University View Details still showing raw HTML in a black code block.
 - The issue was caused by indented HTML lines inside Markdown.
 - The detail page now removes left indentation from every HTML line before rendering.
+
+
+v103:
+- Added optional university detail links: Homepage, Language School Homepage, Promotional Materials, Facebook, Instagram, YouTube, and SNS information.
+- Admin can enter these fields in Add/Edit University; all are optional.
+- If admin enters a link, it appears in University View Details as a clickable card with icon and external-link marker.
+- Blank optional links are not shown on the public details page.
