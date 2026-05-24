@@ -495,3 +495,9 @@ v78:
 - Fixed signup dynamic fields by moving Account Category selector outside the Streamlit form.
 - When Partner Agency of Official Representative is selected, the form now immediately shows organization/company, CEO/representative, position, email, contact number, and official partner selector.
 - After signup, the pending screen says thank you, explains the account is under review, and tells users they may contact their selected official partner organization for approval.
+
+
+v79:
+- Updated Partner Agency signup note to remove example agency names.
+- Changed user-facing labels from Create Eligibleword / Confirm Eligibleword to Create Password / Confirm Password.
+- Changed password mismatch error text to 'Passwords do not match.'

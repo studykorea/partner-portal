@@ -3891,7 +3891,7 @@ def signup():
         if account_category == "Staff of Official Representative Agency":
             st.markdown("**Staff account**: Your organization, such as KIEC or Realize Education, will confirm your account.")
         elif account_category == "Partner Agency of Official Representative":
-            st.markdown("**Partner agency account**: The official partner you select, such as KIEC or Realize Education, will review and approve your company account.")
+            st.markdown("**Partner agency account**: The official partner you select will review and approve your company account.")
         else:
             st.markdown("**Official representative agency**: This account is reviewed by the portal super admin.")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -3916,8 +3916,8 @@ def signup():
                     email = st.text_input("Email Address")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
                     username = st.text_input("Create Username")
-                    password = st.text_input("Create Eligibleword", type="password")
-                confirm = st.text_input("Confirm Eligibleword", type="password")
+                    password = st.text_input("Create Password", type="password")
+                confirm = st.text_input("Confirm Password", type="password")
                 official_representative = staff_org
                 agency_name_clean = staff_org
                 role = "agency_staff"
@@ -3939,9 +3939,9 @@ def signup():
                 u1, u2 = st.columns(2)
                 with u1:
                     username = st.text_input("Create Username")
-                    password = st.text_input("Create Eligibleword", type="password")
+                    password = st.text_input("Create Password", type="password")
                 with u2:
-                    confirm = st.text_input("Confirm Eligibleword", type="password")
+                    confirm = st.text_input("Confirm Password", type="password")
                 name = head_name or ceo_name
                 agency_name_clean = company_name
                 role = "agency_partner"
@@ -3960,8 +3960,8 @@ def signup():
                     phone = st.text_input("Contact Number / WhatsApp")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
                     username = st.text_input("Create Username")
-                    password = st.text_input("Create Eligibleword", type="password")
-                confirm = st.text_input("Confirm Eligibleword", type="password")
+                    password = st.text_input("Create Password", type="password")
+                confirm = st.text_input("Confirm Password", type="password")
                 name = head_name or ceo_name
                 official_representative = company_name
                 agency_name_clean = company_name
@@ -3979,7 +3979,7 @@ def signup():
                 if not all([str(x).strip() for x in required]):
                     st.error("Please complete all required fields.")
                 elif password != confirm:
-                    st.error("Eligiblewords do not match.")
+                    st.error("Passwords do not match.")
                 elif find_user(username):
                     st.error("This username already exists.")
                 elif not agree:
@@ -4106,7 +4106,7 @@ def login():
         st.caption("Partner Login")
         with st.form("login"):
             username = st.text_input("Username")
-            password = st.text_input("Eligibleword", type="password")
+            password = st.text_input("Password", type="password")
             if st.form_submit_button("Login", use_container_width=True):
                 user = find_user(username)
                 if not user or user["password_hash"] != hash_pw(password):
