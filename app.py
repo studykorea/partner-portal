@@ -5,6 +5,7 @@ import pandas as pd
 import json, hashlib, base64, re, os, hmac, re
 from pathlib import Path
 from datetime import datetime
+from io import BytesIO
 from sqlalchemy import create_engine, text
 
 st.set_page_config(page_title="Partner Portal Partner Portal", page_icon="🎓", layout="wide")
@@ -4501,6 +4502,29 @@ h3.uni-name-accent-v93 span {
     font-weight:700 !important;
 }
 
+
+/* v106 student enrollment and nationality statistics */
+.student-stats-card-v106 { margin:0 38px 28px 38px !important; padding:26px !important; border:1px solid #E6ECF5 !important; border-radius:20px !important; background:linear-gradient(180deg,#FFFFFF,#F8FAFF) !important; box-shadow:0 10px 24px rgba(16,24,40,.05) !important; }
+.student-stats-head-v106 { display:flex !important; align-items:flex-start !important; justify-content:space-between !important; gap:18px !important; margin-bottom:20px !important; }
+.student-stats-head-v106 h3 { color:#101828 !important; font-size:24px !important; font-weight:950 !important; margin:0 0 6px 0 !important; }
+.student-stats-head-v106 p { color:#667085 !important; font-size:14px !important; font-weight:700 !important; margin:0 !important; }
+.student-total-pill-v106 { padding:10px 14px !important; background:#EEF5FF !important; color:#005BDB !important; -webkit-text-fill-color:#005BDB !important; border:1px solid #BBD3FF !important; border-radius:999px !important; font-weight:950 !important; white-space:nowrap !important; }
+.student-stats-grid-v106 { display:grid !important; grid-template-columns:1fr 1fr !important; gap:24px !important; }
+.student-program-chart-v106, .nationality-chart-v106 { background:#FFFFFF !important; border:1px solid #E6ECF5 !important; border-radius:16px !important; padding:20px !important; }
+.student-program-chart-v106 h4, .nationality-chart-v106 h4 { color:#101828 !important; font-size:18px !important; font-weight:950 !important; margin:0 0 18px 0 !important; }
+.student-stat-row-v106 { margin-bottom:16px !important; }
+.student-stat-label-v106 { display:flex !important; align-items:center !important; justify-content:space-between !important; gap:12px !important; margin-bottom:7px !important; }
+.student-stat-label-v106 span, .nationality-main-v106 span { color:#344054 !important; font-weight:850 !important; }
+.student-stat-label-v106 b, .nationality-item-v106 b { color:#101828 !important; font-weight:950 !important; }
+.student-stat-bar-v106, .nationality-bar-v106 { width:100% !important; height:12px !important; background:#EAECF0 !important; border-radius:999px !important; overflow:hidden !important; }
+.student-stat-bar-v106 div, .nationality-bar-v106 div { height:100% !important; border-radius:999px !important; }
+.nationality-bar-v106 div { background:#005BDB !important; }
+.nationality-item-v106 { display:grid !important; grid-template-columns:minmax(0,1fr) auto !important; gap:8px 14px !important; align-items:center !important; margin-bottom:14px !important; }
+.nationality-main-v106 { display:flex !important; align-items:center !important; gap:10px !important; min-width:0 !important; }
+.flag-v106 { font-size:24px !important; line-height:1 !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; width:34px !important; height:34px !important; border-radius:999px !important; background:#F2F4F7 !important; flex:0 0 auto !important; }
+.student-muted-v106 { color:#667085 !important; font-weight:700 !important; margin:0 !important; }
+@media(max-width:900px){ .student-stats-grid-v106 { grid-template-columns:1fr !important; } .student-stats-card-v106 { margin:0 20px 24px 20px !important; } .student-stats-head-v106 { flex-direction:column !important; } }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6512,6 +6536,206 @@ def _program_specific_application_badges_v71(row):
 
 
 
+
+# v106 student enrollment / nationality statistics helpers
+COUNTRY_FLAG_OVERRIDES_V106 = {
+    "korea": "🇰🇷", "south korea": "🇰🇷", "republic of korea": "🇰🇷",
+    "nepal": "🇳🇵", "india": "🇮🇳", "bangladesh": "🇧🇩", "pakistan": "🇵🇰",
+    "sri lanka": "🇱🇰", "china": "🇨🇳", "vietnam": "🇻🇳", "myanmar": "🇲🇲",
+    "mongolia": "🇲🇳", "uzbekistan": "🇺🇿", "indonesia": "🇮🇩", "philippines": "🇵🇭",
+    "japan": "🇯🇵", "usa": "🇺🇸", "united states": "🇺🇸", "canada": "🇨🇦",
+    "thailand": "🇹🇭", "malaysia": "🇲🇾", "cambodia": "🇰🇭", "kazakhstan": "🇰🇿"
+}
+
+def country_flag_v106(country):
+    name = str(country or "").strip().lower()
+    return COUNTRY_FLAG_OVERRIDES_V106.get(name, "🌐")
+
+def _to_int_v106(value):
+    try:
+        s = str(value or "").replace(",", "").strip()
+        if s == "" or s.lower() in ["nan", "none", "null", "<na>"]:
+            return 0
+        return int(float(s))
+    except Exception:
+        return 0
+
+def student_stats_template_bytes_v106():
+    """Excel template for admin upload. Requires openpyxl in requirements."""
+    output = BytesIO()
+    summary = pd.DataFrame([{
+        "Data_Year": "2026",
+        "Undergraduate_Students": 1200,
+        "Graduate_Students": 450,
+        "Language_Study_Students": 180,
+    }])
+    nationality = pd.DataFrame([
+        {"Country": "Nepal", "Number_of_Students": 120},
+        {"Country": "Vietnam", "Number_of_Students": 95},
+        {"Country": "China", "Number_of_Students": 80},
+        {"Country": "Bangladesh", "Number_of_Students": 65},
+        {"Country": "India", "Number_of_Students": 45},
+    ])
+    instructions = pd.DataFrame([
+        {"Instruction": "Fill the Summary sheet with one row only."},
+        {"Instruction": "Fill Data_Year as the year or semester of the data, for example 2026 or 2026 Spring."},
+        {"Instruction": "Fill Undergraduate_Students, Graduate_Students, and Language_Study_Students as numbers."},
+        {"Instruction": "Fill the Nationality sheet with Country and Number_of_Students."},
+        {"Instruction": "The system will automatically show the top 5 nationality groups on the university detail page."},
+        {"Instruction": "This upload is optional. If no file is uploaded, no graph will be shown."},
+    ])
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        summary.to_excel(writer, sheet_name="Summary", index=False)
+        nationality.to_excel(writer, sheet_name="Nationality", index=False)
+        instructions.to_excel(writer, sheet_name="Instructions", index=False)
+    output.seek(0)
+    return output.getvalue()
+
+def parse_student_stats_excel_v106(uploaded_file):
+    """Parse optional student statistics Excel upload."""
+    result = {
+        "Student_Data_Year": "",
+        "Undergraduate_Students": "",
+        "Graduate_Students": "",
+        "Language_Study_Students": "",
+        "Nationality_Students_JSON": "[]",
+    }
+    if uploaded_file is None:
+        return result
+    try:
+        sheets = pd.read_excel(uploaded_file, sheet_name=None, keep_default_na=False)
+        summary_df = None
+        nationality_df = None
+        for name, sdf in sheets.items():
+            lname = str(name).lower().strip()
+            if "summary" in lname or "student" in lname:
+                summary_df = sdf
+            if "national" in lname or "country" in lname:
+                nationality_df = sdf
+        if summary_df is None and sheets:
+            summary_df = list(sheets.values())[0]
+        if nationality_df is None and len(sheets) > 1:
+            nationality_df = list(sheets.values())[1]
+
+        if summary_df is not None and len(summary_df) > 0:
+            row = summary_df.iloc[0]
+            lower_cols = {str(c).strip().lower(): c for c in summary_df.columns}
+            def get_col(*names):
+                for n in names:
+                    if n.lower() in lower_cols:
+                        return row.get(lower_cols[n.lower()], "")
+                for lc, orig in lower_cols.items():
+                    for n in names:
+                        if n.lower() in lc:
+                            return row.get(orig, "")
+                return ""
+            result["Student_Data_Year"] = str(get_col("Data_Year", "Year", "Data Until Year")).strip()
+            result["Undergraduate_Students"] = str(_to_int_v106(get_col("Undergraduate_Students", "Undergraduate", "Undergraduate Students")))
+            result["Graduate_Students"] = str(_to_int_v106(get_col("Graduate_Students", "Graduate", "Graduate Students")))
+            result["Language_Study_Students"] = str(_to_int_v106(get_col("Language_Study_Students", "Language Study", "Language", "KLP", "EAP")))
+
+        nationalities = []
+        if nationality_df is not None and len(nationality_df) > 0:
+            cols = {str(c).strip().lower(): c for c in nationality_df.columns}
+            country_col = cols.get("country") or cols.get("nationality")
+            count_col = cols.get("number_of_students") or cols.get("students") or cols.get("number") or cols.get("count")
+            if country_col is None:
+                for lc, orig in cols.items():
+                    if "country" in lc or "national" in lc:
+                        country_col = orig
+                        break
+            if count_col is None:
+                for lc, orig in cols.items():
+                    if "student" in lc or "number" in lc or "count" in lc:
+                        count_col = orig
+                        break
+            if country_col is not None and count_col is not None:
+                for _, r in nationality_df.iterrows():
+                    country = str(r.get(country_col, "")).strip()
+                    count = _to_int_v106(r.get(count_col, ""))
+                    if country and count > 0:
+                        nationalities.append({"country": country, "count": count})
+        nationalities = sorted(nationalities, key=lambda x: x["count"], reverse=True)
+        result["Nationality_Students_JSON"] = json.dumps(nationalities, ensure_ascii=False)
+        return result
+    except Exception as e:
+        st.error(f"Could not read student statistics Excel file: {e}")
+        return result
+
+def nationality_list_v106(value):
+    try:
+        data = json.loads(str(value or "[]"))
+        if isinstance(data, list):
+            clean = []
+            for item in data:
+                if isinstance(item, dict):
+                    country = str(item.get("country", "")).strip()
+                    count = _to_int_v106(item.get("count", 0))
+                    if country and count > 0:
+                        clean.append({"country": country, "count": count})
+            return sorted(clean, key=lambda x: x["count"], reverse=True)
+    except Exception:
+        pass
+    return []
+
+def university_student_stats_html_v106(u):
+    year = display_clean_v50(u.get("Student_Data_Year", "")).strip()
+    ug = _to_int_v106(u.get("Undergraduate_Students", ""))
+    grad = _to_int_v106(u.get("Graduate_Students", ""))
+    lang = _to_int_v106(u.get("Language_Study_Students", ""))
+    nationalities = nationality_list_v106(u.get("Nationality_Students_JSON", ""))[:5]
+    if ug <= 0 and grad <= 0 and lang <= 0 and not nationalities:
+        return ""
+    total_program = max(ug + grad + lang, 1)
+    program_items = [("Undergraduate", ug, "#005BDB"), ("Graduate", grad, "#7A2E83"), ("Language Study", lang, "#F59E0B")]
+    program_html = ""
+    for label, val, color in program_items:
+        pct = max(3, min(100, round((val / total_program) * 100, 1))) if val > 0 else 3
+        program_html += f"""
+        <div class="student-stat-row-v106">
+            <div class="student-stat-label-v106"><span>{label}</span><b>{val:,}</b></div>
+            <div class="student-stat-bar-v106"><div style="width:{pct}%; background:{color};"></div></div>
+        </div>
+        """
+    nationality_html = ""
+    if nationalities:
+        max_country = max([x["count"] for x in nationalities] + [1])
+        for item in nationalities:
+            country = item["country"]
+            count = item["count"]
+            pct = max(8, min(100, round((count / max_country) * 100, 1)))
+            nationality_html += f"""
+            <div class="nationality-item-v106">
+                <div class="nationality-main-v106"><span class="flag-v106">{country_flag_v106(country)}</span><span>{_safe_html_v62(country)}</span></div>
+                <b>{count:,}</b>
+                <div class="nationality-bar-v106"><div style="width:{pct}%;"></div></div>
+            </div>
+            """
+    else:
+        nationality_html = '<p class="student-muted-v106">No nationality data uploaded.</p>'
+    year_label = f"Data year: {_safe_html_v62(year)}" if year else "Uploaded student data"
+    return f"""
+    <div class="student-stats-card-v106">
+        <div class="student-stats-head-v106">
+            <div>
+                <h3>Student Enrollment Information</h3>
+                <p>{year_label}</p>
+            </div>
+            <div class="student-total-pill-v106">Total shown: {(ug + grad + lang):,}</div>
+        </div>
+        <div class="student-stats-grid-v106">
+            <div class="student-program-chart-v106">
+                <h4>Students by Program Level</h4>
+                {program_html}
+            </div>
+            <div class="nationality-chart-v106">
+                <h4>Top 5 Nationalities</h4>
+                {nationality_html}
+            </div>
+        </div>
+    </div>
+    """.strip()
+
 def normalize_url_v103(url):
     """Return a clickable URL. Adds https:// if admin typed only domain."""
     url = display_clean_v50(url).strip()
@@ -6637,6 +6861,7 @@ def _render_university_detail_v62(u):
     program_badges = _program_specific_application_badges_v71(u)
     map_html = google_map_embed_html_v99(u)
     quick_links_html = university_quick_links_html_v103(u)
+    student_stats_html = university_student_stats_html_v106(u)
 
     detail_html = f"""
 <div class="detail-card-v99">
@@ -6661,6 +6886,8 @@ def _render_university_detail_v62(u):
     </div>
 
     {quick_links_html}
+
+    {student_stats_html}
 
     <div class="detail-info-grid-v99">
         <div class="info-box-v32"><b>Homepage</b><span>{_safe_html_v62(u.get("Homepage", ""))}</span></div>
@@ -8046,7 +8273,7 @@ def admin_university_management_v49():
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
         "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
-        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Address","Representative_Phone","Representative_Fax","Region","School_Size"
+        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
 
@@ -8061,6 +8288,8 @@ def admin_university_management_v49():
 
     with tab_add:
         st.markdown("### Add New University")
+        st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+        st.caption("Optional: Download the format, fill student enrollment and nationality data, then upload it below. This is not mandatory.")
         with st.form("add_university_v49"):
             c1, c2 = st.columns(2)
             with c1:
@@ -8109,7 +8338,8 @@ def admin_university_management_v49():
                 photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
                 gallery_photos = st.file_uploader("Upload Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="add_uni_gallery_v89")
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
-                st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned.")
+                student_stats_excel = st.file_uploader("Upload Student Statistics Excel (optional)", type=["xlsx"], key="add_student_stats_excel_v106")
+                st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional.")
 
             # v104 safe optional university link defaults
             language_school_homepage = locals().get("language_school_homepage", "")
@@ -8130,6 +8360,7 @@ def admin_university_management_v49():
                     if not image_path and gallery_path:
                         image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university)
+                    student_stats_v106 = parse_student_stats_excel_v106(student_stats_excel)
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     new_row = {
                         "University": university.strip(),
@@ -8160,6 +8391,11 @@ def admin_university_management_v49():
                         "Instagram_Link": instagram_link.strip(),
                         "YouTube_Link": youtube_link.strip(),
                         "SNS_Information": sns_information.strip(),
+                        "Student_Data_Year": student_stats_v106.get("Student_Data_Year", ""),
+                        "Undergraduate_Students": student_stats_v106.get("Undergraduate_Students", ""),
+                        "Graduate_Students": student_stats_v106.get("Graduate_Students", ""),
+                        "Language_Study_Students": student_stats_v106.get("Language_Study_Students", ""),
+                        "Nationality_Students_JSON": student_stats_v106.get("Nationality_Students_JSON", "[]"),
                         "Address": address.strip(),
                         "Representative_Phone": phone.strip(),
                         "Representative_Fax": fax.strip(),
@@ -8199,6 +8435,9 @@ def admin_university_management_v49():
                 """,
                 unsafe_allow_html=True,
             )
+
+            st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key=f"download_student_stats_template_v106_{selected_key_v90}")
+            st.caption("Optional: upload the completed Excel file below to update student enrollment and top nationality data for this university.")
 
             with st.form(f"edit_university_v90_{selected_key_v90}"):
                 c1, c2 = st.columns(2)
@@ -8255,10 +8494,18 @@ def admin_university_management_v49():
                     current_gallery = st.text_area("Current Slideshow Image Paths", value=display_clean_v50(row.get("Image_Gallery", "")), height=70, key=f"edit_current_gallery_{selected_key_v90}")
                     current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")), key=f"edit_current_logo_{selected_key_v90}")
 
+                    st.markdown("##### Optional Student Statistics")
+                    current_student_year = st.text_input("Current Student Data Year", value=display_clean_v50(row.get("Student_Data_Year", "")), key=f"edit_student_year_v106_{selected_key_v90}")
+                    current_ug_students = st.text_input("Current Undergraduate Students", value=display_clean_v50(row.get("Undergraduate_Students", "")), key=f"edit_ug_students_v106_{selected_key_v90}")
+                    current_grad_students = st.text_input("Current Graduate Students", value=display_clean_v50(row.get("Graduate_Students", "")), key=f"edit_grad_students_v106_{selected_key_v90}")
+                    current_lang_students = st.text_input("Current Language Study Students", value=display_clean_v50(row.get("Language_Study_Students", "")), key=f"edit_lang_students_v106_{selected_key_v90}")
+                    current_nat_json = st.text_area("Current Nationality Students JSON", value=display_clean_v50(row.get("Nationality_Students_JSON", "[]")), height=80, key=f"edit_nat_json_v106_{selected_key_v90}")
+
                     photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key=f"edit_uni_photo_v90_{selected_key_v90}")
                     gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key=f"edit_uni_gallery_v90_{selected_key_v90}")
                     logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key=f"edit_uni_logo_v90_{selected_key_v90}")
-                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images. Uploaded logos are automatically cropped and cleaned.")
+                    student_stats_excel = st.file_uploader("Upload New Student Statistics Excel (optional)", type=["xlsx"], key=f"edit_student_stats_excel_v106_{selected_key_v90}")
+                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional.")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)
@@ -8270,6 +8517,13 @@ def admin_university_management_v49():
                     if not image_path and gallery_path:
                         image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university) if logo else current_logo
+                    student_stats_v106 = parse_student_stats_excel_v106(student_stats_excel) if student_stats_excel else {
+                        "Student_Data_Year": current_student_year,
+                        "Undergraduate_Students": current_ug_students,
+                        "Graduate_Students": current_grad_students,
+                        "Language_Study_Students": current_lang_students,
+                        "Nationality_Students_JSON": current_nat_json or "[]",
+                    }
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
 
                     df.loc[idx, "University"] = university.strip()
@@ -8282,6 +8536,11 @@ def admin_university_management_v49():
                     df.loc[idx, "Instagram_Link"] = instagram_link.strip()
                     df.loc[idx, "YouTube_Link"] = youtube_link.strip()
                     df.loc[idx, "SNS_Information"] = sns_information.strip()
+                    df.loc[idx, "Student_Data_Year"] = student_stats_v106.get("Student_Data_Year", "")
+                    df.loc[idx, "Undergraduate_Students"] = student_stats_v106.get("Undergraduate_Students", "")
+                    df.loc[idx, "Graduate_Students"] = student_stats_v106.get("Graduate_Students", "")
+                    df.loc[idx, "Language_Study_Students"] = student_stats_v106.get("Language_Study_Students", "")
+                    df.loc[idx, "Nationality_Students_JSON"] = student_stats_v106.get("Nationality_Students_JSON", "[]")
                     df.loc[idx, "Address"] = address.strip()
                     df.loc[idx, "Representative_Phone"] = phone.strip()
                     df.loc[idx, "Representative_Fax"] = fax.strip()

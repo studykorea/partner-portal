@@ -691,3 +691,12 @@ v104:
 v105:
 - Updated Useful Links section to show official-style icons for Facebook, Instagram, and YouTube.
 - Kept Homepage, Language School Homepage, and Promotional Materials links intact.
+
+
+v106:
+- Added optional student enrollment statistics Excel upload for each university.
+- Admin can download a sample Excel format, fill Summary and Nationality sheets, and upload it when adding/editing a university.
+- University detail page now shows a Students by Program Level graph for Undergraduate, Graduate, and Language Study students.
+- University detail page now shows Top 5 Nationality Students with country flags and student numbers.
+- Student statistics upload is optional; if no file is uploaded, the section is hidden.
+- Added openpyxl dependency for Excel reading/writing in Streamlit.
