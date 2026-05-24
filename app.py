@@ -3788,6 +3788,62 @@ button[kind="secondary"],
     }
 }
 
+
+/* v89 university auto slideshow */
+.uni-slideshow-v89 {
+    position:relative !important;
+    width:100% !important;
+    height:315px !important;
+    overflow:hidden !important;
+    background:#F2F4F7 !important;
+}
+.uni-slide-img-v89 {
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    opacity:0 !important;
+    animation-name: uniFadeSlideV89 !important;
+    animation-timing-function:ease-in-out !important;
+    animation-iteration-count:infinite !important;
+    transform:scale(1.03) !important;
+}
+.uni-slide-img-v89.active {
+    opacity:1;
+}
+.uni-slide-gradient-v89 {
+    position:absolute !important;
+    inset:0 !important;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,43,91,.16) 100%) !important;
+    pointer-events:none !important;
+}
+.uni-slide-dots-v89 {
+    position:absolute !important;
+    right:18px !important;
+    bottom:14px !important;
+    display:flex !important;
+    gap:7px !important;
+    z-index:3 !important;
+}
+.uni-slide-dots-v89 span {
+    width:8px !important;
+    height:8px !important;
+    background:rgba(255,255,255,.75) !important;
+    border-radius:999px !important;
+    box-shadow:0 2px 5px rgba(0,0,0,.18) !important;
+}
+@keyframes uniFadeSlideV89 {
+    0% { opacity:0; transform:scale(1.03); }
+    6% { opacity:1; transform:scale(1.00); }
+    28% { opacity:1; transform:scale(1.00); }
+    34% { opacity:0; transform:scale(1.02); }
+    100% { opacity:0; transform:scale(1.03); }
+}
+.uni-summary-image-wrap-v88 .uni-slideshow-v89 {
+    border-radius:0 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4089,6 +4145,85 @@ def university_logo_html_v88(path, name="University"):
     if not encoded:
         return f'<div class="uni-logo-placeholder-v88">{_safe_html_v62(name)}<br><span>Logo</span></div>'
     return f'<img class="uni-logo-v88" src="data:image/png;base64,{encoded}"/>'
+
+
+
+def save_uploaded_university_gallery_v89(uploaded_files, university_name):
+    """Save multiple university slideshow photos and return pipe-separated paths."""
+    if not uploaded_files:
+        return ""
+    from PIL import Image, ImageEnhance
+    slug = safe_slug_v49(university_name)
+    out_dir = BASE / "assets" / "universities" / f"{slug}_gallery"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    saved = []
+    for idx, uploaded_file in enumerate(uploaded_files, start=1):
+        try:
+            out_path = out_dir / f"{slug}_slide_{idx}.jpg"
+            img = Image.open(uploaded_file).convert("RGB")
+            target_size = (1800, 760)
+            target_ratio = target_size[0] / target_size[1]
+            w, h = img.size
+            ratio = w / h
+
+            if ratio > target_ratio:
+                new_w = int(h * target_ratio)
+                left = max(0, (w - new_w) // 2)
+                img = img.crop((left, 0, left + new_w, h))
+            else:
+                new_h = int(w / target_ratio)
+                top = max(0, (h - new_h) // 2)
+                img = img.crop((0, top, w, top + new_h))
+
+            img = img.resize(target_size, Image.Resampling.LANCZOS)
+            img = ImageEnhance.Sharpness(img).enhance(1.08)
+            img.save(out_path, quality=94, optimize=True)
+            saved.append(f"assets/universities/{slug}_gallery/{slug}_slide_{idx}.jpg")
+        except Exception:
+            pass
+    return "|".join(saved)
+
+def gallery_paths_v89(u):
+    """Return gallery paths. If no gallery is set, use the main Image as fallback."""
+    raw = display_clean_v50(u.get("Image_Gallery", ""))
+    paths = [p.strip() for p in raw.split("|") if p.strip()] if raw else []
+    main_img = display_clean_v50(u.get("Image", ""))
+    if not paths and main_img:
+        paths = [main_img]
+    return paths
+
+def university_slideshow_html_v89(u, key_suffix=""):
+    """CSS-only auto slideshow for university summary card."""
+    paths = gallery_paths_v89(u)
+    if not paths:
+        return '<div class="uni-summary-photo-v62 uni-photo-placeholder-v52">No image</div>'
+
+    paths = paths[:8]
+    n = len(paths)
+    duration = max(10, n * 4)
+
+    imgs = []
+    for i, path in enumerate(paths):
+        encoded = b64(path)
+        if not encoded:
+            continue
+        delay = -(duration / n) * i
+        active = " active" if i == 0 else ""
+        imgs.append(
+            f'<img class="uni-slide-img-v89{active}" style="animation-delay:{delay:.2f}s; animation-duration:{duration}s;" src="data:image/jpeg;base64,{encoded}"/>'
+        )
+
+    if not imgs:
+        return '<div class="uni-summary-photo-v62 uni-photo-placeholder-v52">No image</div>'
+
+    dots = "".join(["<span></span>" for _ in imgs])
+    imgs_html = "".join(imgs)
+    return f"""<div class="uni-slideshow-v89" style="--slide-count:{len(imgs)}; --slide-duration:{duration}s;">
+        {imgs_html}
+        <div class="uni-slide-gradient-v89"></div>
+        <div class="uni-slide-dots-v89">{dots}</div>
+    </div>"""
 
 
 def reload_data_v49():
@@ -5539,7 +5674,7 @@ def _render_university_detail_v62(u):
 
 
 def _render_university_summary_v62(u, key_suffix):
-    image_html = asset_img_html(u.get("Image", ""), "uni-summary-photo-v62")
+    image_html = university_slideshow_html_v89(u, key_suffix)
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
 
@@ -5588,7 +5723,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "University_Logo", "Homepage", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -6772,7 +6907,7 @@ def admin_university_management_v49():
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
-        "Tuition_Range","Scholarship_Info","Overview","Image","University_Logo",
+        "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
         "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -6821,7 +6956,9 @@ def admin_university_management_v49():
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
                 photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
+                gallery_photos = st.file_uploader("Upload Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="add_uni_gallery_v89")
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
+                st.caption("You can upload several campus photos. They will automatically slide/change on the university card.")
 
             submitted = st.form_submit_button("Add University", use_container_width=True)
             if submitted:
@@ -6831,6 +6968,9 @@ def admin_university_management_v49():
                     st.error("This university already exists. Please use Edit Existing Universities.")
                 else:
                     image_path = save_uploaded_university_photo_v49(photo, university)
+                    gallery_path = save_uploaded_university_gallery_v89(gallery_photos, university)
+                    if not image_path and gallery_path:
+                        image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university)
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     new_row = {
@@ -6853,6 +6993,7 @@ def admin_university_management_v49():
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
                         "Image": image_path,
+                        "Image_Gallery": gallery_path,
                         "University_Logo": logo_path,
                         "Homepage": homepage.strip(),
                         "Address": address.strip(),
@@ -6922,9 +7063,12 @@ def admin_university_management_v49():
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
                     current_img = st.text_input("Current Main Photo Path", value=display_clean_v50(row.get("Image", "")))
+                    current_gallery = st.text_area("Current Slideshow Image Paths", value=display_clean_v50(row.get("Image_Gallery", "")), height=70)
                     current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")))
                     photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key="edit_uni_photo_v49")
+                    gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="edit_uni_gallery_v89")
                     logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key="edit_uni_logo_v88")
+                    st.caption("If you upload new slideshow images, they will replace the previous slideshow image paths.")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)
@@ -6932,6 +7076,9 @@ def admin_university_management_v49():
 
                 if save_clicked:
                     image_path = save_uploaded_university_photo_v49(photo, university) if photo else current_img
+                    gallery_path = save_uploaded_university_gallery_v89(gallery_photos, university) if gallery_photos else current_gallery
+                    if not image_path and gallery_path:
+                        image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university) if logo else current_logo
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     df.loc[idx, "University"] = university.strip()

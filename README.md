@@ -571,3 +571,11 @@ v88:
 - Added University_Logo column support.
 - University cards now use the empty right side for large Undergraduate / Graduate / KLP/EAP application cards.
 - University logo now appears as a large clear logo box near the university title/overview.
+
+
+v89:
+- Added Upload Slideshow Images in Admin > Universities > Add New University.
+- Added Upload New Slideshow Images in Admin > Universities > Edit Existing Universities.
+- Added Image_Gallery column support using pipe-separated image paths.
+- University card hero image now auto-changes/slides through uploaded photos.
+- If no slideshow images are uploaded, the main university photo is used as fallback.
