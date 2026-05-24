@@ -489,3 +489,9 @@ v77:
 - Official representatives can approve both staff and sub-partner agency accounts.
 - Partner agency accounts are listed under the official representative dashboard after approval.
 - Added official representative star badge beside official representative agency names.
+
+
+v78:
+- Fixed signup dynamic fields by moving Account Category selector outside the Streamlit form.
+- When Partner Agency of Official Representative is selected, the form now immediately shows organization/company, CEO/representative, position, email, contact number, and official partner selector.
+- After signup, the pending screen says thank you, explains the account is under review, and tells users they may contact their selected official partner organization for approval.

@@ -3413,6 +3413,21 @@ div[data-testid="stDataEditor"] {
     margin-top:18px;
 }
 
+
+/* v78 dynamic signup category note */
+.signup-category-note-v78 {
+    background:#EEF5FF;
+    border:1px solid #CFE0FF;
+    border-radius:14px;
+    padding:13px 16px;
+    margin:12px 0 18px 0;
+}
+.signup-category-note-v78 p, .signup-category-note-v78 strong {
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:850 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3835,6 +3850,7 @@ def home():
 
 
 
+
 def signup():
     header()
     left, right = st.columns([0.95, 1.35], gap="large")
@@ -3858,17 +3874,29 @@ def signup():
 
         official_options = official_agency_options_v77()
 
-        with st.form("signup"):
-            account_category = st.selectbox(
-                "Account Category",
-                [
-                    "Staff of Official Representative Agency",
-                    "Partner Agency of Official Representative",
-                    "Official Representative Agency"
-                ],
-                help="Choose Staff if you work inside KIEC/Realize. Choose Partner Agency if your company was recommended by KIEC/Realize. Choose Official Representative only for main official partner agencies."
-            )
+        # IMPORTANT v78:
+        # This selector is OUTSIDE the form so the form fields change immediately when the user changes account category.
+        account_category = st.selectbox(
+            "Account Category",
+            [
+                "Staff of Official Representative Agency",
+                "Partner Agency of Official Representative",
+                "Official Representative Agency"
+            ],
+            key="signup_account_category_v78",
+            help="Choose Staff if you work inside KIEC/Realize. Choose Partner Agency if your company was recommended by KIEC/Realize. Choose Official Representative only for main official partner agencies."
+        )
 
+        st.markdown('<div class="signup-category-note-v78">', unsafe_allow_html=True)
+        if account_category == "Staff of Official Representative Agency":
+            st.markdown("**Staff account**: Your organization, such as KIEC or Realize Education, will confirm your account.")
+        elif account_category == "Partner Agency of Official Representative":
+            st.markdown("**Partner agency account**: The official partner you select, such as KIEC or Realize Education, will review and approve your company account.")
+        else:
+            st.markdown("**Official representative agency**: This account is reviewed by the portal super admin.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        with st.form("signup"):
             official_representative = ""
             company_name = ""
             staff_org = ""
@@ -3899,18 +3927,21 @@ def signup():
                 st.markdown("##### Partner Agency Information")
                 c1, c2 = st.columns(2)
                 with c1:
-                    official_representative = st.selectbox("Official Partner / Recommended By", official_options)
-                    company_name = st.text_input("Company / Partner Agency Name")
-                    ceo_name = st.text_input("Representative / CEO Name")
-                    head_name = st.text_input("Head of Representative / Main Contact Name")
+                    company_name = st.text_input("Your Organization / Company Name")
+                    ceo_name = st.text_input("CEO / Representative Name")
+                    head_name = st.text_input("Main Contact Person Name")
                     position = st.text_input("Your Position")
                 with c2:
-                    phone = st.text_input("Contact Number / WhatsApp")
+                    official_representative = st.selectbox("Select Official Partner / Recommended By", official_options)
                     email = st.text_input("Email Address")
+                    phone = st.text_input("Contact Number / WhatsApp")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
+                u1, u2 = st.columns(2)
+                with u1:
                     username = st.text_input("Create Username")
                     password = st.text_input("Create Eligibleword", type="password")
-                confirm = st.text_input("Confirm Eligibleword", type="password")
+                with u2:
+                    confirm = st.text_input("Confirm Eligibleword", type="password")
                 name = head_name or ceo_name
                 agency_name_clean = company_name
                 role = "agency_partner"
@@ -3921,12 +3952,12 @@ def signup():
                 c1, c2 = st.columns(2)
                 with c1:
                     company_name = st.text_input("Official Agency / Company Name")
-                    ceo_name = st.text_input("Representative / CEO Name")
-                    head_name = st.text_input("Head of Representative / Main Contact Name")
+                    ceo_name = st.text_input("CEO / Representative Name")
+                    head_name = st.text_input("Main Contact Person Name")
                     position = st.text_input("Your Position")
                 with c2:
-                    phone = st.text_input("Contact Number / WhatsApp")
                     email = st.text_input("Email Address")
+                    phone = st.text_input("Contact Number / WhatsApp")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
                     username = st.text_input("Create Username")
                     password = st.text_input("Create Eligibleword", type="password")
@@ -4009,6 +4040,7 @@ def signup():
                     }
                     users.append(new_user)
                     write_json(USERS, users)
+                    st.session_state.signup_success_v78 = True
                     set_pending_session_v75(new_user)
                     set_page("Pending")
         st.markdown('</div></div>', unsafe_allow_html=True)
@@ -4024,11 +4056,15 @@ def pending():
     email = str(user.get("email", "") or "")
     approver = approval_authority_text_v75(user)
 
+    just_signed_up = st.session_state.pop("signup_success_v78", False)
+    thank_title = "Thank you for signing up" if just_signed_up else "Approval Pending"
+
     st.markdown(f"""
     <div class="pending-hero-v75">
       <span class="pending-step-v75">Step 3 &nbsp; Approval Pending</span>
-      <h1>Thank You,<br>{full_name}</h1>
-      <p>Your partner registration for <b>{agency_name}</b> has been received and is waiting for approval by <b>{approver}</b>.</p>
+      <h1>{thank_title},<br>{full_name}</h1>
+      <p>Your account is under review and will be confirmed by <b>{approver}</b>.</p>
+      <p>You may also contact your selected official partner organization to approve your account faster.</p>
     </div>
     """, unsafe_allow_html=True)
     st.markdown('<div class="section"><div class="two">', unsafe_allow_html=True)
@@ -4038,9 +4074,10 @@ def pending():
     <p>🔵 <b>Under Review</b><br><span class="muted">Approval is pending with {approver}.</span></p>
     <p>⚪ <b>Access Full Platform</b><br><span class="muted">Eligibility check, tuition calculation, and partner dashboard access will open after approval.</span></p></div>
     <div class="white-panel"><h2 style="color:#B54708!important;">Pending Approval</h2>
-    <p><b>Agency:</b> {agency_name}</p>
+    <p><b>Agency / Company:</b> {agency_name}</p>
     <p><b>Email:</b> {email}</p>
-    <p>Dear {full_name}, you will only be able to use partner services after your account is approved by <b>{approver}</b>.</p></div>
+    <p>Dear {full_name}, your account is under review. You will only be able to use partner services after your account is approved by <b>{approver}</b>.</p>
+    <p class="muted">If you selected an official partner such as KIEC or Realize Education, you may contact that organization and ask them to approve your account.</p></div>
     """, unsafe_allow_html=True)
     st.markdown('</div></div>', unsafe_allow_html=True)
     footer()
