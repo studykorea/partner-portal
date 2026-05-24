@@ -3659,6 +3659,135 @@ button[kind="secondary"],
     font-weight:800 !important;
 }
 
+
+/* v88 university summary layout with logo + right-side program cards */
+.uni-summary-card-v88 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    overflow:hidden !important;
+    box-shadow:0 10px 28px rgba(16,24,40,.06) !important;
+    margin:22px 0 12px 0 !important;
+}
+.uni-summary-image-wrap-v88 {
+    width:100% !important;
+}
+.uni-summary-image-wrap-v88 .uni-summary-photo-v62 {
+    width:100% !important;
+    height:315px !important;
+    object-fit:cover !important;
+    border-radius:0 !important;
+    display:block !important;
+}
+.uni-summary-content-v88 {
+    display:grid !important;
+    grid-template-columns: 1.05fr 1fr !important;
+    gap:28px !important;
+    align-items:stretch !important;
+    padding:34px 36px !important;
+}
+.uni-summary-left-v88 {
+    display:grid !important;
+    grid-template-columns: 190px 1fr !important;
+    gap:24px !important;
+    align-items:center !important;
+}
+.uni-logo-box-v88 {
+    width:190px !important;
+    height:190px !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:24px !important;
+    background:#F8FAFC !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:18px !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.07) !important;
+}
+.uni-logo-v88 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    display:block !important;
+}
+.uni-logo-placeholder-v88 {
+    width:100% !important;
+    height:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    color:#002B5B !important;
+    font-size:18px !important;
+    font-weight:950 !important;
+    line-height:1.2 !important;
+}
+.uni-logo-placeholder-v88 span {
+    color:#667085 !important;
+    font-size:14px !important;
+    margin-top:6px !important;
+}
+.uni-summary-text-v88 h3 {
+    color:#101828 !important;
+    font-size:34px !important;
+    line-height:1.12 !important;
+    font-weight:950 !important;
+    margin:0 0 16px 0 !important;
+}
+.uni-summary-text-v88 p {
+    color:#344054 !important;
+    font-size:17px !important;
+    line-height:1.6 !important;
+    margin:0 !important;
+}
+.uni-summary-programs-v88 {
+    display:grid !important;
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+    gap:16px !important;
+    align-content:center !important;
+    justify-content:stretch !important;
+}
+.uni-summary-programs-v88 .program-date-card-v71 {
+    min-height:150px !important;
+    padding:18px 18px !important;
+    border-radius:18px !important;
+    background:#F6F8FC !important;
+    border:1px solid #DCE6F4 !important;
+}
+.uni-summary-programs-v88 .program-date-card-v71 b {
+    font-size:15px !important;
+    color:#002B5B !important;
+}
+.uni-summary-programs-v88 .program-date-card-v71 span {
+    font-size:13px !important;
+    padding:10px 14px !important;
+}
+.uni-summary-programs-v88 .program-date-card-v71 small {
+    font-size:13px !important;
+    color:#344054 !important;
+}
+@media(max-width:1200px){
+    .uni-summary-content-v88 {
+        grid-template-columns:1fr !important;
+    }
+    .uni-summary-programs-v88 {
+        grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    }
+}
+@media(max-width:760px){
+    .uni-summary-left-v88 {
+        grid-template-columns:1fr !important;
+    }
+    .uni-logo-box-v88 {
+        width:150px !important;
+        height:150px !important;
+    }
+    .uni-summary-programs-v88 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3931,6 +4060,36 @@ def save_uploaded_university_photo_v49(uploaded_file, university_name):
     img = ImageEnhance.Sharpness(img).enhance(1.08)
     img.save(out_path, quality=94, optimize=True)
     return f"assets/universities/{slug}.jpg"
+
+
+def save_uploaded_university_logo_v88(uploaded_file, university_name):
+    """Save university logo as a clean transparent-friendly PNG."""
+    if uploaded_file is None:
+        return ""
+    from PIL import Image, ImageEnhance
+    slug = safe_slug_v49(university_name)
+    out_dir = BASE / "assets" / "university_logos"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{slug}_logo.png"
+
+    img = Image.open(uploaded_file)
+    if img.mode not in ["RGBA", "LA"]:
+        img = img.convert("RGBA")
+    img.thumbnail((700, 700), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGBA", (700, 700), (255, 255, 255, 0))
+    x = (700 - img.width) // 2
+    y = (700 - img.height) // 2
+    canvas.alpha_composite(img, (x, y))
+    canvas = ImageEnhance.Sharpness(canvas).enhance(1.12)
+    canvas.save(out_path, "PNG", optimize=True)
+    return f"assets/university_logos/{slug}_logo.png"
+
+def university_logo_html_v88(path, name="University"):
+    encoded = b64(path)
+    if not encoded:
+        return f'<div class="uni-logo-placeholder-v88">{_safe_html_v62(name)}<br><span>Logo</span></div>'
+    return f'<img class="uni-logo-v88" src="data:image/png;base64,{encoded}"/>'
+
 
 def reload_data_v49():
     try:
@@ -5378,24 +5537,27 @@ def _render_university_detail_v62(u):
     st.markdown(detail_html, unsafe_allow_html=True)
 
 
+
 def _render_university_summary_v62(u, key_suffix):
     image_html = asset_img_html(u.get("Image", ""), "uni-summary-photo-v62")
-    max_sch = float(u.get("_Max_Scholarship", 0) or 0)
-    max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info not updated"
-    intake_text = display_clean_v50(u.get("Intake", ""))
-    open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
-    status_text = _application_status_v66_from_row(u)
-    status_class = _application_status_class_v63(status_text)
+    logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
 
-    summary_html = f'''<div class="uni-summary-card-v62">
+    summary_html = f'''<div class="uni-summary-card-v88">
+<div class="uni-summary-image-wrap-v88">
 {image_html}
-<div class="uni-summary-body-v62">
-<h3>{_safe_html_v62(u.get("University", ""))}</h3>
-<p>{_safe_html_v62(u.get("Overview", ""))}</p>
-<div class="uni-summary-meta-v62">
-{program_badges_inline}
 </div>
+<div class="uni-summary-content-v88">
+    <div class="uni-summary-left-v88">
+        <div class="uni-logo-box-v88">{logo_html}</div>
+        <div class="uni-summary-text-v88">
+            <h3>{_safe_html_v62(u.get("University", ""))}</h3>
+            <p>{_safe_html_v62(u.get("Overview", ""))}</p>
+        </div>
+    </div>
+    <div class="uni-summary-programs-v88">
+        {program_badges_inline}
+    </div>
 </div>
 </div>'''
     st.markdown(summary_html, unsafe_allow_html=True)
@@ -5426,7 +5588,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Homepage", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "University_Logo", "Homepage", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -6610,7 +6772,7 @@ def admin_university_management_v49():
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
-        "Tuition_Range","Scholarship_Info","Overview","Image",
+        "Tuition_Range","Scholarship_Info","Overview","Image","University_Logo",
         "Homepage","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -6658,7 +6820,8 @@ def admin_university_management_v49():
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
-                photo = st.file_uploader("University Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
+                photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
+                logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
 
             submitted = st.form_submit_button("Add University", use_container_width=True)
             if submitted:
@@ -6668,6 +6831,7 @@ def admin_university_management_v49():
                     st.error("This university already exists. Please use Edit Existing Universities.")
                 else:
                     image_path = save_uploaded_university_photo_v49(photo, university)
+                    logo_path = save_uploaded_university_logo_v88(logo, university)
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     new_row = {
                         "University": university.strip(),
@@ -6689,6 +6853,7 @@ def admin_university_management_v49():
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
                         "Image": image_path,
+                        "University_Logo": logo_path,
                         "Homepage": homepage.strip(),
                         "Address": address.strip(),
                         "Representative_Phone": phone.strip(),
@@ -6756,8 +6921,10 @@ def admin_university_management_v49():
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")))
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")))
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80)
-                    current_img = st.text_input("Current Image Path", value=display_clean_v50(row.get("Image", "")))
-                    photo = st.file_uploader("Upload New Photo", type=["png","jpg","jpeg"], key="edit_uni_photo_v49")
+                    current_img = st.text_input("Current Main Photo Path", value=display_clean_v50(row.get("Image", "")))
+                    current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")))
+                    photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key="edit_uni_photo_v49")
+                    logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key="edit_uni_logo_v88")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)
@@ -6765,6 +6932,7 @@ def admin_university_management_v49():
 
                 if save_clicked:
                     image_path = save_uploaded_university_photo_v49(photo, university) if photo else current_img
+                    logo_path = save_uploaded_university_logo_v88(logo, university) if logo else current_logo
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     df.loc[idx, "University"] = university.strip()
                     df.loc[idx, "Location"] = location.strip()
@@ -6791,6 +6959,7 @@ def admin_university_management_v49():
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()
                     df.loc[idx, "Image"] = image_path
+                    df.loc[idx, "University_Logo"] = logo_path
                     write_csv(uni_file, df)
                     reload_data_v49()
                     st.success("University information saved.")

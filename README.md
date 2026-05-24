@@ -564,3 +564,10 @@ v87:
 - View All Activity changed to staff-only activity.
 - Deprecated partner_activity route now redirects back to partner agency list and shows a warning.
 - Partner agency activity remains reserved for the portal super admin.
+
+
+v88:
+- Added university logo upload in Admin > Universities > Add/Edit.
+- Added University_Logo column support.
+- University cards now use the empty right side for large Undergraduate / Graduate / KLP/EAP application cards.
+- University logo now appears as a large clear logo box near the university title/overview.
