@@ -7090,21 +7090,63 @@ def inferred_application_status_v119(row):
     status = display_clean_v50(row.get("Status", ""))
     doc_json = display_clean_v50(row.get("Document_Paths_JSON", ""))
     submitted_at = display_clean_v50(row.get("Submitted_At", ""))
-    if doc_json and doc_json not in ["{}", "[]"] and "draft" in status.lower():
+
+    advanced_fields = [
+        ("Visa_Result", "Visa {value}"),
+        ("Interview_Result", "Interview {value}"),
+        ("Visa_Application_Number", "Visa Application Number Issued"),
+        ("Visa_Mode", "Visa Application Started"),
+        ("COA_Issued", "COA Issued"),
+        ("Offer_Invoice_Issued", "Offer Letter and Invoice Issued"),
+        ("Interview_Done", "Interview Done"),
+        ("Interview_Date", "Interview Date Announced"),
+        ("Application_Number", "Application Number Issued"),
+        ("University_Received", "University Received"),
+    ]
+    for key, label in advanced_fields:
+        val = display_clean_v50(row.get(key, ""))
+        if val:
+            return label.format(value=val)
+
+    if doc_json and doc_json not in ["{}", "[]", "nan", "None", "null"]:
+        if not status or "draft" in status.lower() or "pending" in status.lower():
+            return "Submitted"
+
+    if submitted_at and (not status or "draft" in status.lower() or "pending" in status.lower()):
         return "Submitted"
-    if submitted_at and "draft" in status.lower() and doc_json:
-        return "Submitted"
+
     return status or "Draft"
+
+
+def application_is_active_or_submitted_v128(row_or_status):
+    """
+    v128 fix:
+    Ongoing Applications must show Check Status not only for "Submitted",
+    but also for later statuses such as Interview Passed, University Received,
+    Application Number Issued, Visa Issued, etc.
+    Only draft / documents pending rows should show Continue / Resume.
+    """
+    if isinstance(row_or_status, dict):
+        s = inferred_application_status_v119(row_or_status)
+    else:
+        s = str(row_or_status or "")
+    sl = s.lower().strip()
+    if not sl:
+        return False
+    if "draft" in sl or "documents pending" in sl or sl == "pending":
+        return False
+    return True
+
 
 def application_sort_priority_v119(row):
     status = inferred_application_status_v119(row).lower()
+    if "visa" in status or "interview" in status or "issued" in status or "received" in status:
+        return 6
     if "submitted" in status:
         return 5
-    if "issued" in status or "passed" in status:
-        return 4
     if "draft" in status or "pending" in status:
         return 2
-    return 1
+    return 3
 
 def dedupe_application_rows_v119(df):
     if df is None or len(df) == 0:
@@ -7630,9 +7672,9 @@ def render_ongoing_applications_page_v116():
         """, unsafe_allow_html=True)
 
         c1, c2, c3 = st.columns([1.2, 1.2, 4])
-        status_l = status.lower()
+        is_active_application_v128 = application_is_active_or_submitted_v128(status)
         with c1:
-            if "submitted" in status_l:
+            if is_active_application_v128:
                 if st.button("Check Status", key=f"check_status_v116_{app_id}", use_container_width=True):
                     st.session_state.selected_application_id_v116 = app_id
                     st.session_state.partner_dashboard_view_v81 = "application_status"
@@ -7642,8 +7684,8 @@ def render_ongoing_applications_page_v116():
                 if st.button("Continue / Resume / Finish Application", key=f"resume_app_v116_{app_id}", use_container_width=True):
                     resume_application_v116(row)
         with c2:
-            if "submitted" in status_l:
-                st.caption("Submitted")
+            if is_active_application_v128:
+                st.caption(status or "Submitted")
             else:
                 st.caption("Not submitted yet")
         st.divider()

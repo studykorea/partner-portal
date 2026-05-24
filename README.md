@@ -872,3 +872,10 @@ v127:
 - Passport size photo from Step 2 is placed in the application form when available.
 - Added Download Full Application Packet ZIP containing the generated application form PDF plus all uploaded applicant files.
 - Added reportlab and Pillow to requirements.txt for PDF/image support.
+
+
+v128:
+- Fixed Ongoing Applications showing “Not submitted yet” even after status had progressed to Interview Passed.
+- The dashboard now treats University Received, Application Number Issued, Interview Date, Interview Done, Interview Passed/Failed, Offer/Invoice, COA, and Visa statuses as active submitted applications.
+- Only Draft / Documents Pending applications show Continue / Resume / Finish Application.
+- Active applications show Check Status and the current status caption.
