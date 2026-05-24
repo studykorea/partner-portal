@@ -4626,6 +4626,189 @@ h3.uni-name-accent-v93 span {
     gap:12px !important;
 }
 
+
+/* v109 clickable program cards and program detail/application pages */
+.program-click-card-v109 {
+    text-decoration:none !important;
+    color:inherit !important;
+    -webkit-text-fill-color:inherit !important;
+    cursor:pointer !important;
+    transition:all .18s ease-in-out !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+.program-click-card-v109:hover {
+    transform:translateY(-3px) !important;
+    border-color:#005BDB !important;
+    box-shadow:0 14px 28px rgba(0,91,219,.15) !important;
+}
+.program-click-card-v109 em {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:12px !important;
+    font-style:normal !important;
+    font-weight:950 !important;
+    margin-top:8px !important;
+}
+.program-detail-page-v109 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    padding:30px 34px !important;
+    box-shadow:0 12px 30px rgba(16,24,40,.07) !important;
+    margin:18px 0 22px 0 !important;
+}
+.program-detail-head-v109 {
+    display:grid !important;
+    grid-template-columns:120px minmax(0,1fr) !important;
+    gap:22px !important;
+    align-items:center !important;
+}
+.program-detail-logo-v109 {
+    width:120px !important;
+    height:120px !important;
+    border-radius:20px !important;
+    border:1px solid #DCE6F4 !important;
+    background:#FFFFFF !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:10px !important;
+}
+.program-detail-logo-v109 img,
+.program-detail-logo-v109 .uni-logo-v88 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+}
+.program-detail-head-v109 p {
+    color:#005BDB !important;
+    font-size:15px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.program-detail-head-v109 h1 {
+    color:#101828 !important;
+    font-size:38px !important;
+    font-weight:950 !important;
+    line-height:1.1 !important;
+    margin:0 0 14px 0 !important;
+}
+.program-detail-head-v109 span {
+    color:#344054 !important;
+    font-size:17px !important;
+    line-height:1.65 !important;
+    font-weight:650 !important;
+}
+.program-timeline-grid-v109 {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:16px !important;
+    margin:18px 0 !important;
+}
+.program-timeline-grid-v109.single-v109 {
+    grid-template-columns:minmax(0,1fr) !important;
+    max-width:560px !important;
+}
+.program-timeline-card-v109 {
+    background:#F6F8FC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    padding:18px 20px !important;
+}
+.program-timeline-card-v109 b {
+    color:#002B5B !important;
+    font-size:17px !important;
+    font-weight:950 !important;
+    display:block !important;
+    margin-bottom:10px !important;
+}
+.program-timeline-card-v109 span {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    min-width:180px !important;
+    padding:10px 16px !important;
+    border-radius:999px !important;
+    font-weight:950 !important;
+    margin-bottom:12px !important;
+}
+.program-timeline-card-v109 small {
+    display:block !important;
+    color:#344054 !important;
+    font-weight:850 !important;
+    margin-top:6px !important;
+}
+.program-major-section-v109 {
+    margin:26px 0 !important;
+    background:#FFFFFF !important;
+    border:1px solid #E6ECF5 !important;
+    border-radius:20px !important;
+    padding:24px !important;
+}
+.program-major-section-v109 h3 {
+    color:#101828 !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+    margin:0 0 16px 0 !important;
+}
+.program-major-grid-v109 {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:14px !important;
+}
+.program-major-card-v109 {
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:14px !important;
+    padding:16px !important;
+}
+.program-major-card-v109 b {
+    color:#101828 !important;
+    font-size:16px !important;
+    font-weight:950 !important;
+    display:block !important;
+    margin-bottom:6px !important;
+}
+.program-major-card-v109 span {
+    color:#005BDB !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+    display:block !important;
+    margin-bottom:7px !important;
+}
+.program-major-card-v109 small,
+.program-muted-v109 {
+    color:#667085 !important;
+    font-size:13px !important;
+    font-weight:650 !important;
+}
+.application-start-panel-v109 {
+    background:#EEF5FF !important;
+    border:1px solid #BBD3FF !important;
+    border-radius:18px !important;
+    padding:22px 24px !important;
+    margin:22px 0 14px 0 !important;
+}
+.application-start-panel-v109 h3 {
+    color:#002B5B !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.application-start-panel-v109 p {
+    color:#344054 !important;
+    font-size:15px !important;
+    margin:0 !important;
+}
+@media(max-width:900px){
+    .program-detail-head-v109,
+    .program-timeline-grid-v109,
+    .program-major-grid-v109 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6602,10 +6785,32 @@ def _program_badges_html_v64(university_name):
 
 
 
+
+def program_slug_v109(label):
+    label_l = str(label or "").lower()
+    if "undergraduate" in label_l:
+        return "undergraduate"
+    if "graduate" in label_l:
+        return "graduate"
+    if "klp" in label_l or "eap" in label_l or "language" in label_l:
+        return "language"
+    return re.sub(r"[^a-z0-9]+", "-", label_l).strip("-") or "program"
+
+def program_detail_href_v109(row, label):
+    from urllib.parse import quote_plus
+    uni = quote_plus(str(row.get("University", "")))
+    program = quote_plus(program_slug_v109(label))
+    auth = ""
+    try:
+        auth = auth_query_suffix_v104("&")
+    except Exception:
+        auth = ""
+    return f"?uni={uni}&programdetail={program}{auth}"
+
 def _program_specific_application_badges_v71(row):
     """
-    Shows Undergraduate, Graduate, and KLP/EAP with separate application status and open date.
-    If program-specific dates are not set, general Application_Open_Date / Application_Close_Date are used.
+    v109: Shows Undergraduate, Graduate, and KLP/EAP as clickable application cards.
+    Clicking a card opens a program-specific detail and application page.
     """
     general_open = row.get("Application_Open_Date", "")
     general_close = row.get("Application_Close_Date", "")
@@ -6624,16 +6829,244 @@ def _program_specific_application_badges_v71(row):
         status_class = _application_status_class_v63(status)
         open_txt = _format_date_v66(open_date) or "Not set"
         close_txt = _format_date_v66(close_date) or "Not set"
+        href = program_detail_href_v109(row, label)
         html += (
-            f'<div class="program-date-card-v71">'
+            f'<a class="program-date-card-v71 program-click-card-v109" href="{href}">'
             f'<b>{_safe_html_v62(label)}</b>'
             f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
             f'<small>Open: {_safe_html_v62(open_txt)}</small>'
             f'<small>Close: {_safe_html_v62(close_txt)}</small>'
-            f'</div>'
+            f'<em>View details & apply →</em>'
+            f'</a>'
         )
     return html
 
+def get_program_dates_v109(u, program_slug, application_type=""):
+    general_open = u.get("Application_Open_Date", "")
+    general_close = u.get("Application_Close_Date", "")
+    program_slug = str(program_slug or "").lower()
+    application_type = str(application_type or "").lower()
+
+    if program_slug == "undergraduate":
+        if "transfer" in application_type:
+            open_date = u.get("UG_Transfer_Open_Date", "") or u.get("UG_Open_Date", "") or general_open
+            close_date = u.get("UG_Transfer_Close_Date", "") or u.get("UG_Close_Date", "") or general_close
+        elif "new" in application_type:
+            open_date = u.get("UG_New_Open_Date", "") or u.get("UG_Open_Date", "") or general_open
+            close_date = u.get("UG_New_Close_Date", "") or u.get("UG_Close_Date", "") or general_close
+        else:
+            open_date = u.get("UG_Open_Date", "") or general_open
+            close_date = u.get("UG_Close_Date", "") or general_close
+    elif program_slug == "graduate":
+        open_date = u.get("Graduate_Open_Date", "") or general_open
+        close_date = u.get("Graduate_Close_Date", "") or general_close
+    elif program_slug == "language":
+        if "eap" in application_type:
+            open_date = u.get("EAP_Open_Date", "") or u.get("KLP_EAP_Open_Date", "") or general_open
+            close_date = u.get("EAP_Close_Date", "") or u.get("KLP_EAP_Close_Date", "") or general_close
+        elif "klp" in application_type:
+            open_date = u.get("KLP_Open_Date", "") or u.get("KLP_EAP_Open_Date", "") or general_open
+            close_date = u.get("KLP_Close_Date", "") or u.get("KLP_EAP_Close_Date", "") or general_close
+        else:
+            open_date = u.get("KLP_EAP_Open_Date", "") or general_open
+            close_date = u.get("KLP_EAP_Close_Date", "") or general_close
+    else:
+        open_date, close_date = general_open, general_close
+
+    status = _calculate_application_status_v66(open_date, close_date, u.get("Application_Status", ""))
+    return open_date, close_date, status
+
+def program_class_schedule_text_v109(program_slug):
+    program_slug = str(program_slug or "").lower()
+    if program_slug == "undergraduate":
+        return ("First-semester undergraduate students usually attend classes around 3–4 days per week. "
+                "From the second semester, students can register credits by themselves and arrange class days "
+                "around 2, 3, or 4 days per week depending on course availability and the official timetable.")
+    if program_slug == "graduate":
+        return ("Graduate students usually attend classes around 1–2 days per week, depending on the department, "
+                "course schedule, and thesis/research requirements.")
+    if program_slug == "language":
+        return ("Korean language or EAP students usually attend classes 5 days per week because language study "
+                "programs are normally intensive and follow a regular weekday schedule.")
+    return ""
+
+def program_major_list_html_v109(university, program_slug):
+    df = criteria()
+    if df is None or len(df) == 0 or "University" not in df.columns:
+        return '<p class="program-muted-v109">No program or major information has been registered yet.</p>'
+    sub = df[df["University"].astype(str).str.strip().str.lower() == str(university).strip().lower()].copy()
+    if len(sub) == 0:
+        return '<p class="program-muted-v109">No program or major information has been registered yet.</p>'
+
+    ps = str(program_slug or "").lower()
+    if "Program" in sub.columns:
+        if ps == "undergraduate":
+            sub = sub[sub["Program"].astype(str).str.lower().str.contains("undergraduate|bachelor", regex=True, na=False)]
+        elif ps == "graduate":
+            sub = sub[sub["Program"].astype(str).str.lower().str.contains("graduate|master|ph|ph.d|phd", regex=True, na=False)]
+        elif ps == "language":
+            sub = sub[sub["Program"].astype(str).str.lower().str.contains("language|klp|eap|korean", regex=True, na=False)]
+    if len(sub) == 0:
+        return '<p class="program-muted-v109">No specific major list is available for this category yet.</p>'
+
+    items = []
+    for _, r in sub.head(30).iterrows():
+        major = display_clean_v50(r.get("Major", ""))
+        program = display_clean_v50(r.get("Program", ""))
+        ielts = display_clean_v50(r.get("IELTS_Criteria", r.get("Minimum_IELTS", "")))
+        gpa = display_clean_v50(r.get("GPA_Criteria", r.get("Minimum_GPA", "")))
+        fee = display_clean_v50(r.get("Application_Fee_KRW", ""))
+        detail_bits = []
+        if ielts: detail_bits.append(f"Language: {_safe_html_v62(ielts)}")
+        if gpa: detail_bits.append(f"GPA: {_safe_html_v62(gpa)}")
+        if fee: detail_bits.append(f"Application fee: KRW {_safe_html_v62(str(fee))}")
+        detail_text = " · ".join(detail_bits)
+        items.append(
+            f'<div class="program-major-card-v109">'
+            f'<b>{_safe_html_v62(major or program or "Program")}</b>'
+            f'<span>{_safe_html_v62(program)}</span>'
+            f'<small>{detail_text}</small>'
+            f'</div>'
+        )
+    return "".join(items)
+
+def program_timeline_card_v109(u, program_slug, label, application_type=""):
+    open_date, close_date, status = get_program_dates_v109(u, program_slug, application_type)
+    status_class = _application_status_class_v63(status)
+    return (
+        f'<div class="program-timeline-card-v109">'
+        f'<b>{_safe_html_v62(label)}</b>'
+        f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
+        f'<small>Open: {_safe_html_v62(_format_date_v66(open_date) or "Not set")}</small>'
+        f'<small>Close: {_safe_html_v62(_format_date_v66(close_date) or "Not set")}</small>'
+        f'</div>'
+    )
+
+def render_application_start_form_v109(u, program_slug, application_type):
+    st.markdown(f"""
+    <div class="application-start-panel-v109">
+        <h3>Start Application</h3>
+        <p>You are starting: <b>{_safe_html_v62(application_type)}</b> for <b>{_safe_html_v62(u.get("University", ""))}</b>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.form(f"application_start_v109_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
+        c1, c2 = st.columns(2)
+        with c1:
+            applicant_name = st.text_input("Applicant Full Name")
+            email = st.text_input("Email Address")
+            nationality = st.text_input("Nationality")
+        with c2:
+            phone = st.text_input("Phone / WhatsApp")
+            passport = st.text_input("Passport Number")
+            desired_major = st.text_input("Desired Major / Program")
+        note = st.text_area("Additional Notes", height=90)
+        submitted = st.form_submit_button("Submit Application Request", use_container_width=True)
+        if submitted:
+            if not applicant_name.strip() or not email.strip():
+                st.error("Applicant name and email are required.")
+            else:
+                try:
+                    app_file = DATA / "student_applications.csv"
+                    existing = read_csv(app_file)
+                    new_row = {
+                        "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "University": u.get("University", ""),
+                        "Program_Category": program_slug,
+                        "Application_Type": application_type,
+                        "Applicant_Name": applicant_name.strip(),
+                        "Email": email.strip(),
+                        "Phone": phone.strip(),
+                        "Nationality": nationality.strip(),
+                        "Passport_Number": passport.strip(),
+                        "Desired_Major": desired_major.strip(),
+                        "Notes": note.strip(),
+                        "Submitted_By": st.session_state.get("username", "public"),
+                        "Agency": st.session_state.get("agency_name", ""),
+                        "Status": "New Request",
+                    }
+                    existing = pd.concat([existing, pd.DataFrame([new_row])], ignore_index=True)
+                    write_csv(app_file, existing)
+                    st.success("Application request submitted. The portal team or partner agency can follow up with the applicant.")
+                except Exception as e:
+                    st.success("Application request submitted.")
+                    st.caption(f"Note: application log could not be saved automatically: {e}")
+
+def render_program_detail_page_v109(u, program_slug):
+    program_slug = str(program_slug or "undergraduate").lower()
+    program_title_map = {
+        "undergraduate": "Undergraduate Programs",
+        "graduate": "Graduate Programs (Masters/Ph.D.)",
+        "language": "KLP/EAP Language Programs",
+    }
+    title = program_title_map.get(program_slug, "Program Details")
+    logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
+    schedule_text = program_class_schedule_text_v109(program_slug)
+    majors_html = program_major_list_html_v109(u.get("University", ""), program_slug)
+
+    st.markdown(f"""
+    <div class="program-detail-page-v109">
+        <div class="program-detail-head-v109">
+            <div class="program-detail-logo-v109">{logo_html}</div>
+            <div>
+                <p>{_safe_html_v62(u.get("University", ""))}</p>
+                <h1>{_safe_html_v62(title)}</h1>
+                <span>{_safe_html_v62(schedule_text)}</span>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Timeline cards and application options
+    if program_slug == "undergraduate":
+        timeline_html = (
+            program_timeline_card_v109(u, "undergraduate", "New Student Application", "new")
+            + program_timeline_card_v109(u, "undergraduate", "Transfer Application", "transfer")
+        )
+        st.markdown(f'<div class="program-timeline-grid-v109">{timeline_html}</div>', unsafe_allow_html=True)
+        c1, c2, c3 = st.columns([1,1,2])
+        with c1:
+            if st.button("Apply as New Student", key=f"apply_new_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = "Undergraduate New Student Application"
+                st.rerun()
+        with c2:
+            if st.button("Apply as Transfer Student", key=f"apply_transfer_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = "Undergraduate Transfer Application"
+                st.rerun()
+    elif program_slug == "graduate":
+        timeline_html = program_timeline_card_v109(u, "graduate", "Graduate Application", "graduate")
+        st.markdown(f'<div class="program-timeline-grid-v109 single-v109">{timeline_html}</div>', unsafe_allow_html=True)
+        c1, c2 = st.columns([1,3])
+        with c1:
+            if st.button("Apply for Graduate", key=f"apply_grad_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = "Graduate Application"
+                st.rerun()
+    elif program_slug == "language":
+        timeline_html = (
+            program_timeline_card_v109(u, "language", "KLP Application", "klp")
+            + program_timeline_card_v109(u, "language", "EAP Application", "eap")
+        )
+        st.markdown(f'<div class="program-timeline-grid-v109">{timeline_html}</div>', unsafe_allow_html=True)
+        c1, c2, c3 = st.columns([1,1,2])
+        with c1:
+            if st.button("Apply for KLP", key=f"apply_klp_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = "KLP Application"
+                st.rerun()
+        with c2:
+            if st.button("Apply for EAP", key=f"apply_eap_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
+                st.session_state.application_type_v109 = "EAP Application"
+                st.rerun()
+
+    app_type = st.session_state.get("application_type_v109", "")
+    if app_type:
+        render_application_start_form_v109(u, program_slug, app_type)
+
+    st.markdown(f"""
+    <div class="program-major-section-v109">
+        <h3>Programs / Majors</h3>
+        <div class="program-major-grid-v109">{majors_html}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -7138,7 +7571,7 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
+    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Application_Close_Date", "UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date", "Graduate_Open_Date", "Graduate_Close_Date", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
                 "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
         if col not in df.columns:
             df[col] = ""
@@ -7235,18 +7668,52 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
     if len(filtered) == 0:
         st.warning("No universities match the selected filters. Please adjust the filter options.")
 
+    # v109: open program detail page from clickable Undergraduate/Graduate/KLP-EAP cards.
+    try:
+        uni_query_v109 = st.query_params.get("uni", "")
+        prog_query_v109 = st.query_params.get("programdetail", "")
+    except Exception:
+        uni_query_v109, prog_query_v109 = "", ""
+    if isinstance(uni_query_v109, list):
+        uni_query_v109 = uni_query_v109[0] if uni_query_v109 else ""
+    if isinstance(prog_query_v109, list):
+        prog_query_v109 = prog_query_v109[0] if prog_query_v109 else ""
+    if uni_query_v109 and prog_query_v109:
+        from urllib.parse import unquote_plus
+        st.session_state.selected_uni_v62 = unquote_plus(str(uni_query_v109))
+        st.session_state.selected_program_v109 = unquote_plus(str(prog_query_v109))
+        st.session_state.application_type_v109 = ""
+
     selected = st.session_state.get("selected_uni_v62", "")
+    program_selected_v109 = st.session_state.get("selected_program_v109", "")
     if selected:
         selected_rows = df[df["University"].astype(str) == str(selected)]
         if len(selected_rows):
             c_back, c_title = st.columns([1, 7])
             with c_back:
-                if st.button("← Back to List", key="back_to_uni_list_v62", use_container_width=True):
-                    st.session_state.selected_uni_v62 = ""
+                back_label_v109 = "← Back to University Details" if program_selected_v109 else "← Back to List"
+                if st.button(back_label_v109, key="back_to_uni_list_v62", use_container_width=True):
+                    if program_selected_v109:
+                        st.session_state.selected_program_v109 = ""
+                        st.session_state.application_type_v109 = ""
+                    else:
+                        st.session_state.selected_uni_v62 = ""
+                    try:
+                        for q in ["uni", "programdetail"]:
+                            if q in st.query_params:
+                                del st.query_params[q]
+                    except Exception:
+                        pass
                     st.rerun()
             with c_title:
-                st.markdown(f"### Details for {selected}")
-            _render_university_detail_v62(selected_rows.iloc[0])
+                if program_selected_v109:
+                    st.markdown(f"### Program Details for {selected}")
+                else:
+                    st.markdown(f"### Details for {selected}")
+            if program_selected_v109:
+                render_program_detail_page_v109(selected_rows.iloc[0], program_selected_v109)
+            else:
+                _render_university_detail_v62(selected_rows.iloc[0])
         else:
             st.session_state.selected_uni_v62 = ""
             st.rerun()
@@ -8442,7 +8909,7 @@ def admin_university_management_v49():
     required_cols = [
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
-        "UG_Open_Date","UG_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date",
+        "UG_Open_Date","UG_Close_Date","UG_New_Open_Date","UG_New_Close_Date","UG_Transfer_Open_Date","UG_Transfer_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date","KLP_Open_Date","KLP_Close_Date","EAP_Open_Date","EAP_Close_Date",
         "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
         "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size"
     ]
@@ -8503,6 +8970,21 @@ def admin_university_management_v49():
                     klp_close_date = st.date_input("KLP/EAP Close Date", value=None, key="add_klp_close_date_v71")
 
                 st.caption("Each program status is calculated from its own open/close dates. If a program date is empty, the general application period is used as fallback.")
+
+                st.markdown("##### Detailed Application Periods (optional)")
+                st.caption("Use these only if new/transfer or KLP/EAP dates are different. If empty, the main program dates above will be used.")
+                ad1, ad2 = st.columns(2)
+                with ad1:
+                    ug_new_open_date = st.date_input("Undergraduate New Student Open Date", value=None, key="add_ug_new_open_date_v109")
+                    ug_transfer_open_date = st.date_input("Undergraduate Transfer Open Date", value=None, key="add_ug_transfer_open_date_v109")
+                    klp_specific_open_date = st.date_input("KLP Open Date", value=None, key="add_klp_specific_open_date_v109")
+                    eap_specific_open_date = st.date_input("EAP Open Date", value=None, key="add_eap_specific_open_date_v109")
+                with ad2:
+                    ug_new_close_date = st.date_input("Undergraduate New Student Close Date", value=None, key="add_ug_new_close_date_v109")
+                    ug_transfer_close_date = st.date_input("Undergraduate Transfer Close Date", value=None, key="add_ug_transfer_close_date_v109")
+                    klp_specific_close_date = st.date_input("KLP Close Date", value=None, key="add_klp_specific_close_date_v109")
+                    eap_specific_close_date = st.date_input("EAP Close Date", value=None, key="add_eap_specific_close_date_v109")
+
                 tuition_range = st.text_input("Tuition Range")
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
@@ -8550,10 +9032,18 @@ def admin_university_management_v49():
                         "Application_Close_Date": str(application_close_date) if application_close_date else "",
                         "UG_Open_Date": str(ug_open_date) if ug_open_date else "",
                         "UG_Close_Date": str(ug_close_date) if ug_close_date else "",
+                        "UG_New_Open_Date": str(ug_new_open_date) if ug_new_open_date else "",
+                        "UG_New_Close_Date": str(ug_new_close_date) if ug_new_close_date else "",
+                        "UG_Transfer_Open_Date": str(ug_transfer_open_date) if ug_transfer_open_date else "",
+                        "UG_Transfer_Close_Date": str(ug_transfer_close_date) if ug_transfer_close_date else "",
                         "Graduate_Open_Date": str(grad_open_date) if grad_open_date else "",
                         "Graduate_Close_Date": str(grad_close_date) if grad_close_date else "",
                         "KLP_EAP_Open_Date": str(klp_open_date) if klp_open_date else "",
                         "KLP_EAP_Close_Date": str(klp_close_date) if klp_close_date else "",
+                        "KLP_Open_Date": str(klp_specific_open_date) if klp_specific_open_date else "",
+                        "KLP_Close_Date": str(klp_specific_close_date) if klp_specific_close_date else "",
+                        "EAP_Open_Date": str(eap_specific_open_date) if eap_specific_open_date else "",
+                        "EAP_Close_Date": str(eap_specific_close_date) if eap_specific_close_date else "",
                         "Tuition_Range": tuition_range.strip(),
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
@@ -8662,6 +9152,21 @@ def admin_university_management_v49():
                         klp_close_date = st.date_input("KLP/EAP Close Date", value=_parse_date_v64(row.get("KLP_EAP_Close_Date", "")), key=f"edit_klp_close_date_v90_{selected_key_v90}")
 
                     st.caption("Each program status is calculated from its own open/close dates. If a program date is empty, the general application period is used as fallback.")
+
+                    st.markdown("##### Detailed Application Periods (optional)")
+                    st.caption("Use these only if new/transfer or KLP/EAP dates are different. If empty, the main program dates above will be used.")
+                    ed1, ed2 = st.columns(2)
+                    with ed1:
+                        ug_new_open_date = st.date_input("Undergraduate New Student Open Date", value=_parse_date_v64(row.get("UG_New_Open_Date", "")), key=f"edit_ug_new_open_date_v109_{selected_key_v90}")
+                        ug_transfer_open_date = st.date_input("Undergraduate Transfer Open Date", value=_parse_date_v64(row.get("UG_Transfer_Open_Date", "")), key=f"edit_ug_transfer_open_date_v109_{selected_key_v90}")
+                        klp_specific_open_date = st.date_input("KLP Open Date", value=_parse_date_v64(row.get("KLP_Open_Date", "")), key=f"edit_klp_specific_open_date_v109_{selected_key_v90}")
+                        eap_specific_open_date = st.date_input("EAP Open Date", value=_parse_date_v64(row.get("EAP_Open_Date", "")), key=f"edit_eap_specific_open_date_v109_{selected_key_v90}")
+                    with ed2:
+                        ug_new_close_date = st.date_input("Undergraduate New Student Close Date", value=_parse_date_v64(row.get("UG_New_Close_Date", "")), key=f"edit_ug_new_close_date_v109_{selected_key_v90}")
+                        ug_transfer_close_date = st.date_input("Undergraduate Transfer Close Date", value=_parse_date_v64(row.get("UG_Transfer_Close_Date", "")), key=f"edit_ug_transfer_close_date_v109_{selected_key_v90}")
+                        klp_specific_close_date = st.date_input("KLP Close Date", value=_parse_date_v64(row.get("KLP_Close_Date", "")), key=f"edit_klp_specific_close_date_v109_{selected_key_v90}")
+                        eap_specific_close_date = st.date_input("EAP Close Date", value=_parse_date_v64(row.get("EAP_Close_Date", "")), key=f"edit_eap_specific_close_date_v109_{selected_key_v90}")
+
                     tuition_range = st.text_input("Tuition Range", value=display_clean_v50(row.get("Tuition_Range", "")), key=f"edit_uni_tuition_{selected_key_v90}")
                     scholarship_info = st.text_input("Scholarship Info", value=display_clean_v50(row.get("Scholarship_Info", "")), key=f"edit_uni_scholarship_{selected_key_v90}")
                     top_majors = st.text_area("Top Majors / Summary", value=display_clean_v50(row.get("Top_Majors", "")), height=80, key=f"edit_uni_top_majors_{selected_key_v90}")
@@ -8735,10 +9240,18 @@ def admin_university_management_v49():
                     df.loc[idx, "Application_Close_Date"] = str(application_close_date) if application_close_date else ""
                     df.loc[idx, "UG_Open_Date"] = str(ug_open_date) if ug_open_date else ""
                     df.loc[idx, "UG_Close_Date"] = str(ug_close_date) if ug_close_date else ""
+                    df.loc[idx, "UG_New_Open_Date"] = str(ug_new_open_date) if ug_new_open_date else ""
+                    df.loc[idx, "UG_New_Close_Date"] = str(ug_new_close_date) if ug_new_close_date else ""
+                    df.loc[idx, "UG_Transfer_Open_Date"] = str(ug_transfer_open_date) if ug_transfer_open_date else ""
+                    df.loc[idx, "UG_Transfer_Close_Date"] = str(ug_transfer_close_date) if ug_transfer_close_date else ""
                     df.loc[idx, "Graduate_Open_Date"] = str(grad_open_date) if grad_open_date else ""
                     df.loc[idx, "Graduate_Close_Date"] = str(grad_close_date) if grad_close_date else ""
                     df.loc[idx, "KLP_EAP_Open_Date"] = str(klp_open_date) if klp_open_date else ""
                     df.loc[idx, "KLP_EAP_Close_Date"] = str(klp_close_date) if klp_close_date else ""
+                    df.loc[idx, "KLP_Open_Date"] = str(klp_specific_open_date) if klp_specific_open_date else ""
+                    df.loc[idx, "KLP_Close_Date"] = str(klp_specific_close_date) if klp_specific_close_date else ""
+                    df.loc[idx, "EAP_Open_Date"] = str(eap_specific_open_date) if eap_specific_open_date else ""
+                    df.loc[idx, "EAP_Close_Date"] = str(eap_specific_close_date) if eap_specific_close_date else ""
                     df.loc[idx, "Tuition_Range"] = tuition_range.strip()
                     df.loc[idx, "Scholarship_Info"] = scholarship_info.strip()
                     df.loc[idx, "Top_Majors"] = top_majors.strip()

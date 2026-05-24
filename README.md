@@ -714,3 +714,15 @@ v108:
 - Added ISO country mapping and common aliases.
 - If an unknown country name is entered, the system shows initials as fallback.
 - Updated Excel template instructions and admin explanation to clarify flags are automatic.
+
+
+v109:
+- Undergraduate, Graduate, and KLP/EAP application cards are now clickable.
+- Clicking a card opens a program-specific detail page.
+- Undergraduate detail page includes New Student Application and Transfer Application options.
+- Graduate detail page includes Graduate Apply option.
+- KLP/EAP detail page includes KLP and EAP application options.
+- Added class-day explanation for each program category.
+- Program details show available majors/programs from Eligibility Rules.
+- Added optional separate date fields for Undergraduate New Student, Undergraduate Transfer, KLP, and EAP timelines.
+- Added a simple application request form that saves to data/student_applications.csv.
