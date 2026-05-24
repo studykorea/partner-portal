@@ -631,3 +631,10 @@ v96:
 - Active/current page is now highlighted in blue for admin, official representative, partner agency, and staff users.
 - Dashboard, Universities, Eligibility Rules/Check, Tuition Rules/Scholarship, etc. now show active blue state when selected.
 - Logout remains available in the same navigation bar.
+
+
+v97:
+- Fixed university slideshow showing a gray/blank area.
+- If there is only one image, it now displays as a normal visible image without animation.
+- If multiple images are uploaded, they fade/slide automatically.
+- If saved image paths are missing from the server, the card shows an upload instruction message instead of an empty gray block.

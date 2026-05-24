@@ -4082,6 +4082,56 @@ h3.uni-name-accent-v93 span {
     }
 }
 
+
+/* v97 reliable university slideshow display */
+.uni-slideshow-single-v97 {
+    position:relative !important;
+    width:100% !important;
+    height:315px !important;
+    overflow:hidden !important;
+    background:#F2F4F7 !important;
+}
+.uni-slide-img-single-v97 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    display:block !important;
+    opacity:1 !important;
+    animation:none !important;
+    transform:none !important;
+}
+.uni-slide-img-v97 {
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    opacity:0;
+    animation-timing-function:ease-in-out !important;
+    animation-iteration-count:infinite !important;
+}
+.uni-slideshow-missing-v97 {
+    height:315px !important;
+    background:linear-gradient(135deg,#F2F4F7,#E4E8EF) !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    gap:8px !important;
+    color:#475467 !important;
+}
+.uni-slideshow-missing-v97 b {
+    color:#002B5B !important;
+    font-size:20px !important;
+    font-weight:950 !important;
+}
+.uni-slideshow-missing-v97 span {
+    color:#667085 !important;
+    font-size:14px !important;
+    max-width:520px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4533,38 +4583,69 @@ def gallery_paths_v89(u):
         paths = [main_img]
     return paths
 
+
 def university_slideshow_html_v89(u, key_suffix=""):
-    """CSS-only auto slideshow for university summary card."""
+    """
+    v97: reliable university hero image/slideshow.
+    Fixes the gray empty block issue caused by single-image CSS animation becoming opacity:0.
+    - 1 image: shows a normal fixed image, no animation.
+    - 2+ images: uses CSS fade slideshow with no long blank period.
+    """
     paths = gallery_paths_v89(u)
     if not paths:
         return '<div class="uni-summary-photo-v62 uni-photo-placeholder-v52">No image</div>'
 
     paths = paths[:8]
-    n = len(paths)
-    duration = max(10, n * 4)
+    encoded_imgs = []
+    for path in paths:
+        encoded = b64(path)
+        if encoded:
+            encoded_imgs.append(encoded)
+
+    if not encoded_imgs:
+        return """<div class="uni-slideshow-v89 uni-slideshow-missing-v97">
+            <b>No campus image found</b>
+            <span>Please re-upload slideshow images in Admin → Universities → Edit Existing Universities, then Save Changes.</span>
+        </div>"""
+
+    if len(encoded_imgs) == 1:
+        return f"""<div class="uni-slideshow-v89 uni-slideshow-single-v97">
+            <img class="uni-slide-img-single-v97" src="data:image/jpeg;base64,{encoded_imgs[0]}"/>
+        </div>"""
+
+    n = len(encoded_imgs)
+    duration = max(12, n * 4)
+    unique = re.sub(r"[^A-Za-z0-9_]+", "_", str(key_suffix or u.get("University", "uni")))
+
+    visible_until = max(6, (100 / n) - 2)
+    fade_until = min(5, max(2, visible_until * 0.25))
+    keyframe_name = f"uniFadeSlideV97_{unique}_{n}"
+    style_block = f"""
+    <style>
+    @keyframes {keyframe_name} {{
+        0% {{ opacity:0; transform:scale(1.03); }}
+        {fade_until:.2f}% {{ opacity:1; transform:scale(1.00); }}
+        {visible_until:.2f}% {{ opacity:1; transform:scale(1.00); }}
+        {(visible_until + fade_until):.2f}% {{ opacity:0; transform:scale(1.02); }}
+        100% {{ opacity:0; transform:scale(1.03); }}
+    }}
+    </style>
+    """
 
     imgs = []
-    for i, path in enumerate(paths):
-        encoded = b64(path)
-        if not encoded:
-            continue
+    for i, encoded in enumerate(encoded_imgs):
         delay = -(duration / n) * i
-        active = " active" if i == 0 else ""
         imgs.append(
-            f'<img class="uni-slide-img-v89{active}" style="animation-delay:{delay:.2f}s; animation-duration:{duration}s;" src="data:image/jpeg;base64,{encoded}"/>'
+            f'<img class="uni-slide-img-v97" style="animation-name:{keyframe_name}; animation-delay:{delay:.2f}s; animation-duration:{duration}s;" src="data:image/jpeg;base64,{encoded}"/>'
         )
 
-    if not imgs:
-        return '<div class="uni-summary-photo-v62 uni-photo-placeholder-v52">No image</div>'
-
-    dots = "".join(["<span></span>" for _ in imgs])
-    imgs_html = "".join(imgs)
-    return f"""<div class="uni-slideshow-v89" style="--slide-count:{len(imgs)}; --slide-duration:{duration}s;">
-        {imgs_html}
+    dots = "".join(["<span></span>" for _ in encoded_imgs])
+    return f"""{style_block}
+    <div class="uni-slideshow-v89 uni-slideshow-multi-v97">
+        {''.join(imgs)}
         <div class="uni-slide-gradient-v89"></div>
         <div class="uni-slide-dots-v89">{dots}</div>
     </div>"""
-
 
 def reload_data_v49():
     try:
