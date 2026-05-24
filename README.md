@@ -477,3 +477,15 @@ v76:
 - Pending users now see the personalized message on protected services.
 - Agency representative approval matching now supports Realize / Realize Education aliases and KIEC aliases.
 - Realize Education representatives can see pending staff even if the staff selected Realize or Realize Education.
+
+
+v77:
+- Redesigned signup account categories:
+  1. Staff of Official Representative Agency
+  2. Partner Agency of Official Representative
+  3. Official Representative Agency
+- Staff accounts select their organization such as KIEC or Realize Education and can be approved by that organization.
+- Partner agency accounts enter company name, CEO/representative, main contact, position, phone, and email, then select the official representative that recommended them.
+- Official representatives can approve both staff and sub-partner agency accounts.
+- Partner agency accounts are listed under the official representative dashboard after approval.
+- Added official representative star badge beside official representative agency names.

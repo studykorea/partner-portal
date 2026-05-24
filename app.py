@@ -221,6 +221,50 @@ def find_agency_by_name(name):
     return None
 
 
+
+def official_agency_options_v77():
+    """Official representative agencies shown in signup."""
+    defaults = ["KIEC", "Realize Education"]
+    try:
+        users = read_json(USERS)
+        reps = []
+        for u in users:
+            if str(u.get("role", "")) == "agency_rep" and str(u.get("status", "")) == "approved":
+                name = str(u.get("agency_name", "") or u.get("partner_group", "")).strip()
+                if name and name not in reps:
+                    reps.append(name)
+        for x in reps:
+            if x not in defaults:
+                defaults.append(x)
+    except Exception:
+        pass
+    return defaults
+
+def official_rep_badge_v77(agency_name):
+    return f'<span class="official-rep-badge-v77">⭐ Official Representative</span>'
+
+def approval_agency_id_v77(user):
+    return normalize_agency_id(
+        user.get("sponsor_agency_id", "")
+        or user.get("official_representative", "")
+        or user.get("requested_approver_agency_id", "")
+        or user.get("agency_id", "")
+        or user.get("agency_name", "")
+        or user.get("partner_group", "")
+    )
+
+def user_approval_group_matches_v77(user, current_key):
+    candidates = [
+        user.get("sponsor_agency_id", ""),
+        user.get("official_representative", ""),
+        user.get("requested_approver_agency_id", ""),
+        user.get("partner_group", ""),
+        user.get("agency_id", ""),
+        user.get("agency_name", ""),
+    ]
+    return any(normalize_agency_id(x) == normalize_agency_id(current_key) for x in candidates if str(x).strip())
+
+
 def get_current_user():
     if not st.session_state.get("username"):
         return None
@@ -250,8 +294,9 @@ def approved_reps_for_agency_v75(agency_id):
 
 
 def approval_authority_text_v75(user):
-    agency_name = str(user.get("agency_name", "your agency") or "your agency")
-    if str(user.get("approval_scope", "")) == "agency" and approved_reps_for_agency_v75(user.get("agency_id", "")):
+    agency_name = str(user.get("official_representative", "") or user.get("partner_group", "") or user.get("agency_name", "your agency") or "your agency")
+    approval_id = approval_agency_id_v77(user)
+    if str(user.get("approval_scope", "")) == "agency" and approved_reps_for_agency_v75(approval_id):
         return f"the official representative of {agency_name}"
     return "the portal super admin"
 
@@ -3333,6 +3378,41 @@ div[data-testid="stDataEditor"] {
     color:#667085 !important;
 }
 
+
+/* v77 official representative and signup improvements */
+.official-rep-badge-v77 {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:#FFF4D6;
+    color:#B54708 !important;
+    -webkit-text-fill-color:#B54708 !important;
+    border:1px solid #FEC84B;
+    border-radius:999px;
+    padding:6px 12px;
+    font-size:13px;
+    font-weight:950;
+    vertical-align:middle;
+    margin-left:8px;
+}
+.staff-request-card-v75 {
+    background:#FFFFFF;
+    border:1px solid #DCE6F4;
+    border-radius:16px;
+    padding:18px 20px;
+    margin:12px 0 10px 0;
+    box-shadow:0 8px 20px rgba(16,24,40,.05);
+}
+.staff-request-card-v75 h3 {
+    color:#002B5B !important;
+    font-size:23px !important;
+    font-weight:950 !important;
+    margin:0 0 10px 0 !important;
+}
+.pending-staff-panel-v75 {
+    margin-top:18px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3754,6 +3834,7 @@ def home():
 
 
 
+
 def signup():
     header()
     left, right = st.columns([0.95, 1.35], gap="large")
@@ -3762,58 +3843,109 @@ def signup():
         st.markdown("""
         <div class="public-left-box navy">
           <h1 style="font-size:44px;line-height:1.12;">Partner Sign Up /<br>Agency Registration</h1>
-          <p style="font-size:17px;">Create your partner account to access university information, eligibility tools, and agency resources.</p>
+          <p style="font-size:17px;">Create the correct account type based on your relationship with an official representative agency.</p>
           <hr style="border-color:rgba(255,255,255,.25);">
-          <h3>🛡️ Admin Approval Required</h3><p>All accounts are approved by Partner Portal Admin before access is granted.</p>
-          <h3>🏢 Agency Team Structure</h3><p>KIEC and Realize Education can be selected directly. Other agencies can enter their agency name manually.</p>
-          <h3>🔒 Secure & Confidential</h3><p>Staff can only view their own records, while representatives can view their agency records.</p>
+          <h3>⭐ Official Representative Agency</h3><p>KIEC, Realize Education, or other approved official representatives can approve their staff and sub-partner agencies.</p>
+          <h3>👤 Staff Account</h3><p>For employees working inside an official representative agency.</p>
+          <h3>🤝 Partner Agency Account</h3><p>For sub-partner companies recommended by an official representative agency.</p>
         </div>
         """, unsafe_allow_html=True)
 
     with right:
         st.markdown('<div class="public-form-wrap"><div class="white-panel">', unsafe_allow_html=True)
         st.subheader("Create Your Partner Account")
-        st.caption("Please fill in the details below to register your agency account.")
+        st.caption("Please select the correct account category and fill in the required information.")
+
+        official_options = official_agency_options_v77()
 
         with st.form("signup"):
-            row1_left, row1_right = st.columns(2)
-            with row1_left:
-                account_type = st.selectbox("Account Type", ["Agency Representative", "Agency Staff"])
-            with row1_right:
-                connection = st.selectbox("Official Partner Connection", ["KIEC","Realize Education","Other / New Agency"])
+            account_category = st.selectbox(
+                "Account Category",
+                [
+                    "Staff of Official Representative Agency",
+                    "Partner Agency of Official Representative",
+                    "Official Representative Agency"
+                ],
+                help="Choose Staff if you work inside KIEC/Realize. Choose Partner Agency if your company was recommended by KIEC/Realize. Choose Official Representative only for main official partner agencies."
+            )
 
-            row2_left, row2_right = st.columns(2)
-            with row2_left:
-                agency_select = st.selectbox("Agency Name", ["KIEC", "Realize Education", "Other / New Agency"])
-                if agency_select == "Other / New Agency":
-                    agency = st.text_input("Enter Agency Name")
-                else:
-                    agency = agency_select
-            with row2_right:
-                email = st.text_input("Email Address")
+            official_representative = ""
+            company_name = ""
+            staff_org = ""
+            ceo_name = ""
+            head_name = ""
+            position = ""
 
-            row3_left, row3_right = st.columns(2)
-            with row3_left:
-                name = st.text_input("Representative / Staff Full Name")
-            with row3_right:
-                country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
-
-            row4_left, row4_right = st.columns(2)
-            with row4_left:
-                phone = st.text_input("Phone / WhatsApp")
-            with row4_right:
-                username = st.text_input("Create Username")
-
-            row5_left, row5_right = st.columns(2)
-            with row5_left:
-                password = st.text_input("Create Eligibleword", type="password")
-            with row5_right:
+            if account_category == "Staff of Official Representative Agency":
+                st.markdown("##### Staff Information")
+                c1, c2 = st.columns(2)
+                with c1:
+                    staff_org = st.selectbox("Your Organization / Agency", official_options)
+                    name = st.text_input("Staff Full Name")
+                    position = st.text_input("Position / Job Title")
+                    phone = st.text_input("Contact Number / WhatsApp")
+                with c2:
+                    email = st.text_input("Email Address")
+                    country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
+                    username = st.text_input("Create Username")
+                    password = st.text_input("Create Eligibleword", type="password")
                 confirm = st.text_input("Confirm Eligibleword", type="password")
+                official_representative = staff_org
+                agency_name_clean = staff_org
+                role = "agency_staff"
+                account_type = "Agency Staff"
+
+            elif account_category == "Partner Agency of Official Representative":
+                st.markdown("##### Partner Agency Information")
+                c1, c2 = st.columns(2)
+                with c1:
+                    official_representative = st.selectbox("Official Partner / Recommended By", official_options)
+                    company_name = st.text_input("Company / Partner Agency Name")
+                    ceo_name = st.text_input("Representative / CEO Name")
+                    head_name = st.text_input("Head of Representative / Main Contact Name")
+                    position = st.text_input("Your Position")
+                with c2:
+                    phone = st.text_input("Contact Number / WhatsApp")
+                    email = st.text_input("Email Address")
+                    country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
+                    username = st.text_input("Create Username")
+                    password = st.text_input("Create Eligibleword", type="password")
+                confirm = st.text_input("Confirm Eligibleword", type="password")
+                name = head_name or ceo_name
+                agency_name_clean = company_name
+                role = "agency_partner"
+                account_type = "Partner Agency"
+
+            else:
+                st.markdown("##### Official Representative Agency Information")
+                c1, c2 = st.columns(2)
+                with c1:
+                    company_name = st.text_input("Official Agency / Company Name")
+                    ceo_name = st.text_input("Representative / CEO Name")
+                    head_name = st.text_input("Head of Representative / Main Contact Name")
+                    position = st.text_input("Your Position")
+                with c2:
+                    phone = st.text_input("Contact Number / WhatsApp")
+                    email = st.text_input("Email Address")
+                    country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
+                    username = st.text_input("Create Username")
+                    password = st.text_input("Create Eligibleword", type="password")
+                confirm = st.text_input("Confirm Eligibleword", type="password")
+                name = head_name or ceo_name
+                official_representative = company_name
+                agency_name_clean = company_name
+                role = "agency_rep"
+                account_type = "Official Representative Agency"
 
             agree = st.checkbox("I agree to the portal's Terms of Use and Privacy Policy.")
 
             if st.form_submit_button("Submit for Approval", use_container_width=True):
-                if not all([agency,name,email,username,password,confirm,account_type]):
+                required = [agency_name_clean, name, email, phone, username, password, confirm, position]
+                if account_category == "Partner Agency of Official Representative":
+                    required += [official_representative, company_name, ceo_name]
+                if account_category == "Official Representative Agency":
+                    required += [company_name, ceo_name]
+                if not all([str(x).strip() for x in required]):
                     st.error("Please complete all required fields.")
                 elif password != confirm:
                     st.error("Eligiblewords do not match.")
@@ -3822,48 +3954,57 @@ def signup():
                 elif not agree:
                     st.error("Please agree to the terms.")
                 else:
+                    users = read_json(USERS)
                     agencies = read_agencies()
-                    existing_agency = find_agency_by_name(agency)
 
-                    agency_id = normalize_agency_id(agency)
-                    agency_name_clean = agency.strip()
+                    agency_id = normalize_agency_id(agency_name_clean)
+                    sponsor_agency_id = normalize_agency_id(official_representative)
 
+                    existing_agency = find_agency_by_name(agency_name_clean)
                     if existing_agency:
                         agency_id = existing_agency.get("agency_id", agency_id)
-                        agency_name_clean = existing_agency.get("agency_name", agency_name_clean)
                     else:
                         agencies.append({
                             "agency_id": agency_id,
                             "agency_name": agency_name_clean,
+                            "agency_type": account_category,
+                            "official_representative": official_representative,
+                            "sponsor_agency_id": sponsor_agency_id if role in ["agency_staff", "agency_partner"] else "",
                             "status": "pending",
                             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
                         write_agencies(agencies)
 
-                    users = read_json(USERS)
-                    role = "agency_rep" if account_type == "Agency Representative" else "agency_staff"
-                    has_approved_rep = any(
-                        str(u.get("agency_id", "")) == str(agency_id)
-                        and str(u.get("role", "")) == "agency_rep"
-                        and str(u.get("status", "")) == "approved"
-                        for u in users
-                    )
-                    approval_scope = "agency" if role == "agency_staff" and has_approved_rep else "admin"
+                    if role in ["agency_staff", "agency_partner"]:
+                        has_approved_rep = bool(approved_reps_for_agency_v75(sponsor_agency_id))
+                        approval_scope = "agency" if has_approved_rep else "admin"
+                        requested_approver_agency_id = sponsor_agency_id if has_approved_rep else ""
+                    else:
+                        approval_scope = "admin"
+                        requested_approver_agency_id = ""
+
                     new_user = {
-                        "username": username,
-                        "full_name": name,
-                        "agency_name": agency_name_clean,
+                        "username": username.strip(),
+                        "full_name": name.strip(),
+                        "agency_name": agency_name_clean.strip(),
                         "agency_id": agency_id,
-                        "email": email,
-                        "phone": phone,
+                        "company_name": company_name.strip() if company_name else agency_name_clean.strip(),
+                        "ceo_name": ceo_name.strip(),
+                        "head_representative_name": head_name.strip(),
+                        "position": position.strip(),
+                        "email": email.strip(),
+                        "phone": phone.strip(),
                         "country": country,
-                        "partner_group": connection,
+                        "partner_group": official_representative.strip(),
+                        "official_representative": official_representative.strip(),
+                        "sponsor_agency_id": sponsor_agency_id if role in ["agency_staff", "agency_partner"] else "",
+                        "account_category": account_category,
                         "account_type": account_type,
                         "password_hash": hash_pw(password),
                         "role": role,
                         "status": "pending",
                         "approval_scope": approval_scope,
-                        "requested_approver_agency_id": agency_id if approval_scope == "agency" else "",
+                        "requested_approver_agency_id": requested_approver_agency_id,
                         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     }
                     users.append(new_user)
@@ -3872,6 +4013,7 @@ def signup():
                     set_page("Pending")
         st.markdown('</div></div>', unsafe_allow_html=True)
     footer()
+
 
 
 def pending():
@@ -4004,7 +4146,7 @@ def partner_dashboard():
     st.markdown(f"""
     <div class="partner-hero">
         <div class="partner-status-pill">{portal_label}</div>
-        <h1>Welcome back,<br>{st.session_state.agency_name}</h1>
+        <h1>Welcome back,<br>{st.session_state.agency_name} {official_rep_badge_v77(st.session_state.agency_name) if st.session_state.role == "agency_rep" else ""}</h1>
         <p>{intro}</p>
     </div>
     """, unsafe_allow_html=True)
@@ -4045,7 +4187,7 @@ def partner_dashboard():
                     | users_all_v75.get("agency_name", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
                     | users_all_v75.get("partner_group", "").astype(str).apply(normalize_agency_id).eq(current_key_v76)
                 )
-                & (users_all_v75.get("role", "") == "agency_staff")
+                & (users_all_v75.get("role", "").isin(["agency_staff", "agency_partner"]))
                 & (users_all_v75.get("status", "") == "pending")
             ].copy()
         else:
@@ -4054,21 +4196,21 @@ def partner_dashboard():
         if len(pending_staff_v75):
             st.markdown("""
             <div class="partner-panel pending-staff-panel-v75">
-                <h2>Staff Approval Requests</h2>
-                <p>These users selected your agency as their official partner connection. Please approve only if they belong to your agency.</p>
+                <h2>Staff & Sub-Partner Approval Requests</h2>
+                <p>These users selected your agency as their official representative. Please approve only if they are your staff or recommended sub-partner agency.</p>
             </div>
             """, unsafe_allow_html=True)
             for req_idx, (_, req) in enumerate(pending_staff_v75.iterrows()):
                 st.markdown(f"""
                 <div class="staff-request-card-v75">
-                    <h3>{req.get('full_name','')}</h3>
-                    <p><b>Username:</b> {req.get('username','')} &nbsp; | &nbsp; <b>Email:</b> {req.get('email','')}</p>
-                    <p><b>Country:</b> {req.get('country','')} &nbsp; | &nbsp; <b>Status:</b> <span class="status-pending">pending</span></p>
+                    <h3>{req.get('agency_name','') or req.get('company_name','') or req.get('full_name','')}</h3>
+                    <p><b>Applicant:</b> {req.get('full_name','')} &nbsp; | &nbsp; <b>Username:</b> {req.get('username','')} &nbsp; | &nbsp; <b>Email:</b> {req.get('email','')}</p>
+                    <p><b>Type:</b> {req.get('account_type', req.get('role',''))} &nbsp; | &nbsp; <b>Position:</b> {req.get('position','')} &nbsp; | &nbsp; <b>Status:</b> <span class="status-pending">pending</span></p>
                 </div>
                 """, unsafe_allow_html=True)
                 ac1, ac2, ac3 = st.columns([1,1,4])
                 with ac1:
-                    if st.button("Approve Staff", key=_unique_admin_key_v72("agency_staff_approve", req_idx, req), use_container_width=True):
+                    if st.button("Approve Request", key=_unique_admin_key_v72("agency_staff_approve", req_idx, req), use_container_width=True):
                         all_users = read_json(USERS)
                         for u in all_users:
                             if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
@@ -4079,7 +4221,7 @@ def partner_dashboard():
                         st.success(f"{req.get('full_name','Staff user')} approved.")
                         st.rerun()
                 with ac2:
-                    if st.button("Reject Staff", key=_unique_admin_key_v72("agency_staff_reject", req_idx, req), use_container_width=True):
+                    if st.button("Reject Request", key=_unique_admin_key_v72("agency_staff_reject", req_idx, req), use_container_width=True):
                         all_users = read_json(USERS)
                         for u in all_users:
                             if str(u.get("username", "")) == str(req.get("username", "")) and normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(current_agency_id() or st.session_state.get("agency_name","")):
@@ -4106,14 +4248,25 @@ def partner_dashboard():
             st.markdown('<div class="partner-panel">', unsafe_allow_html=True)
             st.subheader("Agency Staff Activity")
             if len(users_df):
-                staff = users_df[(users_df.get("agency_id","") == current_agency_id()) & (users_df.get("role","") == "agency_staff")]
+                current_key_v77 = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name",""))
+                staff = users_df[
+                    (
+                        users_df.get("agency_id","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
+                        | users_df.get("sponsor_agency_id","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
+                        | users_df.get("official_representative","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
+                        | users_df.get("partner_group","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
+                    )
+                    & (users_df.get("role","").isin(["agency_staff","agency_partner"]))
+                ]
                 if len(staff):
                     rows = []
                     for _, s in staff.iterrows():
                         uname = s.get("username","")
                         staff_logs = e[e.get("partner_username","") == uname] if len(e) else pd.DataFrame()
                         rows.append({
-                            "Staff Name": s.get("full_name",""),
+                            "Company / Staff": s.get("agency_name", s.get("company_name","")) if s.get("role","") == "agency_partner" else s.get("full_name",""),
+                            "Applicant": s.get("full_name",""),
+                            "Account Type": s.get("account_type", s.get("role","")),
                             "Username": uname,
                             "Status": s.get("status",""),
                             "Eligibility Checks": len(staff_logs)
@@ -5386,7 +5539,7 @@ def admin_partner_management_v58():
             country = st.text_input("Country", value=str(selected_user.get("country", "")))
             agency_name = st.text_input("Agency Name", value=str(selected_user.get("agency_name", selected_user.get("partner_group", ""))))
         with c3:
-            role_options = ["admin", "agency_rep", "agency_staff", "partner"]
+            role_options = ["admin", "agency_rep", "agency_staff", "agency_partner", "partner"]
             current_role = str(selected_user.get("role", "agency_staff"))
             role = st.selectbox("Role", role_options, index=role_options.index(current_role) if current_role in role_options else 1)
             status_options = ["pending", "approved", "rejected"]
@@ -5445,7 +5598,7 @@ def admin_partner_management_v58():
             new_country = st.text_input("New Country", value="Nepal")
             new_agency = st.text_input("New Agency Name")
         with c3:
-            new_role = st.selectbox("New Role", ["agency_rep", "agency_staff", "partner"], key="new_role_v58")
+            new_role = st.selectbox("New Role", ["agency_rep", "agency_staff", "agency_partner", "partner"], key="new_role_v58")
             new_status = st.selectbox("New Status", ["approved", "pending", "rejected"], key="new_status_v58")
             pw = st.text_input("Password", type="password", key="new_pw_v58")
 
