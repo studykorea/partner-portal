@@ -797,3 +797,17 @@ v118:
 - The success page shows only a big “Application Submitted Successfully” message with applicant, university, and major summary.
 - Removed the small inline success message under the upload form.
 - Added buttons to go to Ongoing Applications or back to Program Options.
+
+
+v119:
+- Fixed issue where an application still appeared as “Draft - Documents Pending” after successful submission.
+- Submit now updates the exact draft row and also safely updates matching draft rows by passport + university + user/agency.
+- Ongoing Applications now deduplicates old draft/submitted duplicates and shows the submitted record first.
+- If a record has uploaded document JSON, the dashboard now infers the status as Submitted even if an old draft status remained.
+
+
+v120:
+- Fixed application status page rendering issue where raw HTML/code appeared in the timeline area.
+- Redesigned status page to a cleaner mobile-style layout similar to the sample.
+- Added applicant/university/program/status summary card with logo.
+- Added clearer timeline styling with completed/current/pending/failed states.
