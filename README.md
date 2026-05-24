@@ -659,3 +659,9 @@ v100:
 - Fixed University View Details page showing raw HTML code in a black block.
 - The issue was caused by indented multiline HTML being interpreted by Markdown as a code block.
 - Detail page HTML is now dedented before rendering.
+
+
+v101:
+- Fixed NameError: textwrap is not defined on University View Details page.
+- v100 used textwrap.dedent to fix raw HTML rendering, but textwrap was not imported correctly because the import line was combined.
+- University detail page should now load normally.
