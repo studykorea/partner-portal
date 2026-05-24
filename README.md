@@ -783,3 +783,10 @@ v116:
 - Submitted applications show Check Status.
 - Added application status timeline page with steps from submitted to university receipt, application number, interview, offer/invoice, COA, visa application, and visa result.
 - Visa result shows green congratulations message when issued and red rejected message when rejected.
+
+
+v117:
+- Fixed uploaded application sample images not appearing in applicant Step 2.
+- Cause: program matching checked "graduate" before "undergraduate"; because "undergraduate" contains "graduate", undergraduate applications searched the Graduate sample folder/category.
+- Added normalized sample matching for Undergraduate, Graduate, and Language (EAP/KLP).
+- Added fallback matching by nationality + document type for older saved sample rows.

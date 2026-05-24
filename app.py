@@ -7699,12 +7699,18 @@ APPLICATION_DOC_TYPES_V114 = [
 ]
 
 def application_program_label_v114(program_slug, application_type=""):
-    ps = str(program_slug or "").lower()
-    at = str(application_type or "").lower()
-    if "graduate" in ps or "graduate" in at:
-        return "Graduate"
-    if "language" in ps or "klp" in at or "eap" in at:
+    # v117 fix:
+    # The word "undergraduate" contains "graduate", so graduate must NOT be checked first.
+    ps = str(program_slug or "").strip().lower()
+    at = str(application_type or "").strip().lower()
+    combined = f"{ps} {at}"
+
+    if any(x in combined for x in ["language", "klp", "eap", "korean language"]):
         return "Language"
+    if any(x in combined for x in ["undergraduate", "bachelor", "new student", "transfer"]):
+        return "Undergraduate"
+    if any(x in combined for x in ["graduate", "master", "masters", "ph.d", "phd", "doctoral"]):
+        return "Graduate"
     return "Undergraduate"
 
 def read_application_samples_v114():
@@ -7726,20 +7732,43 @@ def save_application_sample_v114(uploaded_file, nationality, program_category, d
     out_path.write_bytes(uploaded_file.getvalue())
     return f"assets/application_samples/{filename}"
 
+def normalize_sample_program_v117(value):
+    v = str(value or "").strip().lower()
+    if "language" in v or "klp" in v or "eap" in v:
+        return "language"
+    # Important: check undergraduate before graduate.
+    if "undergraduate" in v or "bachelor" in v or "new student" in v or "transfer" in v:
+        return "undergraduate"
+    if "graduate" in v or "master" in v or "ph" in v or "doctoral" in v:
+        return "graduate"
+    return v
+
 def get_application_sample_path_v114(nationality, program_category, doc_key):
     df = read_application_samples_v114()
     if len(df) == 0:
         return ""
+
     n = str(nationality or "").strip().lower()
-    p = str(program_category or "").strip().lower()
+    p = normalize_sample_program_v117(program_category)
     d = str(doc_key or "").strip().lower()
-    matched = df[
-        (df["Nationality"].astype(str).str.strip().str.lower() == n)
-        & (df["Program_Category"].astype(str).str.strip().str.lower() == p)
-        & (df["Document_Key"].astype(str).str.strip().str.lower() == d)
-    ]
+
+    df = df.copy()
+    df["_n"] = df["Nationality"].astype(str).str.strip().str.lower()
+    df["_p"] = df["Program_Category"].astype(str).apply(normalize_sample_program_v117)
+    df["_d"] = df["Document_Key"].astype(str).str.strip().str.lower()
+
+    # Exact nationality + program + document.
+    matched = df[(df["_n"] == n) & (df["_p"] == p) & (df["_d"] == d)]
     if len(matched):
         return display_clean_v50(matched.iloc[-1].get("Sample_Path", ""))
+
+    # Fallback: some old data may have Program_Category saved as "Language (EAP/KLP)"
+    # or different capitalization. The normalized check above handles most cases,
+    # but this gives an additional safety net by matching document + nationality only.
+    fallback = df[(df["_n"] == n) & (df["_d"] == d)]
+    if len(fallback):
+        return display_clean_v50(fallback.iloc[-1].get("Sample_Path", ""))
+
     return ""
 
 def sample_preview_html_v114(sample_path, label):
@@ -7810,7 +7839,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
     <div class="application-start-panel-v109 application-start-panel-v112">
         <h3>Application Step 2 · Document Upload</h3>
         <p>Upload documents for <b>{_safe_html_v62(applicant_name)}</b>. Samples are shown based on nationality: <b>{_safe_html_v62(nationality)}</b>.</p>
-        <small>Sample images are managed by the super admin under Application Samples.</small>
+        <small>Sample images are managed by the super admin under Application Samples. Matching: nationality + program category + document type.</small>
     </div>
     """, unsafe_allow_html=True)
 
@@ -10723,7 +10752,7 @@ def admin_application_samples_v114():
     st.markdown(f"""
     <div class="admin-university-tabs-note-v104">
         <b>{_safe_html_v62(display_program)} Sample Setup</b>
-        <span>Choose nationality once, then upload sample images for each required document below. These samples will appear automatically for applicants from that nationality.</span>
+        <span>Choose nationality once, then upload sample images for each required document below. These samples will appear automatically for applicants from that nationality and selected program category.</span>
     </div>
     """, unsafe_allow_html=True)
 
