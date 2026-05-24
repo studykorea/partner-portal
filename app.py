@@ -3474,6 +3474,39 @@ div[data-testid="stDataEditor"] {
     font-weight:850 !important;
 }
 
+
+/* v81 official representative dashboard detail cards */
+.partner-stat-grid-v81 {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+.clickable-stat-v81 {
+    border-color:#BBD3FF !important;
+    box-shadow:0 12px 28px rgba(0,91,219,.08) !important;
+}
+.v81-detail-panel {
+    margin-top:18px !important;
+}
+.v81-detail-panel h2 {
+    color:#002B5B !important;
+    font-weight:950 !important;
+    margin-bottom:6px !important;
+}
+.v81-detail-panel p {
+    color:#667085 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+@media(max-width:1200px){
+    .partner-stat-grid-v81 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+@media(max-width:700px){
+    .partner-stat-grid-v81 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4204,12 +4237,124 @@ def close_shell():
 
 
 
+
+def _agency_related_users_v81(users_df, include_pending=True):
+    """Return users connected to the current official representative agency."""
+    if users_df is None or len(users_df) == 0:
+        return pd.DataFrame()
+    df = users_df.fillna("").copy()
+    current_key = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
+
+    related = df[
+        (
+            df.get("agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key)
+            | df.get("agency_name", "").astype(str).apply(normalize_agency_id).eq(current_key)
+            | df.get("partner_group", "").astype(str).apply(normalize_agency_id).eq(current_key)
+            | df.get("official_representative", "").astype(str).apply(normalize_agency_id).eq(current_key)
+            | df.get("sponsor_agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key)
+            | df.get("requested_approver_agency_id", "").astype(str).apply(normalize_agency_id).eq(current_key)
+        )
+        & (df.get("role", "").isin(["agency_staff", "agency_partner"]))
+    ].copy()
+
+    if not include_pending:
+        related = related[related.get("status", "") == "approved"].copy()
+
+    if len(related):
+        related = related.drop_duplicates(subset=["username", "email"], keep="last")
+    return related
+
+
+def _agency_partner_users_v81(users_df, status="approved"):
+    related = _agency_related_users_v81(users_df, include_pending=True)
+    if len(related) == 0:
+        return related
+    out = related[related.get("role", "") == "agency_partner"].copy()
+    if status:
+        out = out[out.get("status", "") == status].copy()
+    return out
+
+
+def _agency_staff_users_v81(users_df, status="approved"):
+    related = _agency_related_users_v81(users_df, include_pending=True)
+    if len(related) == 0:
+        return related
+    out = related[related.get("role", "") == "agency_staff"].copy()
+    if status:
+        out = out[out.get("status", "") == status].copy()
+    return out
+
+
+def _activity_counts_v81(username, elig_df, tuition_df):
+    """Counts activity for a partner user. Applications lodged is estimated only if application log columns exist."""
+    uname = str(username or "")
+    elig_count = 0
+    tuition_count = 0
+    application_count = 0
+
+    if elig_df is not None and len(elig_df):
+        if "partner_username" in elig_df.columns:
+            elig_count = len(elig_df[elig_df["partner_username"].astype(str) == uname])
+        # If future versions add application status/type columns, count lodged applications here.
+        possible_app_cols = [c for c in elig_df.columns if c.lower() in ["application_lodged", "application_status", "lodged", "application"]]
+        if possible_app_cols and "partner_username" in elig_df.columns:
+            sub = elig_df[elig_df["partner_username"].astype(str) == uname]
+            for c in possible_app_cols:
+                application_count += sub[c].astype(str).str.lower().isin(["yes", "lodged", "submitted", "applied", "true", "1"]).sum()
+
+    if tuition_df is not None and len(tuition_df):
+        if "partner_username" in tuition_df.columns:
+            tuition_count = len(tuition_df[tuition_df["partner_username"].astype(str) == uname])
+
+    return int(elig_count), int(tuition_count), int(application_count)
+
+
+def _user_detail_table_v81(df, elig_df, tuition_df, kind="staff"):
+    rows = []
+    if df is None or len(df) == 0:
+        return pd.DataFrame(rows)
+
+    for _, u in df.iterrows():
+        uname = u.get("username", "")
+        elig_count, tuition_count, application_count = _activity_counts_v81(uname, elig_df, tuition_df)
+
+        if kind == "partner":
+            rows.append({
+                "Partner Agency": u.get("agency_name", u.get("company_name", "")),
+                "CEO / Representative": u.get("ceo_name", ""),
+                "Main Contact": u.get("full_name", u.get("head_representative_name", "")),
+                "Position": u.get("position", ""),
+                "Contact Number": u.get("phone", ""),
+                "Email": u.get("email", ""),
+                "Username": uname,
+                "Status": u.get("status", ""),
+                "Students Counselled / Eligibility Checks": elig_count,
+                "Tuition Estimates": tuition_count,
+                "Applications Lodged": application_count,
+            })
+        else:
+            rows.append({
+                "Staff Name": u.get("full_name", ""),
+                "Position": u.get("position", ""),
+                "Contact Number": u.get("phone", ""),
+                "Email": u.get("email", ""),
+                "Username": uname,
+                "Status": u.get("status", ""),
+                "Students Counselled / Eligibility Checks": elig_count,
+                "Tuition Estimates": tuition_count,
+                "Applications Lodged": application_count,
+            })
+    return pd.DataFrame(rows)
+
+
+
+
 def partner_dashboard():
     dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
 
     e = read_csv(ELIG_LOGS)
     t = read_csv(TUIT_LOGS)
-    users_df = pd.DataFrame(read_json(USERS))
+    users_df = pd.DataFrame(read_json(USERS)).fillna("")
 
     visible_e = visible_logs(e)
     visible_t = visible_logs(t)
@@ -4219,9 +4364,14 @@ def partner_dashboard():
     pass_count = len(visible_e[visible_e["result"] == "Eligible"]) if len(visible_e) and "result" in visible_e.columns else 0
     fail_count = len(visible_e[visible_e["result"] == "FAIL"]) if len(visible_e) and "result" in visible_e.columns else 0
 
+    partner_agencies_v81 = _agency_partner_users_v81(users_df, status="approved") if st.session_state.role == "agency_rep" else pd.DataFrame()
+    staff_users_v81 = _agency_staff_users_v81(users_df, status="approved") if st.session_state.role == "agency_rep" else pd.DataFrame()
+    co_partner_count_v81 = len(partner_agencies_v81)
+    staff_count_v81 = len(staff_users_v81)
+
     if st.session_state.role == "agency_rep":
         portal_label = "Agency Representative Portal"
-        intro = "Monitor all eligibility checks, tuition estimates, and staff activities within your agency."
+        intro = "Monitor co-partner agencies, staff activity, eligibility checks, tuition estimates, and student application activity within your agency network."
     else:
         portal_label = "Agency Staff Portal"
         intro = "Check student eligibility, estimate tuition and scholarship, and manage your own student records."
@@ -4234,32 +4384,74 @@ def partner_dashboard():
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div class="partner-stat-grid">
-        <div class="partner-stat-card">
-            <h3>Available Universities</h3>
-            <h2>{total_unis}</h2>
-            <p class="muted">University profiles</p>
+    if st.session_state.role == "agency_rep":
+        st.markdown(f"""
+        <div class="partner-stat-grid partner-stat-grid-v81">
+            <div class="partner-stat-card clickable-stat-v81">
+                <h3>Confirmed Co-Partner Agencies</h3>
+                <h2>{co_partner_count_v81}</h2>
+                <p class="muted">Approved partner agencies</p>
+            </div>
+            <div class="partner-stat-card clickable-stat-v81">
+                <h3>Confirmed Staff</h3>
+                <h2>{staff_count_v81}</h2>
+                <p class="muted">Approved staff accounts</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Eligibility Checks</h3>
+                <h2>{total_checks}</h2>
+                <p class="muted">Agency-wide records</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Eligible Results</h3>
+                <h2>{pass_count}</h2>
+                <p class="muted">Students matched</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Review Needed</h3>
+                <h2>{fail_count}</h2>
+                <p class="muted">Need alternatives</p>
+            </div>
         </div>
-        <div class="partner-stat-card">
-            <h3>Eligibility Checks</h3>
-            <h2>{total_checks}</h2>
-            <p class="muted">{'Agency-wide records' if st.session_state.role == 'agency_rep' else 'Your records'}</p>
-        </div>
-        <div class="partner-stat-card">
-            <h3>Eligible Results</h3>
-            <h2>{pass_count}</h2>
-            <p class="muted">Students matched</p>
-        </div>
-        <div class="partner-stat-card">
-            <h3>Review Needed</h3>
-            <h2>{fail_count}</h2>
-            <p class="muted">Need alternatives</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
+        b1, b2, b3, b4 = st.columns([1.1, 1.1, 1.2, 3.2])
+        with b1:
+            if st.button("View Partner Agencies", key="v81_view_partner_agencies", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "partners"
+        with b2:
+            if st.button("View Staff List", key="v81_view_staff_list", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "staff"
+        with b3:
+            if st.button("View All Activity", key="v81_view_all_activity", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "activity"
+    else:
+        st.markdown(f"""
+        <div class="partner-stat-grid">
+            <div class="partner-stat-card">
+                <h3>Available Universities</h3>
+                <h2>{total_unis}</h2>
+                <p class="muted">University profiles</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Eligibility Checks</h3>
+                <h2>{total_checks}</h2>
+                <p class="muted">Your records</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Eligible Results</h3>
+                <h2>{pass_count}</h2>
+                <p class="muted">Students matched</p>
+            </div>
+            <div class="partner-stat-card">
+                <h3>Review Needed</h3>
+                <h2>{fail_count}</h2>
+                <p class="muted">Need alternatives</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+    # Pending approval requests for official representative accounts
     if st.session_state.role == "agency_rep":
         users_all_v75 = pd.DataFrame(read_json(USERS)).fillna("")
         if len(users_all_v75):
@@ -4314,6 +4506,41 @@ def partner_dashboard():
                             st.error("This request could not be rejected. Please check whether this user selected your agency as the official representative.")
                         st.rerun()
 
+    # Detailed partner/staff panels for official representatives
+    if st.session_state.role == "agency_rep":
+        view_v81 = st.session_state.get("partner_dashboard_view_v81", "partners")
+
+        if view_v81 == "partners":
+            st.markdown('<div class="partner-panel v81-detail-panel"><h2>Confirmed Co-Partner Agencies</h2><p>Approved sub-partner agencies confirmed under your official representative account.</p></div>', unsafe_allow_html=True)
+            partner_table = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
+            if len(partner_table):
+                st.dataframe(partner_table, use_container_width=True, hide_index=True)
+            else:
+                st.info("No approved co-partner agencies yet.")
+
+        elif view_v81 == "staff":
+            st.markdown('<div class="partner-panel v81-detail-panel"><h2>Confirmed Staff List</h2><p>Approved staff accounts under your organization, with contact information and activity counts.</p></div>', unsafe_allow_html=True)
+            staff_table = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
+            if len(staff_table):
+                st.dataframe(staff_table, use_container_width=True, hide_index=True)
+            else:
+                st.info("No approved staff accounts yet.")
+
+        elif view_v81 == "activity":
+            st.markdown('<div class="partner-panel v81-detail-panel"><h2>Agency Network Activity Log</h2><p>Combined activity for staff and co-partner agencies. Applications Lodged will show values when application tracking data is added.</p></div>', unsafe_allow_html=True)
+            all_related = pd.concat([staff_users_v81, partner_agencies_v81], ignore_index=True) if len(staff_users_v81) or len(partner_agencies_v81) else pd.DataFrame()
+            activity_staff = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
+            activity_partner = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
+            if len(activity_staff) or len(activity_partner):
+                if len(activity_staff):
+                    st.markdown("#### Staff Activity")
+                    st.dataframe(activity_staff, use_container_width=True, hide_index=True)
+                if len(activity_partner):
+                    st.markdown("#### Co-Partner Agency Activity")
+                    st.dataframe(activity_partner, use_container_width=True, hide_index=True)
+            else:
+                st.info("No agency network activity yet.")
+
     left, right = st.columns([1.25, .9], gap="large")
 
     with left:
@@ -4328,36 +4555,22 @@ def partner_dashboard():
         if st.session_state.role == "agency_rep":
             st.markdown('<br>', unsafe_allow_html=True)
             st.markdown('<div class="partner-panel">', unsafe_allow_html=True)
-            st.subheader("Agency Staff Activity")
-            if len(users_df):
-                current_key_v77 = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name",""))
-                staff = users_df[
-                    (
-                        users_df.get("agency_id","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
-                        | users_df.get("sponsor_agency_id","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
-                        | users_df.get("official_representative","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
-                        | users_df.get("partner_group","").astype(str).apply(normalize_agency_id).eq(current_key_v77)
-                    )
-                    & (users_df.get("role","").isin(["agency_staff","agency_partner"]))
-                ]
-                if len(staff):
-                    rows = []
-                    for _, s in staff.iterrows():
-                        uname = s.get("username","")
-                        staff_logs = e[e.get("partner_username","") == uname] if len(e) else pd.DataFrame()
-                        rows.append({
-                            "Company / Staff": s.get("agency_name", s.get("company_name","")) if s.get("role","") == "agency_partner" else s.get("full_name",""),
-                            "Applicant": s.get("full_name",""),
-                            "Account Type": s.get("account_type", s.get("role","")),
-                            "Username": uname,
-                            "Status": s.get("status",""),
-                            "Eligibility Checks": len(staff_logs)
-                        })
-                    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-                else:
-                    st.info("No staff accounts found for your agency yet.")
+            st.subheader("Agency Staff & Partner Activity Summary")
+            staff_table = _user_detail_table_v81(staff_users_v81, e, t, kind="staff")
+            partner_table = _user_detail_table_v81(partner_agencies_v81, e, t, kind="partner")
+            if len(staff_table) or len(partner_table):
+                summary_rows = []
+                if len(staff_table):
+                    temp = staff_table.copy()
+                    temp.insert(0, "Type", "Staff")
+                    summary_rows.append(temp)
+                if len(partner_table):
+                    temp = partner_table.copy()
+                    temp.insert(0, "Type", "Co-Partner Agency")
+                    summary_rows.append(temp)
+                st.dataframe(pd.concat(summary_rows, ignore_index=True), use_container_width=True, hide_index=True)
             else:
-                st.info("No staff accounts found.")
+                st.info("No approved staff or co-partner agency accounts found yet.")
             st.markdown('</div>', unsafe_allow_html=True)
 
     with right:

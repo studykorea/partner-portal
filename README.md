@@ -509,3 +509,14 @@ v80:
 - When a Partner Agency is approved/rejected, the related agency record status is also updated.
 - Pending approval list now checks sponsor_agency_id, official_representative, and requested_approver_agency_id.
 - Duplicate pending cards are reduced by username/email.
+
+
+v81:
+- Added official representative dashboard details.
+- Added Confirmed Co-Partner Agencies count.
+- Added Confirmed Staff count.
+- Added clickable buttons to view co-partner agencies, staff list, and all activity.
+- Co-partner list includes agency/company name, CEO/representative, main contact, position, phone, email, username, status, eligibility checks, tuition estimates, and applications lodged.
+- Staff list includes staff name, position, phone, email, username, status, eligibility checks, tuition estimates, and applications lodged.
+- Activity log summary combines staff and co-partner agency activity.
+- Applications Lodged count is prepared for future application tracking columns; it remains 0 until application lodging data is recorded.
