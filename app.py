@@ -226,6 +226,72 @@ def current_agency_id():
         return ""
     return user.get("agency_id", normalize_agency_id(user.get("agency_name","")))
 
+
+
+def approved_reps_for_agency_v75(agency_id):
+    reps = []
+    for u in read_json(USERS):
+        if str(u.get("agency_id", "")) == str(agency_id) and str(u.get("role", "")) == "agency_rep" and str(u.get("status", "")) == "approved":
+            reps.append(u)
+    return reps
+
+
+def approval_authority_text_v75(user):
+    agency_name = str(user.get("agency_name", "your agency") or "your agency")
+    if str(user.get("approval_scope", "")) == "agency" and approved_reps_for_agency_v75(user.get("agency_id", "")):
+        return f"the official representative of {agency_name}"
+    return "the portal super admin"
+
+
+def set_pending_session_v75(user):
+    st.session_state.pending_username = user.get("username", "")
+    st.session_state.pending_full_name = user.get("full_name", user.get("username", ""))
+    st.session_state.pending_agency_name = user.get("agency_name", user.get("partner_group", ""))
+    st.session_state.pending_email = user.get("email", "")
+    st.session_state.pending_role = user.get("role", "")
+    st.session_state.pending_account_type = user.get("account_type", "")
+    st.session_state.pending_approval_by = approval_authority_text_v75(user)
+
+
+def pending_user_from_session_v75():
+    username = st.session_state.get("pending_username", "")
+    if username:
+        user = find_user(username)
+        if user:
+            return user
+    return {
+        "username": st.session_state.get("pending_username", ""),
+        "full_name": st.session_state.get("pending_full_name", ""),
+        "agency_name": st.session_state.get("pending_agency_name", ""),
+        "email": st.session_state.get("pending_email", ""),
+        "role": st.session_state.get("pending_role", ""),
+        "account_type": st.session_state.get("pending_account_type", ""),
+    }
+
+
+def pending_access_required_v75(feature_name="this service"):
+    header()
+    user = pending_user_from_session_v75()
+    full_name = str(user.get("full_name", "Partner") or "Partner")
+    agency_name = str(user.get("agency_name", "your agency") or "your agency")
+    approver = approval_authority_text_v75(user)
+    st.markdown(f"""
+    <div class="pending-access-card-v75">
+        <div class="pending-pill-v75">Approval Pending</div>
+        <h1>Dear {full_name},</h1>
+        <p>You will only be able to use <b>{feature_name}</b> after your account is approved by <b>{approver}</b>.</p>
+        <p class="pending-muted-v75">Your selected partner agency is <b>{agency_name}</b>. If this is incorrect, please create a new account or contact the portal administrator.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    a1, a2, a3 = st.columns([1.1,1.2,4])
+    with a1:
+        if st.button("Go to Login", key=f"pending_access_login_{feature_name}", use_container_width=True):
+            set_page("Login")
+    with a2:
+        if st.button("View Pending Status", key=f"pending_access_status_{feature_name}", use_container_width=True):
+            set_page("Pending")
+    footer()
+
 def can_view_log_row(row):
     if st.session_state.role == "admin":
         return True
@@ -3137,6 +3203,25 @@ div[data-testid="stDataEditor"] {
     overflow:hidden !important;
 }
 
+
+/* v75 pending approval and agency representative approval panel */
+.pending-hero-v75 {background: linear-gradient(90deg,#002B5B,#053B7A);border-radius:0 0 22px 22px;padding:54px 56px;margin:0 0 28px 0;}
+.pending-hero-v75 * { color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important; }
+.pending-step-v75 {display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 16px;font-weight:900;margin-bottom:16px;}
+.pending-hero-v75 h1 {font-size:46px!important;line-height:1.15!important;margin:0 0 14px 0!important;font-weight:950!important;}
+.pending-hero-v75 p {font-size:18px!important;max-width:850px!important;line-height:1.55!important;}
+.pending-access-card-v75 {background:#FFFFFF;border:1px solid #DCE6F4;border-radius:18px;padding:34px 36px;margin:34px 52px 24px 52px;box-shadow:0 16px 34px rgba(16,24,40,.08);}
+.pending-access-card-v75 h1 {color:#101828!important;margin:8px 0 12px 0!important;}
+.pending-access-card-v75 p {color:#344054!important;font-size:17px!important;line-height:1.55!important;}
+.pending-pill-v75 {display:inline-block;background:#FFF4D6;color:#B54708!important;-webkit-text-fill-color:#B54708!important;border-radius:999px;padding:8px 15px;font-weight:950;}
+.pending-muted-v75 {color:#667085!important;}
+.pending-staff-panel-v75 {margin-top:20px!important;}
+.pending-staff-panel-v75 h2 {color:#101828!important;margin:0 0 6px 0!important;}
+.pending-staff-panel-v75 p {color:#667085!important;margin:0!important;}
+.staff-request-card-v75 {background:#FFFFFF;border:1px solid #DCE6F4;border-radius:16px;padding:18px 20px;margin:12px 0 10px 0;box-shadow:0 8px 20px rgba(16,24,40,.05);}
+.staff-request-card-v75 h3 {color:#002B5B!important;margin:0 0 8px 0!important;font-weight:950!important;}
+.staff-request-card-v75 p {color:#101828!important;margin:5px 0!important;}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3623,12 +3708,13 @@ def signup():
                     agencies = read_agencies()
                     existing_agency = find_agency_by_name(agency)
 
+                    agency_id = normalize_agency_id(agency)
+                    agency_name_clean = agency.strip()
+
                     if existing_agency:
-                        agency_id = existing_agency.get("agency_id")
-                        agency_name_clean = existing_agency.get("agency_name")
+                        agency_id = existing_agency.get("agency_id", agency_id)
+                        agency_name_clean = existing_agency.get("agency_name", agency_name_clean)
                     else:
-                        agency_id = normalize_agency_id(agency)
-                        agency_name_clean = agency.strip()
                         agencies.append({
                             "agency_id": agency_id,
                             "agency_name": agency_name_clean,
@@ -3639,7 +3725,14 @@ def signup():
 
                     users = read_json(USERS)
                     role = "agency_rep" if account_type == "Agency Representative" else "agency_staff"
-                    users.append({
+                    has_approved_rep = any(
+                        str(u.get("agency_id", "")) == str(agency_id)
+                        and str(u.get("role", "")) == "agency_rep"
+                        and str(u.get("status", "")) == "approved"
+                        for u in users
+                    )
+                    approval_scope = "agency" if role == "agency_staff" and has_approved_rep else "admin"
+                    new_user = {
                         "username": username,
                         "full_name": name,
                         "agency_name": agency_name_clean,
@@ -3652,9 +3745,13 @@ def signup():
                         "password_hash": hash_pw(password),
                         "role": role,
                         "status": "pending",
+                        "approval_scope": approval_scope,
+                        "requested_approver_agency_id": agency_id if approval_scope == "agency" else "",
                         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    })
+                    }
+                    users.append(new_user)
                     write_json(USERS, users)
+                    set_pending_session_v75(new_user)
                     set_page("Pending")
         st.markdown('</div></div>', unsafe_allow_html=True)
     footer()
@@ -3662,21 +3759,29 @@ def signup():
 
 def pending():
     header()
-    st.markdown("""
-    <div class="hero navy">
-      <span class="badge">Step 3 &nbsp; Approval Pending</span>
-      <h1>Thank You!<br>Your Registration Is Submitted</h1>
-      <p>Your partner registration has been received and is now pending review by the administration team.</p>
+    user = pending_user_from_session_v75()
+    full_name = str(user.get("full_name", "Partner") or "Partner")
+    agency_name = str(user.get("agency_name", "your agency") or "your agency")
+    email = str(user.get("email", "") or "")
+    approver = approval_authority_text_v75(user)
+
+    st.markdown(f"""
+    <div class="pending-hero-v75">
+      <span class="pending-step-v75">Step 3 &nbsp; Approval Pending</span>
+      <h1>Thank You,<br>{full_name}</h1>
+      <p>Your partner registration for <b>{agency_name}</b> has been received and is waiting for approval by <b>{approver}</b>.</p>
     </div>
     """, unsafe_allow_html=True)
     st.markdown('<div class="section"><div class="two">', unsafe_allow_html=True)
-    st.markdown("""
+    st.markdown(f"""
     <div class="white-panel"><h2>Application Timeline</h2>
     <p>✅ <b>Application Submitted</b><br><span class="muted">Your registration details have been submitted.</span></p>
-    <p>🔵 <b>Under Review</b><br><span class="muted">Our team is reviewing your application.</span></p>
-    <p>⚪ <b>Access Full Platform</b><br><span class="muted">Access is available after approval.</span></p></div>
+    <p>🔵 <b>Under Review</b><br><span class="muted">Approval is pending with {approver}.</span></p>
+    <p>⚪ <b>Access Full Platform</b><br><span class="muted">Eligibility check, tuition calculation, and partner dashboard access will open after approval.</span></p></div>
     <div class="white-panel"><h2 style="color:#B54708!important;">Pending Approval</h2>
-    <p>Detailed university information, eligibility check, tuition fees, and partner features will be available after approval.</p></div>
+    <p><b>Agency:</b> {agency_name}</p>
+    <p><b>Email:</b> {email}</p>
+    <p>Dear {full_name}, you will only be able to use partner services after your account is approved by <b>{approver}</b>.</p></div>
     """, unsafe_allow_html=True)
     st.markdown('</div></div>', unsafe_allow_html=True)
     footer()
@@ -3711,8 +3816,11 @@ def login():
                 if not user or user["password_hash"] != hash_pw(password):
                     st.error("Invalid username or password.")
                 elif user["status"] != "approved":
+                    set_pending_session_v75(user)
                     set_page("Pending")
                 else:
+                    for k in ["pending_username","pending_full_name","pending_agency_name","pending_email","pending_role","pending_account_type","pending_approval_by"]:
+                        st.session_state.pop(k, None)
                     _set_login_session_from_user_v60(user)
                     try:
                         st.query_params["auth"] = _make_auth_token_v60(user)
@@ -3808,6 +3916,57 @@ def partner_dashboard():
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+
+    if st.session_state.role == "agency_rep":
+        users_all_v75 = pd.DataFrame(read_json(USERS)).fillna("")
+        if len(users_all_v75):
+            pending_staff_v75 = users_all_v75[
+                (users_all_v75.get("agency_id", "") == current_agency_id())
+                & (users_all_v75.get("role", "") == "agency_staff")
+                & (users_all_v75.get("status", "") == "pending")
+            ].copy()
+        else:
+            pending_staff_v75 = pd.DataFrame()
+
+        if len(pending_staff_v75):
+            st.markdown("""
+            <div class="partner-panel pending-staff-panel-v75">
+                <h2>Staff Approval Requests</h2>
+                <p>These users selected your agency as their official partner connection. Please approve only if they belong to your agency.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            for req_idx, (_, req) in enumerate(pending_staff_v75.iterrows()):
+                st.markdown(f"""
+                <div class="staff-request-card-v75">
+                    <h3>{req.get('full_name','')}</h3>
+                    <p><b>Username:</b> {req.get('username','')} &nbsp; | &nbsp; <b>Email:</b> {req.get('email','')}</p>
+                    <p><b>Country:</b> {req.get('country','')} &nbsp; | &nbsp; <b>Status:</b> <span class="status-pending">pending</span></p>
+                </div>
+                """, unsafe_allow_html=True)
+                ac1, ac2, ac3 = st.columns([1,1,4])
+                with ac1:
+                    if st.button("Approve Staff", key=_unique_admin_key_v72("agency_staff_approve", req_idx, req), use_container_width=True):
+                        all_users = read_json(USERS)
+                        for u in all_users:
+                            if str(u.get("username", "")) == str(req.get("username", "")) and str(u.get("agency_id", "")) == str(current_agency_id()):
+                                u["status"] = "approved"
+                                u["approved_by"] = st.session_state.username
+                                u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        write_json(USERS, all_users)
+                        st.success(f"{req.get('full_name','Staff user')} approved.")
+                        st.rerun()
+                with ac2:
+                    if st.button("Reject Staff", key=_unique_admin_key_v72("agency_staff_reject", req_idx, req), use_container_width=True):
+                        all_users = read_json(USERS)
+                        for u in all_users:
+                            if str(u.get("username", "")) == str(req.get("username", "")) and str(u.get("agency_id", "")) == str(current_agency_id()):
+                                u["status"] = "rejected"
+                                u["approved_by"] = st.session_state.username
+                                u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        write_json(USERS, all_users)
+                        st.warning(f"{req.get('full_name','Staff user')} rejected.")
+                        st.rerun()
 
     left, right = st.columns([1.25, .9], gap="large")
 
@@ -5898,14 +6057,17 @@ if not st.session_state.logged_in:
     elif st.session_state.page == "Universities": universities_page(public=True)
     elif st.session_state.page == "Contact Us": contact()
     elif st.session_state.page in ["Eligibility Check","Tuition & Scholarship"]:
-        header()
-        st.markdown('<div class="section"><div class="white-panel"><h2>Partner Access Required</h2><p>Please login with an approved partner account to access this feature.</p></div></div>', unsafe_allow_html=True)
-        a1, a2, a3 = st.columns([1,1,4])
-        with a1:
-            if st.button("Go to Login", key="access_login", use_container_width=True): set_page("Login")
-        with a2:
-            if st.button("Partner Sign Up", key="access_signup", use_container_width=True): set_page("Partner Sign Up")
-        footer()
+        if st.session_state.get("pending_username"):
+            pending_access_required_v75(st.session_state.page)
+        else:
+            header()
+            st.markdown('<div class="section"><div class="white-panel"><h2>Partner Access Required</h2><p>Please login with an approved partner account to access this feature.</p></div></div>', unsafe_allow_html=True)
+            a1, a2, a3 = st.columns([1,1,4])
+            with a1:
+                if st.button("Go to Login", key="access_login", use_container_width=True): set_page("Login")
+            with a2:
+                if st.button("Partner Sign Up", key="access_signup", use_container_width=True): set_page("Partner Sign Up")
+            footer()
     else:
         home()
 else:

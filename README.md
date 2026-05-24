@@ -461,3 +461,10 @@ v74:
 - Admin selects one university first, then sees only that university's rows.
 - Saving replaces only the selected university's rows and keeps all other universities unchanged.
 - New rows are automatically assigned to the selected university.
+
+
+v75:
+- Agency staff accounts linked to an existing approved agency representative can now be approved/rejected by that representative from the partner dashboard.
+- Super admin can still approve/reject all pending users.
+- Pending users see a personalized approval message when trying to use protected features.
+- Signup stores approval_scope so Realize/KIEC representative approvals can work.
