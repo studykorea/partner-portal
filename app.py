@@ -309,6 +309,11 @@ def approve_or_reject_partner_request_v80(req, new_status):
                 a["approved_by"] = st.session_state.get("username", "")
                 a["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 a["approved_by_agency"] = st.session_state.get("agency_name", "")
+                if not a.get("agency_logo"):
+                    for u in all_users:
+                        if normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == normalize_agency_id(a.get("agency_id", a.get("agency_name", ""))) and u.get("agency_logo"):
+                            a["agency_logo"] = u.get("agency_logo")
+                            break
         write_agencies(agencies)
 
     st.cache_data.clear()
@@ -3512,6 +3517,28 @@ div[data-testid="stDataEditor"] {
     }
 }
 
+
+/* v83 partner logo upload/display */
+.partner-welcome-line-v83 {
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+}
+.partner-welcome-line-v83 h1 {
+    margin-bottom:0 !important;
+}
+.partner-logo-v83 {
+    width:76px !important;
+    height:76px !important;
+    object-fit:contain !important;
+    background:#FFFFFF !important;
+    border:1px solid rgba(255,255,255,.45) !important;
+    border-radius:18px !important;
+    padding:8px !important;
+    box-shadow:0 12px 26px rgba(0,0,0,.18) !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -3935,6 +3962,61 @@ def home():
 
 
 
+
+def save_partner_logo_v83(uploaded_file, agency_id):
+    """Save uploaded agency logo into assets/partner_logos and return a relative path."""
+    if not uploaded_file:
+        return ""
+    try:
+        ext = Path(uploaded_file.name).suffix.lower()
+        if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
+            ext = ".png"
+        safe_id = re.sub(r"[^A-Za-z0-9_]+", "_", str(agency_id or "agency_logo")).strip("_")
+        logo_dir = Path("assets") / "partner_logos"
+        logo_dir.mkdir(parents=True, exist_ok=True)
+        logo_path = logo_dir / f"{safe_id}{ext}"
+        logo_path.write_bytes(uploaded_file.getbuffer())
+        return str(logo_path).replace("\\", "/")
+    except Exception:
+        return ""
+
+def current_agency_logo_v83():
+    """Find logo for the currently logged-in agency/user."""
+    try:
+        username = st.session_state.get("username", "")
+        user = find_user(username) if username else None
+        if user and user.get("agency_logo"):
+            return user.get("agency_logo", "")
+        current_key = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
+        for u in read_json(USERS):
+            if (
+                normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == current_key
+                or normalize_agency_id(u.get("agency_name", "")) == current_key
+                or normalize_agency_id(u.get("company_name", "")) == current_key
+            ):
+                if u.get("agency_logo"):
+                    return u.get("agency_logo", "")
+        for a in read_agencies():
+            if (
+                normalize_agency_id(a.get("agency_id", a.get("agency_name", ""))) == current_key
+                or normalize_agency_id(a.get("agency_name", "")) == current_key
+            ):
+                if a.get("agency_logo"):
+                    return a.get("agency_logo", "")
+    except Exception:
+        pass
+    return ""
+
+def agency_logo_html_v83(logo_path, class_name="partner-logo-v83"):
+    """Render a small agency logo image from a saved local asset path."""
+    if not logo_path:
+        return ""
+    try:
+        return asset_img_html(logo_path, class_name)
+    except Exception:
+        return ""
+
+
 def signup():
     header()
     left, right = st.columns([0.95, 1.35], gap="large")
@@ -3987,6 +4069,7 @@ def signup():
             ceo_name = ""
             head_name = ""
             position = ""
+            logo_upload = None
 
             if account_category == "Staff of Official Representative Agency":
                 st.markdown("##### Staff Information")
@@ -4020,6 +4103,7 @@ def signup():
                     email = st.text_input("Email Address")
                     phone = st.text_input("Contact Number / WhatsApp")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
+                logo_upload = st.file_uploader("Upload Company Logo Image", type=["png", "jpg", "jpeg", "webp"], key="partner_logo_upload_v83")
                 u1, u2 = st.columns(2)
                 with u1:
                     username = st.text_input("Create Username")
@@ -4044,8 +4128,12 @@ def signup():
                     phone = st.text_input("Contact Number / WhatsApp")
                     country = st.selectbox("Country", ["Nepal","South Korea","India","Bangladesh","Sri Lanka","Vietnam","Other"])
                     username = st.text_input("Create Username")
+                logo_upload = st.file_uploader("Upload Company Logo Image", type=["png", "jpg", "jpeg", "webp"], key="official_logo_upload_v83")
+                u1, u2 = st.columns(2)
+                with u1:
                     password = st.text_input("Create Password", type="password")
-                confirm = st.text_input("Confirm Password", type="password")
+                with u2:
+                    confirm = st.text_input("Confirm Password", type="password")
                 name = head_name or ceo_name
                 official_representative = company_name
                 agency_name_clean = company_name
@@ -4074,6 +4162,7 @@ def signup():
 
                     agency_id = normalize_agency_id(agency_name_clean)
                     sponsor_agency_id = normalize_agency_id(official_representative)
+                    agency_logo_path = save_partner_logo_v83(logo_upload, agency_id) if logo_upload else ""
 
                     existing_agency = find_agency_by_name(agency_name_clean)
                     if existing_agency:
@@ -4086,6 +4175,7 @@ def signup():
                             "official_representative": official_representative,
                             "sponsor_agency_id": sponsor_agency_id if role in ["agency_staff", "agency_partner"] else "",
                             "status": "pending",
+                            "agency_logo": agency_logo_path,
                             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         })
                         write_agencies(agencies)
@@ -4109,6 +4199,7 @@ def signup():
                         "position": position.strip(),
                         "email": email.strip(),
                         "phone": phone.strip(),
+                        "agency_logo": agency_logo_path,
                         "country": country,
                         "partner_group": official_representative.strip(),
                         "official_representative": official_representative.strip(),
@@ -4381,10 +4472,17 @@ def partner_dashboard():
         portal_label = "Agency Staff Portal"
         intro = "Check student eligibility, estimate tuition and scholarship, and manage your own student records."
 
+    agency_logo_v83 = current_agency_logo_v83()
+    agency_logo_html = agency_logo_html_v83(agency_logo_v83, "partner-logo-v83") if agency_logo_v83 else ""
     st.markdown(f"""
     <div class="partner-hero">
         <div class="partner-status-pill">{portal_label}</div>
-        <h1>Welcome back,<br>{st.session_state.agency_name} {official_rep_badge_v77(st.session_state.agency_name) if st.session_state.role == "agency_rep" else ""}</h1>
+        <div class="partner-welcome-line-v83">
+            <div>
+                <h1>Welcome back,<br>{st.session_state.agency_name} {official_rep_badge_v77(st.session_state.agency_name) if st.session_state.role == "agency_rep" else ""}</h1>
+            </div>
+            {agency_logo_html}
+        </div>
         <p>{intro}</p>
     </div>
     """, unsafe_allow_html=True)

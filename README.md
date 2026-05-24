@@ -528,3 +528,10 @@ v82:
 - If Edukorea is approved as a partner agency, Edukorea appears in the staff organization dropdown.
 - Staff who select Edukorea will be routed to Edukorea for approval when an approved Edukorea partner account exists.
 - Approved partner agency accounts can now access the agency-style dashboard and approve their own staff accounts.
+
+
+v83:
+- Added company logo image upload to Partner Agency signup and Official Representative signup.
+- Uploaded logo is saved in assets/partner_logos and stored in the user/agency record.
+- When a partner/official representative logs in, their logo appears beside the company name in the dashboard welcome hero.
+- Partner agency approval also updates the agency logo record when available.
