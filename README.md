@@ -790,3 +790,10 @@ v117:
 - Cause: program matching checked "graduate" before "undergraduate"; because "undergraduate" contains "graduate", undergraduate applications searched the Graduate sample folder/category.
 - Added normalized sample matching for Undergraduate, Graduate, and Language (EAP/KLP).
 - Added fallback matching by nationality + document type for older saved sample rows.
+
+
+v118:
+- After clicking Submit Application, the app now moves to a separate success page.
+- The success page shows only a big “Application Submitted Successfully” message with applicant, university, and major summary.
+- Removed the small inline success message under the upload form.
+- Added buttons to go to Ongoing Applications or back to Program Options.

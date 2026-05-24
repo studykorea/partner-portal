@@ -5163,6 +5163,90 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v118 application submitted full page */
+.application-submitted-page-v118 {
+    min-height:520px !important;
+    border-radius:28px !important;
+    background:linear-gradient(135deg,#ECFDF3 0%,#FFFFFF 58%,#EEF5FF 100%) !important;
+    border:1px solid #BBF7D0 !important;
+    box-shadow:0 22px 50px rgba(16,185,129,.16) !important;
+    padding:70px 40px !important;
+    text-align:center !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:24px 0 !important;
+}
+.submitted-check-v118 {
+    width:96px !important;
+    height:96px !important;
+    border-radius:999px !important;
+    background:#16A34A !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:58px !important;
+    font-weight:950 !important;
+    box-shadow:0 14px 30px rgba(22,163,74,.35) !important;
+    margin-bottom:26px !important;
+}
+.application-submitted-page-v118 h1 {
+    color:#065F46 !important;
+    -webkit-text-fill-color:#065F46 !important;
+    font-size:48px !important;
+    line-height:1.08 !important;
+    font-weight:950 !important;
+    margin:0 0 18px 0 !important;
+}
+.application-submitted-page-v118 p {
+    color:#344054 !important;
+    -webkit-text-fill-color:#344054 !important;
+    font-size:20px !important;
+    font-weight:750 !important;
+    margin:0 0 28px 0 !important;
+}
+.submitted-summary-v118 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:14px !important;
+    width:100% !important;
+    max-width:980px !important;
+    margin-top:10px !important;
+}
+.submitted-summary-v118 span {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    padding:16px 18px !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    font-weight:850 !important;
+    text-align:left !important;
+    box-shadow:0 8px 20px rgba(16,24,40,.06) !important;
+}
+.submitted-summary-v118 b {
+    display:block !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    margin-bottom:6px !important;
+    text-transform:uppercase !important;
+    letter-spacing:.04em !important;
+}
+@media(max-width:900px){
+    .application-submitted-page-v118 h1 {
+        font-size:34px !important;
+    }
+    .submitted-summary-v118 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7886,9 +7970,10 @@ def render_application_documents_step_v114(u, program_slug, application_type):
                     saved_docs[doc_key] = save_application_upload_v114(uploaded_paths[doc_key], applicant_key, doc_key)
 
                 update_application_submitted_v116(step1, saved_docs)
+                st.session_state.application_submitted_data_v118 = dict(step1)
                 st.session_state.application_step_v114 = 3
-                st.success("Application submitted successfully.")
                 st.balloons()
+                st.rerun()
 
 def render_application_start_form_v109(u, program_slug, application_type):
     can_apply, reason = user_can_apply_v112()
@@ -7917,7 +8002,43 @@ def render_application_start_form_v109(u, program_slug, application_type):
         return
 
     if current_step == 3:
-        st.success("Application submitted successfully. You may return to program options.")
+        submitted_name_v118 = ""
+        submitted_uni_v118 = ""
+        submitted_major_v118 = ""
+        try:
+            submitted_data_v118 = st.session_state.get("application_submitted_data_v118", {}) or st.session_state.get("application_step1_data_v114", {})
+            submitted_name_v118 = submitted_data_v118.get("Full_Name_As_Passport", "") or submitted_data_v118.get("Applicant_Name", "")
+            submitted_uni_v118 = submitted_data_v118.get("University", "") or u.get("University", "")
+            submitted_major_v118 = submitted_data_v118.get("Desired_Major", "")
+        except Exception:
+            submitted_uni_v118 = u.get("University", "")
+
+        st.markdown(f"""
+        <div class="application-submitted-page-v118">
+            <div class="submitted-check-v118">✓</div>
+            <h1>Application Submitted Successfully</h1>
+            <p>Your application has been submitted and saved in the portal.</p>
+            <div class="submitted-summary-v118">
+                <span><b>Applicant</b>{_safe_html_v62(submitted_name_v118 or "Applicant")}</span>
+                <span><b>University</b>{_safe_html_v62(submitted_uni_v118 or "Selected University")}</span>
+                <span><b>Major / Program</b>{_safe_html_v62(submitted_major_v118 or "Selected Program")}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c_done1, c_done2, c_done3 = st.columns([1.2, 1.2, 3])
+        with c_done1:
+            if st.button("Go to Ongoing Applications", key="go_ongoing_after_submit_v118", use_container_width=True):
+                st.session_state.partner_dashboard_view_v81 = "applications"
+                st.session_state.page = "Dashboard"
+                st.rerun()
+        with c_done2:
+            if st.button("Back to Program Options", key="back_program_after_submit_v118", use_container_width=True):
+                st.session_state.application_type_v109 = ""
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
+                st.rerun()
         return
 
     st.markdown(f"""
@@ -8151,6 +8272,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = False
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
         render_application_start_form_v109(u, program_slug, app_type)
@@ -8170,6 +8292,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
         with c2:
@@ -8178,6 +8301,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
     elif program_slug == "graduate":
@@ -8190,6 +8314,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
     elif program_slug == "language":
@@ -8205,6 +8330,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
         with c2:
@@ -8213,6 +8339,7 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_page_open_v113 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
+                st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
                 st.rerun()
 
