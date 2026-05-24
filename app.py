@@ -4525,6 +4525,68 @@ h3.uni-name-accent-v93 span {
 .student-muted-v106 { color:#667085 !important; font-weight:700 !important; margin:0 !important; }
 @media(max-width:900px){ .student-stats-grid-v106 { grid-template-columns:1fr !important; } .student-stats-card-v106 { margin:0 20px 24px 20px !important; } .student-stats-head-v106 { flex-direction:column !important; } }
 
+
+/* v107 student statistics Excel upload explanation and template download */
+.student-stats-upload-info-v107 {
+    background:#F8FAFF !important;
+    border:1px solid #BBD3FF !important;
+    border-radius:14px !important;
+    padding:15px 16px !important;
+    margin:18px 0 12px 0 !important;
+}
+.student-stats-upload-info-v107 b {
+    color:#002B5B !important;
+    font-size:16px !important;
+    font-weight:950 !important;
+}
+.student-stats-upload-info-v107 p {
+    color:#344054 !important;
+    font-size:14px !important;
+    line-height:1.55 !important;
+    margin:7px 0 8px 0 !important;
+}
+.student-stats-upload-info-v107 ul {
+    margin:8px 0 0 18px !important;
+    padding:0 !important;
+}
+.student-stats-upload-info-v107 li {
+    color:#475467 !important;
+    font-size:13px !important;
+    line-height:1.55 !important;
+    margin:3px 0 !important;
+}
+.excel-template-download-v107 {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:9px !important;
+    min-height:52px !important;
+    padding:12px 14px !important;
+    border-radius:12px !important;
+    background:#005BDB !important;
+    border:1px solid #005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-decoration:none !important;
+    font-weight:950 !important;
+    box-shadow:0 8px 18px rgba(0,91,219,.18) !important;
+    margin-top:28px !important;
+}
+.excel-template-download-v107 span,
+.excel-template-download-v107 b {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.excel-template-download-v107:hover {
+    background:#004BB8 !important;
+    border-color:#004BB8 !important;
+    transform:translateY(-1px) !important;
+}
+.excel-template-download-v107.disabled {
+    background:#98A2B3 !important;
+    border-color:#98A2B3 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6591,6 +6653,35 @@ def student_stats_template_bytes_v106():
     output.seek(0)
     return output.getvalue()
 
+
+def student_stats_template_download_html_v107():
+    """HTML download link for the student statistics Excel template.
+    This can be placed next to file_uploader inside Streamlit forms.
+    """
+    try:
+        encoded = base64.b64encode(student_stats_template_bytes_v106()).decode("utf-8")
+        mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        return f"""
+        <a class="excel-template-download-v107" href="data:{mime};base64,{encoded}" download="university_student_statistics_template.xlsx">
+            <span>📥</span><b>Download Excel Format</b>
+        </a>
+        """
+    except Exception:
+        return '<div class="excel-template-download-v107 disabled"><span>📥</span><b>Template unavailable</b></div>'
+
+def student_stats_upload_info_html_v107():
+    return """
+    <div class="student-stats-upload-info-v107">
+        <b>What is this Excel upload for?</b>
+        <p>This optional file creates the student statistics section in the university detail page. It shows a graph of enrolled students by program level and the top 5 international student nationalities with country flags.</p>
+        <ul>
+            <li><b>Summary sheet:</b> Data_Year, Undergraduate_Students, Graduate_Students, Language_Study_Students</li>
+            <li><b>Nationality sheet:</b> Country, Number_of_Students</li>
+            <li>If you do not upload this file, the student graph will simply not appear.</li>
+        </ul>
+    </div>
+    """
+
 def parse_student_stats_excel_v106(uploaded_file):
     """Parse optional student statistics Excel upload."""
     result = {
@@ -8289,7 +8380,7 @@ def admin_university_management_v49():
     with tab_add:
         st.markdown("### Add New University")
         st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
-        st.caption("Optional: Download the format, fill student enrollment and nationality data, then upload it below. This is not mandatory.")
+        st.caption("Optional student statistics file: use this template for enrollment numbers and top nationality data. The same template download is also shown next to the Excel upload field below.")
         with st.form("add_university_v49"):
             c1, c2 = st.columns(2)
             with c1:
@@ -8338,8 +8429,13 @@ def admin_university_management_v49():
                 photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
                 gallery_photos = st.file_uploader("Upload Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="add_uni_gallery_v89")
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
-                student_stats_excel = st.file_uploader("Upload Student Statistics Excel (optional)", type=["xlsx"], key="add_student_stats_excel_v106")
-                st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional.")
+                st.markdown(student_stats_upload_info_html_v107(), unsafe_allow_html=True)
+                excel_dl_col_v107, excel_up_col_v107 = st.columns([0.42, 1.58])
+                with excel_dl_col_v107:
+                    st.markdown(student_stats_template_download_html_v107(), unsafe_allow_html=True)
+                with excel_up_col_v107:
+                    student_stats_excel = st.file_uploader("Upload Student Statistics Excel (optional)", type=["xlsx"], key="add_student_stats_excel_v106")
+                st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional and only used for the student graph/top nationality section.")
 
             # v104 safe optional university link defaults
             language_school_homepage = locals().get("language_school_homepage", "")
@@ -8437,7 +8533,7 @@ def admin_university_management_v49():
             )
 
             st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key=f"download_student_stats_template_v106_{selected_key_v90}")
-            st.caption("Optional: upload the completed Excel file below to update student enrollment and top nationality data for this university.")
+            st.caption("Optional student statistics file: use this template for enrollment numbers and top nationality data. The same template download is also shown next to the Excel upload field below.")
 
             with st.form(f"edit_university_v90_{selected_key_v90}"):
                 c1, c2 = st.columns(2)
@@ -8504,8 +8600,13 @@ def admin_university_management_v49():
                     photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key=f"edit_uni_photo_v90_{selected_key_v90}")
                     gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key=f"edit_uni_gallery_v90_{selected_key_v90}")
                     logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key=f"edit_uni_logo_v90_{selected_key_v90}")
-                    student_stats_excel = st.file_uploader("Upload New Student Statistics Excel (optional)", type=["xlsx"], key=f"edit_student_stats_excel_v106_{selected_key_v90}")
-                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional.")
+                    st.markdown(student_stats_upload_info_html_v107(), unsafe_allow_html=True)
+                    excel_dl_col_v107, excel_up_col_v107 = st.columns([0.42, 1.58])
+                    with excel_dl_col_v107:
+                        st.markdown(student_stats_template_download_html_v107(), unsafe_allow_html=True)
+                    with excel_up_col_v107:
+                        student_stats_excel = st.file_uploader("Upload New Student Statistics Excel (optional)", type=["xlsx"], key=f"edit_student_stats_excel_v106_{selected_key_v90}")
+                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images. Uploaded logos are automatically cropped and cleaned. Student statistics Excel is optional and only used for the student graph/top nationality section.")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)

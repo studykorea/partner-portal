@@ -700,3 +700,9 @@ v106:
 - University detail page now shows Top 5 Nationality Students with country flags and student numbers.
 - Student statistics upload is optional; if no file is uploaded, the section is hidden.
 - Added openpyxl dependency for Excel reading/writing in Streamlit.
+
+
+v107:
+- Added a clear Student Statistics Excel explanation box next to the Excel upload area.
+- Added a blue Download Excel Format link directly beside the Student Statistics Excel upload field in Add/Edit University forms.
+- Clarified that the Excel upload is optional and used only to create student graph/top nationality information in university details.
