@@ -624,3 +624,10 @@ v95:
 - The error was caused by applying TextColumn formatting to numeric/mixed columns in Streamlit data_editor.
 - Editable rule tables are now safely converted to text view before rendering.
 - Rule editor keys are now university-specific to prevent stale table state when switching universities.
+
+
+v96:
+- Replaced dashboard button navigation with styled HTML navigation links.
+- Active/current page is now highlighted in blue for admin, official representative, partner agency, and staff users.
+- Dashboard, Universities, Eligibility Rules/Check, Tuition Rules/Scholarship, etc. now show active blue state when selected.
+- Logout remains available in the same navigation bar.

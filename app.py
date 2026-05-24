@@ -638,6 +638,52 @@ handle_top_nav_query_v70()
 
 
 
+# v96: Dashboard navigation uses HTML links so the active page can be styled blue.
+def handle_dash_nav_query_v96():
+    try:
+        dashnav = st.query_params.get("dashnav", "")
+    except Exception:
+        dashnav = ""
+    if isinstance(dashnav, list):
+        dashnav = dashnav[0] if dashnav else ""
+
+    if not dashnav:
+        return
+
+    if dashnav == "Logout":
+        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type"]:
+            st.session_state[k] = False if k == "logged_in" else None
+        try:
+            st.query_params.clear()
+        except Exception:
+            pass
+        st.session_state.page = "Home"
+        return
+
+    allowed_pages = [
+        "Admin Dashboard",
+        "Partner Management",
+        "Universities",
+        "Eligibility Rules",
+        "Tuition Rules",
+        "Scholarship Rules",
+        "Dashboard",
+        "Eligibility Check",
+        "Tuition & Scholarship",
+        "Contact Us",
+    ]
+    if dashnav in allowed_pages:
+        st.session_state.page = dashnav
+        try:
+            del st.query_params["dashnav"]
+        except Exception:
+            pass
+
+handle_dash_nav_query_v96()
+
+
+
+
 
 st.markdown("""
 <style>
@@ -3968,6 +4014,74 @@ h3.uni-name-accent-v93 span {
     font-weight:650 !important;
 }
 
+
+/* v96 active navigation for all dashboard users/admin */
+.dash-nav-v96 {
+    display:grid !important;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)) !important;
+    gap:12px !important;
+    margin:0 0 24px 0 !important;
+}
+.dash-nav-link-v96 {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:9px !important;
+    min-height:48px !important;
+    padding:10px 14px !important;
+    background:#FFFFFF !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    border:1px solid #D9E2F1 !important;
+    border-radius:10px !important;
+    text-decoration:none !important;
+    font-weight:850 !important;
+    box-shadow:0 6px 14px rgba(16,24,40,.03) !important;
+    transition:all .18s ease-in-out !important;
+}
+.dash-nav-link-v96 span,
+.dash-nav-link-v96 .dash-nav-icon-v96 {
+    color:inherit !important;
+    -webkit-text-fill-color:inherit !important;
+}
+.dash-nav-link-v96:hover {
+    border-color:#005BDB !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    transform:translateY(-1px) !important;
+}
+.dash-nav-link-v96.active {
+    background:#005BDB !important;
+    border-color:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    box-shadow:0 10px 24px rgba(0,91,219,.22) !important;
+}
+.dash-nav-link-v96.active span,
+.dash-nav-link-v96.active .dash-nav-icon-v96 {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.dash-nav-link-v96.logout {
+    color:#B42318 !important;
+    -webkit-text-fill-color:#B42318 !important;
+}
+.dash-nav-link-v96.logout.active {
+    background:#B42318 !important;
+    border-color:#B42318 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.dash-nav-icon-v96 {
+    font-size:17px !important;
+    line-height:1 !important;
+}
+@media(max-width:760px){
+    .dash-nav-v96 {
+        grid-template-columns:1fr 1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4944,26 +5058,54 @@ def login():
     footer()
 
 
+
 def dash_shell(items):
+    current_page_v96 = str(st.session_state.get("page", ""))
+    role_v96 = str(st.session_state.get("role", ""))
+
+    def _dash_icon_v96(item):
+        icon_map = {
+            "Admin Dashboard": "☷",
+            "Dashboard": "☷",
+            "Partner Management": "👥",
+            "Universities": "🏛",
+            "Eligibility Rules": "🛡",
+            "Eligibility Check": "🛡",
+            "Tuition Rules": "💲",
+            "Tuition & Scholarship": "💲",
+            "Scholarship Rules": "🎓",
+            "Contact Us": "✉",
+        }
+        return icon_map.get(item, "•")
+
+    def _dash_href_v96(item):
+        return "?dashnav=" + str(item).replace(" ", "%20").replace("&", "%26")
+
     st.markdown('<div class="dash">', unsafe_allow_html=True)
     st.markdown('<div class="side navy"><h2>Partner Portal</h2></div>', unsafe_allow_html=True)
     with st.container():
         pass
     st.markdown('<div class="main">', unsafe_allow_html=True)
-    cols = st.columns(len(items)+1)
-    for c,item in zip(cols, items):
-        with c:
-            if st.button(item, key=f"dashnav_{item}", use_container_width=True):
-                set_page(item)
-    with cols[-1]:
-        if st.button("Logout", key="logout", use_container_width=True):
-            for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type"]:
-                st.session_state[k] = False if k == "logged_in" else None
-            try:
-                st.query_params.clear()
-            except Exception:
-                pass
-            set_page("Home")
+
+    nav_items_v96 = list(items) + ["Logout"]
+    nav_html_parts = ['<div class="dash-nav-v96">']
+    for item in nav_items_v96:
+        is_active = (current_page_v96 == item)
+        if item == "Admin Dashboard" and current_page_v96 in ["Admin Dashboard", ""]:
+            is_active = True
+        if item == "Dashboard" and current_page_v96 in ["Dashboard", ""]:
+            is_active = True
+        active_class = " active" if is_active else ""
+        logout_class = " logout" if item == "Logout" else ""
+        icon = "↪" if item == "Logout" else _dash_icon_v96(item)
+        href = _dash_href_v96(item)
+        nav_html_parts.append(
+            f'<a class="dash-nav-link-v96{active_class}{logout_class}" href="{href}"><span class="dash-nav-icon-v96">{icon}</span><span>{item}</span></a>'
+        )
+    nav_html_parts.append("</div>")
+    st.markdown("".join(nav_html_parts), unsafe_allow_html=True)
+
+
 
 
 admin_shell = dash_shell
