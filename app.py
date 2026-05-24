@@ -729,6 +729,7 @@ def handle_dash_nav_query_v96():
         "Eligibility Rules",
         "Tuition Rules",
         "Scholarship Rules",
+        "Application Samples",
         "Dashboard",
         "Eligibility Check",
         "Tuition & Scholarship",
@@ -4897,6 +4898,61 @@ div[data-testid="stFormSubmitButton"] button:hover {
     border-left:6px solid #005BDB !important;
 }
 
+
+/* v114 application document upload and sample preview */
+.doc-upload-row-title-v114 {
+    margin-top:22px !important;
+    padding:12px 14px !important;
+    background:#EEF5FF !important;
+    border:1px solid #BBD3FF !important;
+    border-radius:12px !important;
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:950 !important;
+    font-size:17px !important;
+}
+.sample-preview-v114 {
+    border:1px solid #DCE6F4 !important;
+    border-radius:16px !important;
+    background:#FFFFFF !important;
+    padding:12px !important;
+    min-height:150px !important;
+    box-shadow:0 6px 16px rgba(16,24,40,.05) !important;
+}
+.sample-preview-v114 b {
+    display:block !important;
+    color:#002B5B !important;
+    font-weight:950 !important;
+    margin-bottom:10px !important;
+}
+.sample-preview-v114 img {
+    width:100% !important;
+    max-height:220px !important;
+    object-fit:contain !important;
+    border-radius:12px !important;
+    border:1px solid #EEF2F7 !important;
+    background:#F8FAFC !important;
+}
+.sample-empty-v114 {
+    border:1px dashed #D0D5DD !important;
+    border-radius:16px !important;
+    background:#F8FAFC !important;
+    padding:18px !important;
+    min-height:110px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+}
+.sample-empty-v114 b {
+    color:#344054 !important;
+    font-weight:950 !important;
+}
+.sample-empty-v114 span {
+    color:#667085 !important;
+    font-size:13px !important;
+    margin-top:6px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7048,6 +7104,7 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
     )
 
 
+
 def user_can_apply_v112():
     """Only logged-in approved partner/agency/staff/admin accounts can start applications."""
     if not st.session_state.get("logged_in"):
@@ -7072,12 +7129,205 @@ def year_options_v112(start=1980, extra_future=2):
     current = datetime.now().year
     return list(range(current + extra_future, start - 1, -1))
 
+APPLICATION_SAMPLE_FILE = DATA / "application_samples.csv"
+APPLICATION_DOC_DIR_V114 = BASE / "assets" / "application_documents"
+APPLICATION_SAMPLE_DIR_V114 = BASE / "assets" / "application_samples"
+APPLICATION_DOC_DIR_V114.mkdir(parents=True, exist_ok=True)
+APPLICATION_SAMPLE_DIR_V114.mkdir(parents=True, exist_ok=True)
+
+APPLICATION_PROGRAM_OPTIONS_V114 = ["Undergraduate", "Graduate", "Language"]
+APPLICATION_DOC_TYPES_V114 = [
+    ("Passport Size Photo", "passport_size_photo", ["jpg", "jpeg", "png"], "Upload passport size photo in JPG/PNG format."),
+    ("Passport Copy", "passport_copy", ["pdf", "jpg", "jpeg", "png"], "Upload passport copy in PDF/JPG/PNG format."),
+    ("High School Graduation Certificate", "high_school_graduation_certificate", ["pdf"], "Upload high school graduation certificate in PDF format."),
+    ("High School Transcript", "high_school_transcript", ["pdf"], "Upload high school transcript in PDF format."),
+    ("Family Relationship Certificate", "family_relationship_certificate", ["pdf"], "Upload family relationship certificate in PDF format."),
+    ("Family Members ID Card Copy and Notarized Document", "family_members_id_notarized", ["pdf"], "Upload family members ID card copy and notarized document in PDF format."),
+    ("Embassy Verified / Apostille Documents", "embassy_verified_apostille", ["pdf"], "Upload embassy verified or apostille documents in PDF format."),
+    ("Language Certificate (IELTS/TOEFL)", "language_certificate", ["pdf"], "Upload IELTS/TOEFL language certificate in PDF format."),
+    ("Bank Certificate", "bank_certificate", ["pdf"], "Upload bank certificate in PDF format."),
+    ("Consent Form", "consent_form", ["pdf"], "Download the consent form, fill applicant details, sign it, and upload PDF."),
+]
+
+def application_program_label_v114(program_slug, application_type=""):
+    ps = str(program_slug or "").lower()
+    at = str(application_type or "").lower()
+    if "graduate" in ps or "graduate" in at:
+        return "Graduate"
+    if "language" in ps or "klp" in at or "eap" in at:
+        return "Language"
+    return "Undergraduate"
+
+def read_application_samples_v114():
+    df = read_csv(APPLICATION_SAMPLE_FILE)
+    cols = ["Nationality", "Program_Category", "Document_Key", "Document_Label", "Sample_Path", "Updated_At"]
+    return ensure_columns_v49(df, cols)
+
+def write_application_samples_v114(df):
+    df.fillna("").replace(["nan", "NaN", "None", "null", "<NA>"], "").to_csv(APPLICATION_SAMPLE_FILE, index=False, encoding="utf-8-sig")
+
+def save_application_sample_v114(uploaded_file, nationality, program_category, doc_key):
+    if uploaded_file is None:
+        return ""
+    ext = Path(uploaded_file.name).suffix.lower() or ".png"
+    if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
+        ext = ".png"
+    filename = f"{safe_slug_v49(nationality)}_{safe_slug_v49(program_category)}_{safe_slug_v49(doc_key)}{ext}"
+    out_path = APPLICATION_SAMPLE_DIR_V114 / filename
+    out_path.write_bytes(uploaded_file.getvalue())
+    return f"assets/application_samples/{filename}"
+
+def get_application_sample_path_v114(nationality, program_category, doc_key):
+    df = read_application_samples_v114()
+    if len(df) == 0:
+        return ""
+    n = str(nationality or "").strip().lower()
+    p = str(program_category or "").strip().lower()
+    d = str(doc_key or "").strip().lower()
+    matched = df[
+        (df["Nationality"].astype(str).str.strip().str.lower() == n)
+        & (df["Program_Category"].astype(str).str.strip().str.lower() == p)
+        & (df["Document_Key"].astype(str).str.strip().str.lower() == d)
+    ]
+    if len(matched):
+        return display_clean_v50(matched.iloc[-1].get("Sample_Path", ""))
+    return ""
+
+def sample_preview_html_v114(sample_path, label):
+    if not sample_path:
+        return f"""
+        <div class="sample-empty-v114">
+            <b>No sample uploaded</b>
+            <span>Super admin can upload a nationality-specific sample.</span>
+        </div>
+        """
+    encoded = b64(sample_path)
+    if encoded:
+        return f"""
+        <div class="sample-preview-v114">
+            <b>Sample for {_safe_html_v62(label)}</b>
+            <img src="data:image/png;base64,{encoded}" />
+        </div>
+        """
+    return f"""
+    <div class="sample-empty-v114">
+        <b>Sample file registered</b>
+        <span>{_safe_html_v62(sample_path)}</span>
+    </div>
+    """
+
+def consent_form_pdf_bytes_v114():
+    text = "CONSENT FORM TEMPLATE\n\nApplicant Name: ____________________\nPassport No.: ____________________\nUniversity: ____________________\nProgram: ____________________\n\nI confirm that the information and documents submitted for admission are true and correct.\n\nApplicant Signature: ____________________\nDate: ____________________"
+    try:
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import A4
+        import io
+        buffer = io.BytesIO()
+        c = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        y = height - 70
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(60, y, "Consent Form Template")
+        c.setFont("Helvetica", 11)
+        y -= 40
+        for line in text.split("\n")[2:]:
+            c.drawString(60, y, line)
+            y -= 24
+        c.save()
+        return buffer.getvalue()
+    except Exception:
+        return text.encode("utf-8")
+
+def save_application_upload_v114(uploaded_file, applicant_key, doc_key):
+    if uploaded_file is None:
+        return ""
+    ext = Path(uploaded_file.name).suffix.lower()
+    safe_name = f"{safe_slug_v49(applicant_key)}_{safe_slug_v49(doc_key)}{ext}"
+    out_dir = APPLICATION_DOC_DIR_V114 / safe_slug_v49(applicant_key)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / safe_name
+    out_path.write_bytes(uploaded_file.getvalue())
+    return f"assets/application_documents/{safe_slug_v49(applicant_key)}/{safe_name}"
+
+def render_application_documents_step_v114(u, program_slug, application_type):
+    step1 = st.session_state.get("application_step1_data_v114", {})
+    nationality = step1.get("Nationality", "")
+    applicant_name = step1.get("Full_Name_As_Passport", "")
+    passport_number = step1.get("Passport_Number", "")
+    program_category = application_program_label_v114(program_slug, application_type)
+    applicant_key = f"{passport_number}_{applicant_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    st.markdown(f"""
+    <div class="application-start-panel-v109 application-start-panel-v112">
+        <h3>Application Step 2 · Document Upload</h3>
+        <p>Upload documents for <b>{_safe_html_v62(applicant_name)}</b>. Samples are shown based on nationality: <b>{_safe_html_v62(nationality)}</b>.</p>
+        <small>Sample images are managed by the super admin under Application Samples.</small>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.download_button(
+        "Download Consent Form Template",
+        data=consent_form_pdf_bytes_v114(),
+        file_name="consent_form_template.pdf",
+        mime="application/pdf",
+        use_container_width=True,
+        key="download_consent_form_v114"
+    )
+
+    uploaded_paths = {}
+    missing_docs = []
+    with st.form(f"application_docs_step2_v114_{safe_slug_v49(passport_number)}"):
+        for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+            st.markdown(f'<div class="doc-upload-row-title-v114">{_safe_html_v62(label)}</div>', unsafe_allow_html=True)
+            c1, c2 = st.columns([1.15, .85])
+            with c1:
+                st.caption(instruction)
+                uploaded = st.file_uploader(
+                    f"Upload {label}",
+                    type=file_types,
+                    key=f"upload_doc_v114_{safe_slug_v49(doc_key)}"
+                )
+                if uploaded:
+                    uploaded_paths[doc_key] = uploaded
+            with c2:
+                sample_path = get_application_sample_path_v114(nationality, program_category, doc_key)
+                st.markdown(sample_preview_html_v114(sample_path, label), unsafe_allow_html=True)
+
+        submitted = st.form_submit_button("Submit Application", use_container_width=True)
+
+        if submitted:
+            for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+                if doc_key not in uploaded_paths:
+                    missing_docs.append(label)
+
+            if missing_docs:
+                st.error("Please upload all required documents: " + ", ".join(missing_docs))
+            else:
+                saved_docs = {}
+                for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+                    saved_docs[doc_key] = save_application_upload_v114(uploaded_paths[doc_key], applicant_key, doc_key)
+
+                app_file = DATA / "student_applications.csv"
+                existing = read_csv(app_file)
+
+                row = dict(step1)
+                row.update({
+                    "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "University": u.get("University", ""),
+                    "Program_Category": program_slug,
+                    "Application_Type": application_type,
+                    "Submitted_By": st.session_state.get("username", ""),
+                    "Agency": st.session_state.get("agency_name", ""),
+                    "Status": "Submitted",
+                    "Document_Paths_JSON": json.dumps(saved_docs, ensure_ascii=False),
+                })
+                existing = pd.concat([existing, pd.DataFrame([row])], ignore_index=True)
+                write_csv(app_file, existing)
+                st.session_state.application_step_v114 = 3
+                st.success("Application submitted successfully.")
+                st.balloons()
+
 def render_application_start_form_v109(u, program_slug, application_type):
-    """
-    v112: Application start page.
-    - Only registered/approved staff, official reps, partner agencies, or admin can apply.
-    - Undergraduate New Student Application has a detailed Step 1 applicant information form.
-    """
     can_apply, reason = user_can_apply_v112()
     if not can_apply:
         st.markdown(f"""
@@ -7093,6 +7343,20 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 st.rerun()
         return
 
+    current_step = int(st.session_state.get("application_step_v114", 1) or 1)
+    if current_step == 2 and st.session_state.get("application_step1_data_v114"):
+        cback, _ = st.columns([1, 4])
+        with cback:
+            if st.button("← Back to Step 1", key="back_to_step1_v114", use_container_width=True):
+                st.session_state.application_step_v114 = 1
+                st.rerun()
+        render_application_documents_step_v114(u, program_slug, application_type)
+        return
+
+    if current_step == 3:
+        st.success("Application submitted successfully. You may return to program options.")
+        return
+
     st.markdown(f"""
     <div class="application-start-panel-v109 application-start-panel-v112">
         <h3>Application Page · Step 1</h3>
@@ -7101,13 +7365,32 @@ def render_application_start_form_v109(u, program_slug, application_type):
     </div>
     """, unsafe_allow_html=True)
 
+    major_options = [""]
+    try:
+        dfc = criteria()
+        if len(dfc) and "University" in dfc.columns:
+            sub = dfc[dfc["University"].astype(str).str.strip().str.lower() == str(u.get("University","")).strip().lower()]
+            if "Program" in sub.columns:
+                category = application_program_label_v114(program_slug, application_type).lower()
+                ptxt = sub["Program"].astype(str).str.lower()
+                if category == "undergraduate":
+                    sub = sub[ptxt.str.contains("undergraduate|bachelor|bba|ba|bs", regex=True, na=False) & ~ptxt.str.contains("graduate|master|ph", regex=True, na=False)]
+                elif category == "graduate":
+                    sub = sub[ptxt.str.contains("graduate|master|ph|mba|ma|ms", regex=True, na=False) & ~ptxt.str.contains("undergraduate|bachelor", regex=True, na=False)]
+                else:
+                    sub = sub[ptxt.str.contains("language|klp|eap|korean", regex=True, na=False)]
+            if "Major" in sub.columns:
+                major_options += sorted([x for x in sub["Major"].dropna().astype(str).unique().tolist() if x.strip()])
+    except Exception:
+        pass
+
     is_undergraduate_new = (
         str(program_slug).lower() == "undergraduate"
         and "new" in str(application_type).lower()
     )
 
     if is_undergraduate_new:
-        form_key = f"ug_new_application_step1_v112_{safe_slug_v49(u.get('University',''))}"
+        form_key = f"ug_new_application_step1_v114_{safe_slug_v49(u.get('University',''))}"
         with st.form(form_key):
             st.markdown("### Applicant Personal Information")
             c1, c2, c3 = st.columns(3)
@@ -7131,6 +7414,13 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 guardian_contact = st.text_input("Parents / Guardian Contact Number *")
                 home_address = st.text_area("Home Country Address *", height=88)
 
+            st.markdown("### Intended Study Information")
+            desired_major = st.selectbox("Select Major / Program Willing to Study *", major_options)
+            if desired_major == "":
+                desired_major_other = st.text_input("If the major is not listed, write the major/program here")
+            else:
+                desired_major_other = ""
+
             st.markdown("### Academic Background")
             c4, c5 = st.columns(2)
             with c4:
@@ -7143,7 +7433,6 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 middle_school_name = st.text_input("Middle School Name")
                 middle_school_enroll_year = st.selectbox("Middle School Enrolled Year", [""] + year_options_v112(1990, 1))
                 middle_school_location = st.text_input("Middle School Location")
-                desired_major = st.text_input("Desired Major / Program")
                 passport_issue_year = st.selectbox("Passport Issue Year", [""] + year_options_v112(2000, 1))
 
             st.markdown("### Financial Information")
@@ -7164,11 +7453,15 @@ def render_application_start_form_v109(u, program_slug, application_type):
             submitted_next = st.form_submit_button("Next", use_container_width=True)
 
             if submitted_next:
+                selected_nationality = nationality_other.strip() if nationality == "Other" and nationality_other.strip() else nationality
+                selected_major = desired_major if desired_major else desired_major_other.strip()
+
                 required_missing = []
                 if not passport_full_name.strip(): required_missing.append("Full Name as in Passport")
                 if not first_name.strip(): required_missing.append("First Name")
                 if not last_name.strip(): required_missing.append("Last Name")
                 if not passport_number.strip(): required_missing.append("Passport Number")
+                if not selected_major: required_missing.append("Major / Program Willing to Study")
                 if not applicant_contact.strip(): required_missing.append("Applicant Contact Number")
                 if not applicant_email.strip(): required_missing.append("Email Address")
                 if not parents_full_name.strip(): required_missing.append("Parents Full Name")
@@ -7185,11 +7478,7 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 if required_missing:
                     st.error("Please complete/fix: " + ", ".join(required_missing))
                 else:
-                    selected_nationality = nationality_other.strip() if nationality == "Other" and nationality_other.strip() else nationality
-                    app_file = DATA / "student_applications.csv"
-                    existing = read_csv(app_file)
-                    new_row = {
-                        "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    st.session_state.application_step1_data_v114 = {
                         "University": u.get("University", ""),
                         "Program_Category": program_slug,
                         "Application_Type": application_type,
@@ -7217,61 +7506,44 @@ def render_application_start_form_v109(u, program_slug, application_type):
                         "Bank_Amount_USD": bank_amount_usd,
                         "Self_Introduction": self_intro.strip(),
                         "Study_Plan": study_plan.strip(),
-                        "Desired_Major": desired_major.strip(),
+                        "Desired_Major": selected_major,
                         "Passport_Issue_Year": passport_issue_year,
-                        "Submitted_By": st.session_state.get("username", ""),
-                        "Agency": st.session_state.get("agency_name", ""),
-                        "Status": "Step 1 Completed",
                     }
-                    existing = pd.concat([existing, pd.DataFrame([new_row])], ignore_index=True)
-                    write_csv(app_file, existing)
-                    st.session_state.application_step_v112 = 2
-                    st.success("Step 1 saved successfully. You can continue to the next page in the next step.")
-                    st.info("Next page will be for document upload and application review.")
+                    st.session_state.application_step_v114 = 2
+                    st.success("Step 1 saved. Please upload applicant documents in Step 2.")
+                    st.rerun()
         return
 
-    # Other application types keep a shorter form for now.
-    with st.form(f"application_start_v109_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
+    with st.form(f"application_start_v114_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
         c1, c2 = st.columns(2)
         with c1:
             applicant_name = st.text_input("Applicant Full Name")
             email = st.text_input("Email Address")
             nationality = st.selectbox("Nationality", nationality_options_v112())
+            desired_major = st.selectbox("Select Major / Program Willing to Study", major_options)
         with c2:
             phone = st.text_input("Phone / WhatsApp")
             passport = st.text_input("Passport Number")
-            desired_major = st.text_input("Desired Major / Program")
-        note = st.text_area("Additional Notes", height=90)
+            note = st.text_area("Additional Notes", height=90)
         submitted = st.form_submit_button("Next", use_container_width=True)
         if submitted:
-            if not applicant_name.strip() or not email.strip():
-                st.error("Applicant name and email are required.")
+            if not applicant_name.strip() or not email.strip() or not passport.strip():
+                st.error("Applicant name, email, and passport number are required.")
             else:
-                try:
-                    app_file = DATA / "student_applications.csv"
-                    existing = read_csv(app_file)
-                    new_row = {
-                        "Submitted_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "University": u.get("University", ""),
-                        "Program_Category": program_slug,
-                        "Application_Type": application_type,
-                        "Applicant_Name": applicant_name.strip(),
-                        "Email": email.strip(),
-                        "Phone": phone.strip(),
-                        "Nationality": nationality,
-                        "Passport_Number": passport.strip(),
-                        "Desired_Major": desired_major.strip(),
-                        "Notes": note.strip(),
-                        "Submitted_By": st.session_state.get("username", ""),
-                        "Agency": st.session_state.get("agency_name", ""),
-                        "Status": "Step 1 Completed",
-                    }
-                    existing = pd.concat([existing, pd.DataFrame([new_row])], ignore_index=True)
-                    write_csv(app_file, existing)
-                    st.success("Step 1 saved successfully. You can continue to the next page in the next step.")
-                except Exception as e:
-                    st.success("Step 1 saved successfully.")
-                    st.caption(f"Note: application log could not be saved automatically: {e}")
+                st.session_state.application_step1_data_v114 = {
+                    "Full_Name_As_Passport": applicant_name.strip(),
+                    "Passport_Number": passport.strip(),
+                    "Nationality": nationality,
+                    "Email": email.strip(),
+                    "Applicant_Contact": phone.strip(),
+                    "Desired_Major": desired_major,
+                    "Notes": note.strip(),
+                    "University": u.get("University", ""),
+                    "Program_Category": program_slug,
+                    "Application_Type": application_type,
+                }
+                st.session_state.application_step_v114 = 2
+                st.rerun()
 
 def render_program_detail_page_v109(u, program_slug):
     program_slug = str(program_slug or "undergraduate").lower()
@@ -7306,6 +7578,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("← Back to Program Options", key=f"back_to_program_options_v113_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = ""
                 st.session_state.application_page_open_v113 = False
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
         render_application_start_form_v109(u, program_slug, app_type)
         return
@@ -7322,11 +7596,15 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply as New Student", key=f"apply_new_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate New Student Application"
                 st.session_state.application_page_open_v113 = True
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
         with c2:
             if st.button("Apply as Transfer Student", key=f"apply_transfer_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate Transfer Application"
                 st.session_state.application_page_open_v113 = True
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
     elif program_slug == "graduate":
         timeline_html = program_timeline_card_v109(u, "graduate", "Graduate Application", "graduate")
@@ -7336,6 +7614,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply for Graduate", key=f"apply_grad_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Graduate Application"
                 st.session_state.application_page_open_v113 = True
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
     elif program_slug == "language":
         timeline_html = (
@@ -7348,11 +7628,15 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply for KLP", key=f"apply_klp_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "KLP Application"
                 st.session_state.application_page_open_v113 = True
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
         with c2:
             if st.button("Apply for EAP", key=f"apply_eap_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "EAP Application"
                 st.session_state.application_page_open_v113 = True
+                st.session_state.application_step_v114 = 1
+                st.session_state.application_step1_data_v114 = {}
                 st.rerun()
 
     st.markdown(f"""
@@ -8494,7 +8778,7 @@ def _unique_admin_key_v72(prefix, idx, user):
 
 
 def admin():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
 
     users_list = read_json(USERS)
     users = pd.DataFrame(users_list)
@@ -8725,7 +9009,7 @@ def add_user_record_v58(new_row):
 
 
 def admin_partner_management_v58():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("Partner Management")
     st.caption("Edit, approve/reject, or delete partner users. Admin account cannot be deleted here for safety.")
 
@@ -8846,7 +9130,7 @@ def admin_partner_management_v58():
     close_shell()
 
 def admin_table(title, df):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader(title)
     st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
     st.info("Later, we can add Add/Edit/Delete forms here.")
@@ -8876,7 +9160,7 @@ def editable_table_v48(title, path, key, help_text=""):
     Used by Eligibility Rules, Tuition Rules, and Scholarship Rules.
     Shows university name with logo, selected-university-only records, Add New Rule, search, filters, and clean table format.
     """
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
 
     is_eligibility = "eligibility" in str(title).lower() or "criteria" in str(title).lower()
     is_tuition = "tuition" in str(title).lower()
@@ -9123,7 +9407,7 @@ def editable_table_v48(title, path, key, help_text=""):
 
 
 def admin_universities_edit_v48():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("Universities Management")
     st.caption("Edit school information directly. Uploading a photo will update the selected school's image path automatically.")
 
@@ -9204,7 +9488,7 @@ def admin_tuition_edit_v48():
 
 
 def admin_university_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("University Management")
     st.caption("Add, edit, or update university information. New universities will appear on the Home and Universities pages. To appear in Eligibility, add at least one major in Eligibility Rules after adding the university.")
 
@@ -9582,7 +9866,7 @@ def admin_university_management_v49():
 
 
 def admin_criteria_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("Eligibility Criteria / Program & Major Management")
     st.caption("Select one university first, then edit only that university’s program level, major, GPA, and language criteria.")
 
@@ -9716,7 +10000,7 @@ def admin_criteria_management_v49():
 
 
 def admin_scholarship_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
     st.subheader("Scholarship Rule Management")
     st.caption("Add or edit scholarship rules by university and program.")
 
@@ -9832,6 +10116,71 @@ def admin_scholarship_management_v49():
     close_shell()
 
 
+
+def admin_application_samples_v114():
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Application Samples"])
+    st.subheader("Application Document Sample Management")
+    st.caption("Super admin can upload sample images for each nationality, program category, and required document. Applicants will see the correct sample automatically based on their nationality and application type.")
+
+    df = read_application_samples_v114()
+
+    st.markdown("""
+    <div class="admin-university-tabs-note-v104">
+        <b>How this works</b>
+        <span>Select nationality + program category + document type, upload a sample image, then save. Example: Nepal + Undergraduate + Bank Certificate.</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.form("application_sample_upload_v114"):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            nationality = st.selectbox("Nationality", nationality_options_v112(), key="sample_nationality_v114")
+        with c2:
+            program_category = st.selectbox("Program Category", APPLICATION_PROGRAM_OPTIONS_V114, key="sample_program_v114")
+        with c3:
+            doc_label = st.selectbox("Document Type", [x[0] for x in APPLICATION_DOC_TYPES_V114], key="sample_doc_type_v114")
+
+        selected_doc = next((x for x in APPLICATION_DOC_TYPES_V114 if x[0] == doc_label), APPLICATION_DOC_TYPES_V114[0])
+        uploaded_sample = st.file_uploader("Upload Sample Image", type=["png", "jpg", "jpeg", "webp"], key="sample_image_upload_v114")
+        st.caption("Upload a clear sample image. This sample will appear beside the applicant document upload field.")
+
+        save_sample = st.form_submit_button("Save Sample Image", use_container_width=True)
+        if save_sample:
+            if uploaded_sample is None:
+                st.error("Please upload a sample image.")
+            else:
+                sample_path = save_application_sample_v114(uploaded_sample, nationality, program_category, selected_doc[1])
+                mask = (
+                    (df["Nationality"].astype(str).str.strip().str.lower() == str(nationality).strip().lower())
+                    & (df["Program_Category"].astype(str).str.strip().str.lower() == str(program_category).strip().lower())
+                    & (df["Document_Key"].astype(str).str.strip().str.lower() == str(selected_doc[1]).strip().lower())
+                )
+                new_row = {
+                    "Nationality": nationality,
+                    "Program_Category": program_category,
+                    "Document_Key": selected_doc[1],
+                    "Document_Label": selected_doc[0],
+                    "Sample_Path": sample_path,
+                    "Updated_At": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                if len(df) and mask.any():
+                    for k, v in new_row.items():
+                        df.loc[mask, k] = v
+                else:
+                    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                write_application_samples_v114(df)
+                st.success("Sample image saved successfully.")
+                st.rerun()
+
+    st.markdown("### Current Sample Images")
+    if len(df) == 0:
+        st.info("No sample images have been uploaded yet.")
+    else:
+        st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
+
+    close_shell()
+
+
 # Routing
 if not st.session_state.logged_in:
     if st.session_state.page == "Partner Sign Up": signup()
@@ -9866,6 +10215,8 @@ else:
             admin_tuition_edit_v48()
         elif st.session_state.page == "Scholarship Rules":
             admin_scholarship_edit_v48()
+        elif st.session_state.page == "Application Samples":
+            admin_application_samples_v114()
         else:
             admin()
     else:

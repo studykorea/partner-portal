@@ -756,3 +756,13 @@ v113:
 - Cause: program query handler reset application_type_v109 on every rerun.
 - Apply buttons now open a separate application page view immediately.
 - Added Back to Program Options button on the application page.
+
+
+v114:
+- Added major/program selection in Step 1 application form.
+- Added Step 2 document upload page after clicking Next.
+- Step 2 includes uploads for passport photo, passport copy, high school certificate/transcript, family documents, apostille/embassy verification, language certificate, bank certificate, and signed consent form.
+- Added Consent Form Template download.
+- Added Super Admin Application Samples page.
+- Super admin can upload sample images by nationality + program category + document type.
+- Applicant Step 2 automatically shows sample images based on applicant nationality and application type.
