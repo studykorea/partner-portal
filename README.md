@@ -638,3 +638,11 @@ v97:
 - If there is only one image, it now displays as a normal visible image without animation.
 - If multiple images are uploaded, they fade/slide automatically.
 - If saved image paths are missing from the server, the card shows an upload instruction message instead of an empty gray block.
+
+
+v98:
+- Added automatic logo cleaning for university logos and partner/agency logos.
+- When admin uploads a logo, the system removes unnecessary outside white/near-white background.
+- The logo is cropped to the actual visible mark and centered on a transparent square canvas.
+- This helps uploaded logos look consistent even if the original image has a white box or large empty margins.
+- Existing old logos need to be re-uploaded once to apply the cleaning process.

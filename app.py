@@ -4132,6 +4132,30 @@ h3.uni-name-accent-v93 span {
     max-width:520px !important;
 }
 
+
+/* v98 cleaned logo display */
+.uni-logo-box-v88 {
+    background:#FFFFFF !important;
+    padding:10px !important;
+}
+.uni-logo-v88 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+}
+.partner-logo-v83 {
+    object-fit:contain !important;
+    background:#FFFFFF !important;
+}
+.selected-rule-logo-v94 {
+    background:#FFFFFF !important;
+}
+.selected-rule-logo-v94 img,
+.selected-rule-logo-v94 .uni-logo-v88 {
+    background:transparent !important;
+    padding:0 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4406,29 +4430,19 @@ def save_uploaded_university_photo_v49(uploaded_file, university_name):
     return f"assets/universities/{slug}.jpg"
 
 
+
 def save_uploaded_university_logo_v88(uploaded_file, university_name):
-    """Save university logo as a clean transparent-friendly PNG."""
+    """Save university logo after auto-cleaning unnecessary outside background/margins."""
     if uploaded_file is None:
         return ""
-    from PIL import Image, ImageEnhance
     slug = safe_slug_v49(university_name)
     out_dir = BASE / "assets" / "university_logos"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{slug}_logo.png"
 
-    img = Image.open(uploaded_file)
-    if img.mode not in ["RGBA", "LA"]:
-        img = img.convert("RGBA")
-    img.thumbnail((700, 700), Image.Resampling.LANCZOS)
-    canvas = Image.new("RGBA", (700, 700), (255, 255, 255, 0))
-    x = (700 - img.width) // 2
-    y = (700 - img.height) // 2
-    canvas.alpha_composite(img, (x, y))
-    canvas = ImageEnhance.Sharpness(canvas).enhance(1.12)
-    canvas.save(out_path, "PNG", optimize=True)
+    cleaned = clean_logo_image_v98(uploaded_file, canvas_size=900, padding_ratio=0.08)
+    cleaned.save(out_path, "PNG", optimize=True)
     return f"assets/university_logos/{slug}_logo.png"
-
-
 
 
 def university_logo_accent_color_v91(path, university_name="", fallback="#002B5B"):
@@ -4798,22 +4812,90 @@ def home():
 
 
 
+
+def clean_logo_image_v98(uploaded_or_path, canvas_size=900, padding_ratio=0.10):
+    """
+    Auto-clean uploaded logos:
+    - Removes outside white/near-white background.
+    - Crops unnecessary empty margins.
+    - Centers the logo on a transparent square canvas.
+    - Keeps transparent PNG output for a clean shape in cards.
+    """
+    from PIL import Image, ImageEnhance
+    import numpy as np
+
+    img = Image.open(uploaded_or_path).convert("RGBA")
+    arr = np.array(img)
+
+    r = arr[:, :, 0].astype(int)
+    g = arr[:, :, 1].astype(int)
+    b = arr[:, :, 2].astype(int)
+    a = arr[:, :, 3].astype(int)
+
+    # Detect background-like pixels. This removes white boxes around logos.
+    near_white = (r > 238) & (g > 238) & (b > 238)
+    near_gray_bg = (np.abs(r-g) < 8) & (np.abs(g-b) < 8) & (r > 228) & (g > 228) & (b > 228)
+    transparent = a < 25
+
+    bg_mask = transparent | near_white | near_gray_bg
+
+    # Foreground includes colored/dark logo parts.
+    fg_mask = (~bg_mask) & (a > 25)
+
+    if fg_mask.any():
+        ys, xs = np.where(fg_mask)
+        x1, x2 = xs.min(), xs.max()
+        y1, y2 = ys.min(), ys.max()
+
+        # Add small safety padding before crop.
+        w, h = img.size
+        pad = max(8, int(max(x2 - x1 + 1, y2 - y1 + 1) * 0.05))
+        x1 = max(0, x1 - pad)
+        y1 = max(0, y1 - pad)
+        x2 = min(w - 1, x2 + pad)
+        y2 = min(h - 1, y2 + pad)
+
+        # Make background transparent in original image.
+        arr[:, :, 3] = np.where(bg_mask, 0, a)
+        img = Image.fromarray(arr, "RGBA").crop((x1, y1, x2 + 1, y2 + 1))
+    else:
+        # If foreground cannot be detected, just trim alpha bbox or use original.
+        bbox = img.getbbox()
+        if bbox:
+            img = img.crop(bbox)
+
+    # Resize into transparent square canvas.
+    target_inner = int(canvas_size * (1 - padding_ratio * 2))
+    img.thumbnail((target_inner, target_inner), Image.Resampling.LANCZOS)
+
+    canvas = Image.new("RGBA", (canvas_size, canvas_size), (255, 255, 255, 0))
+    x = (canvas_size - img.width) // 2
+    y = (canvas_size - img.height) // 2
+    canvas.alpha_composite(img, (x, y))
+
+    # Slight sharpening after resize.
+    canvas = ImageEnhance.Sharpness(canvas).enhance(1.15)
+    return canvas
+
+
+
 def save_partner_logo_v83(uploaded_file, agency_id):
-    """Save uploaded agency logo into assets/partner_logos and return a relative path."""
+    """Save uploaded agency logo after auto-cleaning background and margins."""
     if not uploaded_file:
         return ""
     try:
-        ext = Path(uploaded_file.name).suffix.lower()
-        if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
-            ext = ".png"
         safe_id = re.sub(r"[^A-Za-z0-9_]+", "_", str(agency_id or "agency_logo")).strip("_")
         logo_dir = Path("assets") / "partner_logos"
         logo_dir.mkdir(parents=True, exist_ok=True)
-        logo_path = logo_dir / f"{safe_id}{ext}"
-        logo_path.write_bytes(uploaded_file.getbuffer())
+        logo_path = logo_dir / f"{safe_id}.png"
+
+        cleaned = clean_logo_image_v98(uploaded_file, canvas_size=900, padding_ratio=0.08)
+        cleaned.save(logo_path, "PNG", optimize=True)
+
         return str(logo_path).replace("\\", "/")
     except Exception:
         return ""
+
 
 def current_agency_logo_v83():
     """Find logo for the currently logged-in agency/user."""
@@ -7532,7 +7614,7 @@ def admin_university_management_v49():
                 photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
                 gallery_photos = st.file_uploader("Upload Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="add_uni_gallery_v89")
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
-                st.caption("You can upload several campus photos. They will automatically slide/change on the university card.")
+                st.caption("You can upload several campus photos. They will automatically slide/change on the university card. Uploaded logos are automatically cropped and cleaned.")
 
             submitted = st.form_submit_button("Add University", use_container_width=True)
             if submitted:
@@ -7662,7 +7744,7 @@ def admin_university_management_v49():
                     photo = st.file_uploader("Upload New Main Photo", type=["png","jpg","jpeg"], key=f"edit_uni_photo_v90_{selected_key_v90}")
                     gallery_photos = st.file_uploader("Upload New Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key=f"edit_uni_gallery_v90_{selected_key_v90}")
                     logo = st.file_uploader("Upload New University Logo", type=["png","jpg","jpeg","webp"], key=f"edit_uni_logo_v90_{selected_key_v90}")
-                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images.")
+                    st.caption("If you upload new slideshow images, they will replace only this selected university's slideshow images. Uploaded logos are automatically cropped and cleaned.")
 
                 b1, b2 = st.columns(2)
                 save_clicked = b1.form_submit_button("Save Changes", use_container_width=True)
