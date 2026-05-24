@@ -4156,6 +4156,165 @@ h3.uni-name-accent-v93 span {
     padding:0 !important;
 }
 
+
+/* v99 compact university detail page + Google map */
+.detail-card-v99 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    overflow:hidden !important;
+    box-shadow:0 14px 32px rgba(16,24,40,.07) !important;
+    margin:18px 0 24px 0 !important;
+}
+.detail-photo-v99 .uni-slideshow-v89,
+.detail-photo-v99 .uni-slideshow-single-v97,
+.detail-photo-v99 .uni-wide-v32,
+.detail-photo-v99 img {
+    height:270px !important;
+    width:100% !important;
+    object-fit:cover !important;
+    border-radius:0 !important;
+    display:block !important;
+}
+.detail-main-v99 {
+    display:grid !important;
+    grid-template-columns:minmax(0,1.35fr) minmax(320px,.75fr) !important;
+    gap:26px !important;
+    padding:34px 38px 24px 38px !important;
+    align-items:center !important;
+}
+.detail-left-v99 {
+    display:grid !important;
+    grid-template-columns:170px minmax(0,1fr) !important;
+    gap:26px !important;
+    align-items:center !important;
+}
+.detail-logo-box-v99 {
+    width:170px !important;
+    height:170px !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:24px !important;
+    background:#FFFFFF !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:10px !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.06) !important;
+}
+.detail-logo-box-v99 img,
+.detail-logo-box-v99 .uni-logo-v88 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+}
+.detail-title-copy-v99 h2 {
+    font-size:42px !important;
+    line-height:1.1 !important;
+    font-weight:950 !important;
+    margin:0 0 18px 0 !important;
+}
+.detail-title-copy-v99 p {
+    font-size:19px !important;
+    line-height:1.65 !important;
+    color:#344054 !important;
+    max-width:780px !important;
+    margin:0 !important;
+}
+.detail-program-side-v99 {
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+}
+.detail-program-side-v99 .program-date-card-v71 {
+    min-height:116px !important;
+    padding:16px 18px !important;
+    border-radius:18px !important;
+    background:#F6F8FC !important;
+    border:1px solid #DCE6F4 !important;
+}
+.detail-program-side-v99 .program-date-card-v71 span {
+    padding:10px 16px !important;
+}
+.detail-info-grid-v99 {
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:14px !important;
+    padding:0 38px 30px 38px !important;
+}
+.uni-map-card-v99 {
+    border-top:1px solid #E6ECF5 !important;
+    padding:28px 38px 34px 38px !important;
+    background:#FBFCFF !important;
+}
+.uni-map-header-v99 {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:18px !important;
+    margin-bottom:16px !important;
+}
+.uni-map-header-v99 h3 {
+    font-size:24px !important;
+    font-weight:950 !important;
+    margin:0 0 6px 0 !important;
+    color:#101828 !important;
+}
+.uni-map-header-v99 p {
+    font-size:15px !important;
+    color:#667085 !important;
+    margin:0 !important;
+}
+.uni-map-link-v99 {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:12px 18px !important;
+    background:#005BDB !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-decoration:none !important;
+    border-radius:10px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+}
+.uni-map-frame-v99 {
+    width:100% !important;
+    height:360px !important;
+    border:0 !important;
+    border-radius:18px !important;
+    box-shadow:0 10px 22px rgba(16,24,40,.08) !important;
+}
+.detail-programs-v99 {
+    padding:0 38px 38px 38px !important;
+}
+@media(max-width:1100px){
+    .detail-main-v99 {
+        grid-template-columns:1fr !important;
+    }
+    .detail-info-grid-v99 {
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+}
+@media(max-width:760px){
+    .detail-left-v99 {
+        grid-template-columns:1fr !important;
+    }
+    .detail-logo-box-v99 {
+        width:140px !important;
+        height:140px !important;
+    }
+    .detail-title-copy-v99 h2 {
+        font-size:32px !important;
+    }
+    .detail-info-grid-v99 {
+        grid-template-columns:1fr !important;
+    }
+    .uni-map-header-v99 {
+        align-items:flex-start !important;
+        flex-direction:column !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6163,46 +6322,88 @@ def _program_specific_application_badges_v71(row):
     return html
 
 
+
+def google_map_embed_html_v99(u):
+    """Create a Google Maps embed and open-map button from university address/location."""
+    try:
+        from urllib.parse import quote_plus
+        uni = display_clean_v50(u.get("University", ""))
+        address = display_clean_v50(u.get("Address", ""))
+        location = display_clean_v50(u.get("Location", ""))
+        region = display_clean_v50(u.get("Region", ""))
+        query = " ".join([x for x in [uni, address, location, region, "Korea"] if x]).strip()
+        if not query:
+            return ""
+        q = quote_plus(query)
+        embed_url = f"https://www.google.com/maps?q={q}&output=embed"
+        open_url = f"https://www.google.com/maps/search/?api=1&query={q}"
+        return f"""
+        <div class="uni-map-card-v99">
+            <div class="uni-map-header-v99">
+                <div>
+                    <h3>University Location</h3>
+                    <p>{_safe_html_v62(address if address else query)}</p>
+                </div>
+                <a class="uni-map-link-v99" href="{open_url}" target="_blank">Open in Google Maps</a>
+            </div>
+            <iframe class="uni-map-frame-v99" src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        """
+    except Exception:
+        return ""
+
+
+
 def _render_university_detail_v62(u):
-    detail_accent_color_v91 = university_logo_accent_color_v91(u.get("University_Logo", ""), u.get("University", ""))
-    image_html = asset_img_html(u.get("Image", ""), "uni-wide-v32")
+    detail_name_style_v99 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", "")) if "university_name_style_v93" in globals() else ""
+    logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
+    image_html = university_slideshow_html_v89(u, "detail_" + safe_slug_v49(u.get("University", ""))) if "university_slideshow_html_v89" in globals() else asset_img_html(u.get("Image", ""), "uni-wide-v32")
     programs_html = program_list_html_for_university(u.get("University", ""))
-    max_sch = float(u.get("_Max_Scholarship", 0) or 0)
-    max_sch_text = f"{int(max_sch)}% max scholarship" if max_sch > 0 else "Scholarship info available after rule update"
-    intake_text = display_clean_v50(u.get("Intake", ""))
-    open_date_text = display_clean_v50(u.get("Application_Open_Date", ""))
-    status_text = _application_status_v66_from_row(u)
-    status_class = _application_status_class_v63(status_text)
     program_badges = _program_specific_application_badges_v71(u)
+    map_html = google_map_embed_html_v99(u)
 
-    detail_html = f'''<div class="uni-card-v32 detail-card-v62">
-{image_html}
-<div class="uni-body-v32">
-<div class="uni-title-row-v61">
-<div>
-<h2>{_safe_html_v62(u.get("University", ""))}</h2>
-<p class="uni-overview-v32">{_safe_html_v62(u.get("Overview", ""))}</p>
+    detail_html = f"""
+<div class="detail-card-v99">
+    <div class="detail-photo-v99">
+        {image_html}
+    </div>
+
+    <div class="detail-main-v99">
+        <div class="detail-left-v99">
+            <div class="detail-logo-box-v99">{logo_html}</div>
+            <div class="detail-title-copy-v99">
+                <h2 class="uni-detail-name-v99" style="{detail_name_style_v99}">
+                    <span style="{detail_name_style_v99}">{_safe_html_v62(u.get("University", ""))}</span>
+                </h2>
+                <p>{_safe_html_v62(u.get("Overview", ""))}</p>
+            </div>
+        </div>
+
+        <div class="detail-program-side-v99">
+            {program_badges}
+        </div>
+    </div>
+
+    <div class="detail-info-grid-v99">
+        <div class="info-box-v32"><b>Homepage</b><span>{_safe_html_v62(u.get("Homepage", ""))}</span></div>
+        <div class="info-box-v32"><b>Region</b><span>{_safe_html_v62(u.get("Region", ""))}</span></div>
+        <div class="info-box-v32"><b>Address</b><span>{_safe_html_v62(u.get("Address", ""))}</span></div>
+        <div class="info-box-v32"><b>School Size</b><span>{_safe_html_v62(u.get("School_Size", ""))}</span></div>
+        <div class="info-box-v32"><b>Representative Phone</b><span>{_safe_html_v62(u.get("Representative_Phone", ""))}</span></div>
+        <div class="info-box-v32"><b>Representative Fax</b><span>{_safe_html_v62(u.get("Representative_Fax", ""))}</span></div>
+        <div class="info-box-v32"><b>Foreign Students</b><span>{_safe_html_v62(display_clean_v50(u.get("International_Students", "")))}</span></div>
+        <div class="info-box-v32"><b>Tuition Range</b><span>{_safe_html_v62(u.get("Tuition_Range", ""))}</span></div>
+    </div>
+
+    {map_html}
+
+    <div class="detail-programs-v99">
+        <h3 class="available-title-v41">Available Programs & Majors</h3>
+        {programs_html}
+    </div>
 </div>
-<div class="uni-badges-v61">
-{program_badges}
-</div>
-</div>
-<div class="info-grid-v32">
-<div class="info-box-v32"><b>Homepage</b><span>{_safe_html_v62(u.get("Homepage", ""))}</span></div>
-<div class="info-box-v32"><b>Region</b><span>{_safe_html_v62(u.get("Region", ""))}</span></div>
-<div class="info-box-v32"><b>Address</b><span>{_safe_html_v62(u.get("Address", ""))}</span></div>
-<div class="info-box-v32"><b>School Size</b><span>{_safe_html_v62(u.get("School_Size", ""))}</span></div>
-<div class="info-box-v32"><b>Representative Phone</b><span>{_safe_html_v62(u.get("Representative_Phone", ""))}</span></div>
-<div class="info-box-v32"><b>Representative Fax</b><span>{_safe_html_v62(u.get("Representative_Fax", ""))}</span></div>
-<div class="info-box-v32"><b>Foreign Students</b><span>{_safe_html_v62(display_clean_v50(u.get("International_Students", "")))}</span></div>
-<div class="info-box-v32"><b>Tuition Range</b><span>{_safe_html_v62(u.get("Tuition_Range", ""))}</span></div>
-</div>
-<h3 class="available-title-v41">Available Programs & Majors</h3>
-{programs_html}
-</div>
-</div>'''
+"""
     st.markdown(detail_html, unsafe_allow_html=True)
-
 
 
 def _render_university_summary_v62(u, key_suffix):

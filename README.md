@@ -646,3 +646,10 @@ v98:
 - The logo is cropped to the actual visible mark and centered on a transparent square canvas.
 - This helps uploaded logos look consistent even if the original image has a white box or large empty margins.
 - Existing old logos need to be re-uploaded once to apply the cleaning process.
+
+
+v99:
+- Redesigned university View Details page to remove excessive empty space.
+- Detail page now has a compact hero: campus image, logo, university name, overview, and application cards.
+- Added Google Maps embed based on university name/address/location.
+- Added Open in Google Maps button so users can quickly view the university location.
