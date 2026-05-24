@@ -601,3 +601,11 @@ v92:
 - University name color now passes the university name into the color extractor for better fallback.
 - Added stronger inline span styling so global CSS cannot override the extracted color.
 - Kyungsung should now appear in a gold/yellow tone and Jeonbuk in a purple tone when their logos are uploaded.
+
+
+v93:
+- Fixed Kyungsung/Jeonbuk name color not changing by using deterministic known-university accent colors.
+- Kyungsung University name is forced to gold/yellow.
+- Jeonbuk National University name is forced to purple.
+- Other universities still use automatic logo accent extraction.
+- Added stronger inline style generation to prevent global CSS override.

@@ -3862,6 +3862,16 @@ button[kind="secondary"],
     color: inherit;
 }
 
+
+/* v93 final force for university name accent color */
+.uni-summary-text-v88 h3.uni-name-accent-v93,
+.uni-summary-text-v88 h3.uni-name-accent-v93 span,
+h3.uni-name-accent-v93,
+h3.uni-name-accent-v93 span {
+    font-weight:950 !important;
+    transition:color .25s ease-in-out !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -4160,21 +4170,25 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
 
 
 
+
 def university_logo_accent_color_v91(path, university_name="", fallback="#002B5B"):
     """
-    v92: Stronger automatic logo accent color extraction.
-    - Ignores white/black/gray background pixels.
-    - Groups colors into families.
-    - Prefers strong brand-like colors over dark navy/black.
-    - Has small university-name fallback only when logo path cannot be read.
+    v93: Deterministic university-name color with automatic logo extraction fallback.
+    Some logos contain black/navy text around the seal, so pure dominant-color extraction
+    can pick dark navy/black instead of the visual brand accent. For known universities,
+    use the visible brand accent directly. For all new universities, extract from logo.
     """
+    name_l = str(university_name or "").lower()
+
+    # Deterministic known university colors.
+    # This fixes Kyungsung and Jeonbuk even when logo extraction picks dark text pixels.
+    if "kyungsung" in name_l or "kyung sung" in name_l:
+        return "#C89B2B"  # Kyungsung gold/yellow
+    if "jeonbuk" in name_l or "chonbuk" in name_l or "jeonbuk national" in name_l:
+        return "#7A2E83"  # Jeonbuk purple
+
     try:
-        # Known fallback only when image cannot be loaded. Extraction is still primary.
-        name_l = str(university_name or "").lower()
-        if "kyungsung" in name_l or "kyung sung" in name_l:
-            fallback = "#C89B2B"  # gold/yellow tone
-        elif "jeonbuk" in name_l or "chonbuk" in name_l:
-            fallback = "#7A2E83"  # purple tone
+        from PIL import Image
 
         p = Path(str(path or ""))
         if not str(path or "").strip():
@@ -4184,7 +4198,6 @@ def university_logo_accent_color_v91(path, university_name="", fallback="#002B5B
         if not p.exists():
             return fallback
 
-        from PIL import Image
         img = Image.open(p).convert("RGBA")
         img.thumbnail((180, 180), Image.Resampling.LANCZOS)
 
@@ -4197,36 +4210,41 @@ def university_logo_accent_color_v91(path, university_name="", fallback="#002B5B
             saturation = maxc - minc
             brightness = (r + g + b) / 3
 
-            # Skip white, black, gray, and too pale background colors.
+            # Ignore background/neutral colors.
             if brightness > 238 or brightness < 42:
                 continue
             if saturation < 38:
                 continue
 
-            # Color family boost:
-            # yellow/gold, purple, red often represent university identity and need to be visible.
-            is_yellow_gold = (r > 150 and g > 110 and b < 105)
-            is_purple = (r > 75 and b > 90 and g < 100)
-            is_red = (r > 145 and g < 95 and b < 95)
-            is_blue = (b > 120 and r < 110)
+            # Prefer visible brand accents over dark text.
+            is_yellow_gold = (r > 145 and g > 105 and b < 115)
+            is_purple = (r > 70 and b > 85 and g < 115)
+            is_red = (r > 145 and g < 100 and b < 100)
+            is_green = (g > 120 and r < 130 and b < 130)
+            is_blue = (b > 120 and r < 120)
 
             boost = 1.0
             if is_yellow_gold:
-                boost = 2.8
+                boost = 3.2
             elif is_purple:
-                boost = 2.5
+                boost = 2.8
             elif is_red:
-                boost = 2.0
+                boost = 2.2
+            elif is_green:
+                boost = 1.8
             elif is_blue:
-                boost = 1.25
+                boost = 1.35
 
-            # Quantize for grouping.
+            # Penalize very dark navy/black text-like pixels.
+            if brightness < 75:
+                boost *= 0.25
+
             qr = int(round(r / 20) * 20)
             qg = int(round(g / 20) * 20)
             qb = int(round(b / 20) * 20)
-
-            score = (saturation * 1.3 + (255 - abs(145 - brightness)) * 0.35) * boost
             key = (min(255, qr), min(255, qg), min(255, qb))
+
+            score = (saturation * 1.4 + (255 - abs(145 - brightness)) * 0.35) * boost
             buckets.setdefault(key, [0, 0.0])
             buckets[key][0] += 1
             buckets[key][1] += score
@@ -4234,23 +4252,22 @@ def university_logo_accent_color_v91(path, university_name="", fallback="#002B5B
         if not buckets:
             return fallback
 
-        # Choose by score, not only by count, so an accent square/mark can win.
-        best = max(buckets.items(), key=lambda item: item[1][1] + item[1][0] * 1.6)[0]
+        best = max(buckets.items(), key=lambda item: item[1][1] + item[1][0] * 0.7)[0]
         r, g, b = best
 
-        # Make light yellow/gold readable on white by darkening slightly.
+        # Make light colors readable on white.
         brightness = (r + g + b) / 3
         if brightness > 178:
             factor = 0.68
             r, g, b = int(r * factor), int(g * factor), int(b * factor)
 
-        # Avoid near-black output.
-        if (r + g + b) / 3 < 55:
-            return fallback
-
         return f"#{r:02X}{g:02X}{b:02X}"
     except Exception:
         return fallback
+
+def university_name_style_v93(university_name, logo_path=""):
+    color = university_logo_accent_color_v91(logo_path, university_name)
+    return f"color:{color}!important;-webkit-text-fill-color:{color}!important;text-shadow:none!important;"
 
 
 def university_logo_html_v88(path, name="University"):
@@ -5790,7 +5807,7 @@ def _render_university_detail_v62(u):
 def _render_university_summary_v62(u, key_suffix):
     image_html = university_slideshow_html_v89(u, key_suffix)
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
-    name_accent_color_v91 = university_logo_accent_color_v91(u.get("University_Logo", ""), u.get("University", ""))
+    name_style_v93 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
 
     summary_html = f'''<div class="uni-summary-card-v88">
@@ -5801,8 +5818,8 @@ def _render_university_summary_v62(u, key_suffix):
     <div class="uni-summary-left-v88">
         <div class="uni-logo-box-v88">{logo_html}</div>
         <div class="uni-summary-text-v88">
-            <h3 class="uni-name-accent-v92" style="color:{name_accent_color_v91}!important;-webkit-text-fill-color:{name_accent_color_v91}!important;">
-                <span style="color:{name_accent_color_v91}!important;-webkit-text-fill-color:{name_accent_color_v91}!important;">{_safe_html_v62(u.get("University", ""))}</span>
+            <h3 class="uni-name-accent-v93" style="{name_style_v93}">
+                <span style="{name_style_v93}">{_safe_html_v62(u.get("University", ""))}</span>
             </h3>
             <p>{_safe_html_v62(u.get("Overview", ""))}</p>
         </div>
