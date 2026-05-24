@@ -811,3 +811,10 @@ v120:
 - Redesigned status page to a cleaner mobile-style layout similar to the sample.
 - Added applicant/university/program/status summary card with logo.
 - Added clearer timeline styling with completed/current/pending/failed states.
+
+
+v121:
+- Redesigned Application Status page closer to the sample image.
+- Timeline now shows date and time as separate right-side lines.
+- Added larger green completed circles, blue current step circle, gray pending circles, and a blue Current Step tag.
+- Added View Full Status style button and Need Help section.

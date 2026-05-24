@@ -7071,6 +7071,39 @@ def application_timeline_steps_v120(row):
                 s["state"] = "current"
                 break
     return steps
+
+
+def application_step_date_time_v121(value):
+    val = display_clean_v50(value)
+    if not val:
+        return ("-", "")
+    try:
+        s = str(val).strip().replace("T", " ")
+        for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y/%m/%d %H:%M:%S", "%Y/%m/%d %H:%M", "%Y-%m-%d", "%Y/%m/%d"]:
+            try:
+                dt = datetime.strptime(s, fmt)
+                if fmt in ["%Y-%m-%d", "%Y/%m/%d"]:
+                    return (dt.strftime("%d %b %Y"), "")
+                return (dt.strftime("%d %b %Y"), dt.strftime("%I:%M %p"))
+            except Exception:
+                pass
+        # If the value is not a date, show it as the date/value line.
+        return (s, "")
+    except Exception:
+        return (str(val), "")
+
+
+def timeline_status_icon_v121(state, index):
+    if state in ["completed", "passed", "visa-issued"]:
+        return "✓"
+    if state in ["failed", "visa-rejected"]:
+        return "✕"
+    if state == "current":
+        return "◷"
+    if index in [4, 5]:
+        return "▣"
+    return "□"
+
 def render_application_status_timeline_v116(row):
     uni_name = display_clean_v50(row.get("University", ""))
     uni_row = university_row_by_name_v120(uni_name)
@@ -7083,23 +7116,25 @@ def render_application_status_timeline_v116(row):
     timeline_items = []
     for i, step in enumerate(steps, start=1):
         state = step.get("state", "pending")
-        note = application_step_time_v120(step.get("value", ""))
-        current_badge = '<div class="timeline-current-tag-v120">Current Step</div>' if state == 'current' else ''
-        icon = '✓' if state in ['completed', 'passed', 'visa-issued'] else ('✕' if state in ['failed', 'visa-rejected'] else str(i))
+        date_text, time_text = application_step_date_time_v121(step.get("value", ""))
+        current_badge = '<div class="timeline-current-tag-v121">Current Step</div>' if state == 'current' else ''
+        icon = timeline_status_icon_v121(state, i)
+        date_html = f'<div>{_safe_html_v62(date_text)}</div>'
+        time_html = f'<div>{_safe_html_v62(time_text)}</div>' if time_text else ''
         item_html = f"""
-<div class="timeline-item-v120 {state}">
-  <div class="timeline-left-v120">
-    <div class="timeline-dot-v120">{icon}</div>
-    <div class="timeline-line-v120"></div>
+<div class="timeline-item-v121 {state}">
+  <div class="timeline-left-v121">
+    <div class="timeline-dot-v121">{icon}</div>
+    <div class="timeline-line-v121"></div>
   </div>
-  <div class="timeline-card-v120 {'highlight' if state == 'current' else ''}">
-    <div class="timeline-head-v120">
-      <div>
-        <div class="timeline-step-title-v120">{i}. {_safe_html_v62(step.get('title',''))}</div>
-        <div class="timeline-step-desc-v120">{_safe_html_v62(step.get('desc',''))}</div>
+  <div class="timeline-card-v121 {'highlight' if state == 'current' else ''}">
+    <div class="timeline-content-v121">
+      <div class="timeline-main-v121">
+        <div class="timeline-step-title-v121">{i}. {_safe_html_v62(step.get('title',''))}</div>
+        <div class="timeline-step-desc-v121">{_safe_html_v62(step.get('desc',''))}</div>
         {current_badge}
       </div>
-      <div class="timeline-date-v120">{_safe_html_v62(note)}</div>
+      <div class="timeline-date-v121">{date_html}{time_html}</div>
     </div>
   </div>
 </div>
@@ -7109,65 +7144,82 @@ def render_application_status_timeline_v116(row):
 
     page_html = f"""
 <style>
-.app-status-wrap-v120 {{padding: 8px 0 24px 0 !important;}}
-.app-status-summary-v120 {{background:#FFFFFF;border:1px solid #E5EAF3;border-radius:26px;padding:22px;box-shadow:0 10px 30px rgba(16,24,40,.06);margin:8px 0 26px 0;}}
-.app-status-summary-grid-v120 {{display:grid;grid-template-columns:120px minmax(0,1fr);gap:22px;align-items:center;}}
-.app-logo-box-v120 {{width:110px;height:110px;border-radius:22px;background:#F8FAFC;border:1px solid #E4EAF3;display:flex;align-items:center;justify-content:center;overflow:hidden;}}
-.app-logo-box-v120 img {{max-width:92px !important;max-height:92px !important;object-fit:contain !important;}}
-.app-meta-table-v120 {{display:grid;grid-template-columns:160px minmax(0,1fr);gap:0;}}
-.app-meta-label-v120,.app-meta-value-v120 {{padding:13px 0;border-bottom:1px solid #EDF2F7;font-size:16px;}}
-.app-meta-label-v120 {{color:#667085;font-weight:700;}}
-.app-meta-value-v120 {{color:#0F172A;font-weight:850;}}
-.status-chip-v120 {{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:14px;font-size:15px;font-weight:900;}}
-.status-chip-v120.progress {{background:#DDF8EF;color:#0B8B68;}}
-.status-chip-v120.success {{background:#DCFCE7;color:#15803D;}}
-.status-chip-v120.danger {{background:#FEE2E2;color:#B91C1C;}}
-.status-chip-v120.draft {{background:#FEF3C7;color:#B45309;}}
-.status-chip-v120.neutral {{background:#E5E7EB;color:#374151;}}
-.timeline-shell-v120 {{padding: 6px 0 10px 0;}}
-.timeline-item-v120 {{display:grid;grid-template-columns:60px minmax(0,1fr);gap:18px;align-items:start;}}
-.timeline-left-v120 {{display:flex;flex-direction:column;align-items:center;height:100%;}}
-.timeline-dot-v120 {{width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:950;background:#E5E7EB;color:#475467;position:relative;z-index:2;box-shadow:0 6px 14px rgba(15,23,42,.06);}}
-.timeline-line-v120 {{width:4px;flex:1;min-height:26px;background:#D1D5DB;border-radius:999px;margin-top:6px;}}
-.timeline-card-v120 {{background:#FFFFFF;border:1px solid #E6ECF5;border-radius:22px;padding:18px 20px;margin-bottom:18px;box-shadow:0 8px 24px rgba(16,24,40,.04);}}
-.timeline-card-v120.highlight {{background:#F5F9FF;border-color:#BFD7FF;box-shadow:0 10px 26px rgba(0,91,219,.10);}}
-.timeline-head-v120 {{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;}}
-.timeline-step-title-v120 {{color:#0F172A;font-size:17px;font-weight:950;margin-bottom:4px;}}
-.timeline-step-desc-v120 {{color:#667085;font-size:15px;font-weight:650;line-height:1.55;}}
-.timeline-date-v120 {{color:#475467;font-size:14px;font-weight:800;white-space:nowrap;text-align:right;min-width:120px;}}
-.timeline-current-tag-v120 {{display:inline-flex;align-items:center;justify-content:center;margin-top:12px;padding:8px 14px;border-radius:10px;background:#005BDB;color:#FFFFFF;font-size:13px;font-weight:900;}}
-.timeline-item-v120.completed .timeline-dot-v120, .timeline-item-v120.passed .timeline-dot-v120, .timeline-item-v120.visa-issued .timeline-dot-v120 {{background:#18B67A;color:#FFFFFF;}}
-.timeline-item-v120.completed .timeline-line-v120, .timeline-item-v120.passed .timeline-line-v120, .timeline-item-v120.visa-issued .timeline-line-v120 {{background:#18B67A;}}
-.timeline-item-v120.current .timeline-dot-v120 {{background:#0F6BFF;color:#FFFFFF;}}
-.timeline-item-v120.current .timeline-line-v120 {{background:linear-gradient(180deg,#0F6BFF,#D1D5DB);}}
-.timeline-item-v120.failed .timeline-dot-v120, .timeline-item-v120.visa-rejected .timeline-dot-v120 {{background:#E53935;color:#FFFFFF;}}
-.timeline-item-v120.failed .timeline-line-v120, .timeline-item-v120.visa-rejected .timeline-line-v120 {{background:#E53935;}}
-.timeline-item-v120.failed .timeline-card-v120, .timeline-item-v120.visa-rejected .timeline-card-v120 {{border-color:#FCA5A5;background:#FEF2F2;}}
-.timeline-item-v120.passed .timeline-card-v120, .timeline-item-v120.visa-issued .timeline-card-v120 {{border-color:#86EFAC;background:#F0FDF4;}}
-.timeline-item-v120:last-child .timeline-line-v120 {{display:none;}}
-.visa-congrats-v120 {{margin-top:24px;background:linear-gradient(135deg,#0FA958,#35C66F);border-radius:26px;color:#FFFFFF;text-align:center;padding:44px 24px;box-shadow:0 18px 36px rgba(34,197,94,.24);}}
-.visa-congrats-v120 h1,.visa-congrats-v120 p,.visa-rejected-v120 h1,.visa-rejected-v120 p {{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;}}
-.visa-rejected-v120 {{margin-top:24px;background:linear-gradient(135deg,#DC2626,#EF4444);border-radius:24px;color:#FFFFFF;text-align:center;padding:40px 24px;box-shadow:0 18px 36px rgba(220,38,38,.22);}}
+.app-status-wrap-v121 {{max-width:980px;margin:0 auto;padding:10px 0 32px 0 !important;}}
+.app-status-title-v121 {{font-size:34px;font-weight:950;text-align:center;color:#0F172A;margin:8px 0 22px 0;}}
+.app-status-summary-v121 {{background:#FFFFFF;border:1px solid #E5EAF3;border-radius:26px;padding:22px 24px;box-shadow:0 12px 32px rgba(16,24,40,.08);margin:8px 0 30px 0;}}
+.app-status-summary-grid-v121 {{display:grid;grid-template-columns:130px minmax(0,1fr);gap:26px;align-items:center;}}
+.app-logo-box-v121 {{width:118px;height:118px;border-radius:28px;background:#F8FAFC;border:1px solid #E4EAF3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(16,24,40,.04);}}
+.app-logo-box-v121 img {{max-width:98px !important;max-height:98px !important;object-fit:contain !important;}}
+.app-meta-table-v121 {{display:grid;grid-template-columns:160px minmax(0,1fr);gap:0;}}
+.app-meta-label-v121,.app-meta-value-v121 {{padding:14px 0;border-bottom:1px solid #EDF2F7;font-size:17px;}}
+.app-meta-label-v121 {{color:#667085;font-weight:750;}}
+.app-meta-value-v121 {{color:#0F172A;font-weight:900;}}
+.status-chip-v121 {{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:16px;font-size:15px;font-weight:950;}}
+.status-chip-v121.progress {{background:#DDF8EF;color:#0B8B68;}}
+.status-chip-v121.success {{background:#DCFCE7;color:#15803D;}}
+.status-chip-v121.danger {{background:#FEE2E2;color:#B91C1C;}}
+.status-chip-v121.draft {{background:#FEF3C7;color:#B45309;}}
+.status-chip-v121.neutral {{background:#E5E7EB;color:#374151;}}
+.timeline-shell-v121 {{padding:8px 0 8px 0;}}
+.timeline-item-v121 {{display:grid;grid-template-columns:70px minmax(0,1fr);gap:18px;align-items:stretch;}}
+.timeline-left-v121 {{display:flex;flex-direction:column;align-items:center;height:100%;}}
+.timeline-dot-v121 {{width:58px;height:58px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:950;background:#FFFFFF;color:#98A2B3;border:2px solid #D0D5DD;position:relative;z-index:2;box-shadow:0 8px 20px rgba(16,24,40,.08);}}
+.timeline-line-v121 {{width:4px;flex:1;min-height:34px;background:#D0D5DD;border-radius:999px;margin-top:6px;}}
+.timeline-card-v121 {{background:#FFFFFF;border:1px solid transparent;border-radius:22px;padding:18px 20px;margin-bottom:20px;}}
+.timeline-card-v121.highlight {{background:#F5F9FF;border-color:#BBD3FF;box-shadow:0 10px 30px rgba(0,91,219,.10);}}
+.timeline-content-v121 {{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:18px;align-items:start;}}
+.timeline-step-title-v121 {{color:#0F172A;font-size:20px;font-weight:950;margin:0 0 8px 0;line-height:1.25;}}
+.timeline-step-desc-v121 {{color:#667085;font-size:16px;font-weight:650;line-height:1.55;}}
+.timeline-date-v121 {{color:#475467;font-size:16px;font-weight:800;white-space:nowrap;text-align:right;line-height:1.65;}}
+.timeline-current-tag-v121 {{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;padding:9px 20px;border-radius:10px;background:#005BDB;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;font-size:15px;font-weight:950;}}
+.timeline-item-v121.completed .timeline-dot-v121, .timeline-item-v121.passed .timeline-dot-v121, .timeline-item-v121.visa-issued .timeline-dot-v121 {{background:#009B72;color:#FFFFFF;border-color:#009B72;}}
+.timeline-item-v121.completed .timeline-line-v121, .timeline-item-v121.passed .timeline-line-v121, .timeline-item-v121.visa-issued .timeline-line-v121 {{background:#009B72;}}
+.timeline-item-v121.current .timeline-dot-v121 {{background:#005BDB;color:#FFFFFF;border-color:#DCEBFF;box-shadow:0 0 0 12px #EAF2FF,0 10px 24px rgba(0,91,219,.22);font-size:30px;}}
+.timeline-item-v121.current .timeline-line-v121 {{background:#005BDB;}}
+.timeline-item-v121.current ~ .timeline-item-v121 .timeline-line-v121 {{background:#D0D5DD;}}
+.timeline-item-v121.pending .timeline-dot-v121 {{background:#FFFFFF;color:#667085;border-color:#D0D5DD;font-size:21px;}}
+.timeline-item-v121.pending .timeline-line-v121 {{background:#D0D5DD;border-left:0;}}
+.timeline-item-v121.failed .timeline-dot-v121, .timeline-item-v121.visa-rejected .timeline-dot-v121 {{background:#DC2626;color:#FFFFFF;border-color:#DC2626;}}
+.timeline-item-v121.failed .timeline-line-v121, .timeline-item-v121.visa-rejected .timeline-line-v121 {{background:#DC2626;}}
+.timeline-item-v121.failed .timeline-card-v121, .timeline-item-v121.visa-rejected .timeline-card-v121 {{border-color:#FCA5A5;background:#FEF2F2;}}
+.timeline-item-v121.passed .timeline-card-v121, .timeline-item-v121.visa-issued .timeline-card-v121 {{border-color:#86EFAC;background:#F0FDF4;}}
+.timeline-item-v121:last-child .timeline-line-v121 {{display:none;}}
+.view-full-status-v121 {{margin:28px 0 22px 70px;background:#005BDB;border-radius:16px;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;text-align:center;padding:18px 26px;font-size:22px;font-weight:950;box-shadow:0 14px 30px rgba(0,91,219,.20);}}
+.status-help-v121 {{display:flex;align-items:center;gap:16px;margin:18px 0 8px 70px;border-top:1px solid #EDF2F7;padding-top:20px;color:#475467;font-weight:700;}}
+.status-help-icon-v121 {{width:44px;height:44px;border-radius:999px;background:#EEF5FF;color:#005BDB;display:flex;align-items:center;justify-content:center;font-weight:950;}}
+.visa-congrats-v121 {{margin-top:24px;background:linear-gradient(135deg,#0FA958,#35C66F);border-radius:26px;color:#FFFFFF;text-align:center;padding:44px 24px;box-shadow:0 18px 36px rgba(34,197,94,.24);}}
+.visa-congrats-v121 h1,.visa-congrats-v121 p,.visa-rejected-v121 h1,.visa-rejected-v121 p {{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;}}
+.visa-rejected-v121 {{margin-top:24px;background:linear-gradient(135deg,#DC2626,#EF4444);border-radius:24px;color:#FFFFFF;text-align:center;padding:40px 24px;box-shadow:0 18px 36px rgba(220,38,38,.22);}}
 @media (max-width: 820px) {{
-  .app-status-summary-grid-v120 {{grid-template-columns:1fr;}}
-  .timeline-head-v120 {{flex-direction:column;}}
-  .timeline-date-v120 {{text-align:left;min-width:auto;}}
-  .app-meta-table-v120 {{grid-template-columns:120px minmax(0,1fr);}}
+  .app-status-wrap-v121 {{max-width:100%;}}
+  .app-status-title-v121 {{font-size:28px;}}
+  .app-status-summary-grid-v121 {{grid-template-columns:1fr;}}
+  .app-meta-table-v121 {{grid-template-columns:120px minmax(0,1fr);}}
+  .timeline-item-v121 {{grid-template-columns:58px minmax(0,1fr);gap:12px;}}
+  .timeline-dot-v121 {{width:48px;height:48px;font-size:22px;}}
+  .timeline-content-v121 {{grid-template-columns:1fr;gap:8px;}}
+  .timeline-date-v121 {{text-align:left;font-size:14px;}}
+  .timeline-step-title-v121 {{font-size:17px;}}
+  .timeline-step-desc-v121 {{font-size:14px;}}
+  .view-full-status-v121,.status-help-v121 {{margin-left:0;}}
 }}
 </style>
-<div class="app-status-wrap-v120">
-  <div class="app-status-summary-v120">
-    <div class="app-status-summary-grid-v120">
-      <div class="app-logo-box-v120">{logo_html}</div>
-      <div class="app-meta-table-v120">
-        <div class="app-meta-label-v120">Applicant</div><div class="app-meta-value-v120">{_safe_html_v62(applicant)}</div>
-        <div class="app-meta-label-v120">University</div><div class="app-meta-value-v120">{_safe_html_v62(uni_name)}</div>
-        <div class="app-meta-label-v120">Program</div><div class="app-meta-value-v120">{_safe_html_v62(program_name)}</div>
-        <div class="app-meta-label-v120">Status</div><div class="app-meta-value-v120"><span class="status-chip-v120 {chip_cls}">{_safe_html_v62(chip_text)}</span></div>
+<div class="app-status-wrap-v121">
+  <div class="app-status-title-v121">Application Status</div>
+  <div class="app-status-summary-v121">
+    <div class="app-status-summary-grid-v121">
+      <div class="app-logo-box-v121">{logo_html}</div>
+      <div class="app-meta-table-v121">
+        <div class="app-meta-label-v121">Applicant</div><div class="app-meta-value-v121">{_safe_html_v62(applicant)}</div>
+        <div class="app-meta-label-v121">University</div><div class="app-meta-value-v121">{_safe_html_v62(uni_name)}</div>
+        <div class="app-meta-label-v121">Program</div><div class="app-meta-value-v121">{_safe_html_v62(program_name)}</div>
+        <div class="app-meta-label-v121">Status</div><div class="app-meta-value-v121"><span class="status-chip-v121 {chip_cls}">{_safe_html_v62(chip_text)}</span></div>
       </div>
     </div>
   </div>
-  <div class="timeline-shell-v120">{timeline_html}</div>
+  <div class="timeline-shell-v121">{timeline_html}</div>
+  <div class="view-full-status-v121">▣ &nbsp; View Full Status</div>
+  <div class="status-help-v121"><div class="status-help-icon-v121">?</div><div><b>Need Help?</b><br><span>Contact our support team</span></div></div>
 </div>
 """
     st.markdown(textwrap.dedent(page_html).strip(), unsafe_allow_html=True)
@@ -7175,14 +7227,14 @@ def render_application_status_timeline_v116(row):
     visa_result = application_stage_value_v116(row, "Visa_Result").lower()
     if "issued" in visa_result or "approved" in visa_result:
         st.markdown(textwrap.dedent("""
-            <div class="visa-congrats-v120">
+            <div class="visa-congrats-v121">
                 <h1>🎉 Congratulations!</h1>
                 <p>Your visa has been issued.</p>
             </div>
         """).strip(), unsafe_allow_html=True)
     elif "reject" in visa_result or "denied" in visa_result:
         st.markdown(textwrap.dedent("""
-            <div class="visa-rejected-v120">
+            <div class="visa-rejected-v121">
                 <h1>Visa Rejected</h1>
                 <p>Your visa has been rejected.</p>
             </div>
