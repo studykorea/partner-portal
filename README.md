@@ -706,3 +706,11 @@ v107:
 - Added a clear Student Statistics Excel explanation box next to the Excel upload area.
 - Added a blue Download Excel Format link directly beside the Student Statistics Excel upload field in Add/Edit University forms.
 - Clarified that the Excel upload is optional and used only to create student graph/top nationality information in university details.
+
+
+v108:
+- Top 5 nationality list now shows real country flag images automatically based on country names uploaded in Excel.
+- Admin only needs to type country names like Nepal, Bangladesh, Vietnam, Indonesia, Pakistan.
+- Added ISO country mapping and common aliases.
+- If an unknown country name is entered, the system shows initials as fallback.
+- Updated Excel template instructions and admin explanation to clarify flags are automatic.

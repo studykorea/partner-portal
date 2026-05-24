@@ -4587,6 +4587,45 @@ h3.uni-name-accent-v93 span {
     border-color:#98A2B3 !important;
 }
 
+
+/* v108 automatic country flag images in nationality chart */
+.flag-img-wrap-v108 {
+    width:40px !important;
+    height:40px !important;
+    border-radius:999px !important;
+    background:#FFFFFF !important;
+    border:1px solid #D9E2F1 !important;
+    box-shadow:0 4px 10px rgba(16,24,40,.08) !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    flex:0 0 auto !important;
+}
+.flag-img-v108 {
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    display:block !important;
+}
+.flag-fallback-v108 {
+    width:40px !important;
+    height:40px !important;
+    border-radius:999px !important;
+    background:#F2F4F7 !important;
+    color:#344054 !important;
+    -webkit-text-fill-color:#344054 !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-weight:950 !important;
+    font-size:15px !important;
+    flex:0 0 auto !important;
+}
+.nationality-main-v106 {
+    gap:12px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6600,18 +6639,59 @@ def _program_specific_application_badges_v71(row):
 
 
 # v106 student enrollment / nationality statistics helpers
-COUNTRY_FLAG_OVERRIDES_V106 = {
-    "korea": "🇰🇷", "south korea": "🇰🇷", "republic of korea": "🇰🇷",
-    "nepal": "🇳🇵", "india": "🇮🇳", "bangladesh": "🇧🇩", "pakistan": "🇵🇰",
-    "sri lanka": "🇱🇰", "china": "🇨🇳", "vietnam": "🇻🇳", "myanmar": "🇲🇲",
-    "mongolia": "🇲🇳", "uzbekistan": "🇺🇿", "indonesia": "🇮🇩", "philippines": "🇵🇭",
-    "japan": "🇯🇵", "usa": "🇺🇸", "united states": "🇺🇸", "canada": "🇨🇦",
-    "thailand": "🇹🇭", "malaysia": "🇲🇾", "cambodia": "🇰🇭", "kazakhstan": "🇰🇿"
+COUNTRY_ISO_OVERRIDES_V108 = {
+    # Common countries for international student data
+    "nepal": "np", "bangladesh": "bd", "vietnam": "vn", "viet nam": "vn",
+    "indonesia": "id", "pakistan": "pk", "india": "in", "sri lanka": "lk",
+    "china": "cn", "people's republic of china": "cn", "pr china": "cn",
+    "mongolia": "mn", "myanmar": "mm", "burma": "mm", "uzbekistan": "uz",
+    "kazakhstan": "kz", "kyrgyzstan": "kg", "tajikistan": "tj",
+    "philippines": "ph", "the philippines": "ph", "japan": "jp",
+    "thailand": "th", "malaysia": "my", "cambodia": "kh", "laos": "la",
+    "taiwan": "tw", "hong kong": "hk", "singapore": "sg",
+
+    # Korea and common western countries
+    "korea": "kr", "south korea": "kr", "republic of korea": "kr",
+    "usa": "us", "u.s.a.": "us", "united states": "us", "united states of america": "us",
+    "canada": "ca", "australia": "au", "new zealand": "nz",
+    "uk": "gb", "u.k.": "gb", "united kingdom": "gb", "england": "gb",
+    "france": "fr", "germany": "de", "italy": "it", "spain": "es",
+    "russia": "ru", "russian federation": "ru",
+
+    # Middle East / Africa / Latin America common cases
+    "iran": "ir", "iraq": "iq", "saudi arabia": "sa", "turkey": "tr",
+    "egypt": "eg", "nigeria": "ng", "ghana": "gh", "kenya": "ke",
+    "ethiopia": "et", "south africa": "za", "brazil": "br", "mexico": "mx",
 }
 
-def country_flag_v106(country):
+def country_iso_code_v108(country):
+    """Return ISO-2 code from country name in uploaded Excel. Case-insensitive and accepts common aliases."""
     name = str(country or "").strip().lower()
-    return COUNTRY_FLAG_OVERRIDES_V106.get(name, "🌐")
+    name = re.sub(r"\\s+", " ", name)
+    name = name.replace("&", "and")
+    if name in COUNTRY_ISO_OVERRIDES_V108:
+        return COUNTRY_ISO_OVERRIDES_V108[name]
+
+    # Handle names that include extra text, e.g., "Nepalese / Nepal", "Vietnam students".
+    for key, iso in COUNTRY_ISO_OVERRIDES_V108.items():
+        if key and (name == key or key in name):
+            return iso
+    return ""
+
+def country_flag_html_v108(country):
+    """Return an actual country flag image automatically from country name."""
+    iso = country_iso_code_v108(country)
+    safe_country = _safe_html_v62(country)
+    if iso:
+        return (
+            f'<span class="flag-img-wrap-v108" title="{safe_country}">'
+            f'<img class="flag-img-v108" src="https://flagcdn.com/w80/{iso}.png" alt="{safe_country} flag" loading="lazy" />'
+            f'</span>'
+        )
+
+    # Fallback when country name is not mapped: show first two letters, not a fake country flag.
+    initials = "".join([w[:1] for w in re.findall(r"[A-Za-z]+", str(country or ""))[:2]]).upper() or "🌐"
+    return f'<span class="flag-fallback-v108" title="{safe_country}">{_safe_html_v62(initials)}</span>'
 
 def _to_int_v106(value):
     try:
@@ -6642,7 +6722,7 @@ def student_stats_template_bytes_v106():
         {"Instruction": "Fill the Summary sheet with one row only."},
         {"Instruction": "Fill Data_Year as the year or semester of the data, for example 2026 or 2026 Spring."},
         {"Instruction": "Fill Undergraduate_Students, Graduate_Students, and Language_Study_Students as numbers."},
-        {"Instruction": "Fill the Nationality sheet with Country and Number_of_Students."},
+        {"Instruction": "Fill the Nationality sheet with Country and Number_of_Students. Type normal country names such as Nepal, Bangladesh, Vietnam, Indonesia, Pakistan. Flags will be added automatically."},
         {"Instruction": "The system will automatically show the top 5 nationality groups on the university detail page."},
         {"Instruction": "This upload is optional. If no file is uploaded, no graph will be shown."},
     ])
@@ -6676,7 +6756,7 @@ def student_stats_upload_info_html_v107():
         <p>This optional file creates the student statistics section in the university detail page. It shows a graph of enrolled students by program level and the top 5 international student nationalities with country flags.</p>
         <ul>
             <li><b>Summary sheet:</b> Data_Year, Undergraduate_Students, Graduate_Students, Language_Study_Students</li>
-            <li><b>Nationality sheet:</b> Country, Number_of_Students</li>
+            <li><b>Nationality sheet:</b> Country, Number_of_Students. Type country names normally; flags are added automatically.</li>
             <li>If you do not upload this file, the student graph will simply not appear.</li>
         </ul>
     </div>
@@ -6797,7 +6877,7 @@ def university_student_stats_html_v106(u):
             pct = max(8, min(100, round((count / max_country) * 100, 1)))
             nationality_html += f"""
             <div class="nationality-item-v106">
-                <div class="nationality-main-v106"><span class="flag-v106">{country_flag_v106(country)}</span><span>{_safe_html_v62(country)}</span></div>
+                <div class="nationality-main-v106">{country_flag_html_v108(country)}<span>{_safe_html_v62(country)}</span></div>
                 <b>{count:,}</b>
                 <div class="nationality-bar-v106"><div style="width:{pct}%;"></div></div>
             </div>
