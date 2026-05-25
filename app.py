@@ -7655,6 +7655,125 @@ a[target="blank"] {
     border-color: #3F5BD6 !important;
 }
 
+
+/* v191 professional program detail header layout */
+.program-detail-page-v191 {
+    background: #FFFFFF !important;
+    border: 1px solid #DCE6F4 !important;
+    border-radius: 24px !important;
+    padding: 34px 38px !important;
+    box-shadow: 0 14px 34px rgba(16,24,40,.07) !important;
+    margin: 18px 0 24px 0 !important;
+}
+.program-detail-head-v191 {
+    display: grid !important;
+    grid-template-columns: 150px minmax(0,1fr) !important;
+    gap: 30px !important;
+    align-items: center !important;
+}
+.program-detail-logo-v191 {
+    width: 150px !important;
+    height: 150px !important;
+    border-radius: 24px !important;
+    border: 1px solid #DCE6F4 !important;
+    background: #FFFFFF !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 14px !important;
+    box-shadow: 0 10px 26px rgba(16,24,40,.06) !important;
+}
+.program-detail-logo-v191 img,
+.program-detail-logo-v191 .uni-logo-v88 {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+.program-detail-main-v191 {
+    min-width: 0 !important;
+}
+.program-detail-kicker-v191 {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 8px 14px !important;
+    border-radius: 999px !important;
+    background: #EEF5FF !important;
+    color: #3F5BD6 !important;
+    -webkit-text-fill-color: #3F5BD6 !important;
+    font-size: 12px !important;
+    font-weight: 950 !important;
+    letter-spacing: .12em !important;
+    margin-bottom: 14px !important;
+}
+.program-detail-name-line-v191 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    flex-wrap: nowrap !important;
+    margin-bottom: 10px !important;
+}
+.program-detail-name-line-v191 h1 {
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    font-size: 44px !important;
+    font-weight: 950 !important;
+    line-height: 1.05 !important;
+    letter-spacing: -0.03em !important;
+    margin: 0 !important;
+}
+.program-detail-main-v191 h2 {
+    color: #002B5B !important;
+    -webkit-text-fill-color: #002B5B !important;
+    font-size: 24px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+    margin: 0 0 14px 0 !important;
+}
+.program-detail-main-v191 p {
+    color: #344054 !important;
+    -webkit-text-fill-color: #344054 !important;
+    font-size: 17px !important;
+    line-height: 1.65 !important;
+    font-weight: 650 !important;
+    max-width: 1120px !important;
+    margin: 0 !important;
+}
+.program-detail-name-line-v191 .ieqas-direct-badge-wrap-v182 {
+    width: 90px !important;
+    height: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    max-height: 90px !important;
+    margin-left: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.program-detail-name-line-v191 .ieqas-direct-badge-img-v182 {
+    width: 90px !important;
+    height: 90px !important;
+    max-width: 90px !important;
+    max-height: 90px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+@media(max-width:900px) {
+    .program-detail-head-v191 {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+    }
+    .program-detail-logo-v191 {
+        width: 130px !important;
+        height: 130px !important;
+    }
+    .program-detail-name-line-v191 {
+        flex-wrap: wrap !important;
+    }
+    .program-detail-name-line-v191 h1 {
+        font-size: 34px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11496,13 +11615,17 @@ def render_program_detail_page_v109(u, program_slug):
     ieqas_badge_program_v178 = university_excellent_accreditation_name_badge_v169(u)
 
     st.markdown(f"""
-    <div class="program-detail-page-v109">
-        <div class="program-detail-head-v109">
-            <div class="program-detail-logo-v109">{logo_html}</div>
-            <div class="program-detail-title-area-v178">
-                <p class="program-detail-uni-name-v178">{_safe_html_v62(u.get("University", ""))}{ieqas_badge_program_v178}</p>
-                <h1>{_safe_html_v62(title)}</h1>
-                <span>{_safe_html_v62(schedule_text)}</span>
+    <div class="program-detail-page-v191">
+        <div class="program-detail-head-v191">
+            <div class="program-detail-logo-v191">{logo_html}</div>
+            <div class="program-detail-main-v191">
+                <div class="program-detail-kicker-v191">PROGRAM INFORMATION</div>
+                <div class="program-detail-name-line-v191">
+                    <h1>{_safe_html_v62(u.get("University", ""))}</h1>
+                    {ieqas_badge_program_v178}
+                </div>
+                <h2>{_safe_html_v62(title)}</h2>
+                <p>{_safe_html_v62(schedule_text)}</p>
             </div>
         </div>
     </div>

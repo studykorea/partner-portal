@@ -1255,3 +1255,11 @@ v190:
   View Details & Apply → Graduate
   View Details & Apply → KLP/EAP
 - Clicking these buttons changes the page using session_state, so no new browser tab opens.
+
+
+v191:
+- Redesigned the Program Details header to look more professional.
+- University logo is larger and placed in a clean card.
+- University name is much larger and clearer.
+- IEQAS badge is aligned beside the university name without weird spacing.
+- Program title and schedule text are organized under the university name.
