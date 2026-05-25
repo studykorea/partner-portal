@@ -5926,6 +5926,49 @@ div[data-testid="stFormSubmitButton"] button:hover {
     min-height:44px !important;
 }
 
+
+/* v133 professional dashboard navigation icons */
+.dash-nav-icon-v96 {
+    width:22px !important;
+    height:22px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    color:#344054 !important;
+    -webkit-text-fill-color:initial !important;
+    font-size:0 !important;
+    line-height:1 !important;
+    margin-right:10px !important;
+}
+.dash-nav-icon-v96 svg {
+    width:21px !important;
+    height:21px !important;
+    fill:none !important;
+    stroke:currentColor !important;
+    stroke-width:2 !important;
+    stroke-linecap:round !important;
+    stroke-linejoin:round !important;
+    display:block !important;
+}
+.dash-nav-link-v96 {
+    gap:8px !important;
+}
+.dash-nav-link-v96.active .dash-nav-icon-v96,
+.dash-nav-link-v96.active .dash-nav-icon-v96 svg {
+    color:#FFFFFF !important;
+    stroke:#FFFFFF !important;
+}
+.dash-nav-link-v96.logout .dash-nav-icon-v96,
+.dash-nav-link-v96.logout .dash-nav-icon-v96 svg {
+    color:#9F1D1D !important;
+    stroke:#9F1D1D !important;
+}
+.dash-nav-link-v96.logout.active .dash-nav-icon-v96,
+.dash-nav-link-v96.logout.active .dash-nav-icon-v96 svg {
+    color:#FFFFFF !important;
+    stroke:#FFFFFF !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6998,19 +7041,23 @@ def dash_shell(items):
     role_v96 = str(st.session_state.get("role", ""))
 
     def _dash_icon_v96(item):
-        icon_map = {
-            "Admin Dashboard": "☷",
-            "Dashboard": "☷",
-            "Partner Management": "👥",
-            "Universities": "🏛",
-            "Eligibility Rules": "🛡",
-            "Eligibility Check": "🛡",
-            "Tuition Rules": "💲",
-            "Tuition & Scholarship": "💲",
-            "Scholarship Rules": "🎓",
-            "Contact Us": "✉",
+        # v133: professional inline SVG icons instead of emoji-style icons.
+        svg_map = {
+            "Admin Dashboard": '<svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>',
+            "Dashboard": '<svg viewBox="0 0 24 24"><path d="M4 13h6V5H4v8Zm10 6h6V5h-6v14ZM4 19h6v-4H4v4Z"/></svg>',
+            "Partner Management": '<svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0"/><path d="M3 20a7 7 0 0 1 14 0"/><path d="M17 8a3 3 0 0 1 3 3"/><path d="M18.5 15.5A5.5 5.5 0 0 1 22 20"/></svg>',
+            "Universities": '<svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V9l7-4 7 4v12"/><path d="M9 21v-7h6v7"/><path d="M10 10h4"/></svg>',
+            "Eligibility Rules": '<svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
+            "Eligibility Check": '<svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
+            "Tuition Rules": '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7.5c-.9-1.1-2.4-1.8-4.1-1.8-2.3 0-4.1 1.1-4.1 2.8 0 4.3 8.4 1.8 8.4 6.2 0 1.8-1.8 3-4.3 3-1.9 0-3.6-.8-4.6-2.1"/></svg>',
+            "Tuition & Scholarship": '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7.5c-.9-1.1-2.4-1.8-4.1-1.8-2.3 0-4.1 1.1-4.1 2.8 0 4.3 8.4 1.8 8.4 6.2 0 1.8-1.8 3-4.3 3-1.9 0-3.6-.8-4.6-2.1"/></svg>',
+            "Scholarship Rules": '<svg viewBox="0 0 24 24"><path d="M4 8 12 4l8 4-8 4-8-4Z"/><path d="M6 10v5c1.8 1.8 10.2 1.8 12 0v-5"/><path d="M20 8v6"/></svg>',
+            "Contact Us": '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>',
+            "Applications": '<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>',
+            "Application Samples": '<svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>',
+            "Logout": '<svg viewBox="0 0 24 24"><path d="M10 17 15 12 10 7"/><path d="M15 12H3"/><path d="M14 5h5v14h-5"/></svg>',
         }
-        return icon_map.get(item, "•")
+        return svg_map.get(item, '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>')
 
     def _dash_href_v96(item):
         auth_suffix = auth_query_suffix_v104("&")
@@ -7032,7 +7079,7 @@ def dash_shell(items):
             is_active = True
         active_class = " active" if is_active else ""
         logout_class = " logout" if item == "Logout" else ""
-        icon = "↪" if item == "Logout" else _dash_icon_v96(item)
+        icon = _dash_icon_v96(item)
         href = _dash_href_v96(item)
         nav_html_parts.append(
             f'<a class="dash-nav-link-v96{active_class}{logout_class}" href="{href}"><span class="dash-nav-icon-v96">{icon}</span><span>{item}</span></a>'

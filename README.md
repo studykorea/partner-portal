@@ -913,3 +913,9 @@ v132:
 - Uploaded document section now shows clean professional cards with document title and a simple uploaded-document message.
 - Download buttons still keep the real original file name when the admin downloads the file.
 - Missing file cards no longer show raw saved paths and instead show a cleaner instruction message.
+
+
+v133:
+- Replaced emoji/childish dashboard navigation icons with professional inline SVG line icons.
+- Updated admin, partner management, universities, eligibility, tuition, scholarship, applications, application samples, contact, and logout icons.
+- Active menu icons now turn white together with the active blue tab.
