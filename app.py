@@ -518,17 +518,19 @@ def asset_img_html(relative_path, class_name="uni-photo"):
     return f'<img class="{class_name}" src="data:image/jpeg;base64,{encoded}">'
 
 
-def official_rep_icon_html_v141(class_name="official-rep-icon-inline-v141"):
+def official_rep_icon_html_v141(class_name="official-rep-icon-inline-v141", size=24):
+    """Small official representative verified badge, like a blue tick next to a company name."""
     encoded = b64(OFFICIAL_REP_ICON)
+    style = f"width:{size}px;height:{size}px;max-width:{size}px;max-height:{size}px;object-fit:contain;display:inline-block;vertical-align:middle;flex:0 0 auto;"
     if not encoded:
-        return f'<span class="{class_name} official-rep-icon-fallback-v141">✓</span>'
-    return f'<img class="{class_name}" src="data:image/png;base64,{encoded}" alt="Official Representative">'
+        return f'<span class="{class_name} official-rep-icon-fallback-v141" style="{style}">✓</span>'
+    return f'<img class="{class_name}" style="{style}" src="data:image/png;base64,{encoded}" alt="Official Representative">'
 
 def official_rep_name_html_v141(name):
-    return f'<span class="official-rep-name-wrap-v141"><span>{_safe_html_v62(name)}</span>{official_rep_icon_html_v141("official-rep-icon-inline-v141")}</span>'
+    return f'<span class="official-rep-name-wrap-v141"><span>{_safe_html_v62(name)}</span>{official_rep_icon_html_v141("official-rep-icon-inline-v141", 26)}</span>'
 
 def official_rep_badge_html_v141(label="Official Representative"):
-    return f'<span class="official-rep-badge-v141">{official_rep_icon_html_v141("official-rep-icon-badge-v141")}<span>{_safe_html_v62(label)}</span></span>'
+    return f'<span class="official-rep-badge-v141">{official_rep_icon_html_v141("official-rep-icon-badge-v141", 20)}<span>{_safe_html_v62(label)}</span></span>'
 
 @st.cache_data(ttl=300, show_spinner=False)
 def universities():
@@ -3264,6 +3266,13 @@ section[data-testid="stFileUploader"] button * {
     align-items:center;
     justify-content:center;
     margin-bottom:10px;
+    overflow:hidden;
+}
+.stat-icon-v73 img {
+    width:22px;
+    height:22px;
+    object-fit:contain;
+    display:block;
 }
 .admin-stat-card-v73.warning-v73 h2 {color:#B54708 !important;}
 .admin-stat-card-v73.success-v73 h2 {color:#067647 !important;}
@@ -6372,6 +6381,22 @@ div[data-testid="stFormSubmitButton"] button:hover {
     font-size:18px !important;
     font-weight:950 !important;
 }
+
+
+/* v143 official representative verified icon sizing fix */
+.official-rep-icon-inline-v141,
+.official-rep-icon-badge-v141,
+.official-rep-icon-dashboard-v142 {
+    object-fit:contain !important;
+    display:inline-block !important;
+    vertical-align:middle !important;
+    flex:0 0 auto !important;
+}
+.official-rep-icon-inline-v141 { width:26px !important; height:26px !important; max-width:26px !important; max-height:26px !important; }
+.official-rep-icon-badge-v141 { width:20px !important; height:20px !important; max-width:20px !important; max-height:20px !important; }
+.official-rep-icon-dashboard-v142 { width:24px !important; height:24px !important; max-width:24px !important; max-height:24px !important; }
+.stat-icon-v73 .official-rep-icon-dashboard-v142 { width:24px !important; height:24px !important; }
+.official-rep-name-wrap-v141 { display:inline-flex !important; align-items:center !important; gap:8px !important; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -11352,7 +11377,7 @@ def admin():
     st.markdown(f"""
     <div class="admin-stats-grid-v73">
         <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">⭐</div>
+            <div class="stat-icon-v73">{official_rep_icon_html_v141("official-rep-icon-dashboard-v142", 24)}</div>
             <b>Official Representative / Partners</b>
             <h2>{len(official_representatives_v130())}</h2>
             <p>Official partner organizations</p>
