@@ -6478,6 +6478,22 @@ div[data-testid="stFormSubmitButton"] button:hover {
     display:none !important;
 }
 
+
+/* v149 dashboard card actions no home redirect */
+.admin-stat-card-link-v148 {
+    text-decoration:none !important;
+    color:inherit !important;
+    cursor:default !important;
+}
+.admin-card-action-row-v149 {
+    margin:10px 0 24px 0 !important;
+}
+.admin-card-action-row-v149 + div button,
+.admin-card-action-row-v149 ~ div button {
+    border-radius:14px !important;
+    font-weight:850 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11477,7 +11493,7 @@ def render_admin_network_page_v130():
         return
 
 def handle_admin_dashboard_jump_v148():
-    """Make top dashboard stat cards clickable through query parameters."""
+    """Backward compatibility for old dashboard links. v149 uses Streamlit buttons instead."""
     try:
         jump = st.query_params.get("adminjump", "")
     except Exception:
@@ -11493,28 +11509,22 @@ def handle_admin_dashboard_jump_v148():
     except Exception:
         pass
 
+    st.session_state.page = "Admin Dashboard"
     if jump == "official":
         st.session_state.admin_network_view_v130 = "official_list"
-        st.session_state.admin_network_selected_id_v130 = ""
-        st.session_state.admin_network_selected_type_v130 = ""
-        return False
-    if jump == "partners":
+    elif jump == "partners":
         st.session_state.admin_network_view_v130 = "partner_list"
-        st.session_state.admin_network_selected_id_v130 = ""
-        st.session_state.admin_network_selected_type_v130 = ""
-        return False
-    if jump == "pending":
-        st.session_state.page = "Partner Management"
-        st.rerun()
-    if jump == "universities":
-        st.session_state.page = "Universities"
-        st.rerun()
-    if jump == "eligibility":
+    elif jump == "eligibility":
         st.session_state.admin_network_view_v130 = "eligibility_checks"
-        st.session_state.admin_network_selected_id_v130 = ""
-        st.session_state.admin_network_selected_type_v130 = ""
-        return False
-    return False
+    elif jump == "pending":
+        st.session_state.page = "Partner Management"
+        st.session_state.admin_network_view_v130 = ""
+    elif jump == "universities":
+        st.session_state.page = "Universities"
+        st.session_state.admin_network_view_v130 = ""
+    st.session_state.admin_network_selected_id_v130 = ""
+    st.session_state.admin_network_selected_type_v130 = ""
+    st.rerun()
 
 
 def admin():
@@ -11559,48 +11569,86 @@ def admin():
 
     st.markdown(f"""
     <div class="admin-stats-grid-v148">
-        <a class="admin-stat-card-link-v148" href="?adminjump=official" target="_self">
+        <div class="admin-stat-card-link-v148">
             <div class="admin-stat-card-v73">
                 <div class="stat-icon-v73">{official_rep_icon_html_v141("official-rep-icon-dashboard-v142", 24)}</div>
                 <b>Official Representative / Partners</b>
                 <h2>{len(official_representatives_v130())}</h2>
                 <p>Official partner organizations</p>
             </div>
-        </a>
-        <a class="admin-stat-card-link-v148" href="?adminjump=partners" target="_self">
+        </div>
+        <div class="admin-stat-card-link-v148">
             <div class="admin-stat-card-v73">
                 <div class="stat-icon-v73">🤝</div>
                 <b>Other Partner Agencies</b>
                 <h2>{len(partner_agencies_v130())}</h2>
                 <p>Approved sub-partner agencies</p>
             </div>
-        </a>
-        <a class="admin-stat-card-link-v148" href="?adminjump=pending" target="_self">
+        </div>
+        <div class="admin-stat-card-link-v148">
             <div class="admin-stat-card-v73 warning-v73">
                 <div class="stat-icon-v73">⏳</div>
                 <b>Pending Approval</b>
                 <h2>{pending}</h2>
                 <p>Waiting for admin action</p>
             </div>
-        </a>
-        <a class="admin-stat-card-link-v148" href="?adminjump=universities" target="_self">
+        </div>
+        <div class="admin-stat-card-link-v148">
             <div class="admin-stat-card-v73">
                 <div class="stat-icon-v73">🏛️</div>
                 <b>Universities</b>
                 <h2>{total_unis}</h2>
                 <p>University profiles</p>
             </div>
-        </a>
-        <a class="admin-stat-card-link-v148" href="?adminjump=eligibility" target="_self">
+        </div>
+        <div class="admin-stat-card-link-v148">
             <div class="admin-stat-card-v73">
                 <div class="stat-icon-v73">📋</div>
                 <b>Eligibility Checks</b>
                 <h2>{total_checks}</h2>
                 <p>Student check records</p>
             </div>
-        </a>
+        </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # v149: Use Streamlit buttons for dashboard card actions.
+    # HTML links caused full page reloads on Streamlit and could send the user back to Home.
+    st.markdown('<div class="admin-card-action-row-v149">', unsafe_allow_html=True)
+    ac1_v149, ac2_v149, ac3_v149, ac4_v149, ac5_v149 = st.columns(5)
+    with ac1_v149:
+        if st.button("Open Official Representatives", key="dash_open_official_v149", use_container_width=True):
+            st.session_state.page = "Admin Dashboard"
+            st.session_state.admin_network_view_v130 = "official_list"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
+            st.rerun()
+    with ac2_v149:
+        if st.button("Open Partner Agencies", key="dash_open_partners_v149", use_container_width=True):
+            st.session_state.page = "Admin Dashboard"
+            st.session_state.admin_network_view_v130 = "partner_list"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
+            st.rerun()
+    with ac3_v149:
+        if st.button("Open Pending Approvals", key="dash_open_pending_v149", use_container_width=True):
+            st.session_state.page = "Partner Management"
+            st.session_state.admin_network_view_v130 = ""
+            st.rerun()
+    with ac4_v149:
+        if st.button("Open Universities", key="dash_open_universities_v149", use_container_width=True):
+            st.session_state.page = "Universities"
+            st.session_state.admin_network_view_v130 = ""
+            st.rerun()
+    with ac5_v149:
+        if st.button("Open Eligibility Usage", key="dash_open_eligibility_v149", use_container_width=True):
+            st.session_state.page = "Admin Dashboard"
+            st.session_state.admin_network_view_v130 = "eligibility_checks"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
     # v130: if super admin is inside a partner/agency drill-down page, render it here.
     if st.session_state.get("admin_network_view_v130", ""):

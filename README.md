@@ -981,3 +981,10 @@ v148:
 - Pending Approval card opens Partner Management for approval/rejection.
 - Universities card opens the university management page.
 - Eligibility Checks card opens a usage page showing users, count of checks, and recent eligibility check records.
+
+
+v149:
+- Fixed dashboard card navigation issue where clicking cards could redirect to Home.
+- Removed HTML href navigation from admin dashboard cards because it caused full page reloads in Streamlit.
+- Added reliable Streamlit action buttons under the dashboard cards for Official Representatives, Partner Agencies, Pending Approvals, Universities, and Eligibility Usage.
+- Old adminjump query links are still supported and now route safely without staying on Home.
