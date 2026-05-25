@@ -1144,3 +1144,11 @@ v174:
 - Restored normal university detail information display.
 - Added a small safe IEQAS-style badge next to the university name only.
 - Badge uses university logo and valid date in compact format.
+
+
+v175:
+- Removed the fake auto-generated IEQAS badge.
+- Added Upload IEQAS Badge Image (optional) in Add/Edit University.
+- Super admin can upload an official IEQAS badge image for each university.
+- The uploaded badge image is shown as-is beside the university name, only resized to a small badge.
+- Saved in universities.csv as IEQAS_Badge_Image.
