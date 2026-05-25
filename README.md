@@ -957,3 +957,10 @@ v139:
 - Nepal now displays in its correct flag shape using emoji flag rendering.
 - Increased flag size next to applicant name.
 - Enlarged university logo card on the right side above the status badge.
+
+
+v140:
+- Fixed Nepal flag display in the application detail header.
+- Nepal flag now renders as a real inline SVG flag instead of showing NP or an emoji.
+- Other country flags use full flag image display with object-fit: contain.
+- Upload this version to GitHub and redeploy Streamlit to update the website.
