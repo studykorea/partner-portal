@@ -7384,6 +7384,53 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v180 uploaded IEQAS badge appears immediately beside university name */
+.uni-detail-name-v99,
+.uni-name-accent-v93,
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-uploaded-badge-wrap-v180 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 108px !important;
+    height: 108px !important;
+    min-width: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+}
+.ieqas-uploaded-badge-img-v180 {
+    width: 108px !important;
+    height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10) !important;
+    display: block !important;
+}
+.ieqas-uploaded-badge-wrap-v179,
+.ieqas-uploaded-badge-wrap-v178,
+.ieqas-uploaded-badge-wrap-v177,
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v179,
+.ieqas-uploaded-badge-img-v178,
+.ieqas-uploaded-badge-img-v177,
+.ieqas-uploaded-badge-img-v175 {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7792,6 +7839,7 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
 
 
 
+
 def save_uploaded_ieqas_badge_data_v179(uploaded_file):
     """
     Save the uploaded IEQAS badge inside the CSV as a data URI.
@@ -7800,6 +7848,11 @@ def save_uploaded_ieqas_badge_data_v179(uploaded_file):
     if uploaded_file is None:
         return ""
     try:
+        try:
+            uploaded_file.seek(0)
+        except Exception:
+            pass
+
         img = Image.open(uploaded_file).convert("RGBA")
 
         # Make square canvas without cropping.
@@ -7808,23 +7861,30 @@ def save_uploaded_ieqas_badge_data_v179(uploaded_file):
         canvas = Image.new("RGBA", (side, side), (255, 255, 255, 0))
         canvas.paste(img, ((side - w) // 2, (side - h) // 2), img)
 
-        # Make outside circular area transparent. This keeps the badge itself.
+        # Transparent outside circular area. Keeps official badge content inside.
         mask = Image.new("L", (side, side), 0)
         draw = ImageDraw.Draw(mask)
         pad = max(2, int(side * 0.01))
         draw.ellipse((pad, pad, side - pad, side - pad), fill=255)
         canvas.putalpha(mask)
 
-        # Resize to keep CSV reasonable but clear enough for badge display.
+        # Keep CSV size reasonable.
         canvas.thumbnail((520, 520), Image.Resampling.LANCZOS)
 
         from io import BytesIO
         buffer = BytesIO()
         canvas.save(buffer, format="PNG", optimize=True)
         encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+        try:
+            uploaded_file.seek(0)
+        except Exception:
+            pass
+
         return f"data:image/png;base64,{encoded}"
     except Exception:
         return ""
+
 
 
 def save_uploaded_ieqas_badge_v175(uploaded_file, university_name="university"):
@@ -11798,20 +11858,28 @@ def resolve_ieqas_badge_path_v177(u):
 
 
 
+
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v179: Render uploaded IEQAS badge from CSV data first.
-    This guarantees it appears after super admin uploads and saves, even on Streamlit Cloud.
+    v180: Render uploaded IEQAS badge immediately after upload.
+    Priority:
+    1. session_state instant upload data
+    2. IEQAS_Badge_Image_Data column in universities.csv / DB
+    3. older file path fallback
     """
-    data_uri = display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+    uni_name = display_clean_v50(u.get("University", ""))
+    slug = safe_slug_v49(uni_name)
+    session_map = st.session_state.get("ieqas_badge_preview_data_v180", {})
+    data_uri = session_map.get(slug, "") or display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+
     status = display_clean_v50(u.get("Accreditation_Status", ""))
     until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
     title = f"{status} {until}".strip() or "IEQAS badge"
 
     if data_uri.startswith("data:image"):
         return (
-            f'<span class="ieqas-uploaded-badge-wrap-v179" title="{_safe_html_v62(title)}">'
-            f'<img class="ieqas-uploaded-badge-img-v179" src="{data_uri}" alt="IEQAS badge" />'
+            f'<span class="ieqas-uploaded-badge-wrap-v180" title="{_safe_html_v62(title)}">'
+            f'<img class="ieqas-uploaded-badge-img-v180" src="{data_uri}" alt="IEQAS badge" />'
             f'</span>'
         )
 
@@ -11852,8 +11920,8 @@ def university_excellent_accreditation_name_badge_v169(u):
         mime = "image/svg+xml"
 
     return (
-        f'<span class="ieqas-uploaded-badge-wrap-v179" title="{_safe_html_v62(title)}">'
-        f'<img class="ieqas-uploaded-badge-img-v179" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
+        f'<span class="ieqas-uploaded-badge-wrap-v180" title="{_safe_html_v62(title)}">'
+        f'<img class="ieqas-uploaded-badge-img-v180" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
         f'</span>'
     )
 
@@ -14262,6 +14330,37 @@ def admin_university_management_v49():
                 unsafe_allow_html=True,
             )
 
+            st.markdown("#### IEQAS Badge Image")
+            instant_ieqas_badge_v180 = st.file_uploader(
+                "Upload IEQAS Badge Image",
+                type=["png", "jpg", "jpeg", "webp"],
+                key=f"instant_ieqas_badge_upload_v180_{selected_key_v90}",
+                help="Upload the official IEQAS badge image. It will save immediately and appear beside the university name."
+            )
+            if instant_ieqas_badge_v180 is not None:
+                if "IEQAS_Badge_Image" not in df.columns:
+                    df["IEQAS_Badge_Image"] = ""
+                if "IEQAS_Badge_Image_Data" not in df.columns:
+                    df["IEQAS_Badge_Image_Data"] = ""
+                saved_ieqas_path_v180 = save_uploaded_ieqas_badge_v175(instant_ieqas_badge_v180, selected)
+                saved_ieqas_data_v180 = save_uploaded_ieqas_badge_data_v179(instant_ieqas_badge_v180)
+                if saved_ieqas_path_v180:
+                    df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_path_v180
+                if saved_ieqas_data_v180:
+                    df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v180
+                    st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[selected_key_v90] = saved_ieqas_data_v180
+                write_csv(uni_file, df)
+                reload_data_v49()
+                st.success("IEQAS badge image saved. It will now appear beside the university name.")
+                st.rerun()
+
+            current_ieqas_data_v180 = display_clean_v50(row.get("IEQAS_Badge_Image_Data", ""))
+            current_ieqas_path_v180 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
+            if current_ieqas_data_v180.startswith("data:image") or current_ieqas_path_v180:
+                st.caption("IEQAS badge is currently saved for this university.")
+            else:
+                st.caption("No IEQAS badge is saved yet. Upload the official badge image above.")
+
             st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key=f"download_student_stats_template_v106_{selected_key_v90}")
             st.caption("Optional student statistics file: use this template for enrollment numbers and top nationality data. The same template download is also shown next to the Excel upload field below.")
 
@@ -14433,6 +14532,7 @@ def admin_university_management_v49():
                             df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_v177
                         if saved_ieqas_data_v179:
                             df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v179
+                            st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[safe_slug_v49(university)] = saved_ieqas_data_v179
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
                     df.loc[idx, "Application_Status"] = calculated_application_status

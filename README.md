@@ -1184,3 +1184,11 @@ v179:
 - This avoids Streamlit Cloud/GitHub local-path issues.
 - The badge appears on summary, university detail, and program detail pages.
 - Please re-upload the IEQAS badge in Edit University and click Save Changes once after deploying v179.
+
+
+v180:
+- Added an instant IEQAS badge upload area in Edit University.
+- When super admin uploads the IEQAS image there, it saves immediately without needing the full university form Save button.
+- The uploaded badge is stored in IEQAS_Badge_Image_Data and session preview data.
+- The badge appears automatically beside the university name on the university list, detail, and program detail pages.
+- Fixed file stream seek behavior so image upload can be saved correctly.
