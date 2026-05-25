@@ -7256,6 +7256,47 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: block !important;
 }
 
+
+/* v177 force-show uploaded IEQAS badge beside university name */
+.uni-detail-name-v99,
+.uni-name-accent-v93 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-uploaded-badge-wrap-v177 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 112px !important;
+    height: 112px !important;
+    min-width: 112px !important;
+    max-width: 112px !important;
+    max-height: 112px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 4px !important;
+}
+.ieqas-uploaded-badge-img-v177 {
+    width: 112px !important;
+    height: 112px !important;
+    max-width: 112px !important;
+    max-height: 112px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.12) !important;
+    border-radius: 0 !important;
+    display: block !important;
+}
+/* keep older uploaded badge visible if old markup remains */
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v175 {
+    display: inline-flex !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11570,16 +11611,83 @@ def university_excellent_accreditation_badge_html_v168(u, compact=False):
 
 
 
+
+def resolve_ieqas_badge_path_v177(u):
+    """
+    Find uploaded IEQAS badge even if the CSV cell was not saved properly.
+    Priority:
+    1. IEQAS_Badge_Image column
+    2. Auto-detect by university slug in assets/ieqas_badges
+    3. Auto-detect by university slug in assets/universities
+    4. Any saved file containing 'ieqas' and the university slug
+    """
+    raw = display_clean_v50(u.get("IEQAS_Badge_Image", ""))
+    candidates = []
+    if raw:
+        candidates.append(raw)
+
+    uni = display_clean_v50(u.get("University", ""))
+    slug = safe_slug_v49(uni) if uni else ""
+
+    search_dirs = [
+        BASE / "assets" / "ieqas_badges",
+        BASE / "assets" / "universities",
+        BASE / "assets" / "university_logos",
+        BASE / "uploads" / "universities",
+        BASE / "uploads",
+    ]
+
+    if slug:
+        for d in search_dirs:
+            candidates.extend([
+                str(d / f"{slug}_ieqas_badge.png"),
+                str(d / f"{slug}_ieqas_badge.jpg"),
+                str(d / f"{slug}_ieqas_badge.jpeg"),
+                str(d / f"{slug}_ieqas_badge.webp"),
+            ])
+
+    # Broad scan fallback
+    if slug:
+        for d in search_dirs:
+            try:
+                if d.exists():
+                    for p in d.glob("*"):
+                        low = p.name.lower()
+                        if p.is_file() and "ieqas" in low and slug.lower() in low:
+                            candidates.append(str(p))
+            except Exception:
+                pass
+
+    # Return first readable path; handle both absolute and BASE-relative paths.
+    for c in candidates:
+        if not c:
+            continue
+        p = Path(c)
+        if p.exists() and p.is_file():
+            return str(p)
+        p2 = BASE / c
+        if p2.exists() and p2.is_file():
+            return str(p2)
+    return raw
+
+
+
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v175: Use the actual IEQAS badge image uploaded by super admin.
-    No auto-generated fake badge. It only resizes the uploaded image.
+    v177: Always show the super-admin uploaded IEQAS badge image if saved or detectable.
+    It does not depend on accreditation status, because the uploaded badge itself is the source.
     """
-    badge_path = display_clean_v50(u.get("IEQAS_Badge_Image", ""))
+    badge_path = resolve_ieqas_badge_path_v177(u)
     if not badge_path:
         return ""
 
     encoded = b64(badge_path)
+    if not encoded:
+        # Try BASE-relative fallback
+        try:
+            encoded = b64(str(BASE / badge_path))
+        except Exception:
+            encoded = ""
     if not encoded:
         return ""
 
@@ -11597,8 +11705,8 @@ def university_excellent_accreditation_name_badge_v169(u):
     title = f"{status} {until}".strip() or "IEQAS badge"
 
     return (
-        f'<span class="ieqas-uploaded-badge-wrap-v175" title="{_safe_html_v62(title)}">'
-        f'<img class="ieqas-uploaded-badge-img-v175" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
+        f'<span class="ieqas-uploaded-badge-wrap-v177" title="{_safe_html_v62(title)}">'
+        f'<img class="ieqas-uploaded-badge-img-v177" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
         f'</span>'
     )
 
@@ -14042,7 +14150,7 @@ def admin_university_management_v49():
                         accreditation_month = st.selectbox("Accreditation Until Month", acc_month_options_v168, index=acc_month_options_v168.index(acc_month_default_v168) if acc_month_default_v168 in acc_month_options_v168 else 0, key=f"edit_accreditation_month_v168_{selected_key_v90}")
                     current_ieqas_badge_v175 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
                     if current_ieqas_badge_v175:
-                        st.caption("Current IEQAS badge image is saved. Upload a new image only if you want to replace it.")
+                        st.caption(f"Current IEQAS badge image saved: {current_ieqas_badge_v175}. Upload a new image only if you want to replace it.")
                     else:
                         st.caption("No IEQAS badge image saved yet. Please upload the official IEQAS badge image if you want it to appear beside the university name.")
                     ieqas_badge_upload = st.file_uploader(
@@ -14164,8 +14272,12 @@ def admin_university_management_v49():
                     df.loc[idx, "International_Students"] = intl_students.strip()
                     df.loc[idx, "Accreditation_Status"] = accreditation_status
                     df.loc[idx, "Accreditation_Until"] = f"{accreditation_year}-{accreditation_month}" if accreditation_year and accreditation_month else ""
+                    if "IEQAS_Badge_Image" not in df.columns:
+                        df["IEQAS_Badge_Image"] = ""
                     if ieqas_badge_upload is not None:
-                        df.loc[idx, "IEQAS_Badge_Image"] = save_uploaded_ieqas_badge_v175(ieqas_badge_upload, university)
+                        saved_ieqas_v177 = save_uploaded_ieqas_badge_v175(ieqas_badge_upload, university)
+                        if saved_ieqas_v177:
+                            df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_v177
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
                     df.loc[idx, "Application_Status"] = calculated_application_status

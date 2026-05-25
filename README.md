@@ -1160,3 +1160,11 @@ v176:
 - IEQAS badge images now save to assets/ieqas_badges/.
 - Uploaded badge is converted to PNG and given a circular transparent outside area.
 - The uploaded badge image appears beside the university name after re-uploading and saving.
+
+
+v177:
+- Fixed uploaded IEQAS badge still not appearing on the university detail page.
+- Added a resolver that finds the badge from IEQAS_Badge_Image or automatically from assets/ieqas_badges by university slug.
+- Added protection so IEQAS_Badge_Image column is created before saving.
+- The uploaded badge now appears beside the university name and does not depend on accreditation status.
+- Edit University now shows the saved IEQAS badge path so super admin can confirm it saved.
