@@ -1176,3 +1176,11 @@ v178:
 - Added the uploaded IEQAS badge beside the university name on the Program Detail page too.
 - Made image reading stronger for absolute, relative, assets/ieqas_badges, and assets/universities paths.
 - The uploaded badge remains transparent-style and small.
+
+
+v179:
+- Fixed IEQAS badge not appearing by storing uploaded badge image directly in universities.csv as IEQAS_Badge_Image_Data.
+- The page now renders the badge from CSV data first, not from local file path.
+- This avoids Streamlit Cloud/GitHub local-path issues.
+- The badge appears on summary, university detail, and program detail pages.
+- Please re-upload the IEQAS badge in Edit University and click Save Changes once after deploying v179.

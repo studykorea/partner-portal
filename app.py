@@ -7339,6 +7339,51 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v179 IEQAS badge from CSV data URI */
+.uni-detail-name-v99,
+.uni-name-accent-v93,
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-uploaded-badge-wrap-v179 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 104px !important;
+    height: 104px !important;
+    min-width: 104px !important;
+    max-width: 104px !important;
+    max-height: 104px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+}
+.ieqas-uploaded-badge-img-v179 {
+    width: 104px !important;
+    height: 104px !important;
+    max-width: 104px !important;
+    max-height: 104px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10) !important;
+    display: block !important;
+}
+.ieqas-uploaded-badge-wrap-v178,
+.ieqas-uploaded-badge-wrap-v177,
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v178,
+.ieqas-uploaded-badge-img-v177,
+.ieqas-uploaded-badge-img-v175 {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7744,6 +7789,42 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
     cleaned = clean_logo_image_v98(uploaded_file, canvas_size=900, padding_ratio=0.08)
     cleaned.save(out_path, "PNG", optimize=True)
     return f"assets/university_logos/{slug}_logo.png"
+
+
+
+def save_uploaded_ieqas_badge_data_v179(uploaded_file):
+    """
+    Save the uploaded IEQAS badge inside the CSV as a data URI.
+    This avoids broken local file paths on Streamlit/GitHub redeploys.
+    """
+    if uploaded_file is None:
+        return ""
+    try:
+        img = Image.open(uploaded_file).convert("RGBA")
+
+        # Make square canvas without cropping.
+        w, h = img.size
+        side = max(w, h)
+        canvas = Image.new("RGBA", (side, side), (255, 255, 255, 0))
+        canvas.paste(img, ((side - w) // 2, (side - h) // 2), img)
+
+        # Make outside circular area transparent. This keeps the badge itself.
+        mask = Image.new("L", (side, side), 0)
+        draw = ImageDraw.Draw(mask)
+        pad = max(2, int(side * 0.01))
+        draw.ellipse((pad, pad, side - pad, side - pad), fill=255)
+        canvas.putalpha(mask)
+
+        # Resize to keep CSV reasonable but clear enough for badge display.
+        canvas.thumbnail((520, 520), Image.Resampling.LANCZOS)
+
+        from io import BytesIO
+        buffer = BytesIO()
+        canvas.save(buffer, format="PNG", optimize=True)
+        encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        return f"data:image/png;base64,{encoded}"
+    except Exception:
+        return ""
 
 
 def save_uploaded_ieqas_badge_v175(uploaded_file, university_name="university"):
@@ -11716,22 +11797,32 @@ def resolve_ieqas_badge_path_v177(u):
 
 
 
+
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v178: Show super-admin uploaded IEQAS badge image beside university name.
-    Works on both university detail page and program detail page.
+    v179: Render uploaded IEQAS badge from CSV data first.
+    This guarantees it appears after super admin uploads and saves, even on Streamlit Cloud.
     """
+    data_uri = display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+    status = display_clean_v50(u.get("Accreditation_Status", ""))
+    until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
+    title = f"{status} {until}".strip() or "IEQAS badge"
+
+    if data_uri.startswith("data:image"):
+        return (
+            f'<span class="ieqas-uploaded-badge-wrap-v179" title="{_safe_html_v62(title)}">'
+            f'<img class="ieqas-uploaded-badge-img-v179" src="{data_uri}" alt="IEQAS badge" />'
+            f'</span>'
+        )
+
+    # Fallback to file path for older saved records.
     badge_path = resolve_ieqas_badge_path_v177(u) if "resolve_ieqas_badge_path_v177" in globals() else display_clean_v50(u.get("IEQAS_Badge_Image", ""))
     if not badge_path:
         return ""
 
-    # Robust file read for absolute path, relative path, or BASE-relative path.
     path_candidates = []
     p = Path(str(badge_path))
-    path_candidates.append(p)
-    path_candidates.append(BASE / str(badge_path))
-    path_candidates.append(BASE / "assets" / "ieqas_badges" / p.name)
-    path_candidates.append(BASE / "assets" / "universities" / p.name)
+    path_candidates.extend([p, BASE / str(badge_path), BASE / "assets" / "ieqas_badges" / p.name, BASE / "assets" / "universities" / p.name])
 
     real_path = None
     for candidate in path_candidates:
@@ -11760,13 +11851,9 @@ def university_excellent_accreditation_name_badge_v169(u):
     elif ext.endswith(".svg"):
         mime = "image/svg+xml"
 
-    status = display_clean_v50(u.get("Accreditation_Status", ""))
-    until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
-    title = f"{status} {until}".strip() or "IEQAS badge"
-
     return (
-        f'<span class="ieqas-uploaded-badge-wrap-v178" title="{_safe_html_v62(title)}">'
-        f'<img class="ieqas-uploaded-badge-img-v178" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
+        f'<span class="ieqas-uploaded-badge-wrap-v179" title="{_safe_html_v62(title)}">'
+        f'<img class="ieqas-uploaded-badge-img-v179" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
         f'</span>'
     )
 
@@ -11888,7 +11975,7 @@ def universities_page(public=False):
         return
 
     for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Application_Close_Date", "UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date", "Graduate_Open_Date", "Graduate_Close_Date", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
-                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range", "Accreditation_Status", "Accreditation_Until", "IEQAS_Badge_Image"]:
+                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range", "Accreditation_Status", "Accreditation_Until", "IEQAS_Badge_Image", "IEQAS_Badge_Image_Data"]:
         if col not in df.columns:
             df[col] = ""
 
@@ -13966,7 +14053,7 @@ def admin_university_management_v49():
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","UG_New_Open_Date","UG_New_Close_Date","UG_Transfer_Open_Date","UG_Transfer_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date","KLP_Open_Date","KLP_Close_Date","EAP_Open_Date","EAP_Close_Date",
         "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
-        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size","Accreditation_Status","Accreditation_Until","IEQAS_Badge_Image"
+        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size","Accreditation_Status","Accreditation_Until","IEQAS_Badge_Image","IEQAS_Badge_Image_Data"
     ]
     df = ensure_columns_v49(df, required_cols)
 
@@ -14086,6 +14173,7 @@ def admin_university_management_v49():
                         image_path = gallery_path.split("|")[0]
                     logo_path = save_uploaded_university_logo_v88(logo, university)
                     ieqas_badge_path_v175 = save_uploaded_ieqas_badge_v175(ieqas_badge_upload, university)
+                    ieqas_badge_data_v179 = save_uploaded_ieqas_badge_data_v179(ieqas_badge_upload)
                     student_stats_v106 = parse_student_stats_excel_v106(student_stats_excel)
                     calculated_application_status = _auto_application_status_v65(application_open_date, application_close_date, application_status)
                     new_row = {
@@ -14096,6 +14184,7 @@ def admin_university_management_v49():
                         "Accreditation_Status": accreditation_status,
                         "Accreditation_Until": f"{accreditation_year}-{accreditation_month}" if accreditation_year and accreditation_month else "",
                         "IEQAS_Badge_Image": ieqas_badge_path_v175,
+                        "IEQAS_Badge_Image_Data": ieqas_badge_data_v179,
                         "Top_Majors": top_majors.strip(),
                         "Intake": intake.strip(),
                         "Application_Status": calculated_application_status,
@@ -14209,8 +14298,9 @@ def admin_university_management_v49():
                     with acc_y2:
                         accreditation_month = st.selectbox("Accreditation Until Month", acc_month_options_v168, index=acc_month_options_v168.index(acc_month_default_v168) if acc_month_default_v168 in acc_month_options_v168 else 0, key=f"edit_accreditation_month_v168_{selected_key_v90}")
                     current_ieqas_badge_v175 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
-                    if current_ieqas_badge_v175:
-                        st.caption(f"Current IEQAS badge image saved: {current_ieqas_badge_v175}. Upload a new image only if you want to replace it.")
+                    current_ieqas_badge_data_v179 = display_clean_v50(row.get("IEQAS_Badge_Image_Data", ""))
+                    if current_ieqas_badge_data_v179 or current_ieqas_badge_v175:
+                        st.caption("Current IEQAS badge image is saved. Upload a new image only if you want to replace it.")
                     else:
                         st.caption("No IEQAS badge image saved yet. Please upload the official IEQAS badge image if you want it to appear beside the university name.")
                     ieqas_badge_upload = st.file_uploader(
@@ -14334,10 +14424,15 @@ def admin_university_management_v49():
                     df.loc[idx, "Accreditation_Until"] = f"{accreditation_year}-{accreditation_month}" if accreditation_year and accreditation_month else ""
                     if "IEQAS_Badge_Image" not in df.columns:
                         df["IEQAS_Badge_Image"] = ""
+                    if "IEQAS_Badge_Image_Data" not in df.columns:
+                        df["IEQAS_Badge_Image_Data"] = ""
                     if ieqas_badge_upload is not None:
                         saved_ieqas_v177 = save_uploaded_ieqas_badge_v175(ieqas_badge_upload, university)
+                        saved_ieqas_data_v179 = save_uploaded_ieqas_badge_data_v179(ieqas_badge_upload)
                         if saved_ieqas_v177:
                             df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_v177
+                        if saved_ieqas_data_v179:
+                            df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v179
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
                     df.loc[idx, "Application_Status"] = calculated_application_status
