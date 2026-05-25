@@ -7531,6 +7531,40 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v184 force all app links to stay in the same browser tab */
+a[target="_blank"],
+a[target="_new"],
+a[target="blank"] {
+    target-name: current !important;
+}
+.ieqas-direct-badge-img-v182 {
+    background: transparent !important;
+    border-radius: 0 !important;
+    object-fit: contain !important;
+}
+
+
+/* v184 cleaned transparent IEQAS PNG badge */
+.ieqas-direct-badge-wrap-v182 {
+    width: 120px !important;
+    height: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.ieqas-direct-badge-img-v182 {
+    width: 120px !important;
+    height: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.08) !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7620,6 +7654,7 @@ def browser_login_nav_sync_v163():
     """, height=0)
 
 def header():
+    st.markdown("""<base target="_self"><!-- v184 base target self -->""", unsafe_allow_html=True)
     # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
     try:
         restore_login_from_query_v60()
@@ -11815,7 +11850,7 @@ def university_quick_links_html_v103(u):
         href = normalize_url_v103(value)
         if href:
             links.append(
-                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}" target="_blank" rel="noopener noreferrer">'
+                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}">'
                 f'<span class="uni-quick-icon-v103 {extra_cls}">{icon_html}</span>'
                 f'<span>{_safe_html_v62(label)}</span>'
                 f'<span class="uni-external-v103">↗</span>'
@@ -11902,7 +11937,7 @@ def google_map_embed_html_v99(u):
 <h3>University Location</h3>
 <p>{_safe_html_v62(address if address else query)}</p>
 </div>
-<a class="uni-map-link-v99" href="{open_url}" target="_blank">Open in Google Maps</a>
+<a class="uni-map-link-v99" href="{open_url}">Open in Google Maps</a>
 </div>
 <iframe class="uni-map-frame-v99" src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>

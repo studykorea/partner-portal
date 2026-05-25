@@ -1209,3 +1209,11 @@ v182:
 - To show the badge, add the real IEQAS badge image to that path in GitHub.
 - The code will automatically display it beside Kyungsung University name.
 - The screenshot provided in chat was included only as reference_screenshot_not_badge.png, not used as the badge.
+
+
+v184:
+- Replaced the Kyungsung University IEQAS badge with the user's uploaded badge image.
+- Removed the white background from the IEQAS badge PNG and saved it as a transparent PNG.
+- Active badge file: assets/ieqas_badges/kyungsung_university_ieqas_badge.png
+- Removed target=_blank / window.open patterns so website actions stay in the same browser tab/page.
+- Added base target _self as an extra safeguard.
