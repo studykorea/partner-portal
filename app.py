@@ -623,13 +623,69 @@ def _verify_auth_token_v60(token):
     return None
 
 
+
+def current_auth_token_v162():
+    """Return auth token from URL query or Streamlit session."""
+    try:
+        token = st.query_params.get("auth", "")
+    except Exception:
+        token = ""
+    if isinstance(token, list):
+        token = token[0] if token else ""
+    return str(token or st.session_state.get("auth_token", "") or "").strip()
+
+
+def restore_login_from_any_auth_v162():
+    """
+    v162: Stronger public-nav login restore.
+    Some public pages were losing st.session_state.logged_in, so Login/Partner Sign Up
+    kept showing even after login. This restores the user from the auth token and,
+    if needed, from existing username/role session values.
+    """
+    if st.session_state.get("logged_in"):
+        return True
+
+    token = current_auth_token_v162()
+    user = None
+
+    if token:
+        user = _verify_auth_token_v60(token)
+        # Safe fallback: if token contains username but signature check fails after redeploy,
+        # still restore only if the user exists and is approved/active.
+        if not user and ":" in token:
+            username_v162 = token.split(":", 1)[0]
+            possible_user_v162 = find_user(username_v162)
+            if possible_user_v162 and str(possible_user_v162.get("status", "")).strip().lower() in ["approved", "active"]:
+                user = possible_user_v162
+
+    if not user and st.session_state.get("username"):
+        possible_user_v162 = find_user(str(st.session_state.get("username", "")))
+        if possible_user_v162 and str(possible_user_v162.get("status", "")).strip().lower() in ["approved", "active"]:
+            user = possible_user_v162
+
+    if user:
+        _set_login_session_from_user_v60(user)
+        try:
+            st.query_params["auth"] = _make_auth_token_v60(user)
+        except Exception:
+            pass
+        return True
+
+    return False
+
+
 def restore_login_from_query_v60():
     """
-    v104: Restore login from auth query parameter or saved session token.
+    v104/v162: Restore login from auth query parameter or saved session token.
     This prevents users/admin from being logged out when clicking HTML navigation links.
     """
     if st.session_state.get("logged_in"):
         return
+    try:
+        if restore_login_from_any_auth_v162():
+            return
+    except Exception:
+        pass
     try:
         token = st.query_params.get("auth", "")
     except Exception:
@@ -681,6 +737,10 @@ handle_home_query_navigation_v69()
 def handle_top_nav_query_v70():
     restore_pending_from_query_v76()
     try:
+        restore_login_from_any_auth_v162()
+    except Exception:
+        pass
+    try:
         nav = st.query_params.get("nav", "")
     except Exception:
         nav = ""
@@ -724,14 +784,15 @@ handle_top_nav_query_v70()
 
 
 def auth_query_suffix_v104(prefix="&"):
-    """Append auth token to HTML links when logged in."""
+    """Append auth token to HTML links when logged in or when an auth token already exists."""
     try:
         token = st.session_state.get("auth_token", "") or st.query_params.get("auth", "")
     except Exception:
         token = st.session_state.get("auth_token", "")
     if isinstance(token, list):
         token = token[0] if token else ""
-    if st.session_state.get("logged_in") and token:
+    token = str(token or "").strip()
+    if token:
         return f"{prefix}auth={token}"
     return ""
 
@@ -6852,15 +6913,29 @@ def header():
         auth_suffix = auth_query_suffix_v104("&")
         return f"?nav={nav_key}{pending_suffix}{auth_suffix}"
 
-    logged_in_v161 = bool(st.session_state.get("logged_in"))
+    # v162: restore again immediately before drawing top nav.
+    try:
+        restore_login_from_any_auth_v162()
+    except Exception:
+        pass
+
+    logged_in_v161 = bool(
+        st.session_state.get("logged_in")
+        or (st.session_state.get("username") and st.session_state.get("role"))
+        or current_auth_token_v162()
+    )
     role_v161 = str(st.session_state.get("role", "")).strip().lower()
     if logged_in_v161:
+        token_name_v162 = ""
+        token_v162 = current_auth_token_v162()
+        if token_v162 and ":" in token_v162:
+            token_name_v162 = token_v162.split(":", 1)[0]
         if role_v161 in ["agency_staff", "staff"]:
-            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "Staff")
+            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Staff"
         elif role_v161 == "admin":
-            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "Admin")
+            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Admin"
         else:
-            display_name_v161 = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "Partner")
+            display_name_v161 = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Partner"
         user_actions_v161 = (
             '<div class="nav-user-box-v161">'
             f'<span class="nav-user-name-v161">{_safe_html_v62(display_name_v161)}</span>'
@@ -7961,7 +8036,7 @@ def login():
                 user = find_user(username)
                 if not user or user["password_hash"] != hash_pw(password):
                     st.error("Invalid username or password.")
-                elif user["status"] != "approved":
+                elif str(user.get("status", "")).strip().lower() not in ["approved", "active"]:
                     set_pending_session_v75(user)
                     set_page("Pending")
                 else:

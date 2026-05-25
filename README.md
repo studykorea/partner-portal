@@ -1081,3 +1081,11 @@ v161:
 - Partner/company users see their company/agency name in the top-right navigation.
 - A Logout button appears next to the name.
 - Added top-nav logout handling through nav=logout.
+
+
+v162:
+- Fixed public top navigation still showing Login and Partner Sign Up after login.
+- Header now restores login from auth token immediately before drawing navigation.
+- If logged in or auth token exists, the top-right area shows staff/full name or company/agency name with Logout.
+- Navigation links now preserve auth token even when Streamlit session_state is temporarily reset.
+- Added fallback restore from approved/active username in auth token after redeploy.
