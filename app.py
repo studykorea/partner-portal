@@ -1,6 +1,5 @@
 
 import streamlit as st
-from components.ieqas_badge import show_ieqas_badge, IEQAS_BADGE_CSS
 import streamlit.components.v1 as components
 import textwrap
 import pandas as pd
@@ -7088,25 +7087,97 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
 }
 
 
-/* v172 IEQAS component placement next to university name */
+/* v174 restored university detail + small IEQAS badge */
 .uni-detail-name-v99,
 .uni-name-accent-v93 {
     display: flex !important;
     align-items: center !important;
-    gap: 22px !important;
+    gap: 12px !important;
     flex-wrap: wrap !important;
 }
-.ieqas-component-wrap {
-    background: transparent !important;
+.ieqas-mini-seal-v174 {
+    width: 72px !important;
+    height: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    background: radial-gradient(circle, #ffffff 0 48%, #fff8dc 49% 62%, #d6b75a 63% 100%) !important;
+    border: 1.2px solid #b8932c !important;
+    box-shadow: 0 6px 16px rgba(16,24,40,.14) !important;
+    overflow: hidden !important;
+    vertical-align: middle !important;
 }
-.ieqas-component-svg {
-    background: transparent !important;
+.ieqas-mini-ring-text-v174 {
+    position: absolute !important;
+    top: 5px !important;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center !important;
+    color: #111827 !important;
+    font-size: 7px !important;
+    font-weight: 900 !important;
+    letter-spacing: .8px !important;
+}
+.ieqas-mini-inner-v174 {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.96) !important;
+    border: 1px solid rgba(214,183,90,.8) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    padding: 3px !important;
+}
+.ieqas-mini-label-v174 {
+    background: #082a63 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    font-size: 6px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    padding: 2px 4px !important;
+    border-radius: 2px !important;
+}
+.ieqas-mini-logo-v174 {
+    width: 28px !important;
+    height: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.ieqas-mini-logo-v174 img {
+    width: 28px !important;
+    height: 18px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+.ieqas-mini-initial-v174 {
+    color: #082a63 !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+}
+.ieqas-mini-date-v174 {
+    color: #111827 !important;
+    font-size: 5.5px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
 }
 .ieqas-badge-large-v168,
 .ieqas-badge-compact-v168,
 .ieqas-name-badge-v169,
-.ieqas-name-badge-v170 {
-    background: transparent !important;
+.ieqas-name-badge-v170,
+.ieqas-mini-badge-v173,
+.ieqas-component-wrap {
+    display: none !important;
 }
 
 </style>
@@ -7198,7 +7269,6 @@ def browser_login_nav_sync_v163():
     """, height=0)
 
 def header():
-    st.markdown(IEQAS_BADGE_CSS, unsafe_allow_html=True)
     # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
     try:
         restore_login_from_query_v60()
@@ -11385,22 +11455,43 @@ def university_excellent_accreditation_badge_html_v168(u, compact=False):
 
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v172: Render reusable IEQAS component for Excellent accredited universities.
-    Dynamic fields: university logo, university name, valid date, and accreditation status.
+    v174: Small safe IEQAS-style badge next to university name.
+    No large SVG component, no huge page layout, no raw HTML block.
     """
     status = display_clean_v50(u.get("Accreditation_Status", ""))
     if status.strip().lower() != "excellent accredited":
         return ""
 
-    university_name = display_clean_v50(u.get("University", ""))
+    name = display_clean_v50(u.get("University", ""))
+    until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
+    title = f"Excellent accredited until {until}" if until else "Excellent accredited"
+
     logo_path = display_clean_v50(u.get("University_Logo", ""))
-    valid_until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
-    return show_ieqas_badge(
-        university_name=university_name,
-        logo_path=logo_path,
-        valid_until=valid_until,
-        status="Excellent Accredited Institution",
-        size=190,
+    encoded_logo = b64(logo_path) if logo_path else ""
+    ext = str(logo_path).lower()
+    mime = "image/png"
+    if ext.endswith(".jpg") or ext.endswith(".jpeg"):
+        mime = "image/jpeg"
+    elif ext.endswith(".svg"):
+        mime = "image/svg+xml"
+    elif ext.endswith(".webp"):
+        mime = "image/webp"
+
+    # Very small logo inside the badge; fallback to initials if logo missing.
+    if encoded_logo:
+        logo_html = f'<img src="data:{mime};base64,{encoded_logo}" alt="{_safe_html_v62(name)} logo" />'
+    else:
+        logo_html = f'<span class="ieqas-mini-initial-v174">{_safe_html_v62((name or "U")[:1].upper())}</span>'
+
+    return (
+        f'<span class="ieqas-mini-seal-v174" title="{_safe_html_v62(title)}">'
+        f'<span class="ieqas-mini-ring-text-v174">IEQAS</span>'
+        f'<span class="ieqas-mini-inner-v174">'
+        f'<span class="ieqas-mini-label-v174">Excellent</span>'
+        f'<span class="ieqas-mini-logo-v174">{logo_html}</span>'
+        f'<span class="ieqas-mini-date-v174">{_safe_html_v62(until) if until else ""}</span>'
+        f'</span>'
+        f'</span>'
     )
 
 

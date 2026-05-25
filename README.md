@@ -1138,40 +1138,9 @@ v171:
 - Kept the transparent sample-style badge with university logo, university name, and accreditation date.
 
 
-v172:
-- Added reusable component file: components/ieqas_badge.py
-- Added function: show_ieqas_badge(university_name, logo_path, valid_until, status, size=190)
-- Badge is dynamic HTML/SVG/CSS, not a fixed image.
-- Dynamic fields: university logo, university name, IEQAS valid date, accreditation status.
-- Badge has transparent background, gold circular border, Ministry of Education text, Taegeuk-style marks, blue Excellent Accredited Institution label, IEQAS text, and Ministry of Education Republic of Korea text.
-- App now calls this component for universities where Accreditation_Status is Excellent accredited.
-
-Folder structure:
-partner-portal/
-├── app.py
-├── components/
-│   ├── __init__.py
-│   └── ieqas_badge.py
-├── universities.csv
-├── assets/
-│   └── university logos/images
-└── requirements.txt
-
-CSV columns used:
-- University
-- University_Logo
-- Accreditation_Status
-- Accreditation_Until
-
-Example call:
-from components.ieqas_badge import show_ieqas_badge, IEQAS_BADGE_CSS
-st.markdown(IEQAS_BADGE_CSS, unsafe_allow_html=True)
-st.markdown(
-    show_ieqas_badge(
-        university_name=row["University"],
-        logo_path=row["University_Logo"],
-        valid_until=row["Accreditation_Until"],
-        status="Excellent Accredited Institution",
-    ),
-    unsafe_allow_html=True,
-)
+v174:
+- Emergency restore for the university details layout.
+- Removed the huge IEQAS component that pushed all university details away.
+- Restored normal university detail information display.
+- Added a small safe IEQAS-style badge next to the university name only.
+- Badge uses university logo and valid date in compact format.
