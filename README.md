@@ -1004,3 +1004,11 @@ v151:
 - Approve button is styled with green background and bold white text.
 - Decline button is styled with red background and bold white text.
 - Pending approval layout is more professional and matches the marked area in the screenshot.
+
+
+v152:
+- Removed the empty white box above the pending approval buttons.
+- Replaced Streamlit buttons with styled action links processed by the pending approvals page.
+- Approve button is green with bold white text.
+- Decline button is red with bold white text.
+- Buttons stay on the right side of the request card in the marked area.

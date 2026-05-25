@@ -6583,6 +6583,76 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     }
 }
 
+
+/* v152 pending approval buttons: no empty box, colored action buttons */
+.pending-row-v152 {
+    display:grid !important;
+    grid-template-columns:minmax(0, 1fr) 260px !important;
+    gap:26px !important;
+    align-items:stretch !important;
+    margin:18px 0 20px 0 !important;
+}
+.pending-request-card-v152 {
+    min-height:230px !important;
+    height:100% !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+}
+.pending-action-panel-v152 {
+    min-height:230px !important;
+    height:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    gap:20px !important;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    padding:0 !important;
+    margin:0 !important;
+}
+.pending-action-btn-v152 {
+    width:100% !important;
+    min-height:58px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:15px !important;
+    text-decoration:none !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:17px !important;
+    font-weight:950 !important;
+    letter-spacing:.2px !important;
+    box-shadow:0 12px 26px rgba(16,24,40,.12) !important;
+}
+.pending-action-btn-v152.approve-v152 {
+    background:#16A34A !important;
+    border:1px solid #16A34A !important;
+}
+.pending-action-btn-v152.approve-v152:hover {
+    background:#15803D !important;
+    border-color:#15803D !important;
+}
+.pending-action-btn-v152.decline-v152 {
+    background:#DC2626 !important;
+    border:1px solid #DC2626 !important;
+}
+.pending-action-btn-v152.decline-v152:hover {
+    background:#B91C1C !important;
+    border-color:#B91C1C !important;
+}
+@media(max-width:900px){
+    .pending-row-v152 {
+        grid-template-columns:1fr !important;
+    }
+    .pending-action-panel-v152,
+    .pending-request-card-v152 {
+        min-height:auto !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11519,6 +11589,52 @@ def render_pending_approval_page_v150():
     role = str(st.session_state.get("role", ""))
     title_note = "Super admin can see and approve/decline all pending signup requests." if role == "admin" else "You can only see requests that selected your organization as their recommended official representative."
 
+    # v152: HTML styled approve/decline links are processed here.
+    try:
+        pending_action_v152 = st.query_params.get("pending_action_v152", "")
+        pending_user_v152 = st.query_params.get("pending_user_v152", "")
+        pending_email_v152 = st.query_params.get("pending_email_v152", "")
+    except Exception:
+        pending_action_v152 = pending_user_v152 = pending_email_v152 = ""
+    if isinstance(pending_action_v152, list):
+        pending_action_v152 = pending_action_v152[0] if pending_action_v152 else ""
+    if isinstance(pending_user_v152, list):
+        pending_user_v152 = pending_user_v152[0] if pending_user_v152 else ""
+    if isinstance(pending_email_v152, list):
+        pending_email_v152 = pending_email_v152[0] if pending_email_v152 else ""
+
+    pending_action_v152 = str(pending_action_v152 or "").strip().lower()
+    if pending_action_v152 in ["approve", "decline"] and str(pending_user_v152).strip():
+        target_req_v152 = next(
+            (
+                r for r in requests
+                if str(r.get("username", "")).strip() == str(pending_user_v152).strip()
+                and (not str(pending_email_v152).strip() or str(r.get("email", "")).strip() == str(pending_email_v152).strip())
+            ),
+            None
+        )
+        new_status_v152 = "approved" if pending_action_v152 == "approve" else "rejected"
+        if target_req_v152 and update_pending_request_status_v150(target_req_v152, new_status_v152):
+            st.session_state.pending_action_message_v152 = f"{display_clean_v50(target_req_v152.get('agency_name', '') or target_req_v152.get('full_name', '') or target_req_v152.get('username', 'Request'))} {new_status_v152}."
+        else:
+            st.session_state.pending_action_message_v152 = "This pending request could not be updated. Please check the approval authority."
+        try:
+            st.query_params.clear()
+        except Exception:
+            pass
+        st.session_state.page = "Admin Dashboard"
+        st.session_state.admin_network_view_v130 = "pending_approvals"
+        st.rerun()
+
+    msg_v152 = st.session_state.pop("pending_action_message_v152", "")
+    if msg_v152:
+        if "approved" in msg_v152.lower():
+            st.success(msg_v152)
+        elif "rejected" in msg_v152.lower():
+            st.warning(msg_v152)
+        else:
+            st.error(msg_v152)
+
     st.markdown(f"""
     <div class="network-page-head-v130 pending-page-head-v150">
         <h2>Pending Signup Approval Requests</h2>
@@ -11542,10 +11658,12 @@ def render_pending_approval_page_v150():
         recommended_by = display_clean_v50(req.get("official_representative", "") or req.get("partner_group", "") or req.get("sponsor_agency_id", "") or req.get("requested_approver_agency_id", ""))
         created_at = display_clean_v50(req.get("created_at", ""))
 
-        card_col_v151, action_col_v151 = st.columns([4.5, 1.35], gap="large")
-        with card_col_v151:
-            st.markdown(f"""
-            <div class="pending-request-card-v150 pending-request-card-v151">
+        action_approve_url = f"?pending_action_v152=approve&pending_user_v152={quote(username)}&pending_email_v152={quote(email)}"
+        action_decline_url = f"?pending_action_v152=decline&pending_user_v152={quote(username)}&pending_email_v152={quote(email)}"
+
+        st.markdown(f"""
+        <div class="pending-row-v152">
+            <div class="pending-request-card-v150 pending-request-card-v152">
                 <div>
                     <span class="pending-chip-v150">Pending</span>
                     <h3>{_safe_html_v62(company or applicant or "Pending Request")}</h3>
@@ -11554,23 +11672,12 @@ def render_pending_approval_page_v150():
                     <p><b>Recommended / Approval Agency:</b> {_safe_html_v62(recommended_by or "Portal Super Admin")} &nbsp; | &nbsp; <b>Registered:</b> {_safe_html_v62(created_at or "-")}</p>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
-
-        with action_col_v151:
-            st.markdown('<div class="pending-action-panel-v151">', unsafe_allow_html=True)
-            if st.button("Approve", key=f"pending_approve_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True, type="primary"):
-                if update_pending_request_status_v150(req, "approved"):
-                    st.success(f"{company or applicant or 'Request'} approved.")
-                else:
-                    st.error("This request could not be approved. Please check the approval authority.")
-                st.rerun()
-            if st.button("Decline", key=f"pending_decline_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True):
-                if update_pending_request_status_v150(req, "rejected"):
-                    st.warning(f"{company or applicant or 'Request'} declined.")
-                else:
-                    st.error("This request could not be declined. Please check the approval authority.")
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+            <div class="pending-action-panel-v152">
+                <a class="pending-action-btn-v152 approve-v152" href="{action_approve_url}" target="_self">Approve</a>
+                <a class="pending-action-btn-v152 decline-v152" href="{action_decline_url}" target="_self">Decline</a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 def render_admin_network_page_v130():
