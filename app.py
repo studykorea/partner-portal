@@ -6391,12 +6391,18 @@ div[data-testid="stFormSubmitButton"] button:hover {
     display:inline-block !important;
     vertical-align:middle !important;
     flex:0 0 auto !important;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+    padding:0 !important;
+    margin:0 !important;
 }
 .official-rep-icon-inline-v141 { width:26px !important; height:26px !important; max-width:26px !important; max-height:26px !important; }
 .official-rep-icon-badge-v141 { width:20px !important; height:20px !important; max-width:20px !important; max-height:20px !important; }
 .official-rep-icon-dashboard-v142 { width:24px !important; height:24px !important; max-width:24px !important; max-height:24px !important; }
 .stat-icon-v73 .official-rep-icon-dashboard-v142 { width:24px !important; height:24px !important; }
 .official-rep-name-wrap-v141 { display:inline-flex !important; align-items:center !important; gap:8px !important; }
+.official-rep-name-wrap-v141, .official-rep-badge-v141 { background:transparent !important; border:none !important; box-shadow:none !important; }
 
 </style>
 """, unsafe_allow_html=True)
