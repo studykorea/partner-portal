@@ -1,5 +1,6 @@
 
 import streamlit as st
+import streamlit.components.v1 as components
 import textwrap
 import pandas as pd
 import json, hashlib, base64, re, os, hmac, re, smtplib, ssl
@@ -758,6 +759,10 @@ def handle_top_nav_query_v70():
         "signup": "Partner Sign Up",
     }
     if nav == "logout":
+        try:
+            components.html("<script>localStorage.removeItem('pp_auth_token_v163');localStorage.removeItem('pp_user_display_v163');localStorage.removeItem('pp_user_role_v163');</script>", height=0)
+        except Exception:
+            pass
         for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token","apply_access_granted_v158","application_login_verified_v158"]:
             st.session_state.pop(k, None)
         try:
@@ -6895,6 +6900,79 @@ def set_page(p):
 
 
 
+
+def browser_login_nav_sync_v163():
+    """
+    v163: Browser-side login persistence for the public top navigation.
+    Streamlit session_state can reset on public pages; this keeps the top-right nav
+    showing the logged-in user using localStorage and also restores ?auth= in the URL.
+    """
+    try:
+        token = st.session_state.get("auth_token", "") or current_auth_token_v162()
+    except Exception:
+        token = st.session_state.get("auth_token", "") or ""
+    token = str(token or "").strip()
+
+    role = str(st.session_state.get("role", "") or "").strip().lower()
+    display_name = ""
+    if st.session_state.get("logged_in") or token:
+        if role in ["agency_staff", "staff"]:
+            display_name = st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Staff"
+        elif role == "admin":
+            display_name = st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Admin"
+        else:
+            display_name = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Partner"
+
+    # Escape for JS string safely.
+    import json as _json_v163
+    token_js = _json_v163.dumps(token)
+    display_js = _json_v163.dumps(str(display_name or ""))
+    role_js = _json_v163.dumps(role)
+
+    components.html(f"""
+    <script>
+    (function() {{
+      const incomingToken = {token_js};
+      const incomingDisplay = {display_js};
+      const incomingRole = {role_js};
+
+      if (incomingToken) {{
+        localStorage.setItem("pp_auth_token_v163", incomingToken);
+        localStorage.setItem("pp_user_display_v163", incomingDisplay || "Partner");
+        localStorage.setItem("pp_user_role_v163", incomingRole || "partner");
+      }}
+
+      const token = localStorage.getItem("pp_auth_token_v163") || "";
+      const display = localStorage.getItem("pp_user_display_v163") || (token.includes(":") ? token.split(":")[0] : "Partner");
+
+      function replaceNav() {{
+        if (!token) return;
+        const navRight = window.parent.document.querySelector(".nav-right-v70");
+        if (!navRight) return;
+        navRight.innerHTML = `
+          <div class="nav-user-box-v161">
+            <span class="nav-user-name-v161">${{display}}</span>
+            <a class="nav-logout-v161" href="?nav=logout" onclick="localStorage.removeItem('pp_auth_token_v163');localStorage.removeItem('pp_user_display_v163');localStorage.removeItem('pp_user_role_v163');">Logout</a>
+          </div>
+        `;
+      }}
+
+      replaceNav();
+      setTimeout(replaceNav, 200);
+      setTimeout(replaceNav, 800);
+
+      // If URL lost auth, put it back once so Streamlit can restore the session server-side too.
+      try {{
+        const url = new URL(window.parent.location.href);
+        if (token && !url.searchParams.get("auth")) {{
+          url.searchParams.set("auth", token);
+          window.parent.history.replaceState(null, "", url.toString());
+        }}
+      }} catch(e) {{}}
+    }})();
+    </script>
+    """, height=0)
+
 def header():
     # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
     try:
@@ -6964,6 +7042,11 @@ def header():
     </div>
     """
     st.markdown(nav_html, unsafe_allow_html=True)
+    # v163: client-side backup so logged-in users do not see Login/Partner Sign Up on public pages.
+    try:
+        browser_login_nav_sync_v163()
+    except Exception:
+        pass
 
 def footer():
 
@@ -8057,6 +8140,10 @@ def login():
 
 
 def dash_shell(items):
+    try:
+        browser_login_nav_sync_v163()
+    except Exception:
+        pass
     current_page_v96 = str(st.session_state.get("page", ""))
     role_v96 = str(st.session_state.get("role", ""))
 

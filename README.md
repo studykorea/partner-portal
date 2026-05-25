@@ -1089,3 +1089,11 @@ v162:
 - If logged in or auth token exists, the top-right area shows staff/full name or company/agency name with Logout.
 - Navigation links now preserve auth token even when Streamlit session_state is temporarily reset.
 - Added fallback restore from approved/active username in auth token after redeploy.
+
+
+v163:
+- Added browser localStorage login persistence for the public top navigation.
+- If Streamlit session_state resets on public pages, the header still replaces Login/Partner Sign Up with the logged-in user's name and Logout.
+- Public navigation also restores the auth token into the URL when it is missing.
+- Dashboard pages also save the active login token to browser storage.
+- Logout clears the browser login token.
