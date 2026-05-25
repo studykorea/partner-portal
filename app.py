@@ -7228,6 +7228,34 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v176 uploaded IEQAS badge fix: use saved transparent PNG image */
+.ieqas-uploaded-badge-wrap-v175 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 104px !important;
+    height: 104px !important;
+    min-width: 104px !important;
+    max-width: 104px !important;
+    max-height: 104px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+}
+.ieqas-uploaded-badge-img-v175 {
+    width: 104px !important;
+    height: 104px !important;
+    max-width: 104px !important;
+    max-height: 104px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10) !important;
+    border-radius: 0 !important;
+    display: block !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7593,7 +7621,7 @@ def ensure_columns_v49(df, columns):
 def save_uploaded_university_photo_v49(uploaded_file, university_name):
     if uploaded_file is None:
         return ""
-    from PIL import Image, ImageEnhance
+    from PIL import Image, ImageDraw, ImageEnhance
     slug = safe_slug_v49(university_name)
     out_dir = BASE / "assets" / "universities"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -7634,20 +7662,42 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
     cleaned.save(out_path, "PNG", optimize=True)
     return f"assets/university_logos/{slug}_logo.png"
 
+
 def save_uploaded_ieqas_badge_v175(uploaded_file, university_name="university"):
-    """Save optional IEQAS badge image uploaded by super admin."""
-    if not uploaded_file:
+    """
+    Save optional IEQAS badge image uploaded by super admin.
+
+    v176 fix:
+    - Do not use undefined UPLOAD_DIR.
+    - Save into assets/ieqas_badges so b64() can read it later.
+    - Convert to PNG.
+    - Apply a circular alpha mask so the outside background becomes transparent.
+    """
+    if uploaded_file is None:
         return ""
     try:
-        folder = UPLOAD_DIR / "universities"
-        folder.mkdir(parents=True, exist_ok=True)
-        safe_uni = re.sub(r"[^A-Za-z0-9_-]+", "_", str(university_name or "university")).strip("_")[:80]
-        original = re.sub(r"[^A-Za-z0-9_.-]+", "_", uploaded_file.name)
-        ext = Path(original).suffix.lower() or ".png"
-        filename = f"{safe_uni}_ieqas_badge{ext}"
-        path = folder / filename
-        path.write_bytes(uploaded_file.getbuffer())
-        return str(path)
+        slug = safe_slug_v49(university_name or "university")
+        out_dir = BASE / "assets" / "ieqas_badges"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"{slug}_ieqas_badge.png"
+
+        img = Image.open(uploaded_file).convert("RGBA")
+
+        # Make a square canvas using the longer side, centered, without cropping the badge.
+        w, h = img.size
+        side = max(w, h)
+        canvas = Image.new("RGBA", (side, side), (255, 255, 255, 0))
+        canvas.paste(img, ((side - w) // 2, (side - h) // 2), img)
+
+        # Transparent outside circular badge area; keep inner white badge content.
+        mask = Image.new("L", (side, side), 0)
+        draw = ImageDraw.Draw(mask)
+        pad = max(2, int(side * 0.015))
+        draw.ellipse((pad, pad, side - pad, side - pad), fill=255)
+        canvas.putalpha(mask)
+
+        canvas.save(out_path, "PNG", optimize=True)
+        return f"assets/ieqas_badges/{slug}_ieqas_badge.png"
     except Exception:
         return ""
 
@@ -13993,6 +14043,8 @@ def admin_university_management_v49():
                     current_ieqas_badge_v175 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
                     if current_ieqas_badge_v175:
                         st.caption("Current IEQAS badge image is saved. Upload a new image only if you want to replace it.")
+                    else:
+                        st.caption("No IEQAS badge image saved yet. Please upload the official IEQAS badge image if you want it to appear beside the university name.")
                     ieqas_badge_upload = st.file_uploader(
                         "Upload IEQAS Badge Image (optional)",
                         type=["png", "jpg", "jpeg", "webp"],

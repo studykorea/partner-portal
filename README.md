@@ -1152,3 +1152,11 @@ v175:
 - Super admin can upload an official IEQAS badge image for each university.
 - The uploaded badge image is shown as-is beside the university name, only resized to a small badge.
 - Saved in universities.csv as IEQAS_Badge_Image.
+
+
+v176:
+- Fixed IEQAS badge upload not saving.
+- v175 used an undefined UPLOAD_DIR, so the uploaded badge path was saved as blank.
+- IEQAS badge images now save to assets/ieqas_badges/.
+- Uploaded badge is converted to PNG and given a circular transparent outside area.
+- The uploaded badge image appears beside the university name after re-uploading and saving.
