@@ -1237,12 +1237,10 @@ v187:
 - Kept global target/window.open cleanup as backup.
 
 
-v188:
-- Strong fix for new-tab problem.
-- Removed browser JavaScript navigation helpers and hidden component scripts from navigation.
-- Disabled localStorage/auth-query navigation sync.
-- Disabled URL query navigation handlers for top nav and dashboard nav.
-- Replaced header with pure Streamlit button navigation only.
-- Removed auth query suffix generation.
-- Logout clears Streamlit session only.
-- No top-menu <a href> links, no target=_blank, no window.open.
+v189:
+- Restored the normal website design by starting from v187, not the broken v188 build.
+- Kept the Streamlit button-based navigation.
+- Disabled browser JavaScript/localStorage navigation sync that could repeatedly create new tabs.
+- Removed hidden browser JS logout script from the header.
+- Did not remove or damage the main CSS/design.
+- IEQAS badge fix from v185/v187 is preserved.
