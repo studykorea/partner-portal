@@ -1272,3 +1272,12 @@ v193:
 - Disabled browser/localStorage sync helper.
 - Kept the top navigation as Streamlit buttons.
 - Kept v190 same-tab program card buttons and v191 professional program detail layout.
+
+
+v194:
+- Fixed the remaining new-tab problem from the dashboard/partner portal navigation.
+- The dashboard navigation still used HTML <a href="?dashnav=..."> links.
+- Replaced dashboard navigation with real Streamlit buttons.
+- Removed dashnav URL links completely.
+- Clicking Dashboard, Universities, Eligibility Check, Tuition & Scholarship, Contact Us, and Logout now uses session_state only.
+- Preserved the normal website design/CSS.

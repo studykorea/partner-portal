@@ -793,16 +793,7 @@ def handle_top_nav_query_v70():
 
 
 def auth_query_suffix_v104(prefix="&"):
-    """Append auth token to HTML links when logged in or when an auth token already exists."""
-    try:
-        token = st.session_state.get("auth_token", "") or st.query_params.get("auth", "")
-    except Exception:
-        token = st.session_state.get("auth_token", "")
-    if isinstance(token, list):
-        token = token[0] if token else ""
-    token = str(token or "").strip()
-    if token:
-        return f"{prefix}auth={token}"
+    """v194: disabled auth URL suffix for internal navigation."""
     return ""
 
 
@@ -7771,6 +7762,29 @@ a[target="blank"] {
     }
 }
 
+
+/* v194 dashboard navigation is Streamlit buttons only: no href links, no new tabs */
+.dash-nav-button-shell-v194 {
+    width: 100% !important;
+    margin: 0 0 18px 0 !important;
+}
+.dash-nav-button-shell-v194 div[data-testid="stButton"] > button {
+    height: 58px !important;
+    border-radius: 12px !important;
+    border: 1px solid #D7DEE9 !important;
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    font-weight: 900 !important;
+    font-size: 15px !important;
+    box-shadow: 0 8px 18px rgba(16,24,40,.04) !important;
+}
+.dash-nav-button-shell-v194 div[data-testid="stButton"] > button:hover {
+    border-color: #3F5BD6 !important;
+    color: #3F5BD6 !important;
+    -webkit-text-fill-color: #3F5BD6 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9154,36 +9168,52 @@ def login():
 
 
 
+
 def dash_shell(items):
-    try:
-        browser_login_nav_sync_v163()
-    except Exception:
-        pass
+    """
+    v194: Dashboard/partner portal navigation uses Streamlit buttons only.
+    No <a href>, no ?dashnav= links, no browser URL navigation, so it cannot open new tabs.
+    """
     current_page_v96 = str(st.session_state.get("page", ""))
-    role_v96 = str(st.session_state.get("role", ""))
 
-    def _dash_icon_v96(item):
-        # v133: professional inline SVG icons instead of emoji-style icons.
-        svg_map = {
-            "Admin Dashboard": '<svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>',
-            "Dashboard": '<svg viewBox="0 0 24 24"><path d="M4 13h6V5H4v8Zm10 6h6V5h-6v14ZM4 19h6v-4H4v4Z"/></svg>',
-            "Partner Management": '<svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0"/><path d="M3 20a7 7 0 0 1 14 0"/><path d="M17 8a3 3 0 0 1 3 3"/><path d="M18.5 15.5A5.5 5.5 0 0 1 22 20"/></svg>',
-            "Universities": '<svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V9l7-4 7 4v12"/><path d="M9 21v-7h6v7"/><path d="M10 10h4"/></svg>',
-            "Eligibility Rules": '<svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
-            "Eligibility Check": '<svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
-            "Tuition Rules": '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7.5c-.9-1.1-2.4-1.8-4.1-1.8-2.3 0-4.1 1.1-4.1 2.8 0 4.3 8.4 1.8 8.4 6.2 0 1.8-1.8 3-4.3 3-1.9 0-3.6-.8-4.6-2.1"/></svg>',
-            "Tuition & Scholarship": '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7.5c-.9-1.1-2.4-1.8-4.1-1.8-2.3 0-4.1 1.1-4.1 2.8 0 4.3 8.4 1.8 8.4 6.2 0 1.8-1.8 3-4.3 3-1.9 0-3.6-.8-4.6-2.1"/></svg>',
-            "Scholarship Rules": '<svg viewBox="0 0 24 24"><path d="M4 8 12 4l8 4-8 4-8-4Z"/><path d="M6 10v5c1.8 1.8 10.2 1.8 12 0v-5"/><path d="M20 8v6"/></svg>',
-            "Contact Us": '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>',
-            "Applications": '<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>',
-            "Application Samples": '<svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>',
-            "Logout": '<svg viewBox="0 0 24 24"><path d="M10 17 15 12 10 7"/><path d="M15 12H3"/><path d="M14 5h5v14h-5"/></svg>',
+    def _dash_icon_text_v194(item):
+        icon_map = {
+            "Admin Dashboard": "▦",
+            "Dashboard": "▦",
+            "Partner Management": "👥",
+            "Universities": "🏛",
+            "Eligibility Rules": "🛡",
+            "Eligibility Check": "🛡",
+            "Tuition Rules": "$",
+            "Tuition & Scholarship": "$",
+            "Scholarship Rules": "▱",
+            "Contact Us": "✉",
+            "Applications": "▤",
+            "Application Samples": "▤",
+            "Logout": "↪",
         }
-        return svg_map.get(item, '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>')
+        return icon_map.get(item, "•")
 
-    def _dash_href_v96(item):
-        auth_suffix = auth_query_suffix_v104("&")
-        return "?dashnav=" + str(item).replace(" ", "%20").replace("&", "%26") + auth_suffix
+    def _dash_go_v194(item):
+        if item == "Logout":
+            for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token","apply_access_granted_v158","application_login_verified_v158"]:
+                st.session_state.pop(k, None)
+            try:
+                st.query_params.clear()
+            except Exception:
+                pass
+            st.session_state.page = "Home"
+            st.rerun()
+
+        st.session_state.page = item
+        try:
+            # Clear old URL navigation params if they are present from previous versions.
+            for q in ["dashnav", "nav", "go", "uni", "programdetail", "program", "auth"]:
+                if q in st.query_params:
+                    del st.query_params[q]
+        except Exception:
+            pass
+        st.rerun()
 
     st.markdown('<div class="dash">', unsafe_allow_html=True)
     st.markdown('<div class="side navy"><h2>Partner Portal</h2></div>', unsafe_allow_html=True)
@@ -9192,23 +9222,25 @@ def dash_shell(items):
     st.markdown('<div class="main">', unsafe_allow_html=True)
 
     nav_items_v96 = list(items) + ["Logout"]
-    nav_html_parts = ['<div class="dash-nav-v96">']
-    for item in nav_items_v96:
+    st.markdown('<div class="dash-nav-button-shell-v194">', unsafe_allow_html=True)
+    nav_cols_v194 = st.columns(len(nav_items_v96), gap="small")
+
+    for idx_v194, item in enumerate(nav_items_v96):
         is_active = (current_page_v96 == item)
         if item == "Admin Dashboard" and current_page_v96 in ["Admin Dashboard", ""]:
             is_active = True
         if item == "Dashboard" and current_page_v96 in ["Dashboard", ""]:
             is_active = True
-        active_class = " active" if is_active else ""
-        logout_class = " logout" if item == "Logout" else ""
-        icon = _dash_icon_v96(item)
-        href = _dash_href_v96(item)
-        nav_html_parts.append(
-            f'<a class="dash-nav-link-v96{active_class}{logout_class}" href="{href}"><span class="dash-nav-icon-v96">{icon}</span><span>{item}</span></a>'
-        )
-    nav_html_parts.append("</div>")
-    st.markdown("".join(nav_html_parts), unsafe_allow_html=True)
 
+        label_v194 = f"{_dash_icon_text_v194(item)}  {item}"
+        if is_active and item != "Logout":
+            label_v194 = f"{label_v194} ▸"
+
+        with nav_cols_v194[idx_v194]:
+            if st.button(label_v194, key=f"dash_nav_btn_v194_{idx_v194}_{item}", use_container_width=True):
+                _dash_go_v194(item)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
