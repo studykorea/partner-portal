@@ -6653,6 +6653,66 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     }
 }
 
+
+/* v154 pending approval logo/photo visual */
+.pending-request-card-v154 {
+    display:grid !important;
+    grid-template-columns:150px minmax(0,1fr) !important;
+    gap:24px !important;
+    align-items:center !important;
+}
+.pending-visual-box-v154 {
+    width:138px !important;
+    height:138px !important;
+    border-radius:22px !important;
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.06) !important;
+}
+.pending-visual-box-v154 img {
+    max-width:112px !important;
+    max-height:96px !important;
+    object-fit:contain !important;
+    display:block !important;
+}
+.pending-staff-img-v154 {
+    width:112px !important;
+    height:112px !important;
+    max-width:112px !important;
+    max-height:112px !important;
+    object-fit:contain !important;
+    border-radius:12px !important;
+    background:#FFFFFF !important;
+}
+.pending-logo-img-v154 {
+    width:112px !important;
+    height:96px !important;
+    object-fit:contain !important;
+}
+.pending-visual-box-v154 span {
+    margin-top:8px !important;
+    font-size:11px !important;
+    font-weight:800 !important;
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+}
+.pending-visual-fallback-v154 div {
+    font-size:34px !important;
+    font-weight:950 !important;
+    color:#3D5AD6 !important;
+    -webkit-text-fill-color:#3D5AD6 !important;
+}
+@media(max-width:900px){
+    .pending-request-card-v154 {
+        grid-template-columns:1fr !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11584,6 +11644,30 @@ def update_pending_request_status_v150(req, new_status):
     return changed
 
 
+
+def pending_request_visual_html_v154(req):
+    """Show company logo for partner agency requests and staff/passport-size photo for staff requests."""
+    role = str(req.get("role", "")).strip().lower()
+    account_type = str(req.get("account_type", "")).strip().lower()
+    name = display_clean_v50(req.get("agency_name", "") or req.get("company_name", "") or req.get("full_name", "") or req.get("username", ""))
+
+    if role in ["agency_partner", "partner"] or "partner agency" in account_type:
+        img_path = display_clean_v50(req.get("agency_logo", "") or req.get("company_logo", "") or req.get("logo_path", "") or req.get("logo", ""))
+        label = "Company Logo"
+        fallback = "".join([p[:1].upper() for p in name.split()[:2]]) or "AG"
+        img_class = "pending-logo-img-v154"
+    else:
+        img_path = display_clean_v50(req.get("passport_photo", "") or req.get("photo", "") or req.get("profile_photo", "") or req.get("staff_photo", "") or req.get("image_path", ""))
+        label = "Staff Photo"
+        fallback = "".join([p[:1].upper() for p in name.split()[:2]]) or "ST"
+        img_class = "pending-staff-img-v154"
+
+    encoded = b64(img_path) if img_path else ""
+    if encoded:
+        return f'<div class="pending-visual-box-v154"><img class="{img_class}" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(label)}"><span>{_safe_html_v62(label)}</span></div>'
+    return f'<div class="pending-visual-box-v154 pending-visual-fallback-v154"><div>{_safe_html_v62(fallback)}</div><span>{_safe_html_v62(label)}</span></div>'
+
+
 def render_pending_approval_page_v150():
     requests = pending_approval_requests_v150()
     role = str(st.session_state.get("role", ""))
@@ -11662,10 +11746,12 @@ def render_pending_approval_page_v150():
         action_approve_url = f"?pending_action_v152=approve&pending_user_v152={url_quote_v153(username)}&pending_email_v152={url_quote_v153(email)}"
         action_decline_url = f"?pending_action_v152=decline&pending_user_v152={url_quote_v153(username)}&pending_email_v152={url_quote_v153(email)}"
 
+        visual_html_v154 = pending_request_visual_html_v154(req)
         st.markdown(f"""
-        <div class="pending-row-v152">
-            <div class="pending-request-card-v150 pending-request-card-v152">
-                <div>
+        <div class="pending-row-v152 pending-row-v154">
+            <div class="pending-request-card-v150 pending-request-card-v152 pending-request-card-v154">
+                {visual_html_v154}
+                <div class="pending-info-v154">
                     <span class="pending-chip-v150">Pending</span>
                     <h3>{_safe_html_v62(company or applicant or "Pending Request")}</h3>
                     <p><b>Applicant:</b> {_safe_html_v62(applicant)} &nbsp; | &nbsp; <b>Username:</b> {_safe_html_v62(username)} &nbsp; | &nbsp; <b>Email:</b> {_safe_html_v62(email or "-")}</p>

@@ -1018,3 +1018,11 @@ v153:
 - Fixed the Pending Approvals page error caused by quote not being defined.
 - Added a safe local urllib.parse quote import inside the pending approval page function.
 - The Approve/Decline colored action buttons should now load correctly without crashing.
+
+
+v154:
+- Added a visual space inside each Pending Approval request card.
+- Partner agency requests show the uploaded company logo when available.
+- Staff signup requests show the uploaded staff/passport-size photo when available.
+- If no image is uploaded, a clean initials placeholder appears.
+- Improved pending approval card layout to look more professional.
