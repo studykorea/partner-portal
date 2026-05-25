@@ -6494,6 +6494,43 @@ div[data-testid="stFormSubmitButton"] button:hover {
     font-weight:850 !important;
 }
 
+
+/* v150 dedicated pending approval page */
+.pending-request-card-v150 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    padding:22px 24px !important;
+    margin:18px 0 10px 0 !important;
+    box-shadow:0 10px 28px rgba(16,24,40,.06) !important;
+}
+.pending-request-card-v150 h3 {
+    margin:10px 0 10px 0 !important;
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-size:24px !important;
+    font-weight:950 !important;
+}
+.pending-request-card-v150 p {
+    color:#475467 !important;
+    -webkit-text-fill-color:#475467 !important;
+    font-size:15px !important;
+    line-height:1.7 !important;
+    margin:4px 0 !important;
+}
+.pending-chip-v150 {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:7px 14px !important;
+    border-radius:999px !important;
+    background:#FFF4D8 !important;
+    color:#9A5B00 !important;
+    -webkit-text-fill-color:#9A5B00 !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11333,6 +11370,155 @@ def render_application_list_for_admin_network_v130(df, key_prefix):
         if st.button("Open Application Details", key=f"{key_prefix}_open_app_{idx}_{safe_slug_v49(app_id)}", use_container_width=True):
             admin_open_application_detail_v130(app_id)
 
+
+def pending_approval_requests_v150():
+    """
+    Dedicated pending signup/register approval list.
+    - Super admin (role=admin) can see all pending partner/staff/agency representative requests.
+    - Official representative can see only requests that selected their agency as recommended by / official representative.
+    """
+    users = read_json(USERS)
+    rows = []
+    current_role = str(st.session_state.get("role", "")).strip()
+    current_key = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
+
+    for u in users:
+        role = str(u.get("role", "")).strip()
+        status = str(u.get("status", "")).strip().lower()
+        if status != "pending":
+            continue
+        if role not in ["agency_rep", "agency_staff", "agency_partner", "partner"]:
+            continue
+
+        if current_role == "admin":
+            rows.append(u)
+        elif role in ["agency_staff", "agency_partner", "partner"] and user_approval_group_matches_v77(u, current_key):
+            rows.append(u)
+
+    seen = set()
+    deduped = []
+    for u in rows:
+        key = (str(u.get("username", "")).strip().lower(), str(u.get("email", "")).strip().lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(u)
+    return deduped
+
+
+def update_pending_request_status_v150(req, new_status):
+    """Approve/decline pending signup request from dedicated pending approvals page."""
+    current_role = str(st.session_state.get("role", "")).strip()
+    current_key = normalize_agency_id(current_agency_id() or st.session_state.get("agency_name", ""))
+    req_username = str(req.get("username", "")).strip()
+    req_email = str(req.get("email", "")).strip()
+
+    all_users = read_json(USERS)
+    changed = False
+    affected_agency_ids = set()
+
+    for u in all_users:
+        same_user = (
+            str(u.get("username", "")).strip() == req_username
+            and (not req_email or str(u.get("email", "")).strip() == req_email)
+        )
+        if not same_user:
+            continue
+
+        allowed = False
+        if current_role == "admin":
+            allowed = True
+        elif str(u.get("role", "")) in ["agency_staff", "agency_partner", "partner"] and user_approval_group_matches_v77(u, current_key):
+            allowed = True
+
+        if allowed:
+            u["status"] = new_status
+            u["approved_by"] = st.session_state.get("username", "")
+            u["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            u["approved_by_agency"] = st.session_state.get("agency_name", "Portal Admin" if current_role == "admin" else "")
+            changed = True
+            if str(u.get("role", "")) in ["agency_partner", "partner"]:
+                affected_agency_ids.add(normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))))
+
+    write_json(USERS, all_users)
+
+    if affected_agency_ids:
+        agencies = read_agencies()
+        for a in agencies:
+            aid = normalize_agency_id(a.get("agency_id", a.get("agency_name", "")))
+            if aid in affected_agency_ids:
+                a["status"] = new_status
+                a["approved_by"] = st.session_state.get("username", "")
+                a["approved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                a["approved_by_agency"] = st.session_state.get("agency_name", "Portal Admin" if current_role == "admin" else "")
+                if not a.get("agency_logo"):
+                    for u in all_users:
+                        if normalize_agency_id(u.get("agency_id", u.get("agency_name", ""))) == aid and u.get("agency_logo"):
+                            a["agency_logo"] = u.get("agency_logo")
+                            break
+        write_agencies(agencies)
+
+    st.cache_data.clear()
+    return changed
+
+
+def render_pending_approval_page_v150():
+    requests = pending_approval_requests_v150()
+    role = str(st.session_state.get("role", ""))
+    title_note = "Super admin can see and approve/decline all pending signup requests." if role == "admin" else "You can only see requests that selected your organization as their recommended official representative."
+
+    st.markdown(f"""
+    <div class="network-page-head-v130 pending-page-head-v150">
+        <h2>Pending Signup Approval Requests</h2>
+        <p>{_safe_html_v62(title_note)}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if not requests:
+        st.info("No pending approval requests found.")
+        return
+
+    for idx, req in enumerate(requests):
+        company = display_clean_v50(req.get("agency_name", "") or req.get("company_name", "") or req.get("partner_group", "") or req.get("full_name", ""))
+        applicant = display_clean_v50(req.get("full_name", "") or req.get("name", "") or req.get("username", ""))
+        username = display_clean_v50(req.get("username", ""))
+        email = display_clean_v50(req.get("email", ""))
+        phone = display_clean_v50(req.get("phone", "") or req.get("contact_number", ""))
+        position = display_clean_v50(req.get("position", ""))
+        account_type = display_clean_v50(req.get("account_type", req.get("role", "")))
+        country = display_clean_v50(req.get("country", ""))
+        recommended_by = display_clean_v50(req.get("official_representative", "") or req.get("partner_group", "") or req.get("sponsor_agency_id", "") or req.get("requested_approver_agency_id", ""))
+        created_at = display_clean_v50(req.get("created_at", ""))
+
+        st.markdown(f"""
+        <div class="pending-request-card-v150">
+            <div>
+                <span class="pending-chip-v150">Pending</span>
+                <h3>{_safe_html_v62(company or applicant or "Pending Request")}</h3>
+                <p><b>Applicant:</b> {_safe_html_v62(applicant)} &nbsp; | &nbsp; <b>Username:</b> {_safe_html_v62(username)} &nbsp; | &nbsp; <b>Email:</b> {_safe_html_v62(email or "-")}</p>
+                <p><b>Type:</b> {_safe_html_v62(account_type or "-")} &nbsp; | &nbsp; <b>Position:</b> {_safe_html_v62(position or "-")} &nbsp; | &nbsp; <b>Phone:</b> {_safe_html_v62(phone or "-")} &nbsp; | &nbsp; <b>Country:</b> {_safe_html_v62(country or "-")}</p>
+                <p><b>Recommended / Approval Agency:</b> {_safe_html_v62(recommended_by or "Portal Super Admin")} &nbsp; | &nbsp; <b>Registered:</b> {_safe_html_v62(created_at or "-")}</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c1, c2, c3 = st.columns([1, 1, 4])
+        with c1:
+            if st.button("Approve", key=f"pending_approve_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True):
+                if update_pending_request_status_v150(req, "approved"):
+                    st.success(f"{company or applicant or 'Request'} approved.")
+                else:
+                    st.error("This request could not be approved. Please check the approval authority.")
+                st.rerun()
+        with c2:
+            if st.button("Decline", key=f"pending_decline_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True):
+                if update_pending_request_status_v150(req, "rejected"):
+                    st.warning(f"{company or applicant or 'Request'} declined.")
+                else:
+                    st.error("This request could not be declined. Please check the approval authority.")
+                st.rerun()
+
+
 def render_admin_network_page_v130():
     view = st.session_state.get("admin_network_view_v130", "")
     selected_id = st.session_state.get("admin_network_selected_id_v130", "")
@@ -11343,6 +11529,10 @@ def render_admin_network_page_v130():
         st.session_state.admin_network_selected_id_v130 = ""
         st.session_state.admin_network_selected_type_v130 = ""
         st.rerun()
+
+    if view == "pending_approvals":
+        render_pending_approval_page_v150()
+        return
 
     if view == "official_list":
         reps = official_representatives_v130()
@@ -11517,8 +11707,8 @@ def handle_admin_dashboard_jump_v148():
     elif jump == "eligibility":
         st.session_state.admin_network_view_v130 = "eligibility_checks"
     elif jump == "pending":
-        st.session_state.page = "Partner Management"
-        st.session_state.admin_network_view_v130 = ""
+        st.session_state.page = "Admin Dashboard"
+        st.session_state.admin_network_view_v130 = "pending_approvals"
     elif jump == "universities":
         st.session_state.page = "Universities"
         st.session_state.admin_network_view_v130 = ""
@@ -11632,8 +11822,10 @@ def admin():
             st.rerun()
     with ac3_v149:
         if st.button("Open Pending Approvals", key="dash_open_pending_v149", use_container_width=True):
-            st.session_state.page = "Partner Management"
-            st.session_state.admin_network_view_v130 = ""
+            st.session_state.page = "Admin Dashboard"
+            st.session_state.admin_network_view_v130 = "pending_approvals"
+            st.session_state.admin_network_selected_id_v130 = ""
+            st.session_state.admin_network_selected_type_v130 = ""
             st.rerun()
     with ac4_v149:
         if st.button("Open Universities", key="dash_open_universities_v149", use_container_width=True):

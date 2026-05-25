@@ -988,3 +988,12 @@ v149:
 - Removed HTML href navigation from admin dashboard cards because it caused full page reloads in Streamlit.
 - Added reliable Streamlit action buttons under the dashboard cards for Official Representatives, Partner Agencies, Pending Approvals, Universities, and Eligibility Usage.
 - Old adminjump query links are still supported and now route safely without staying on Home.
+
+
+v150:
+- Fixed Pending Approvals dashboard action.
+- Pending Approvals no longer opens the general Partner Management table.
+- Added a dedicated Pending Signup Approval Requests page.
+- Super admin can see all pending signup/register requests and approve or decline them.
+- Official representatives can only see and approve/decline requests that selected their organization as the recommended/approval agency.
+- Approving partner agency requests also updates the agency status in agencies.json.
