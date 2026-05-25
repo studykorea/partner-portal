@@ -6232,6 +6232,85 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v139 full country flag and larger university logo */
+.applicant-name-with-flag-v138 {
+    gap:18px !important;
+}
+.applicant-flag-v138 {
+    display:none !important;
+}
+.applicant-flag-v139 {
+    width:76px !important;
+    height:56px !important;
+    border-radius:14px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    box-shadow:0 8px 18px rgba(16,24,40,.10) !important;
+    vertical-align:middle !important;
+    overflow:visible !important;
+    flex:0 0 auto !important;
+}
+.applicant-flag-emoji-v139 {
+    font-size:48px !important;
+    line-height:1 !important;
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif !important;
+    -webkit-text-fill-color:initial !important;
+}
+.applicant-flag-fallback-v139 {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:18px !important;
+    font-weight:950 !important;
+}
+.admin-app-detail-right-v138 {
+    width:280px !important;
+    min-height:250px !important;
+    padding:26px 24px !important;
+    gap:20px !important;
+}
+.detail-university-logo-v138 {
+    width:180px !important;
+    height:180px !important;
+    border-radius:30px !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    box-shadow:0 12px 30px rgba(16,24,40,.09) !important;
+}
+.detail-university-logo-v138 img {
+    max-width:152px !important;
+    max-height:152px !important;
+    object-fit:contain !important;
+    display:block !important;
+}
+.detail-university-logo-v138.logo-fallback-v138 {
+    font-size:38px !important;
+}
+.admin-app-detail-hero-v138 {
+    grid-template-columns:300px minmax(0,1fr) 320px !important;
+}
+@media(max-width:1100px){
+    .admin-app-detail-hero-v138 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-detail-right-v138 {
+        width:100% !important;
+        min-height:auto !important;
+        align-items:center !important;
+    }
+    .detail-university-logo-v138 {
+        width:150px !important;
+        height:150px !important;
+    }
+    .detail-university-logo-v138 img {
+        max-width:128px !important;
+        max-height:128px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13414,48 +13493,47 @@ def update_application_status_from_admin_v125(app_id, updates):
 
 
 def country_flag_html_v138(country_name, size=44):
-    """Return a professional flag image next to applicant name based on nationality/country."""
+    """Return a professional full country flag next to applicant name based on nationality/country."""
     country = str(country_name or "").strip().lower()
     country = country.replace("republic of korea", "south korea").replace("korea, republic of", "south korea")
-    iso_map = {
-        "nepal": "np", "nepali": "np",
-        "bangladesh": "bd", "bangladeshi": "bd",
-        "india": "in", "indian": "in",
-        "pakistan": "pk", "pakistani": "pk",
-        "vietnam": "vn", "viet nam": "vn", "vietnamese": "vn",
-        "indonesia": "id", "indonesian": "id",
-        "sri lanka": "lk", "sri lankan": "lk",
-        "myanmar": "mm", "burma": "mm", "myanmarese": "mm",
-        "china": "cn", "chinese": "cn",
-        "mongolia": "mn", "mongolian": "mn",
-        "uzbekistan": "uz", "uzbek": "uz",
-        "kazakhstan": "kz", "kazakh": "kz",
-        "kyrgyzstan": "kg", "kyrgyz": "kg",
-        "thailand": "th", "thai": "th",
-        "philippines": "ph", "filipino": "ph",
-        "cambodia": "kh", "cambodian": "kh",
-        "laos": "la", "lao": "la",
-        "malaysia": "my", "malaysian": "my",
-        "japan": "jp", "japanese": "jp",
-        "south korea": "kr", "korea": "kr", "korean": "kr",
-        "united states": "us", "usa": "us", "america": "us", "american": "us",
-        "canada": "ca", "canadian": "ca",
-        "australia": "au", "australian": "au",
-        "united kingdom": "gb", "uk": "gb", "british": "gb",
-        "france": "fr", "french": "fr",
-        "germany": "de", "german": "de",
+
+    # Emoji flag keeps Nepal's original non-rectangular flag shape instead of forcing it into a rectangle.
+    emoji_map = {
+        "nepal": "🇳🇵", "nepali": "🇳🇵",
+        "bangladesh": "🇧🇩", "bangladeshi": "🇧🇩",
+        "india": "🇮🇳", "indian": "🇮🇳",
+        "pakistan": "🇵🇰", "pakistani": "🇵🇰",
+        "vietnam": "🇻🇳", "viet nam": "🇻🇳", "vietnamese": "🇻🇳",
+        "indonesia": "🇮🇩", "indonesian": "🇮🇩",
+        "sri lanka": "🇱🇰", "sri lankan": "🇱🇰",
+        "myanmar": "🇲🇲", "burma": "🇲🇲", "myanmarese": "🇲🇲",
+        "china": "🇨🇳", "chinese": "🇨🇳",
+        "mongolia": "🇲🇳", "mongolian": "🇲🇳",
+        "uzbekistan": "🇺🇿", "uzbek": "🇺🇿",
+        "kazakhstan": "🇰🇿", "kazakh": "🇰🇿",
+        "kyrgyzstan": "🇰🇬", "kyrgyz": "🇰🇬",
+        "thailand": "🇹🇭", "thai": "🇹🇭",
+        "philippines": "🇵🇭", "filipino": "🇵🇭",
+        "cambodia": "🇰🇭", "cambodian": "🇰🇭",
+        "laos": "🇱🇦", "lao": "🇱🇦",
+        "malaysia": "🇲🇾", "malaysian": "🇲🇾",
+        "japan": "🇯🇵", "japanese": "🇯🇵",
+        "south korea": "🇰🇷", "korea": "🇰🇷", "korean": "🇰🇷",
+        "united states": "🇺🇸", "usa": "🇺🇸", "america": "🇺🇸", "american": "🇺🇸",
+        "canada": "🇨🇦", "canadian": "🇨🇦",
+        "australia": "🇦🇺", "australian": "🇦🇺",
+        "united kingdom": "🇬🇧", "uk": "🇬🇧", "british": "🇬🇧",
+        "france": "🇫🇷", "french": "🇫🇷",
+        "germany": "🇩🇪", "german": "🇩🇪",
     }
-    code = iso_map.get(country, "")
-    label = _safe_html_v62(country_name or "Nationality")
-    if code:
-        # FlagCDN is lightweight and displays full rectangular country flag images.
+    if country in emoji_map:
         return (
-            f'<span class="applicant-flag-v138" title="{label}">'
-            f'<img src="https://flagcdn.com/w80/{code}.png" alt="{label} flag">'
-            f'</span>'
+            f'<span class="applicant-flag-v139 applicant-flag-emoji-v139" '
+            f'title="{_safe_html_v62(country_name or "Nationality")}">{emoji_map[country]}</span>'
         )
+
     initials = "".join([p[:1].upper() for p in str(country_name or "NA").split()[:2]]) or "NA"
-    return f'<span class="applicant-flag-v138 applicant-flag-fallback-v138" title="{label}">{_safe_html_v62(initials)}</span>'
+    return f'<span class="applicant-flag-v139 applicant-flag-fallback-v139" title="{_safe_html_v62(country_name or "Nationality")}">{_safe_html_v62(initials)}</span>'
 
 def university_logo_compact_html_v138(uni_name):
     """Small clean university logo card for application detail header."""

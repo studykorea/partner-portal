@@ -950,3 +950,10 @@ v138:
 - Added university logo on the right side above the application/interview status badge.
 - Improved the application detail header layout to look more professional and balanced.
 - Country flags are automatically selected from the applicant nationality field using a country-to-ISO mapping.
+
+
+v139:
+- Fixed applicant country flag display to show the full flag instead of cropped rectangle.
+- Nepal now displays in its correct flag shape using emoji flag rendering.
+- Increased flag size next to applicant name.
+- Enlarged university logo card on the right side above the status badge.
