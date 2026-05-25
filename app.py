@@ -40,6 +40,11 @@ JSON_TABLE_MAP = {
     "agencies.json": "agencies",
 }
 
+
+def force_single_tab_navigation_v186():
+    """Force app navigation links to stay in the same browser tab."""
+    st.markdown('<base target="_self">\n<script>\n(function() {\n  function forceSameTab() {\n    document.querySelectorAll(\'a\').forEach(function(a) {\n      a.setAttribute(\'target\', \'_self\');\n      a.removeAttribute(\'rel\');\n    });\n  }\n  window.open = function(url) {\n    if (url) { window.location.href = url; }\n    return window;\n  };\n  document.addEventListener(\'click\', function(e) {\n    var el = e.target;\n    while (el && el.tagName !== \'A\') { el = el.parentElement; }\n    if (!el) { return; }\n    var href = el.getAttribute(\'href\');\n    if (!href || href === \'#\' || href.startsWith(\'javascript:\') || href.startsWith(\'mailto:\') || href.startsWith(\'tel:\')) {\n      return;\n    }\n    el.setAttribute(\'target\', \'_self\');\n  }, true);\n  forceSameTab();\n  setInterval(forceSameTab, 700);\n})();\n</script>', unsafe_allow_html=True)
+
 def hash_pw(p): return hashlib.sha256(p.encode()).hexdigest()
 
 def get_database_url():
@@ -7570,6 +7575,14 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     flex-wrap: wrap !important;
 }
 
+
+/* v186 same-tab navigation safety */
+a[target="_blank"],
+a[target="_new"],
+a[target="blank"] {
+    target-name: current !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7659,6 +7672,7 @@ def browser_login_nav_sync_v163():
     """, height=0)
 
 def header():
+    force_single_tab_navigation_v186()
     st.markdown("""<base target="_self"><!-- v185 base target self -->""", unsafe_allow_html=True)
     # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
     try:
@@ -11855,7 +11869,7 @@ def university_quick_links_html_v103(u):
         href = normalize_url_v103(value)
         if href:
             links.append(
-                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}" rel="noopener noreferrer">'
+                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}">'
                 f'<span class="uni-quick-icon-v103 {extra_cls}">{icon_html}</span>'
                 f'<span>{_safe_html_v62(label)}</span>'
                 f'<span class="uni-external-v103">↗</span>'

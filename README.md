@@ -1219,3 +1219,11 @@ v185:
 - Badge display is fixed at 92px beside the university name.
 - Kept same-tab link behavior.
 - Source image used for cleaned badge: /mnt/data/ghostwriter_images/context/de36c970-e93c-5afc-b002-cc9563ac8e4f.png
+
+
+v186:
+- Fixed repeated new browser tabs opening when clicking Dashboard, Universities, Eligibility Check, Tuition & Scholarship, Contact Us, Logout, and other navigation links.
+- Removed target=_blank / target=_new / target=blank from HTML links.
+- Removed noopener/noreferrer link behavior.
+- Replaced window.open() with same-tab window.location.href.
+- Added a global same-tab navigation safeguard using <base target="_self">.
