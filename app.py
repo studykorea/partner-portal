@@ -1,3 +1,4 @@
+import base64
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -7297,6 +7298,47 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: inline-flex !important;
 }
 
+
+/* v178 show uploaded IEQAS badge beside university name on program detail page too */
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-uploaded-badge-wrap-v178 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 96px !important;
+    height: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+    max-height: 96px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+}
+.ieqas-uploaded-badge-img-v178 {
+    width: 96px !important;
+    height: 96px !important;
+    max-width: 96px !important;
+    max-height: 96px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.12) !important;
+    border-radius: 0 !important;
+    display: block !important;
+}
+.ieqas-uploaded-badge-wrap-v177,
+.ieqas-uploaded-badge-img-v177,
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v175 {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11060,13 +11102,14 @@ def render_program_detail_page_v109(u, program_slug):
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
     schedule_text = program_class_schedule_text_v109(program_slug)
     majors_html = program_major_list_html_v109(u.get("University", ""), program_slug)
+    ieqas_badge_program_v178 = university_excellent_accreditation_name_badge_v169(u)
 
     st.markdown(f"""
     <div class="program-detail-page-v109">
         <div class="program-detail-head-v109">
             <div class="program-detail-logo-v109">{logo_html}</div>
-            <div>
-                <p>{_safe_html_v62(u.get("University", ""))}</p>
+            <div class="program-detail-title-area-v178">
+                <p class="program-detail-uni-name-v178">{_safe_html_v62(u.get("University", ""))}{ieqas_badge_program_v178}</p>
                 <h1>{_safe_html_v62(title)}</h1>
                 <span>{_safe_html_v62(schedule_text)}</span>
             </div>
@@ -11672,26 +11715,43 @@ def resolve_ieqas_badge_path_v177(u):
 
 
 
+
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v177: Always show the super-admin uploaded IEQAS badge image if saved or detectable.
-    It does not depend on accreditation status, because the uploaded badge itself is the source.
+    v178: Show super-admin uploaded IEQAS badge image beside university name.
+    Works on both university detail page and program detail page.
     """
-    badge_path = resolve_ieqas_badge_path_v177(u)
+    badge_path = resolve_ieqas_badge_path_v177(u) if "resolve_ieqas_badge_path_v177" in globals() else display_clean_v50(u.get("IEQAS_Badge_Image", ""))
     if not badge_path:
         return ""
 
-    encoded = b64(badge_path)
-    if not encoded:
-        # Try BASE-relative fallback
+    # Robust file read for absolute path, relative path, or BASE-relative path.
+    path_candidates = []
+    p = Path(str(badge_path))
+    path_candidates.append(p)
+    path_candidates.append(BASE / str(badge_path))
+    path_candidates.append(BASE / "assets" / "ieqas_badges" / p.name)
+    path_candidates.append(BASE / "assets" / "universities" / p.name)
+
+    real_path = None
+    for candidate in path_candidates:
         try:
-            encoded = b64(str(BASE / badge_path))
+            if candidate.exists() and candidate.is_file():
+                real_path = candidate
+                break
         except Exception:
-            encoded = ""
+            pass
+    if real_path is None:
+        return ""
+
+    try:
+        encoded = base64.b64encode(real_path.read_bytes()).decode("utf-8")
+    except Exception:
+        encoded = ""
     if not encoded:
         return ""
 
-    ext = str(badge_path).lower()
+    ext = str(real_path).lower()
     mime = "image/png"
     if ext.endswith(".jpg") or ext.endswith(".jpeg"):
         mime = "image/jpeg"
@@ -11705,8 +11765,8 @@ def university_excellent_accreditation_name_badge_v169(u):
     title = f"{status} {until}".strip() or "IEQAS badge"
 
     return (
-        f'<span class="ieqas-uploaded-badge-wrap-v177" title="{_safe_html_v62(title)}">'
-        f'<img class="ieqas-uploaded-badge-img-v177" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
+        f'<span class="ieqas-uploaded-badge-wrap-v178" title="{_safe_html_v62(title)}">'
+        f'<img class="ieqas-uploaded-badge-img-v178" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
         f'</span>'
     )
 

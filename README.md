@@ -1168,3 +1168,11 @@ v177:
 - Added protection so IEQAS_Badge_Image column is created before saving.
 - The uploaded badge now appears beside the university name and does not depend on accreditation status.
 - Edit University now shows the saved IEQAS badge path so super admin can confirm it saved.
+
+
+v178:
+- Fixed the reason the uploaded IEQAS badge did not appear in the screenshot.
+- The screenshot was the Program Detail page, not the normal University Detail page.
+- Added the uploaded IEQAS badge beside the university name on the Program Detail page too.
+- Made image reading stronger for absolute, relative, assets/ieqas_badges, and assets/universities paths.
+- The uploaded badge remains transparent-style and small.
