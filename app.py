@@ -7532,37 +7532,42 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
 }
 
 
-/* v184 force all app links to stay in the same browser tab */
-a[target="_blank"],
-a[target="_new"],
-a[target="blank"] {
-    target-name: current !important;
-}
-.ieqas-direct-badge-img-v182 {
-    background: transparent !important;
-    border-radius: 0 !important;
-    object-fit: contain !important;
-}
-
-
-/* v184 cleaned transparent IEQAS PNG badge */
+/* v185 clean circular IEQAS badge: no white rectangle, no cropped text */
 .ieqas-direct-badge-wrap-v182 {
-    width: 120px !important;
-    height: 120px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    max-height: 120px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 92px !important;
+    height: 92px !important;
+    min-width: 92px !important;
+    max-width: 92px !important;
+    max-height: 92px !important;
     background: transparent !important;
     box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+    vertical-align: middle !important;
 }
 .ieqas-direct-badge-img-v182 {
-    width: 120px !important;
-    height: 120px !important;
-    max-width: 120px !important;
-    max-height: 120px !important;
+    width: 92px !important;
+    height: 92px !important;
+    max-width: 92px !important;
+    max-height: 92px !important;
     object-fit: contain !important;
     background: transparent !important;
-    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.08) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: block !important;
+}
+.uni-detail-name-v99,
+.uni-name-accent-v93,
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
 }
 
 </style>
@@ -7654,7 +7659,7 @@ def browser_login_nav_sync_v163():
     """, height=0)
 
 def header():
-    st.markdown("""<base target="_self"><!-- v184 base target self -->""", unsafe_allow_html=True)
+    st.markdown("""<base target="_self"><!-- v185 base target self -->""", unsafe_allow_html=True)
     # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
     try:
         restore_login_from_query_v60()
@@ -11850,7 +11855,7 @@ def university_quick_links_html_v103(u):
         href = normalize_url_v103(value)
         if href:
             links.append(
-                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}">'
+                f'<a class="uni-quick-link-v103 {extra_cls}" href="{href}" rel="noopener noreferrer">'
                 f'<span class="uni-quick-icon-v103 {extra_cls}">{icon_html}</span>'
                 f'<span>{_safe_html_v62(label)}</span>'
                 f'<span class="uni-external-v103">↗</span>'

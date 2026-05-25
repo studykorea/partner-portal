@@ -1211,9 +1211,11 @@ v182:
 - The screenshot provided in chat was included only as reference_screenshot_not_badge.png, not used as the badge.
 
 
-v184:
-- Replaced the Kyungsung University IEQAS badge with the user's uploaded badge image.
-- Removed the white background from the IEQAS badge PNG and saved it as a transparent PNG.
+v185:
+- Replaced the broken rectangular IEQAS badge image with a cleaned circular transparent PNG.
+- Removed the white rectangle/background around the badge.
+- Removed accidental extra text around the badge.
 - Active badge file: assets/ieqas_badges/kyungsung_university_ieqas_badge.png
-- Removed target=_blank / window.open patterns so website actions stay in the same browser tab/page.
-- Added base target _self as an extra safeguard.
+- Badge display is fixed at 92px beside the university name.
+- Kept same-tab link behavior.
+- Source image used for cleaned badge: /mnt/data/ghostwriter_images/context/de36c970-e93c-5afc-b002-cc9563ac8e4f.png
