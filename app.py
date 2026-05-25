@@ -5642,6 +5642,56 @@ div[data-testid="stFormSubmitButton"] button:hover {
 }
 
 
+/* v148 clickable admin dashboard stat cards */
+.admin-stats-grid-v148 {
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:14px !important;
+    margin:18px 0 28px 0 !important;
+}
+.admin-stat-card-link-v148 {
+    display:block !important;
+    text-decoration:none !important;
+    color:inherit !important;
+}
+.admin-stat-card-link-v148 .admin-stat-card-v73 {
+    height:100% !important;
+    cursor:pointer !important;
+    transition:all .18s ease !important;
+}
+.admin-stat-card-link-v148:hover .admin-stat-card-v73 {
+    transform:translateY(-4px) !important;
+    box-shadow:0 16px 36px rgba(16,24,40,.12) !important;
+    border-color:#3D5BD6 !important;
+}
+.admin-stat-card-link-v148:hover .admin-stat-card-v73 b,
+.admin-stat-card-link-v148:hover .admin-stat-card-v73 h2 {
+    color:#3D5BD6 !important;
+    -webkit-text-fill-color:#3D5BD6 !important;
+}
+.elig-user-card-v148 {
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    padding:18px 20px !important;
+    margin:12px 0 !important;
+    box-shadow:0 8px 22px rgba(16,24,40,.06) !important;
+}
+.elig-user-card-v148 h3 {
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-weight:950 !important;
+    margin:0 0 8px 0 !important;
+}
+.elig-user-card-v148 p {
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+    font-weight:700 !important;
+    margin:4px 0 !important;
+}
+@media(max-width:1200px){.admin-stats-grid-v148{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}}
+@media(max-width:700px){.admin-stats-grid-v148{grid-template-columns:1fr !important;}}
+
 /* v130 super admin official/partner agency drill-down */
 .network-shortcut-grid-v130 {
     display:grid !important;
@@ -11330,6 +11380,43 @@ def render_admin_network_page_v130():
                 st.rerun()
         return
 
+    if view == "eligibility_checks":
+        e = read_csv(ELIG_LOGS)
+        st.markdown('<div class="network-page-head-v130"><h2>Eligibility Check Usage</h2><p>List of users who used the eligibility check, number of checks, and recent checked student records.</p></div>', unsafe_allow_html=True)
+        if e.empty:
+            st.info("No eligibility check records found yet.")
+            return
+
+        for col in ["partner_username", "agency_id", "agency_name", "checked_by_name", "student_name", "university", "major", "result", "timestamp"]:
+            if col not in e.columns:
+                e[col] = ""
+
+        grouped = e.groupby(["partner_username", "agency_id", "agency_name", "checked_by_name"], dropna=False).size().reset_index(name="Checks")
+        grouped = grouped.sort_values("Checks", ascending=False)
+
+        for idx, row in grouped.iterrows():
+            username = display_clean_v50(row.get("partner_username", "")) or "Unknown user"
+            checked_by = display_clean_v50(row.get("checked_by_name", "")) or username
+            agency_name = display_clean_v50(row.get("agency_name", "")) or display_clean_v50(row.get("agency_id", "")) or "-"
+            checks = int(row.get("Checks", 0))
+            user_records = e[e["partner_username"].astype(str).fillna("") == str(row.get("partner_username", ""))]
+            latest = user_records.sort_values("timestamp", ascending=False).head(5) if "timestamp" in user_records.columns else user_records.head(5)
+
+            st.markdown(
+                '<div class="elig-user-card-v148">'
+                f'<h3>{_safe_html_v62(checked_by)}</h3>'
+                f'<p><b>Username:</b> {_safe_html_v62(username)} · <b>Agency:</b> {_safe_html_v62(agency_name)} · <b>Total eligibility checks:</b> {checks}</p>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            with st.expander(f"View recent checks by {checked_by}"):
+                show_cols = [c for c in ["timestamp", "student_name", "program", "university", "major", "gpa", "ielts", "toefl_ibt", "topik", "result"] if c in latest.columns]
+                if show_cols:
+                    st.dataframe(latest[show_cols], use_container_width=True, hide_index=True)
+                else:
+                    st.dataframe(latest, use_container_width=True, hide_index=True)
+        return
+
     if view == "agency_detail" and selected_id:
         agency_name = selected_id
         all_agencies = official_representatives_v130() + partner_agencies_v130()
@@ -11389,8 +11476,50 @@ def render_admin_network_page_v130():
         render_application_list_for_admin_network_v130(apps, f"agencyapps_{safe_slug_v49(selected_id)}")
         return
 
+def handle_admin_dashboard_jump_v148():
+    """Make top dashboard stat cards clickable through query parameters."""
+    try:
+        jump = st.query_params.get("adminjump", "")
+    except Exception:
+        jump = ""
+    if isinstance(jump, list):
+        jump = jump[0] if jump else ""
+    jump = str(jump or "").strip().lower()
+    if not jump:
+        return False
+
+    try:
+        st.query_params.clear()
+    except Exception:
+        pass
+
+    if jump == "official":
+        st.session_state.admin_network_view_v130 = "official_list"
+        st.session_state.admin_network_selected_id_v130 = ""
+        st.session_state.admin_network_selected_type_v130 = ""
+        return False
+    if jump == "partners":
+        st.session_state.admin_network_view_v130 = "partner_list"
+        st.session_state.admin_network_selected_id_v130 = ""
+        st.session_state.admin_network_selected_type_v130 = ""
+        return False
+    if jump == "pending":
+        st.session_state.page = "Partner Management"
+        st.rerun()
+    if jump == "universities":
+        st.session_state.page = "Universities"
+        st.rerun()
+    if jump == "eligibility":
+        st.session_state.admin_network_view_v130 = "eligibility_checks"
+        st.session_state.admin_network_selected_id_v130 = ""
+        st.session_state.admin_network_selected_type_v130 = ""
+        return False
+    return False
+
+
 def admin():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    handle_admin_dashboard_jump_v148()
 
     users_list = read_json(USERS)
     users = pd.DataFrame(users_list)
@@ -11429,37 +11558,47 @@ def admin():
     """, unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div class="admin-stats-grid-v73">
-        <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">{official_rep_icon_html_v141("official-rep-icon-dashboard-v142", 24)}</div>
-            <b>Official Representative / Partners</b>
-            <h2>{len(official_representatives_v130())}</h2>
-            <p>Official partner organizations</p>
-        </div>
-        <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">🤝</div>
-            <b>Other Partner Agencies</b>
-            <h2>{len(partner_agencies_v130())}</h2>
-            <p>Approved sub-partner agencies</p>
-        </div>
-        <div class="admin-stat-card-v73 warning-v73">
-            <div class="stat-icon-v73">⏳</div>
-            <b>Pending Approval</b>
-            <h2>{pending}</h2>
-            <p>Waiting for admin action</p>
-        </div>
-        <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">🏛️</div>
-            <b>Universities</b>
-            <h2>{total_unis}</h2>
-            <p>University profiles</p>
-        </div>
-        <div class="admin-stat-card-v73">
-            <div class="stat-icon-v73">📋</div>
-            <b>Eligibility Checks</b>
-            <h2>{total_checks}</h2>
-            <p>Student check records</p>
-        </div>
+    <div class="admin-stats-grid-v148">
+        <a class="admin-stat-card-link-v148" href="?adminjump=official" target="_self">
+            <div class="admin-stat-card-v73">
+                <div class="stat-icon-v73">{official_rep_icon_html_v141("official-rep-icon-dashboard-v142", 24)}</div>
+                <b>Official Representative / Partners</b>
+                <h2>{len(official_representatives_v130())}</h2>
+                <p>Official partner organizations</p>
+            </div>
+        </a>
+        <a class="admin-stat-card-link-v148" href="?adminjump=partners" target="_self">
+            <div class="admin-stat-card-v73">
+                <div class="stat-icon-v73">🤝</div>
+                <b>Other Partner Agencies</b>
+                <h2>{len(partner_agencies_v130())}</h2>
+                <p>Approved sub-partner agencies</p>
+            </div>
+        </a>
+        <a class="admin-stat-card-link-v148" href="?adminjump=pending" target="_self">
+            <div class="admin-stat-card-v73 warning-v73">
+                <div class="stat-icon-v73">⏳</div>
+                <b>Pending Approval</b>
+                <h2>{pending}</h2>
+                <p>Waiting for admin action</p>
+            </div>
+        </a>
+        <a class="admin-stat-card-link-v148" href="?adminjump=universities" target="_self">
+            <div class="admin-stat-card-v73">
+                <div class="stat-icon-v73">🏛️</div>
+                <b>Universities</b>
+                <h2>{total_unis}</h2>
+                <p>University profiles</p>
+            </div>
+        </a>
+        <a class="admin-stat-card-link-v148" href="?adminjump=eligibility" target="_self">
+            <div class="admin-stat-card-v73">
+                <div class="stat-icon-v73">📋</div>
+                <b>Eligibility Checks</b>
+                <h2>{total_checks}</h2>
+                <p>Student check records</p>
+            </div>
+        </a>
     </div>
     """, unsafe_allow_html=True)
 

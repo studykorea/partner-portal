@@ -972,3 +972,12 @@ v146:
 - Partner Agency of Official Representative accounts are no longer classified as official representatives just because their account type contains the words “official representative”.
 - Partner agencies remain listed under Other Partner Agencies without the verified badge.
 - Agencies that have recommended_by / approved_by_agency / official_representative fields are treated as partner agencies, not official representatives.
+
+
+v148:
+- Made the super admin dashboard statistic cards clickable.
+- Official Representative / Partners card opens the official representative list.
+- Other Partner Agencies card opens the sub-partner agency list.
+- Pending Approval card opens Partner Management for approval/rejection.
+- Universities card opens the university management page.
+- Eligibility Checks card opens a usage page showing users, count of checks, and recent eligibility check records.
