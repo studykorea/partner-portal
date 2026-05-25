@@ -5860,6 +5860,72 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v132 professional uploaded document cards */
+.admin-doc-card-v132,
+.admin-doc-missing-v132 {
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    padding:18px 18px !important;
+    margin:10px 0 10px 0 !important;
+    min-height:96px !important;
+    box-shadow:0 8px 20px rgba(16,24,40,.05) !important;
+}
+.admin-doc-card-v132 {
+    background:linear-gradient(135deg,#F8FAFC,#FFFFFF) !important;
+}
+.admin-doc-missing-v132 {
+    background:#FFF7ED !important;
+    border-color:#FDBA74 !important;
+}
+.admin-doc-icon-v132 {
+    width:48px !important;
+    height:48px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#EAF2FF !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:22px !important;
+    flex:0 0 auto !important;
+}
+.admin-doc-missing-v132 .admin-doc-icon-v132 {
+    background:#FFEDD5 !important;
+    color:#EA580C !important;
+    -webkit-text-fill-color:#EA580C !important;
+}
+.admin-doc-card-v132 b,
+.admin-doc-missing-v132 b {
+    display:block !important;
+    color:#002B5B !important;
+    -webkit-text-fill-color:#002B5B !important;
+    font-size:17px !important;
+    font-weight:950 !important;
+    margin-bottom:5px !important;
+}
+.admin-doc-card-v132 span,
+.admin-doc-missing-v132 span {
+    display:block !important;
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+    font-size:14px !important;
+    font-weight:700 !important;
+    line-height:1.35 !important;
+}
+/* Make document download buttons visually consistent */
+.admin-doc-card-v132 + div button,
+.admin-doc-missing-v132 + div button {
+    border-radius:14px !important;
+    font-weight:850 !important;
+    min-height:44px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -12669,10 +12735,12 @@ def admin_download_document_button_v125(doc_key, rel_path, idx):
     path = resolve_uploaded_doc_path_v126(rel_path)
     if path is None:
         st.markdown(f"""
-        <div class="admin-doc-missing-v126">
-            <b>{_safe_html_v62(label)}</b>
-            <span>File path saved but file was not found.</span>
-            <small>{_safe_html_v62(str(rel_path))}</small>
+        <div class="admin-doc-missing-v132">
+            <div class="admin-doc-icon-v132">⚠️</div>
+            <div>
+                <b>{_safe_html_v62(label)}</b>
+                <span>Uploaded file is missing. Please ask the applicant or agency to upload this document again.</span>
+            </div>
         </div>
         """, unsafe_allow_html=True)
         return
@@ -12688,9 +12756,12 @@ def admin_download_document_button_v125(doc_key, rel_path, idx):
         mime = "image/png"
 
     st.markdown(f"""
-    <div class="admin-doc-card-v126">
-        <b>{_safe_html_v62(label)}</b>
-        <span>{_safe_html_v62(name)}</span>
+    <div class="admin-doc-card-v132">
+        <div class="admin-doc-icon-v132">📄</div>
+        <div>
+            <b>{_safe_html_v62(label)}</b>
+            <span>Uploaded document available</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     st.download_button(
@@ -13158,7 +13229,7 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
         if raw_doc_v126:
             st.caption("Saved document data was found but could not be read. Please check the Document_Paths_JSON column.")
     else:
-        st.caption(f"{len(docs)} uploaded document(s) found. Click each button to download.")
+        st.caption(f"{len(docs)} uploaded document(s) found. File names are hidden for a cleaner review page. Use the download buttons to save each document.")
         doc_cols = st.columns(3)
         for idx, (doc_key, rel_path) in enumerate(docs.items()):
             with doc_cols[idx % 3]:

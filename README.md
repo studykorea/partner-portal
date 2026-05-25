@@ -906,3 +906,10 @@ v131:
 - Application detail page now renders inside the Applications page without creating a second dashboard shell.
 - Improved applicant detail hero layout with a larger university logo and organized University / Program / Major information cards.
 - Status badge is placed clearly on the right side of the applicant detail header.
+
+
+v132:
+- Removed long uploaded file names from the admin applicant document cards.
+- Uploaded document section now shows clean professional cards with document title and a simple uploaded-document message.
+- Download buttons still keep the real original file name when the admin downloads the file.
+- Missing file cards no longer show raw saved paths and instead show a cleaner instruction message.
