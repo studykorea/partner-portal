@@ -6885,6 +6885,19 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     -webkit-text-fill-color:#FFFFFF !important;
 }
 
+
+/* v164 partner hero raw HTML fix */
+.partner-hero-v164 p {
+    background:transparent !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-family:inherit !important;
+}
+.partner-hero-v164 code,
+.partner-hero-v164 pre {
+    display:none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9265,18 +9278,21 @@ def partner_dashboard():
 
     agency_logo_v83 = current_agency_logo_v83()
     agency_logo_html = agency_logo_html_v83(agency_logo_v83, "partner-logo-v83") if agency_logo_v83 else ""
-    st.markdown(f"""
-    <div class="partner-hero">
-        <div class="partner-status-pill">{portal_label}</div>
-        <div class="partner-welcome-line-v83">
-            <div>
-                <h1>Welcome back,<br>{st.session_state.agency_name} {official_rep_badge_v77(st.session_state.agency_name) if st.session_state.role == "agency_rep" else ""}</h1>
-            </div>
-            {agency_logo_html}
-        </div>
-        <p>{intro}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    agency_name_v164 = _safe_html_v62(st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", ""))
+    badge_v164 = official_rep_badge_v77(st.session_state.get("agency_name", "")) if st.session_state.role == "agency_rep" else ""
+    # v164: render as compact HTML with no indented raw HTML lines.
+    # This prevents Streamlit/Markdown from showing </div> and <p> as a dark code block.
+    hero_html_v164 = (
+        '<div class="partner-hero partner-hero-v164">'
+        f'<div class="partner-status-pill">{_safe_html_v62(portal_label)}</div>'
+        '<div class="partner-welcome-line-v83">'
+        f'<div><h1>Welcome back,<br>{agency_name_v164} {badge_v164}</h1></div>'
+        f'{agency_logo_html}'
+        '</div>'
+        f'<p>{_safe_html_v62(intro)}</p>'
+        '</div>'
+    )
+    st.markdown(hero_html_v164, unsafe_allow_html=True)
 
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         st.markdown(f"""

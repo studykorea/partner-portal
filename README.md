@@ -1097,3 +1097,9 @@ v163:
 - Public navigation also restores the auth token into the URL when it is missing.
 - Dashboard pages also save the active login token to browser storage.
 - Logout clears the browser login token.
+
+
+v164:
+- Fixed the partner dashboard hero issue where raw HTML like </div> and <p> appeared in a dark code block.
+- Rebuilt the partner hero section as compact safe HTML instead of indented multiline HTML.
+- Escaped the hero intro text safely and kept the agency name/logo display.
