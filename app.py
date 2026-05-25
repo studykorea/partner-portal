@@ -7431,6 +7431,55 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v181 IEQAS badge display from persistent JSON DB */
+.uni-detail-name-v99,
+.uni-name-accent-v93,
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-uploaded-badge-wrap-v181 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 108px !important;
+    height: 108px !important;
+    min-width: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+}
+.ieqas-uploaded-badge-img-v181 {
+    width: 108px !important;
+    height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10) !important;
+    display: block !important;
+}
+.ieqas-uploaded-badge-wrap-v180,
+.ieqas-uploaded-badge-wrap-v179,
+.ieqas-uploaded-badge-wrap-v178,
+.ieqas-uploaded-badge-wrap-v177,
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v180,
+.ieqas-uploaded-badge-img-v179,
+.ieqas-uploaded-badge-img-v178,
+.ieqas-uploaded-badge-img-v177,
+.ieqas-uploaded-badge-img-v175 {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7838,6 +7887,72 @@ def save_uploaded_university_logo_v88(uploaded_file, university_name):
     return f"assets/university_logos/{slug}_logo.png"
 
 
+
+
+
+def ieqas_badge_db_path_v181():
+    """Persistent small JSON DB for IEQAS badge data, independent from university CSV column issues."""
+    return BASE / "ieqas_badges.json"
+
+
+def load_ieqas_badge_db_v181():
+    path = ieqas_badge_db_path_v181()
+    try:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+    return {}
+
+
+def save_ieqas_badge_db_v181(data):
+    path = ieqas_badge_db_path_v181()
+    try:
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def save_ieqas_badge_for_university_v181(university_name, uploaded_file):
+    """
+    Save uploaded IEQAS image in a persistent JSON DB and session state.
+    This guarantees it appears immediately after upload and after rerun.
+    """
+    if uploaded_file is None:
+        return ""
+    slug = safe_slug_v49(university_name or "university")
+    data_uri = save_uploaded_ieqas_badge_data_v179(uploaded_file)
+    if not data_uri:
+        return ""
+
+    db = load_ieqas_badge_db_v181()
+    db[slug] = {
+        "university": str(university_name or ""),
+        "data_uri": data_uri,
+    }
+    save_ieqas_badge_db_v181(db)
+
+    st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[slug] = data_uri
+    return data_uri
+
+
+def get_ieqas_badge_data_for_university_v181(university_name, row_data_uri=""):
+    """Read IEQAS badge data from session, CSV row, or JSON DB."""
+    slug = safe_slug_v49(university_name or "university")
+    session_map = st.session_state.get("ieqas_badge_preview_data_v180", {})
+    if session_map.get(slug, "").startswith("data:image"):
+        return session_map.get(slug, "")
+
+    if display_clean_v50(row_data_uri).startswith("data:image"):
+        return display_clean_v50(row_data_uri)
+
+    db = load_ieqas_badge_db_v181()
+    item = db.get(slug, {})
+    if isinstance(item, dict) and str(item.get("data_uri", "")).startswith("data:image"):
+        return item.get("data_uri", "")
+
+    return ""
 
 
 def save_uploaded_ieqas_badge_data_v179(uploaded_file):
@@ -11859,18 +11974,17 @@ def resolve_ieqas_badge_path_v177(u):
 
 
 
+
 def university_excellent_accreditation_name_badge_v169(u):
     """
-    v180: Render uploaded IEQAS badge immediately after upload.
-    Priority:
-    1. session_state instant upload data
-    2. IEQAS_Badge_Image_Data column in universities.csv / DB
-    3. older file path fallback
+    v181: Render uploaded IEQAS badge from session/CSV/JSON DB.
+    This fixes the issue where the badge did not appear on the university list page.
     """
     uni_name = display_clean_v50(u.get("University", ""))
-    slug = safe_slug_v49(uni_name)
-    session_map = st.session_state.get("ieqas_badge_preview_data_v180", {})
-    data_uri = session_map.get(slug, "") or display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+    data_uri = get_ieqas_badge_data_for_university_v181(
+        uni_name,
+        display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+    )
 
     status = display_clean_v50(u.get("Accreditation_Status", ""))
     until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
@@ -11878,52 +11992,12 @@ def university_excellent_accreditation_name_badge_v169(u):
 
     if data_uri.startswith("data:image"):
         return (
-            f'<span class="ieqas-uploaded-badge-wrap-v180" title="{_safe_html_v62(title)}">'
-            f'<img class="ieqas-uploaded-badge-img-v180" src="{data_uri}" alt="IEQAS badge" />'
+            f'<span class="ieqas-uploaded-badge-wrap-v181" title="{_safe_html_v62(title)}">'
+            f'<img class="ieqas-uploaded-badge-img-v181" src="{data_uri}" alt="IEQAS badge" />'
             f'</span>'
         )
 
-    # Fallback to file path for older saved records.
-    badge_path = resolve_ieqas_badge_path_v177(u) if "resolve_ieqas_badge_path_v177" in globals() else display_clean_v50(u.get("IEQAS_Badge_Image", ""))
-    if not badge_path:
-        return ""
-
-    path_candidates = []
-    p = Path(str(badge_path))
-    path_candidates.extend([p, BASE / str(badge_path), BASE / "assets" / "ieqas_badges" / p.name, BASE / "assets" / "universities" / p.name])
-
-    real_path = None
-    for candidate in path_candidates:
-        try:
-            if candidate.exists() and candidate.is_file():
-                real_path = candidate
-                break
-        except Exception:
-            pass
-    if real_path is None:
-        return ""
-
-    try:
-        encoded = base64.b64encode(real_path.read_bytes()).decode("utf-8")
-    except Exception:
-        encoded = ""
-    if not encoded:
-        return ""
-
-    ext = str(real_path).lower()
-    mime = "image/png"
-    if ext.endswith(".jpg") or ext.endswith(".jpeg"):
-        mime = "image/jpeg"
-    elif ext.endswith(".webp"):
-        mime = "image/webp"
-    elif ext.endswith(".svg"):
-        mime = "image/svg+xml"
-
-    return (
-        f'<span class="ieqas-uploaded-badge-wrap-v180" title="{_safe_html_v62(title)}">'
-        f'<img class="ieqas-uploaded-badge-img-v180" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
-        f'</span>'
-    )
+    return ""
 
 
 def _render_university_detail_v62(u):
@@ -14343,12 +14417,12 @@ def admin_university_management_v49():
                 if "IEQAS_Badge_Image_Data" not in df.columns:
                     df["IEQAS_Badge_Image_Data"] = ""
                 saved_ieqas_path_v180 = save_uploaded_ieqas_badge_v175(instant_ieqas_badge_v180, selected)
-                saved_ieqas_data_v180 = save_uploaded_ieqas_badge_data_v179(instant_ieqas_badge_v180)
+                saved_ieqas_data_v180 = save_ieqas_badge_for_university_v181(selected, instant_ieqas_badge_v180)
                 if saved_ieqas_path_v180:
                     df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_path_v180
                 if saved_ieqas_data_v180:
                     df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v180
-                    st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[selected_key_v90] = saved_ieqas_data_v180
+                    st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[safe_slug_v49(selected)] = saved_ieqas_data_v180
                 write_csv(uni_file, df)
                 reload_data_v49()
                 st.success("IEQAS badge image saved. It will now appear beside the university name.")
@@ -14527,7 +14601,7 @@ def admin_university_management_v49():
                         df["IEQAS_Badge_Image_Data"] = ""
                     if ieqas_badge_upload is not None:
                         saved_ieqas_v177 = save_uploaded_ieqas_badge_v175(ieqas_badge_upload, university)
-                        saved_ieqas_data_v179 = save_uploaded_ieqas_badge_data_v179(ieqas_badge_upload)
+                        saved_ieqas_data_v179 = save_ieqas_badge_for_university_v181(university, ieqas_badge_upload)
                         if saved_ieqas_v177:
                             df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_v177
                         if saved_ieqas_data_v179:

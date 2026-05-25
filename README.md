@@ -1192,3 +1192,10 @@ v180:
 - The uploaded badge is stored in IEQAS_Badge_Image_Data and session preview data.
 - The badge appears automatically beside the university name on the university list, detail, and program detail pages.
 - Fixed file stream seek behavior so image upload can be saved correctly.
+
+
+v181:
+- Fixed IEQAS uploaded badge not appearing by saving uploaded badge data in a separate persistent JSON file: ieqas_badges.json.
+- The badge renderer now checks session state, IEQAS_Badge_Image_Data, and ieqas_badges.json.
+- Uploading the badge in Edit University should make it appear immediately on the university list, details, and program detail pages.
+- This avoids CSV/path/cache problems that prevented the badge from appearing.
