@@ -6405,6 +6405,13 @@ div[data-testid="stFormSubmitButton"] button:hover {
 .official-rep-name-wrap-v141 { display:inline-flex !important; align-items:center !important; gap:8px !important; }
 .official-rep-name-wrap-v141, .official-rep-badge-v141 { background:transparent !important; border:none !important; box-shadow:none !important; }
 
+
+/* v146 verified badge only for official representative agencies */
+.partner-agency-card-v146 .official-rep-icon-inline-v141,
+.partner-agency-card-v146 .official-rep-badge-v141 {
+    display:none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7194,7 +7201,7 @@ def signup():
           <h1 style="font-size:44px;line-height:1.12;">Partner Sign Up /<br>Agency Registration</h1>
           <p style="font-size:17px;">Create the correct account type based on your relationship with an official representative agency.</p>
           <hr style="border-color:rgba(255,255,255,.25);">
-          <h3>⭐ Official Representative Agency</h3><p>Approved official representatives and approved partner agencies can approve their own staff accounts.</p>
+          <h3>⭐ Official Representative Agency</h3><p>Only approved official representative agencies receive the verified badge. Partner agencies can approve only their own staff accounts.</p>
           <h3>👤 Staff Account</h3><p>For employees working inside an official representative agency.</p>
           <h3>🤝 Partner Agency Account</h3><p>For sub-partner companies recommended by an official representative agency.</p>
         </div>
@@ -11061,20 +11068,34 @@ def agency_logo_html_v130(agency_name_or_id, size=72):
     initials = "".join([x[:1].upper() for x in str(agency_name_or_id or "A").split()[:2]]) or "A"
     return f'<div class="agency-logo-v130 logo-fallback-v130" style="width:{size}px;height:{size}px">{_safe_html_v62(initials)}</div>'
 
-def is_official_rep_user_v130(u):
-    role = str(u.get("role", "")).strip()
-    account_type = str(u.get("account_type", "")).lower()
-    return role == "agency_rep" or "official representative" in account_type
-
 def is_partner_agency_user_v130(u):
-    role = str(u.get("role", "")).strip()
-    account_type = str(u.get("account_type", "")).lower()
+    role = str(u.get("role", "")).strip().lower()
+    account_type = str(u.get("account_type", "")).strip().lower()
     return role in ["agency_partner", "partner"] or "partner agency" in account_type
 
 def is_staff_user_v130(u):
-    role = str(u.get("role", "")).strip()
-    account_type = str(u.get("account_type", "")).lower()
+    role = str(u.get("role", "")).strip().lower()
+    account_type = str(u.get("account_type", "")).strip().lower()
     return role == "agency_staff" or "staff" in account_type
+
+def is_official_rep_user_v130(u):
+    """
+    v146: Badge/classification fix.
+    Only true official representative accounts get the verified badge.
+    Partner Agency of Official Representative must NOT be treated as official only
+    because its text contains the words "official representative".
+    """
+    role = str(u.get("role", "")).strip().lower()
+    account_type = str(u.get("account_type", "")).strip().lower()
+
+    if is_partner_agency_user_v130(u) or is_staff_user_v130(u):
+        return False
+
+    return role == "agency_rep" or account_type in [
+        "official representative agency",
+        "official representative",
+        "agency representative",
+    ]
 
 def approved_users_v130():
     return [u for u in read_json(USERS) if str(u.get("status", "")).strip().lower() == "approved"]
@@ -11098,13 +11119,23 @@ def official_representatives_v130():
                     "created_at": display_clean_v50(u.get("created_at", "")),
                     "source": "user",
                 })
-    # from agencies defaults/active list, excluding UniQuest
+    # from agencies defaults/active list, excluding UniQuest and sub-partner agencies
     for a in read_agencies():
         aid = normalize_agency_id(a.get("agency_id", a.get("agency_name", "")))
         name = display_clean_v50(a.get("agency_name", ""))
         if not name or aid == "uniquest":
             continue
-        # defaults/active agencies are official reps unless they have partner-only approved_by_agency field
+
+        # v146: If the agency was recommended/approved by another agency, it is a partner agency,
+        # not an official representative. Do not show verified badge for these agencies.
+        recommended_by = display_clean_v50(
+            a.get("approved_by_agency", "") 
+            or a.get("official_representative", "") 
+            or a.get("recommended_by", "")
+        )
+        if recommended_by:
+            continue
+
         if aid not in seen and str(a.get("status", "")).lower() in ["active", "approved"]:
             seen.add(aid)
             reps.append({

@@ -964,3 +964,11 @@ v140:
 - Nepal flag now renders as a real inline SVG flag instead of showing NP or an emoji.
 - Other country flags use full flag image display with object-fit: contain.
 - Upload this version to GitHub and redeploy Streamlit to update the website.
+
+
+v146:
+- Fixed official representative badge logic.
+- The verified badge now appears only for true Official Representative / Agency Representative accounts.
+- Partner Agency of Official Representative accounts are no longer classified as official representatives just because their account type contains the words “official representative”.
+- Partner agencies remain listed under Other Partner Agencies without the verified badge.
+- Agencies that have recommended_by / approved_by_agency / official_representative fields are treated as partner agencies, not official representatives.
