@@ -1265,10 +1265,10 @@ v191:
 - Program title and schedule text are organized under the university name.
 
 
-v192:
-- Fixed top navigation still opening new tabs by disabling the remaining old URL-query navigation handlers.
-- Disabled: handle_home_query_navigation_v69, handle_top_nav_query_v70, handle_dash_nav_query_v96.
-- Disabled auth_query_suffix_v104 so internal links no longer add auth query strings.
-- Disabled browser/localStorage navigation sync.
-- Removed top-level calls to old query navigation handlers.
-- Kept the v191 professional design and program detail layout unchanged.
+v193:
+- Fixed the broken black/dark page by restoring from v191.
+- Kept the full original design/CSS.
+- Removed top-level old query-navigation calls that caused URL-based tab/page behavior.
+- Disabled browser/localStorage sync helper.
+- Kept the top navigation as Streamlit buttons.
+- Kept v190 same-tab program card buttons and v191 professional program detail layout.
