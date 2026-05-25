@@ -6133,6 +6133,105 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v138 applicant country flag and university logo in detail header */
+.admin-app-detail-hero-v138 {
+    grid-template-columns:300px minmax(0,1fr) 260px !important;
+    gap:34px !important;
+    align-items:center !important;
+}
+.applicant-name-with-flag-v138 {
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    flex-wrap:wrap !important;
+}
+.applicant-flag-v138 {
+    width:54px !important;
+    height:38px !important;
+    border-radius:10px !important;
+    overflow:hidden !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    box-shadow:0 8px 18px rgba(16,24,40,.10) !important;
+    vertical-align:middle !important;
+}
+.applicant-flag-v138 img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    display:block !important;
+}
+.applicant-flag-fallback-v138 {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:15px !important;
+    font-weight:950 !important;
+}
+.admin-app-detail-right-v138 {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:18px !important;
+    background:#FFFFFF !important;
+    border:1px solid #E4EAF3 !important;
+    border-radius:24px !important;
+    padding:22px 18px !important;
+    box-shadow:0 14px 32px rgba(16,24,40,.07) !important;
+    min-height:190px !important;
+}
+.detail-university-logo-v138 {
+    width:104px !important;
+    height:104px !important;
+    border-radius:22px !important;
+    background:#F8FAFC !important;
+    border:1px solid #DCE6F4 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+}
+.detail-university-logo-v138 img {
+    max-width:88px !important;
+    max-height:88px !important;
+    object-fit:contain !important;
+    display:block !important;
+}
+.detail-university-logo-v138.logo-fallback-v138 {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:26px !important;
+    font-weight:950 !important;
+}
+.admin-app-detail-right-v138 .admin-app-detail-status-v131 {
+    min-width:0 !important;
+    width:100% !important;
+    justify-content:center !important;
+}
+.admin-app-detail-right-v138 .admin-app-detail-status-v131 span,
+.admin-app-detail-right-v138 .admin-app-detail-status-v131 .status-pending,
+.admin-app-detail-right-v138 .admin-app-detail-status-v131 .status-approved,
+.admin-app-detail-right-v138 .admin-app-detail-status-v131 .status-rejected {
+    width:100% !important;
+    text-align:center !important;
+}
+@media(max-width:1100px){
+    .admin-app-detail-hero-v138 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-detail-right-v138 {
+        align-items:flex-start !important;
+        width:100% !important;
+    }
+    .admin-app-detail-right-v138 .admin-app-detail-status-v131 {
+        justify-content:flex-start !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13313,6 +13412,69 @@ def update_application_status_from_admin_v125(app_id, updates):
     return True
 
 
+
+def country_flag_html_v138(country_name, size=44):
+    """Return a professional flag image next to applicant name based on nationality/country."""
+    country = str(country_name or "").strip().lower()
+    country = country.replace("republic of korea", "south korea").replace("korea, republic of", "south korea")
+    iso_map = {
+        "nepal": "np", "nepali": "np",
+        "bangladesh": "bd", "bangladeshi": "bd",
+        "india": "in", "indian": "in",
+        "pakistan": "pk", "pakistani": "pk",
+        "vietnam": "vn", "viet nam": "vn", "vietnamese": "vn",
+        "indonesia": "id", "indonesian": "id",
+        "sri lanka": "lk", "sri lankan": "lk",
+        "myanmar": "mm", "burma": "mm", "myanmarese": "mm",
+        "china": "cn", "chinese": "cn",
+        "mongolia": "mn", "mongolian": "mn",
+        "uzbekistan": "uz", "uzbek": "uz",
+        "kazakhstan": "kz", "kazakh": "kz",
+        "kyrgyzstan": "kg", "kyrgyz": "kg",
+        "thailand": "th", "thai": "th",
+        "philippines": "ph", "filipino": "ph",
+        "cambodia": "kh", "cambodian": "kh",
+        "laos": "la", "lao": "la",
+        "malaysia": "my", "malaysian": "my",
+        "japan": "jp", "japanese": "jp",
+        "south korea": "kr", "korea": "kr", "korean": "kr",
+        "united states": "us", "usa": "us", "america": "us", "american": "us",
+        "canada": "ca", "canadian": "ca",
+        "australia": "au", "australian": "au",
+        "united kingdom": "gb", "uk": "gb", "british": "gb",
+        "france": "fr", "french": "fr",
+        "germany": "de", "german": "de",
+    }
+    code = iso_map.get(country, "")
+    label = _safe_html_v62(country_name or "Nationality")
+    if code:
+        # FlagCDN is lightweight and displays full rectangular country flag images.
+        return (
+            f'<span class="applicant-flag-v138" title="{label}">'
+            f'<img src="https://flagcdn.com/w80/{code}.png" alt="{label} flag">'
+            f'</span>'
+        )
+    initials = "".join([p[:1].upper() for p in str(country_name or "NA").split()[:2]]) or "NA"
+    return f'<span class="applicant-flag-v138 applicant-flag-fallback-v138" title="{label}">{_safe_html_v62(initials)}</span>'
+
+def university_logo_compact_html_v138(uni_name):
+    """Small clean university logo card for application detail header."""
+    try:
+        uni_row = university_row_by_name_v120(uni_name)
+        logo_path = display_clean_v50(uni_row.get("University_Logo", ""))
+        encoded = b64(logo_path)
+        if encoded:
+            return (
+                '<div class="detail-university-logo-v138">'
+                f'<img src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(uni_name)} logo">'
+                '</div>'
+            )
+    except Exception:
+        pass
+    initials = "".join([p[:1].upper() for p in str(uni_name or "U").split()[:2]]) or "U"
+    return f'<div class="detail-university-logo-v138 logo-fallback-v138">{_safe_html_v62(initials)}</div>'
+
+
 def applicant_photo_html_v134(row, applicant_name="", size=150):
     """Show applicant passport-size photo in admin application detail header."""
     try:
@@ -13365,20 +13527,24 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
     program_cat = admin_app_program_category_v125(row)
     status = inferred_application_status_v119(row)
 
+    nationality_v138 = display_clean_v50(row.get("Nationality", ""))
     st.markdown(f"""
-    <div class="admin-app-detail-hero-v131">
+    <div class="admin-app-detail-hero-v131 admin-app-detail-hero-v138">
         <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 260)}</div>
         <div class="admin-app-detail-main-v131">
             <div class="admin-app-detail-label-v131">Application Detail</div>
-            <h1>{_safe_html_v62(applicant)}</h1>
+            <h1 class="applicant-name-with-flag-v138">{_safe_html_v62(applicant)} {country_flag_html_v138(nationality_v138, 44)}</h1>
             <div class="admin-app-detail-meta-v131">
                 <span><b>University</b>{_safe_html_v62(uni)}</span>
                 <span><b>Program</b>{_safe_html_v62(program_cat)}</span>
                 <span><b>Major</b>{_safe_html_v62(major)}</span>
             </div>
         </div>
-        <div class="admin-app-detail-status-v131">
-            {application_status_badge_v116(status)}
+        <div class="admin-app-detail-right-v138">
+            {university_logo_compact_html_v138(uni)}
+            <div class="admin-app-detail-status-v131">
+                {application_status_badge_v116(status)}
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)

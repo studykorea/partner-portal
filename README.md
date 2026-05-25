@@ -943,3 +943,10 @@ v137:
 - Increased applicant photo display area to 280px.
 - Photo now appears larger while keeping the full uploaded image visible without cropping.
 - Added padding and white background so portrait photos keep their original shape inside the larger photo box.
+
+
+v138:
+- Added applicant nationality flag next to the applicant name on the super admin application detail page.
+- Added university logo on the right side above the application/interview status badge.
+- Improved the application detail header layout to look more professional and balanced.
+- Country flags are automatically selected from the applicant nationality field using a country-to-ISO mapping.
