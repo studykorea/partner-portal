@@ -6531,6 +6531,58 @@ div[data-testid="stFormSubmitButton"] button:hover {
     font-weight:900 !important;
 }
 
+
+/* v151 pending approval action buttons on the right side */
+.pending-request-card-v151 {
+    min-height:230px !important;
+    display:flex !important;
+    align-items:center !important;
+}
+.pending-action-panel-v151 {
+    min-height:230px !important;
+    height:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    gap:18px !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:22px !important;
+    padding:28px 22px !important;
+    margin:18px 0 10px 0 !important;
+    box-shadow:0 10px 28px rgba(16,24,40,.06) !important;
+}
+/* first button in the action panel = Approve */
+.pending-action-panel-v151 + div button,
+.pending-action-panel-v151 ~ div button {
+    font-weight:900 !important;
+    border-radius:14px !important;
+}
+/* More reliable Streamlit button targeting for pending approval page */
+div[data-testid="column"]:has(.pending-action-panel-v151) button[kind="primary"] {
+    background:#16A34A !important;
+    border:1px solid #16A34A !important;
+    color:#FFFFFF !important;
+    font-weight:950 !important;
+}
+div[data-testid="column"]:has(.pending-action-panel-v151) button[kind="secondary"] {
+    background:#DC2626 !important;
+    border:1px solid #DC2626 !important;
+    color:#FFFFFF !important;
+    font-weight:950 !important;
+}
+div[data-testid="column"]:has(.pending-action-panel-v151) button p {
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+}
+@media(max-width:900px){
+    .pending-action-panel-v151,
+    .pending-request-card-v151 {
+        min-height:auto !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11490,33 +11542,35 @@ def render_pending_approval_page_v150():
         recommended_by = display_clean_v50(req.get("official_representative", "") or req.get("partner_group", "") or req.get("sponsor_agency_id", "") or req.get("requested_approver_agency_id", ""))
         created_at = display_clean_v50(req.get("created_at", ""))
 
-        st.markdown(f"""
-        <div class="pending-request-card-v150">
-            <div>
-                <span class="pending-chip-v150">Pending</span>
-                <h3>{_safe_html_v62(company or applicant or "Pending Request")}</h3>
-                <p><b>Applicant:</b> {_safe_html_v62(applicant)} &nbsp; | &nbsp; <b>Username:</b> {_safe_html_v62(username)} &nbsp; | &nbsp; <b>Email:</b> {_safe_html_v62(email or "-")}</p>
-                <p><b>Type:</b> {_safe_html_v62(account_type or "-")} &nbsp; | &nbsp; <b>Position:</b> {_safe_html_v62(position or "-")} &nbsp; | &nbsp; <b>Phone:</b> {_safe_html_v62(phone or "-")} &nbsp; | &nbsp; <b>Country:</b> {_safe_html_v62(country or "-")}</p>
-                <p><b>Recommended / Approval Agency:</b> {_safe_html_v62(recommended_by or "Portal Super Admin")} &nbsp; | &nbsp; <b>Registered:</b> {_safe_html_v62(created_at or "-")}</p>
+        card_col_v151, action_col_v151 = st.columns([4.5, 1.35], gap="large")
+        with card_col_v151:
+            st.markdown(f"""
+            <div class="pending-request-card-v150 pending-request-card-v151">
+                <div>
+                    <span class="pending-chip-v150">Pending</span>
+                    <h3>{_safe_html_v62(company or applicant or "Pending Request")}</h3>
+                    <p><b>Applicant:</b> {_safe_html_v62(applicant)} &nbsp; | &nbsp; <b>Username:</b> {_safe_html_v62(username)} &nbsp; | &nbsp; <b>Email:</b> {_safe_html_v62(email or "-")}</p>
+                    <p><b>Type:</b> {_safe_html_v62(account_type or "-")} &nbsp; | &nbsp; <b>Position:</b> {_safe_html_v62(position or "-")} &nbsp; | &nbsp; <b>Phone:</b> {_safe_html_v62(phone or "-")} &nbsp; | &nbsp; <b>Country:</b> {_safe_html_v62(country or "-")}</p>
+                    <p><b>Recommended / Approval Agency:</b> {_safe_html_v62(recommended_by or "Portal Super Admin")} &nbsp; | &nbsp; <b>Registered:</b> {_safe_html_v62(created_at or "-")}</p>
+                </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        c1, c2, c3 = st.columns([1, 1, 4])
-        with c1:
-            if st.button("Approve", key=f"pending_approve_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True):
+        with action_col_v151:
+            st.markdown('<div class="pending-action-panel-v151">', unsafe_allow_html=True)
+            if st.button("Approve", key=f"pending_approve_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True, type="primary"):
                 if update_pending_request_status_v150(req, "approved"):
                     st.success(f"{company or applicant or 'Request'} approved.")
                 else:
                     st.error("This request could not be approved. Please check the approval authority.")
                 st.rerun()
-        with c2:
             if st.button("Decline", key=f"pending_decline_v150_{idx}_{safe_slug_v49(username)}", use_container_width=True):
                 if update_pending_request_status_v150(req, "rejected"):
                     st.warning(f"{company or applicant or 'Request'} declined.")
                 else:
                     st.error("This request could not be declined. Please check the approval authority.")
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 def render_admin_network_page_v130():

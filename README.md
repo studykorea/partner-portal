@@ -997,3 +997,10 @@ v150:
 - Super admin can see all pending signup/register requests and approve or decline them.
 - Official representatives can only see and approve/decline requests that selected their organization as the recommended/approval agency.
 - Approving partner agency requests also updates the agency status in agencies.json.
+
+
+v151:
+- Moved Approve and Decline buttons to the right side of each pending approval card.
+- Approve button is styled with green background and bold white text.
+- Decline button is styled with red background and bold white text.
+- Pending approval layout is more professional and matches the marked area in the screenshot.
