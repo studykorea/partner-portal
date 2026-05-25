@@ -1263,3 +1263,12 @@ v191:
 - University name is much larger and clearer.
 - IEQAS badge is aligned beside the university name without weird spacing.
 - Program title and schedule text are organized under the university name.
+
+
+v192:
+- Fixed top navigation still opening new tabs by disabling the remaining old URL-query navigation handlers.
+- Disabled: handle_home_query_navigation_v69, handle_top_nav_query_v70, handle_dash_nav_query_v96.
+- Disabled auth_query_suffix_v104 so internal links no longer add auth query strings.
+- Disabled browser/localStorage navigation sync.
+- Removed top-level calls to old query navigation handlers.
+- Kept the v191 professional design and program detail layout unchanged.
