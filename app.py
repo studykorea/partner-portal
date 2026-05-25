@@ -6974,7 +6974,7 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     margin: 14px auto 0 auto !important;
     position: relative !important;
 }
-.ieqas-badge-large-v168 { width: 260px !important; height: 260px !important; }
+.ieqas-badge-large-v168 { width: 0 !important; height: 0 !important; display:none !important; }
 .ieqas-badge-compact-v168 { width: 120px !important; height: 120px !important; margin-top: 12px !important; }
 .ieqas-ring-v168 {
     position: absolute !important;
@@ -7049,6 +7049,78 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
 .ieqas-badge-compact-v168 .ieqas-logo-name-v168 strong { font-size: 8px !important; }
 .ieqas-badge-compact-v168 .ieqas-main-text-v168 { font-size: 8px !important; }
 .ieqas-badge-compact-v168 .ieqas-sub-text-v168 { font-size: 8px !important; }
+
+
+/* v169 excellent accreditation badge next to university name */
+.uni-detail-name-v99,
+.uni-name-accent-v93 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-name-badge-v169 {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    border-radius: 50% !important;
+    vertical-align: middle !important;
+    background: transparent !important;
+    margin-left: 6px !important;
+}
+.ieqas-name-badge-ring-v169 {
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 50% !important;
+    background:
+        radial-gradient(circle at center, #ffffff 0 42%, transparent 43%),
+        conic-gradient(from 0deg, #C8A64A, #F2D67A, #B89124, #F2D67A, #C8A64A) !important;
+    box-shadow: 0 8px 22px rgba(16,24,40,.16) !important;
+}
+.ieqas-name-badge-ring-v169::after {
+    content: "IEQAS" !important;
+    position: absolute !important;
+    inset: 7px !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(0,43,91,.22) !important;
+    color: #002B5B !important;
+    font-size: 8px !important;
+    font-weight: 950 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding-top: 5px !important;
+    letter-spacing: .2px !important;
+}
+.ieqas-name-badge-check-v169 {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+    background: #002B5B !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    font-weight: 950 !important;
+    z-index: 2 !important;
+    line-height: 1 !important;
+}
+.ieqas-badge-large-v168 {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+.ieqas-badge-v168,
+.ieqas-name-badge-v169 {
+    font-family: inherit !important;
+    white-space: normal !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -11277,6 +11349,7 @@ def google_map_embed_html_v99(u):
 
 
 
+
 def accreditation_until_label_v168(value):
     value = display_clean_v50(value)
     if not value:
@@ -11302,29 +11375,38 @@ def university_excellent_accreditation_badge_html_v168(u, compact=False):
     encoded_logo = b64(logo_path) if logo_path else ""
     logo_html = f'<img src="data:image/png;base64,{encoded_logo}" alt="{_safe_html_v62(name)} logo">' if encoded_logo else '<span class="ieqas-logo-fallback-v168">★</span>'
     size_class = "ieqas-badge-compact-v168" if compact else "ieqas-badge-large-v168"
+    until_text = _safe_html_v62(until) if until else "—"
 
-    return f"""
-    <div class="ieqas-badge-v168 {size_class}">
-        <div class="ieqas-ring-v168">
-            <span>Ministry of Education</span>
-            <span>IEQAS</span>
-            <span>Excellent Accredited Institution</span>
-        </div>
-        <div class="ieqas-inner-v168">
-            <div class="ieqas-korean-symbol-v168">◉</div>
-            <div class="ieqas-small-title-v168">Ministry of Education Designated</div>
-            <div class="ieqas-small-title-v168">International Education Quality Assurance System</div>
-            <div class="ieqas-blue-ribbon-v168">Excellent Accredited Institution</div>
-            <div class="ieqas-logo-name-v168">
-                {logo_html}
-                <strong>{_safe_html_v62(name)}</strong>
-            </div>
-            <div class="ieqas-main-text-v168">ACCREDITED INSTITUTION</div>
-            <div class="ieqas-sub-text-v168">IEQAS</div>
-            <div class="ieqas-valid-v168">Accreditation valid until {_safe_html_v62(until) if until else "—"}</div>
-        </div>
-    </div>
-    """
+    return (
+        f'<span class="ieqas-badge-v168 {size_class}" title="Excellent accredited until {until_text}">'
+        f'<span class="ieqas-ring-v168"><span>Ministry of Education</span><span>IEQAS</span><span>Excellent Accredited Institution</span></span>'
+        f'<span class="ieqas-inner-v168">'
+        f'<span class="ieqas-korean-symbol-v168">◉</span>'
+        f'<span class="ieqas-small-title-v168">Ministry of Education Designated</span>'
+        f'<span class="ieqas-small-title-v168">International Education Quality Assurance System</span>'
+        f'<span class="ieqas-blue-ribbon-v168">Excellent Accredited</span>'
+        f'<span class="ieqas-logo-name-v168">{logo_html}<strong>{_safe_html_v62(name)}</strong></span>'
+        f'<span class="ieqas-main-text-v168">ACCREDITED</span>'
+        f'<span class="ieqas-sub-text-v168">IEQAS</span>'
+        f'<span class="ieqas-valid-v168">Valid until {until_text}</span>'
+        f'</span>'
+        f'</span>'
+    )
+
+
+def university_excellent_accreditation_name_badge_v169(u):
+    """Small official-looking badge placed directly next to the university name."""
+    status = display_clean_v50(u.get("Accreditation_Status", ""))
+    if status.strip().lower() != "excellent accredited":
+        return ""
+    until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
+    title = f"Excellent accredited until {until}" if until else "Excellent accredited"
+    return (
+        f'<span class="ieqas-name-badge-v169" title="{_safe_html_v62(title)}">'
+        f'<span class="ieqas-name-badge-ring-v169"></span>'
+        f'<span class="ieqas-name-badge-check-v169">✓</span>'
+        f'</span>'
+    )
 
 
 def _render_university_detail_v62(u):
@@ -11336,7 +11418,7 @@ def _render_university_detail_v62(u):
     map_html = google_map_embed_html_v99(u)
     quick_links_html = university_quick_links_html_v103(u)
     student_stats_html = university_student_stats_html_v106(u)
-    accreditation_badge_html_v168 = university_excellent_accreditation_badge_html_v168(u)
+    accreditation_badge_name_v169 = university_excellent_accreditation_name_badge_v169(u)
 
     detail_html = f"""
 <div class="detail-card-v99">
@@ -11349,7 +11431,7 @@ def _render_university_detail_v62(u):
             <div class="detail-logo-box-v99">{logo_html}</div>
             <div class="detail-title-copy-v99">
                 <h2 class="uni-detail-name-v99" style="{detail_name_style_v99}">
-                    <span style="{detail_name_style_v99}">{_safe_html_v62(u.get("University", ""))}</span>
+                    <span style="{detail_name_style_v99}">{_safe_html_v62(u.get("University", ""))}</span>{accreditation_badge_name_v169}
                 </h2>
                 <p>{_safe_html_v62(u.get("Overview", ""))}</p>
             </div>
@@ -11357,7 +11439,6 @@ def _render_university_detail_v62(u):
 
         <div class="detail-program-side-v99">
             {program_badges}
-            {accreditation_badge_html_v168}
         </div>
     </div>
 
@@ -11395,7 +11476,7 @@ def _render_university_summary_v62(u, key_suffix):
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
     name_style_v93 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
-    accreditation_badge_compact_v168 = university_excellent_accreditation_badge_html_v168(u, compact=True)
+    accreditation_badge_name_v169 = university_excellent_accreditation_name_badge_v169(u)
 
     summary_html = f'''<div class="uni-summary-card-v88">
 <div class="uni-summary-image-wrap-v88">
@@ -11406,14 +11487,13 @@ def _render_university_summary_v62(u, key_suffix):
         <div class="uni-logo-box-v88">{logo_html}</div>
         <div class="uni-summary-text-v88">
             <h3 class="uni-name-accent-v93" style="{name_style_v93}">
-                <span style="{name_style_v93}">{_safe_html_v62(u.get("University", ""))}</span>
+                <span style="{name_style_v93}">{_safe_html_v62(u.get("University", ""))}</span>{accreditation_badge_name_v169}
             </h3>
             <p>{_safe_html_v62(u.get("Overview", ""))}</p>
         </div>
     </div>
     <div class="uni-summary-programs-v88">
         {program_badges_inline}
-        {accreditation_badge_compact_v168}
     </div>
 </div>
 </div>'''

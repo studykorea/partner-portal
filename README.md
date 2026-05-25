@@ -1117,3 +1117,10 @@ v168:
 - Saved accreditation data in universities.csv as Accreditation_Status and Accreditation_Until.
 - If a university is Excellent accredited, a dynamic IEQAS-style transparent badge appears automatically.
 - The badge uses the selected university logo and university name automatically and updates the valid-until year/month automatically.
+
+
+v169:
+- Fixed the black raw HTML/code block issue from the accreditation badge.
+- Moved the Excellent accredited badge directly next to the university name.
+- Removed the large badge from the right-side application/program area.
+- The badge appears only when the university accreditation status is Excellent accredited.
