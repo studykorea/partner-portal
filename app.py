@@ -6713,6 +6713,50 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     }
 }
 
+
+/* v155 login redirect and return-to-application buttons */
+.application-locked-v155 {
+    padding:34px 38px !important;
+}
+.application-login-actions-v155 {
+    display:flex !important;
+    gap:16px !important;
+    flex-wrap:wrap !important;
+    margin-top:26px !important;
+}
+.application-login-btn-v155 {
+    min-width:240px !important;
+    min-height:54px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:14px !important;
+    text-decoration:none !important;
+    font-size:16px !important;
+    font-weight:950 !important;
+    letter-spacing:.2px !important;
+}
+.application-login-btn-v155.primary-v155 {
+    background:#3D5AD6 !important;
+    border:1px solid #3D5AD6 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    box-shadow:0 14px 30px rgba(61,90,214,.22) !important;
+}
+.application-login-btn-v155.secondary-v155 {
+    background:#FFFFFF !important;
+    border:1px solid #D0D5DD !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+}
+.application-login-btn-v155.primary-v155:hover {
+    background:#2446C7 !important;
+    border-color:#2446C7 !important;
+}
+.application-login-btn-v155.secondary-v155:hover {
+    background:#F8FAFC !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7733,6 +7777,72 @@ def pending():
     footer()
 
 
+
+def capture_application_return_context_v155(university="", program_slug="", application_type=""):
+    """Save where the applicant was when they were asked to login."""
+    if university:
+        st.session_state.return_apply_uni_v155 = str(university)
+    if program_slug:
+        st.session_state.return_apply_program_v155 = str(program_slug)
+    if application_type:
+        st.session_state.return_apply_type_v155 = str(application_type)
+    st.session_state.return_after_login_v155 = "application"
+
+
+def get_application_return_context_v155():
+    """Read return-to-application context from session or query params."""
+    try:
+        apply_return = st.query_params.get("apply_return", "")
+        q_uni = st.query_params.get("uni", "")
+        q_program = st.query_params.get("programdetail", "")
+        q_type = st.query_params.get("apptype", "")
+    except Exception:
+        apply_return = q_uni = q_program = q_type = ""
+
+    if isinstance(apply_return, list):
+        apply_return = apply_return[0] if apply_return else ""
+    if isinstance(q_uni, list):
+        q_uni = q_uni[0] if q_uni else ""
+    if isinstance(q_program, list):
+        q_program = q_program[0] if q_program else ""
+    if isinstance(q_type, list):
+        q_type = q_type[0] if q_type else ""
+
+    from urllib.parse import unquote_plus
+    uni = unquote_plus(str(q_uni or st.session_state.get("return_apply_uni_v155", "") or ""))
+    program = unquote_plus(str(q_program or st.session_state.get("return_apply_program_v155", "") or ""))
+    app_type = unquote_plus(str(q_type or st.session_state.get("return_apply_type_v155", "") or ""))
+
+    should_return = str(apply_return).strip() == "1" or st.session_state.get("return_after_login_v155") == "application"
+    return should_return, uni, program, app_type
+
+
+def go_to_application_return_after_login_v155(default_page):
+    """After approved login, return to the selected application page if login came from Apply page."""
+    should_return, uni, program, app_type = get_application_return_context_v155()
+    if should_return and uni and program:
+        st.session_state.page = "Universities"
+        st.session_state.selected_uni_v62 = uni
+        st.session_state.selected_program_v109 = program
+        st.session_state.application_type_v109 = app_type
+        st.session_state.application_page_open_v113 = bool(app_type)
+        st.session_state.application_step_v114 = 1
+        st.session_state.application_step1_data_v114 = {}
+        st.session_state.application_submitted_data_v118 = {}
+        st.session_state.current_application_id_v116 = ""
+        for k in ["return_after_login_v155", "return_apply_uni_v155", "return_apply_program_v155", "return_apply_type_v155"]:
+            st.session_state.pop(k, None)
+        try:
+            for q in ["apply_return", "apptype", "nav"]:
+                if q in st.query_params:
+                    del st.query_params[q]
+        except Exception:
+            pass
+        st.rerun()
+
+    set_page(default_page)
+
+
 def login():
     header()
     left, right = st.columns([0.95, 1.35], gap="large")
@@ -7772,7 +7882,7 @@ def login():
                         st.query_params["auth"] = st.session_state.get("auth_token", "") or _make_auth_token_v60(user)
                     except Exception:
                         pass
-                    set_page("Admin Dashboard" if user["role"] == "admin" else "Dashboard")
+                    go_to_application_return_after_login_v155("Admin Dashboard" if user["role"] == "admin" else "Dashboard")
         if st.button("Create New Partner Account", key="go_signup_from_login", use_container_width=True):
             set_page("Partner Sign Up")
         st.markdown('</div></div>', unsafe_allow_html=True)
@@ -9819,17 +9929,26 @@ def render_application_documents_step_v114(u, program_slug, application_type):
 def render_application_start_form_v109(u, program_slug, application_type):
     can_apply, reason = user_can_apply_v112()
     if not can_apply:
+        capture_application_return_context_v155(u.get("University", ""), program_slug, application_type)
+        from urllib.parse import quote_plus as url_quote_plus_v155
+        login_url_v155 = (
+            f"?nav=login&apply_return=1"
+            f"&uni={url_quote_plus_v155(str(u.get('University', '')))}"
+            f"&programdetail={url_quote_plus_v155(str(program_slug))}"
+            f"&apptype={url_quote_plus_v155(str(application_type))}"
+        )
+        signup_url_v155 = "?nav=signup"
         st.markdown(f"""
-        <div class="application-locked-v112">
+        <div class="application-locked-v112 application-locked-v155">
             <h3>Partner Login Required</h3>
             <p>{_safe_html_v62(reason)}</p>
+            <p class="muted">After login, you will automatically return to this application page.</p>
+            <div class="application-login-actions-v155">
+                <a class="application-login-btn-v155 primary-v155" href="{login_url_v155}" target="_self">Go to Login</a>
+                <a class="application-login-btn-v155 secondary-v155" href="{signup_url_v155}" target="_self">Create Partner / Staff Account</a>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        c1, c2 = st.columns([1, 3])
-        with c1:
-            if st.button("Go to Login", key="go_login_apply_v112", use_container_width=True):
-                st.session_state.page = "Login"
-                st.rerun()
         return
 
     current_step = int(st.session_state.get("application_step_v114", 1) or 1)

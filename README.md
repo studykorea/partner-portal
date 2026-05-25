@@ -1026,3 +1026,12 @@ v154:
 - Staff signup requests show the uploaded staff/passport-size photo when available.
 - If no image is uploaded, a clean initials placeholder appears.
 - Improved pending approval card layout to look more professional.
+
+
+v155:
+- Fixed the Go to Login action from the application page.
+- Replaced the unreliable Streamlit login button with a direct login link.
+- When users click Go to Login from an application page, the selected university/program/application type is saved.
+- After approved login, the user returns directly to the same application page to continue.
+- Added a Create Partner / Staff Account button for unregistered users.
+- New signup still goes to the pending approval screen after registration.
