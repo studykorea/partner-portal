@@ -2708,6 +2708,55 @@ div[data-testid="stFileUploader"] label {
     height: 46px !important;
     margin-top: 0 !important;
 }
+.featured-v32 .uni-card-v53 {
+    padding: 16px 16px 14px 16px !important;
+    border-radius: 20px !important;
+    border: 1px solid #D9E3F0 !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%) !important;
+    box-shadow: 0 10px 30px rgba(15, 39, 89, 0.06) !important;
+}
+.featured-v32 .uni-card-v53 h3 {
+    margin: 4px 0 18px 0 !important;
+    color: #10254D !important;
+    font-size: 26px !important;
+    line-height: 1.18 !important;
+    font-weight: 800 !important;
+}
+.featured-v32 .uni-meta-list-v166 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 4px !important;
+}
+.featured-v32 .uni-meta-item-v166 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: #F5F8FD !important;
+    border: 1px solid #E4ECF7 !important;
+    border-radius: 14px !important;
+    padding: 10px 12px !important;
+    min-height: 48px !important;
+}
+.featured-v32 .uni-meta-icon-v166 {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #EAF1FF !important;
+    color: #3459D1 !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+}
+.featured-v32 .uni-meta-text-v166 {
+    color: #31486B !important;
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+    font-weight: 600 !important;
+}
 .home-row-gap-v53 {
     height: 34px;
 }
@@ -7644,16 +7693,34 @@ def home():
                 students_text = student_count_v53(u)
                 intl_text = intl_count_v53(u)
 
-                students_html = f"<p>👥 {students_text}</p>" if students_text else ""
-                intl_html = f"<p>🌏 {intl_text}</p>" if intl_text else ""
+                location_html = f"""
+                  <div class="uni-meta-item-v166">
+                    <span class="uni-meta-icon-v166">📍</span>
+                    <span class="uni-meta-text-v166">{location_text}</span>
+                  </div>
+                """ if location_text else ""
+                students_html = f"""
+                  <div class="uni-meta-item-v166">
+                    <span class="uni-meta-icon-v166">👥</span>
+                    <span class="uni-meta-text-v166">{students_text}</span>
+                  </div>
+                """ if students_text else ""
+                intl_html = f"""
+                  <div class="uni-meta-item-v166">
+                    <span class="uni-meta-icon-v166">🌍</span>
+                    <span class="uni-meta-text-v166">{intl_text}</span>
+                  </div>
+                """ if intl_text else ""
 
                 st.markdown(f"""
                 <div class="card uni-card-v53">
                   {image_html}
                   <h3>{display_value_v53(u.get('University',''))}</h3>
-                  <p class="muted">📍 {location_text}</p>
-                  {students_html}
-                  {intl_html}
+                  <div class="uni-meta-list-v166">
+                    {location_html}
+                    {students_html}
+                    {intl_html}
+                  </div>
                 </div>
                 """, unsafe_allow_html=True)
 
