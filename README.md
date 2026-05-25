@@ -919,3 +919,8 @@ v133:
 - Replaced emoji/childish dashboard navigation icons with professional inline SVG line icons.
 - Updated admin, partner management, universities, eligibility, tuition, scholarship, applications, application samples, contact, and logout icons.
 - Active menu icons now turn white together with the active blue tab.
+
+
+v134:
+- In the super admin application detail header, the left image now shows the applicant passport-size photo instead of the university logo.
+- If the applicant photo is missing, the page shows a clean fallback box with applicant initials and “No Photo”.

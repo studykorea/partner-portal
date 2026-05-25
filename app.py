@@ -5969,6 +5969,50 @@ div[data-testid="stFormSubmitButton"] button:hover {
     stroke:#FFFFFF !important;
 }
 
+
+/* v134 applicant photo in admin application detail */
+.applicant-photo-box-v134 {
+    border-radius:24px !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    box-shadow:0 12px 28px rgba(16,24,40,.08) !important;
+}
+.applicant-photo-box-v134 img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    display:block !important;
+}
+.applicant-photo-fallback-v134 {
+    flex-direction:column !important;
+    background:linear-gradient(135deg,#EEF5FF,#FFFFFF) !important;
+}
+.applicant-photo-fallback-v134 span {
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:34px !important;
+    font-weight:950 !important;
+    line-height:1 !important;
+}
+.applicant-photo-fallback-v134 small {
+    color:#667085 !important;
+    -webkit-text-fill-color:#667085 !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+    margin-top:8px !important;
+}
+.admin-app-detail-logo-v131 {
+    width:160px !important;
+    height:160px !important;
+    border:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13148,6 +13192,37 @@ def update_application_status_from_admin_v125(app_id, updates):
     write_applications_df_v116(df)
     return True
 
+
+def applicant_photo_html_v134(row, applicant_name="", size=150):
+    """Show applicant passport-size photo in admin application detail header."""
+    try:
+        docs = parse_document_paths_v125(row)
+        photo_path = None
+        for key in ["passport_size_photo", "passport_photo", "photo", "applicant_photo"]:
+            if docs.get(key):
+                photo_path = resolve_uploaded_doc_path_v126(docs.get(key))
+                if photo_path:
+                    break
+        if photo_path and photo_path.exists():
+            encoded = base64.b64encode(photo_path.read_bytes()).decode()
+            return (
+                f'<div class="applicant-photo-box-v134" style="width:{size}px;height:{size}px">'
+                f'<img src="data:image/{photo_path.suffix.lower().replace(".","")};base64,{encoded}" '
+                f'alt="{_safe_html_v62(applicant_name or "Applicant Photo")}">'
+                f'</div>'
+            )
+    except Exception:
+        pass
+
+    initials = "".join([x[:1].upper() for x in str(applicant_name or "Applicant").split()[:2]]) or "AP"
+    return (
+        f'<div class="applicant-photo-box-v134 applicant-photo-fallback-v134" style="width:{size}px;height:{size}px">'
+        f'<span>{_safe_html_v62(initials)}</span>'
+        f'<small>No Photo</small>'
+        f'</div>'
+    )
+
+
 def admin_application_detail_page_v125(app_id, render_shell=True):
     if render_shell:
         dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
@@ -13172,7 +13247,7 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
 
     st.markdown(f"""
     <div class="admin-app-detail-hero-v131">
-        <div class="admin-app-detail-logo-v131">{admin_app_logo_html_v125(uni)}</div>
+        <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 160)}</div>
         <div class="admin-app-detail-main-v131">
             <div class="admin-app-detail-label-v131">Application Detail</div>
             <h1>{_safe_html_v62(applicant)}</h1>
