@@ -5671,6 +5671,22 @@ div[data-testid="stFormSubmitButton"] button:hover {
     font-weight:950 !important;
     margin:0 0 8px 0 !important;
 }
+.network-heading-with-icon-v147 {
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+}
+.network-heading-with-icon-v147 .official-rep-icon-heading-v147 {
+    width:30px !important;
+    height:30px !important;
+    max-width:30px !important;
+    max-height:30px !important;
+    object-fit:contain !important;
+    flex:0 0 auto !important;
+    display:inline-block !important;
+    vertical-align:middle !important;
+}
+
 .network-shortcut-card-v130 p,
 .network-page-head-v130 p,
 .network-detail-hero-v130 p,
@@ -11453,10 +11469,11 @@ def admin():
         close_shell()
         return
 
-    st.markdown("""
+    official_shortcut_heading_v147 = f'<div class="network-heading-with-icon-v147">{official_rep_icon_html_v141("official-rep-icon-heading-v147", 30)}<span>Official Representative / Partners</span></div>'
+    st.markdown(f"""
     <div class="network-shortcut-grid-v130">
         <div class="network-shortcut-card-v130">
-            <h2>Official Representative / Partners</h2>
+            <h2>{official_shortcut_heading_v147}</h2>
             <p>View official partners, staff under each organization, and applications submitted through them.</p>
         </div>
         <div class="network-shortcut-card-v130">
