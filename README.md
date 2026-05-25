@@ -1281,3 +1281,11 @@ v194:
 - Removed dashnav URL links completely.
 - Clicking Dashboard, Universities, Eligibility Check, Tuition & Scholarship, Contact Us, and Logout now uses session_state only.
 - Preserved the normal website design/CSS.
+
+
+v195:
+- Made the Undergraduate, Graduate, and KLP/EAP cards directly clickable.
+- Moved “View Details & Apply →” inside each program card.
+- Removed the separate View Details & Apply buttons below the cards.
+- Program cards use HTML forms with target=_self, not anchor links, so they open in the same browser tab.
+- Dashboard same-tab fix from v194 is preserved.

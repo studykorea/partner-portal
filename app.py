@@ -7785,6 +7785,69 @@ a[target="blank"] {
     -webkit-text-fill-color: #3F5BD6 !important;
 }
 
+
+/* v195 clickable program cards: View Details & Apply is inside each card */
+.program-card-form-v195 {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+.program-submit-card-v195 {
+    width: 100% !important;
+    min-width: 210px !important;
+    height: 174px !important;
+    cursor: pointer !important;
+    text-align: left !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    font-family: inherit !important;
+    background: #F6F8FC !important;
+    border: 1px solid #DCE6F4 !important;
+    border-radius: 18px !important;
+    padding: 18px 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    box-shadow: 0 10px 24px rgba(16,24,40,.055) !important;
+}
+.program-submit-card-v195:hover {
+    transform: translateY(-2px) !important;
+    border-color: #3F5BD6 !important;
+    box-shadow: 0 16px 34px rgba(63,91,214,.14) !important;
+}
+.program-submit-card-v195 b {
+    color: #002B5B !important;
+    -webkit-text-fill-color: #002B5B !important;
+    font-size: 18px !important;
+    line-height: 1.18 !important;
+    font-weight: 950 !important;
+}
+.program-submit-card-v195 span {
+    width: 100% !important;
+    border-radius: 999px !important;
+    padding: 10px 12px !important;
+    text-align: center !important;
+    font-weight: 950 !important;
+    font-size: 13px !important;
+}
+.program-submit-card-v195 small {
+    color: #344054 !important;
+    -webkit-text-fill-color: #344054 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+}
+.program-submit-card-v195 em {
+    margin-top: auto !important;
+    color: #3F5BD6 !important;
+    -webkit-text-fill-color: #3F5BD6 !important;
+    font-style: normal !important;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+}
+.uni-summary-programs-v88 {
+    align-items: stretch !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10831,37 +10894,46 @@ def program_detail_href_v109(row, label):
     """
     return "#"
 
+
 def _program_specific_application_badges_v71(row):
     """
-    v190: Shows Undergraduate, Graduate, and KLP/EAP as visual cards only.
-    No <a href> links here, because those links opened new browser tabs.
-    Actual navigation is handled by Streamlit buttons in _render_university_summary_v62.
+    v195: Each program card is directly clickable using an HTML form submit.
+    This stays in the same tab because it uses method='get' and target='_self'.
+    No <a href> links and no separate buttons below the cards.
     """
+    from urllib.parse import quote_plus
+
     general_open = row.get("Application_Open_Date", "")
     general_close = row.get("Application_Close_Date", "")
+    uni_name = str(row.get("University", "") or "")
 
     programs = [
-        ("Undergraduate", "UG_Open_Date", "UG_Close_Date"),
-        ("Graduate (Masters/Ph.D.)", "Graduate_Open_Date", "Graduate_Close_Date"),
-        ("KLP/EAP", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date"),
+        ("Undergraduate", "undergraduate", "UG_Open_Date", "UG_Close_Date"),
+        ("Graduate (Masters/Ph.D.)", "graduate", "Graduate_Open_Date", "Graduate_Close_Date"),
+        ("KLP/EAP", "language", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date"),
     ]
 
     html = ""
-    for label, open_col, close_col in programs:
+    for label, slug, open_col, close_col in programs:
         open_date = row.get(open_col, "") or general_open
         close_date = row.get(close_col, "") or general_close
         status = _calculate_application_status_v66(open_date, close_date, row.get("Application_Status", ""))
         status_class = _application_status_class_v63(status)
         open_txt = _format_date_v66(open_date) or "Not set"
         close_txt = _format_date_v66(close_date) or "Not set"
+
         html += (
-            f'<div class="program-date-card-v71 program-click-card-v109 program-static-card-v190">'
+            f'<form class="program-card-form-v195" method="get" target="_self">'
+            f'<input type="hidden" name="uni" value="{_safe_html_v62(uni_name)}">'
+            f'<input type="hidden" name="programdetail" value="{_safe_html_v62(slug)}">'
+            f'<button type="submit" class="program-date-card-v71 program-click-card-v109 program-submit-card-v195">'
             f'<b>{_safe_html_v62(label)}</b>'
             f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
             f'<small>Open: {_safe_html_v62(open_txt)}</small>'
             f'<small>Close: {_safe_html_v62(close_txt)}</small>'
-            f'<em>Click the button below</em>'
-            f'</div>'
+            f'<em>View Details &amp; Apply →</em>'
+            f'</button>'
+            f'</form>'
         )
     return html
 
@@ -12409,30 +12481,6 @@ def _render_university_summary_v62(u, key_suffix):
 </div>
 </div>'''
     st.markdown(summary_html, unsafe_allow_html=True)
-
-    # v190: Same-tab program navigation. These are Streamlit buttons, not HTML links.
-    st.markdown('<div class="program-button-row-v190">', unsafe_allow_html=True)
-    prog_cols_v190 = st.columns(3, gap="medium")
-    programs_v190 = [
-        ("Undergraduate", "undergraduate"),
-        ("Graduate (Masters/Ph.D.)", "graduate"),
-        ("KLP/EAP", "language"),
-    ]
-    for prog_i_v190, (prog_label_v190, prog_slug_v190) in enumerate(programs_v190):
-        with prog_cols_v190[prog_i_v190]:
-            if st.button(f"View Details & Apply → {prog_label_v190}", key=f"program_same_tab_v190_{key_suffix}_{prog_slug_v190}", use_container_width=True):
-                st.session_state.selected_uni_v62 = str(u.get("University", ""))
-                st.session_state.selected_program_v109 = prog_slug_v190
-                st.session_state.application_page_open_v113 = False
-                st.session_state.page = "Universities"
-                try:
-                    for q in ["nav", "uni", "programdetail", "program", "apptype"]:
-                        if q in st.query_params:
-                            del st.query_params[q]
-                except Exception:
-                    pass
-                st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("View University Details", key=f"view_details_v62_{key_suffix}", use_container_width=True):
         st.session_state.selected_uni_v62 = str(u.get("University", ""))
