@@ -19,6 +19,7 @@ USERS = DATA / "users.json"
 UNIS = DATA / "universities.csv"
 CRITERIA = DATA / "admission_criteria.csv"
 SCHOLARSHIPS = DATA / "scholarship_rules.csv"
+OFFICIAL_REP_ICON = "assets/official_representative_verified.png"
 ELIG_LOGS = DATA / "eligibility_logs.csv"
 TUIT_LOGS = DATA / "tuition_logs.csv"
 INQUIRIES = DATA / "inquiries.csv"
@@ -249,7 +250,7 @@ def official_agency_options_v77():
     return defaults
 
 def official_rep_badge_v77(agency_name):
-    return f'<span class="official-rep-badge-v77">⭐ Official Representative</span>'
+    return official_rep_badge_html_v141("Official Representative")
 
 def approval_agency_id_v77(user):
     return normalize_agency_id(
@@ -515,6 +516,19 @@ def asset_img_html(relative_path, class_name="uni-photo"):
     if not encoded:
         return '<div class="thumb">🏛️</div>'
     return f'<img class="{class_name}" src="data:image/jpeg;base64,{encoded}">'
+
+
+def official_rep_icon_html_v141(class_name="official-rep-icon-inline-v141"):
+    encoded = b64(OFFICIAL_REP_ICON)
+    if not encoded:
+        return f'<span class="{class_name} official-rep-icon-fallback-v141">✓</span>'
+    return f'<img class="{class_name}" src="data:image/png;base64,{encoded}" alt="Official Representative">'
+
+def official_rep_name_html_v141(name):
+    return f'<span class="official-rep-name-wrap-v141"><span>{_safe_html_v62(name)}</span>{official_rep_icon_html_v141("official-rep-icon-inline-v141")}</span>'
+
+def official_rep_badge_html_v141(label="Official Representative"):
+    return f'<span class="official-rep-badge-v141">{official_rep_icon_html_v141("official-rep-icon-badge-v141")}<span>{_safe_html_v62(label)}</span></span>'
 
 @st.cache_data(ttl=300, show_spinner=False)
 def universities():
@@ -11197,7 +11211,8 @@ def render_admin_network_page_v130():
             st.markdown(
                 '<div class="network-agency-card-v130">'
                 f'{agency_logo_html_v130(rep["agency_id"], 82)}'
-                f'<div><h3>{_safe_html_v62(rep["agency_name"])} <span class="official-star-v130">⭐ Official Representative</span></h3>'
+                f'<div><div class="network-official-title-v141"><h3>{official_rep_name_html_v141(rep["agency_name"])}</h3></div>'
+                f'<div class="network-official-badge-row-v141">{official_rep_badge_html_v141()}</div>'
                 f'<p><b>Email:</b> {_safe_html_v62(rep.get("email","") or "-")} · <b>Phone:</b> {_safe_html_v62(rep.get("phone","") or "-")} · <b>Country:</b> {_safe_html_v62(rep.get("country","") or "-")}</p>'
                 f'<p><b>Registered staff:</b> {staff_count} · <b>Applications submitted:</b> {len(apps)}</p></div>'
                 '</div>',
@@ -11224,7 +11239,7 @@ def render_admin_network_page_v130():
                 '<div class="network-agency-card-v130">'
                 f'{agency_logo_html_v130(partner["agency_id"], 82)}'
                 f'<div><h3>{_safe_html_v62(partner["agency_name"])}</h3>'
-                f'<p><b>Recommended by:</b> {_safe_html_v62(rec)} · <b>Registered:</b> {_safe_html_v62(partner.get("created_at","") or "-")}</p>'
+                f'<p><b>Recommended by:</b> {official_rep_name_html_v141(rec) if rec and rec != "Not provided" else _safe_html_v62(rec)} · <b>Registered:</b> {_safe_html_v62(partner.get("created_at","") or "-")}</p>'
                 f'<p><b>Email:</b> {_safe_html_v62(partner.get("email","") or "-")} · <b>Phone:</b> {_safe_html_v62(partner.get("phone","") or "-")} · <b>Staff:</b> {staff_count} · <b>Applications:</b> {len(apps)}</p></div>'
                 '</div>',
                 unsafe_allow_html=True
@@ -11243,11 +11258,13 @@ def render_admin_network_page_v130():
         display_name = found.get("agency_name", selected_id)
         staff = staff_under_agency_v130(selected_id)
         apps = applications_for_agency_v130(selected_id)
+        agency_heading_html_v141 = official_rep_name_html_v141(display_name) if selected_type == "official" else _safe_html_v62(display_name)
+        agency_type_badge_v141 = official_rep_badge_html_v141() if selected_type == "official" else _safe_html_v62("Partner Agency")
         st.markdown(
             '<div class="network-detail-hero-v130">'
             f'{agency_logo_html_v130(selected_id, 108)}'
-            f'<div><span>{_safe_html_v62("Official Representative" if selected_type=="official" else "Partner Agency")}</span>'
-            f'<h2>{_safe_html_v62(display_name)}</h2>'
+            f'<div><span>{agency_type_badge_v141}</span>'
+            f'<h2>{agency_heading_html_v141}</h2>'
             f'<p><b>Registered staff:</b> {len(staff)} · <b>Submitted applications:</b> {len(apps)}</p></div>'
             '</div>',
             unsafe_allow_html=True
@@ -11376,7 +11393,7 @@ def admin():
     st.markdown("""
     <div class="network-shortcut-grid-v130">
         <div class="network-shortcut-card-v130">
-            <h2>⭐ Official Representative / Partners</h2>
+            <h2>Official Representative / Partners</h2>
             <p>View official partners, staff under each organization, and applications submitted through them.</p>
         </div>
         <div class="network-shortcut-card-v130">
