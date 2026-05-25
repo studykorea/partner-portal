@@ -19,7 +19,7 @@ USERS = DATA / "users.json"
 UNIS = DATA / "universities.csv"
 CRITERIA = DATA / "admission_criteria.csv"
 SCHOLARSHIPS = DATA / "scholarship_rules.csv"
-OFFICIAL_REP_ICON = "assets/official_representative_verified.png"
+OFFICIAL_REP_ICON = "assets/official_representative_verified.svg"
 ELIG_LOGS = DATA / "eligibility_logs.csv"
 TUIT_LOGS = DATA / "tuition_logs.csv"
 INQUIRIES = DATA / "inquiries.csv"
@@ -524,7 +524,8 @@ def official_rep_icon_html_v141(class_name="official-rep-icon-inline-v141", size
     style = f"width:{size}px;height:{size}px;max-width:{size}px;max-height:{size}px;object-fit:contain;display:inline-block;vertical-align:middle;flex:0 0 auto;"
     if not encoded:
         return f'<span class="{class_name} official-rep-icon-fallback-v141" style="{style}">✓</span>'
-    return f'<img class="{class_name}" style="{style}" src="data:image/png;base64,{encoded}" alt="Official Representative">'
+    mime = 'image/svg+xml' if str(OFFICIAL_REP_ICON).lower().endswith('.svg') else 'image/png'
+    return f'<img class="{class_name}" style="{style}" src="data:{mime};base64,{encoded}" alt="Official Representative">'
 
 def official_rep_name_html_v141(name):
     return f'<span class="official-rep-name-wrap-v141"><span>{_safe_html_v62(name)}</span>{official_rep_icon_html_v141("official-rep-icon-inline-v141", 26)}</span>'
