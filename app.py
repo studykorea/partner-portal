@@ -11403,12 +11403,12 @@ def university_excellent_accreditation_name_badge_v169(u):
     logo_href = f"data:{mime};base64,{encoded_logo}" if encoded_logo else ""
 
     line1, line2 = (split_badge_name_lines_v170(name) + [""])[:2]
-    safe_line1 = html.escape(line1)
-    safe_line2 = html.escape(line2)
+    safe_line1 = _safe_html_v62(line1)
+    safe_line2 = _safe_html_v62(line2)
     safe_title = _safe_html_v62(title)
-    safe_until = html.escape(until if until else "-")
-    safe_name = html.escape(name)
-    safe_logo = html.escape(logo_href)
+    safe_until = _safe_html_v62(until if until else "-")
+    safe_name = _safe_html_v62(name)
+    safe_logo = _safe_html_v62(logo_href)
 
     logo_markup = (
         f'<image href="{safe_logo}" x="49" y="52" width="42" height="42" preserveAspectRatio="xMidYMid meet"/>'

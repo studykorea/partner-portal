@@ -1130,3 +1130,9 @@ v170:
 - Replaced the simple check-style accreditation icon with a sample-style IEQAS badge.
 - The badge now shows the university logo, university name, and accreditation valid-until date.
 - Badge remains transparent and appears next to the university name for Excellent accredited universities only.
+
+
+v171:
+- Fixed NameError on the university detail page caused by html.escape inside the IEQAS badge generator.
+- The IEQAS sample-style badge now uses the existing safe HTML helper.
+- Kept the transparent sample-style badge with university logo, university name, and accreditation date.
