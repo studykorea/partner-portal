@@ -1227,3 +1227,11 @@ v186:
 - Removed noopener/noreferrer link behavior.
 - Replaced window.open() with same-tab window.location.href.
 - Added a global same-tab navigation safeguard using <base target="_self">.
+
+
+v187:
+- Replaced the entire top navigation from HTML <a href> links to real Streamlit buttons.
+- This removes the main cause of repeated new tabs in Chrome.
+- Dashboard, Universities, Eligibility Check, Tuition & Scholarship, Contact Us, Login, Sign Up, and Logout now navigate through session_state in the same tab.
+- Removed home hero HTML links too.
+- Kept global target/window.open cleanup as backup.

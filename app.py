@@ -7583,6 +7583,49 @@ a[target="blank"] {
     target-name: current !important;
 }
 
+
+/* v187: Streamlit-button navigation. No anchor links, no new tabs. */
+.top-nav-button-shell-v187 {
+    width: 100% !important;
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #E7EEF8 !important;
+    padding: 14px 20px 12px 20px !important;
+    margin: 0 0 18px 0 !important;
+    box-sizing: border-box !important;
+}
+.top-nav-button-shell-v187 div[data-testid="stButton"] > button {
+    height: 52px !important;
+    border-radius: 12px !important;
+    border: 1px solid #D7DEE9 !important;
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    font-weight: 900 !important;
+    font-size: 15px !important;
+    box-shadow: 0 8px 18px rgba(16,24,40,.04) !important;
+}
+.top-nav-button-shell-v187 div[data-testid="stButton"] > button:hover {
+    border-color: #3F5BD6 !important;
+    color: #3F5BD6 !important;
+}
+.nav-user-name-button-v187 {
+    min-height: 52px !important;
+    border: 1px solid #D7DEE9 !important;
+    border-radius: 12px !important;
+    background: #F8FAFC !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 12px !important;
+    font-weight: 900 !important;
+    color: #0F172A !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+.hero-buttons-v69 span {
+    cursor: default !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -7671,82 +7714,120 @@ def browser_login_nav_sync_v163():
     </script>
     """, height=0)
 
+
 def header():
+    """
+    v187: Button-based navigation only.
+    No <a href> links in the main top navigation, so Chrome cannot open new tabs.
+    """
     force_single_tab_navigation_v186()
-    st.markdown("""<base target="_self"><!-- v185 base target self -->""", unsafe_allow_html=True)
-    # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
+
+    # Restore login before drawing navigation.
     try:
         restore_login_from_query_v60()
-    except Exception:
-        pass
-
-    current = st.session_state.get("page", "Home")
-    pending_token = _current_pending_token_v76()
-    pending_suffix = f"&pending={pending_token}" if pending_token else ""
-
-    def active_cls(target):
-        return " active" if current == target else ""
-
-    def nav_href(nav_key):
-        auth_suffix = auth_query_suffix_v104("&")
-        return f"?nav={nav_key}{pending_suffix}{auth_suffix}"
-
-    # v162: restore again immediately before drawing top nav.
-    try:
         restore_login_from_any_auth_v162()
     except Exception:
         pass
 
-    logged_in_v161 = bool(
+    current = st.session_state.get("page", "Home")
+
+    def _go_page_v187(page_name):
+        st.session_state.page = page_name
+        try:
+            # Clear URL navigation params so repeated clicks do not create new browser entries/tabs.
+            for q in ["nav", "go", "uni", "program", "programdetail"]:
+                if q in st.query_params:
+                    del st.query_params[q]
+        except Exception:
+            pass
+        st.rerun()
+
+    def _logout_v187():
+        try:
+            components.html(
+                "<script>localStorage.removeItem('pp_auth_token_v163');"
+                "localStorage.removeItem('pp_user_display_v163');"
+                "localStorage.removeItem('pp_user_role_v163');</script>",
+                height=0,
+            )
+        except Exception:
+            pass
+        for k in [
+            "logged_in", "role", "username", "agency_name", "agency_id",
+            "full_name", "account_type", "auth_token",
+            "apply_access_granted_v158", "application_login_verified_v158"
+        ]:
+            st.session_state.pop(k, None)
+        try:
+            st.query_params.clear()
+        except Exception:
+            pass
+        st.session_state.page = "Home"
+        st.rerun()
+
+    logged_in_v187 = bool(
         st.session_state.get("logged_in")
         or (st.session_state.get("username") and st.session_state.get("role"))
         or current_auth_token_v162()
     )
-    role_v161 = str(st.session_state.get("role", "")).strip().lower()
-    if logged_in_v161:
-        token_name_v162 = ""
-        token_v162 = current_auth_token_v162()
-        if token_v162 and ":" in token_v162:
-            token_name_v162 = token_v162.split(":", 1)[0]
-        if role_v161 in ["agency_staff", "staff"]:
-            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Staff"
-        elif role_v161 == "admin":
-            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Admin"
-        else:
-            display_name_v161 = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "") or token_name_v162 or "Partner"
-        user_actions_v161 = (
-            '<div class="nav-user-box-v161">'
-            f'<span class="nav-user-name-v161">{_safe_html_v62(display_name_v161)}</span>'
-            '<a class="nav-logout-v161" href="?nav=logout">Logout</a>'
-            '</div>'
-        )
-    else:
-        user_actions_v161 = (
-            f'<a class="nav-login-v70" href="{nav_href("login")}">Login</a>'
-            f'<a class="nav-signup-v70" href="{nav_href("signup")}">👥&nbsp;&nbsp;Partner Sign Up</a>'
-        )
+    role_v187 = str(st.session_state.get("role", "")).strip().lower()
 
-    nav_html = f"""
-    <div class="top-nav-reference-v70">
-      <div class="nav-left-v70">
-        <a class="nav-link-v70{active_cls('Home')}" href="{nav_href('home')}">Home</a>
-        <a class="nav-link-v70{active_cls('Universities')}" href="{nav_href('universities')}">Universities</a>
-        <a class="nav-link-v70{active_cls('Eligibility Check')}" href="{nav_href('eligibility')}">Eligibility Check</a>
-        <a class="nav-link-v70{active_cls('Tuition & Scholarship')}" href="{nav_href('tuition')}">Tuition Fees</a>
-        <a class="nav-link-v70{active_cls('Contact Us')}" href="{nav_href('contact')}">Contact Us</a>
-        <a class="nav-link-v70" href="{nav_href('mou')}">MoU Contact</a>
-      </div>
-      <div class="nav-right-v70">
-        {user_actions_v161}
-      </div>
-    </div>
-    """
-    st.markdown(nav_html, unsafe_allow_html=True)
-    # v163: client-side backup so logged-in users do not see Login/Partner Sign Up on public pages.
-    try:
-        browser_login_nav_sync_v163()
-    except Exception:
-        pass
+    # Header shell. Buttons below are real Streamlit buttons, not links.
+    st.markdown('<div class="top-nav-button-shell-v187">', unsafe_allow_html=True)
+
+    if logged_in_v187:
+        # Logged-in view
+        nav_cols = st.columns([1.0, 1.05, 1.35, 1.45, 1.15, 1.15, 1.2])
+        nav_items = [
+            ("Dashboard", "Admin Dashboard" if role_v187 == "admin" else "Dashboard"),
+            ("Universities", "Universities"),
+            ("Eligibility Check", "Eligibility Check"),
+            ("Tuition & Scholarship", "Tuition & Scholarship"),
+            ("Contact Us", "Contact Us"),
+        ]
+        for i, (label, page_name) in enumerate(nav_items):
+            active = " ▸" if current == page_name else ""
+            with nav_cols[i]:
+                if st.button(label + active, key=f"top_nav_btn_v187_{label}_{page_name}", use_container_width=True):
+                    _go_page_v187(page_name)
+
+        with nav_cols[5]:
+            if role_v187 in ["agency_staff", "staff"]:
+                display_name_v187 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Staff"
+            elif role_v187 == "admin":
+                display_name_v187 = st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Admin"
+            else:
+                display_name_v187 = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "") or "Partner"
+            st.markdown(f'<div class="nav-user-name-button-v187">{_safe_html_v62(display_name_v187)}</div>', unsafe_allow_html=True)
+
+        with nav_cols[6]:
+            if st.button("Logout", key="top_nav_logout_btn_v187", use_container_width=True):
+                _logout_v187()
+    else:
+        # Public view
+        nav_cols = st.columns([0.75, 1.0, 1.25, 1.35, 1.0, 1.0, 1.0, 1.25, 1.55])
+        nav_items = [
+            ("Home", "Home"),
+            ("Universities", "Universities"),
+            ("Eligibility Check", "Eligibility Check"),
+            ("Tuition Fees", "Tuition & Scholarship"),
+            ("Contact Us", "Contact Us"),
+            ("MoU Contact", "Contact Us"),
+        ]
+        for i, (label, page_name) in enumerate(nav_items):
+            active = " ▸" if current == page_name else ""
+            with nav_cols[i]:
+                if st.button(label + active, key=f"top_nav_public_btn_v187_{label}_{page_name}", use_container_width=True):
+                    _go_page_v187(page_name)
+        with nav_cols[7]:
+            if st.button("Login", key="top_nav_login_btn_v187", use_container_width=True):
+                _go_page_v187("Login")
+        with nav_cols[8]:
+            if st.button("Partner Sign Up", key="top_nav_signup_btn_v187", use_container_width=True):
+                _go_page_v187("Partner Sign Up")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 def footer():
 
@@ -8465,8 +8546,8 @@ def home():
         <h1>Partner Portal for<br>University Recruitment</h1>
         <p class="hero-lead-v69">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
         <div class="hero-buttons-v69">
-          <a class="hero-btn-primary-v69" href="?go=signup">👤&nbsp;&nbsp;Apply for Partner Access</a>
-          <a class="hero-btn-outline-v69" href="?go=universities">🏛️&nbsp;&nbsp;Explore Universities</a>
+          <span class="hero-btn-primary-v69">👤&nbsp;&nbsp;Apply for Partner Access</span>
+          <span class="hero-btn-outline-v69">🏛️&nbsp;&nbsp;Explore Universities</span>
         </div>
         <p class="hero-lock-v69">🔒 Detailed information is available only for approved partners.</p>
       </div>
