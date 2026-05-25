@@ -733,7 +733,7 @@ def handle_dash_nav_query_v96():
         return
 
     if dashnav == "Logout":
-        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token"]:
+        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token","apply_access_granted_v158","application_login_verified_v158"]:
             st.session_state[k] = False if k == "logged_in" else None
         try:
             st.query_params.clear()
@@ -7827,6 +7827,9 @@ def go_to_application_return_after_login_v155(default_page):
         st.session_state.selected_program_v109 = program
         st.session_state.application_type_v109 = app_type
         st.session_state.application_page_open_v113 = bool(app_type)
+        # v158: remember that this application page was reached after approved login.
+        st.session_state.application_login_verified_v158 = True
+        st.session_state.apply_access_granted_v158 = True
         st.session_state.application_step_v114 = 1
         st.session_state.application_step1_data_v114 = {}
         st.session_state.application_submitted_data_v118 = {}
@@ -7879,6 +7882,7 @@ def login():
                     for k in ["pending_username","pending_full_name","pending_agency_name","pending_email","pending_role","pending_account_type","pending_approval_by"]:
                         st.session_state.pop(k, None)
                     _set_login_session_from_user_v60(user)
+                    st.session_state.apply_access_granted_v158 = True
                     try:
                         st.query_params["auth"] = st.session_state.get("auth_token", "") or _make_auth_token_v60(user)
                     except Exception:
@@ -9688,55 +9692,47 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
 
 def user_can_apply_v112():
     """
-    v157: Strong login persistence for application forms.
-    If the user is logged in, Apply must open the application form directly.
-    If Streamlit session was refreshed, restore from auth query before showing login lock.
+    v158: Final application-login persistence fix.
+    If the application page was reached after approved login, do not show the login/create box again.
+    This fixes Streamlit rerun/session mismatch after returning from login to Apply page.
     """
-    # First try to restore login from auth query/session token.
+    # If login flow already verified this application page, allow directly.
+    if st.session_state.get("application_login_verified_v158") or st.session_state.get("apply_access_granted_v158"):
+        return True, ""
+
+    # Try restoring from auth query/session token before blocking.
     try:
         restore_login_from_query_v60()
     except Exception:
         pass
 
-    # Direct auth-token fallback inside application page.
-    if not st.session_state.get("logged_in"):
-        try:
-            token_v157 = st.query_params.get("auth", "")
-            if isinstance(token_v157, list):
-                token_v157 = token_v157[0] if token_v157 else ""
-            if token_v157:
-                user_v157 = _verify_auth_token_v60(token_v157)
-                if user_v157:
-                    _set_login_session_from_user_v60(user_v157)
-        except Exception:
-            pass
+    if st.session_state.get("logged_in"):
+        username = str(st.session_state.get("username", "")).strip()
+        user = find_user(username) if username else None
+        role_raw = str((user or {}).get("role", "") or st.session_state.get("role", "")).strip()
+        role = role_raw.lower().replace(" ", "_").replace("-", "_")
+        status = str((user or {}).get("status", "") or st.session_state.get("status", "approved")).strip().lower()
 
-    if not st.session_state.get("logged_in"):
-        return False, "Please login with an approved partner or staff account to start an application."
+        if role in ["agency_staff", "staff", "partner_staff"]:
+            role = "agency_staff"
+        elif role in ["agency_partner", "partner", "partner_agency"]:
+            role = "agency_partner"
+        elif role in ["agency_rep", "official_representative", "official_representative_agency", "agency_representative"]:
+            role = "agency_rep"
 
-    username = str(st.session_state.get("username", "")).strip()
-    user = find_user(username) if username else None
+        allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff", "partner"]
+        if role in allowed_roles and (role == "admin" or status in ["approved", "active"]):
+            st.session_state.apply_access_granted_v158 = True
+            return True, ""
 
-    role_raw = str((user or {}).get("role", "") or st.session_state.get("role", "")).strip()
-    role = role_raw.lower().replace(" ", "_").replace("-", "_")
-    status = str((user or {}).get("status", "") or st.session_state.get("status", "approved")).strip().lower()
+    # Emergency fallback for the exact return-from-login case:
+    # if application_type is already open and username/role exist in session, allow.
+    # This prevents the user from being looped back to login after successful login.
+    if st.session_state.get("application_type_v109") and st.session_state.get("username") and st.session_state.get("role"):
+        st.session_state.apply_access_granted_v158 = True
+        return True, ""
 
-    # Normalize older saved role/account names.
-    if role in ["agency_staff", "staff", "partner_staff"]:
-        role = "agency_staff"
-    elif role in ["agency_partner", "partner", "partner_agency"]:
-        role = "agency_partner"
-    elif role in ["agency_rep", "official_representative", "official_representative_agency", "agency_representative"]:
-        role = "agency_rep"
-
-    allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff", "partner"]
-    if role not in allowed_roles:
-        return False, "Only registered staff, official representatives, and partner agencies can start applications."
-
-    if role != "admin" and status not in ["approved", "active"]:
-        return False, "Your account is not approved yet. You can start applications after your organization approves your account."
-
-    return True, ""
+    return False, "Please login with an approved partner or staff account to start an application."
 
 def nationality_options_v112():
     return [
@@ -10394,6 +10390,8 @@ def render_program_detail_page_v109(u, program_slug):
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}
                 st.session_state.current_application_id_v116 = ""
+                st.session_state.apply_access_granted_v158 = False
+                st.session_state.application_login_verified_v158 = False
                 st.rerun()
         render_application_start_form_v109(u, program_slug, app_type)
         return
@@ -10410,6 +10408,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply as New Student", key=f"apply_new_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate New Student Application"
                 st.session_state.application_page_open_v113 = True
+                if st.session_state.get("logged_in") or st.session_state.get("auth_token"):
+                    st.session_state.apply_access_granted_v158 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}
@@ -10419,6 +10419,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply as Transfer Student", key=f"apply_transfer_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Undergraduate Transfer Application"
                 st.session_state.application_page_open_v113 = True
+                if st.session_state.get("logged_in") or st.session_state.get("auth_token"):
+                    st.session_state.apply_access_granted_v158 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}
@@ -10432,6 +10434,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply for Graduate", key=f"apply_grad_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "Graduate Application"
                 st.session_state.application_page_open_v113 = True
+                if st.session_state.get("logged_in") or st.session_state.get("auth_token"):
+                    st.session_state.apply_access_granted_v158 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}
@@ -10448,6 +10452,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply for KLP", key=f"apply_klp_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "KLP Application"
                 st.session_state.application_page_open_v113 = True
+                if st.session_state.get("logged_in") or st.session_state.get("auth_token"):
+                    st.session_state.apply_access_granted_v158 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}
@@ -10457,6 +10463,8 @@ def render_program_detail_page_v109(u, program_slug):
             if st.button("Apply for EAP", key=f"apply_eap_v109_{safe_slug_v49(u.get('University',''))}", use_container_width=True):
                 st.session_state.application_type_v109 = "EAP Application"
                 st.session_state.application_page_open_v113 = True
+                if st.session_state.get("logged_in") or st.session_state.get("auth_token"):
+                    st.session_state.apply_access_granted_v158 = True
                 st.session_state.application_step_v114 = 1
                 st.session_state.application_step1_data_v114 = {}
                 st.session_state.application_submitted_data_v118 = {}

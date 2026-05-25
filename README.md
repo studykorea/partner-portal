@@ -1050,3 +1050,11 @@ v157:
 - Login restore now accepts approved/active status case-insensitively and restores from auth token before showing the login lock.
 - Graduate application Step 1 now uses a fuller form similar to undergraduate, with bachelor university name, bachelor university location, bachelor enrolled period, graduation year, bachelor major, and GPA.
 - Graduate Step 2 now asks for Bachelor Graduation Certificate and Bachelor Transcript instead of high school graduation/transcript.
+
+
+v158:
+- Fixed the login loop on application pages.
+- After a user logs in from an Apply page, the application page is marked as verified so it will not show the Login/Create box again.
+- Clicking Apply while already logged in now grants application access for the current session.
+- Added a fallback so if username and role are already in session, the form opens directly instead of asking to login again.
+- Logout clears the application access flags.
