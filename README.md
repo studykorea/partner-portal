@@ -1042,3 +1042,11 @@ v156:
 - Application access now checks the active login session as the main source of truth.
 - Approved partner, agency, and staff accounts can continue directly to the application form after login.
 - Login now saves the user status in session state for application access checks.
+
+
+v157:
+- Fixed login persistence again for application pages.
+- If a user is already logged in, clicking Apply now opens the application form directly instead of showing Login/Create Account.
+- Login restore now accepts approved/active status case-insensitively and restores from auth token before showing the login lock.
+- Graduate application Step 1 now uses a fuller form similar to undergraduate, with bachelor university name, bachelor university location, bachelor enrolled period, graduation year, bachelor major, and GPA.
+- Graduate Step 2 now asks for Bachelor Graduation Certificate and Bachelor Transcript instead of high school graduation/transcript.

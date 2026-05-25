@@ -587,6 +587,7 @@ def _set_login_session_from_user_v60(user):
     st.session_state.logged_in = True
     st.session_state.username = user["username"]
     st.session_state.role = user["role"]
+    st.session_state.status = user.get("status", "approved")
     st.session_state.agency_name = user.get("agency_name", "")
     st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
     st.session_state.full_name = user.get("full_name", "")
@@ -606,7 +607,7 @@ def _verify_auth_token_v60(token):
     try:
         username, sig = str(token).split(":", 1)
         user = find_user(username)
-        if not user or user.get("status") != "approved":
+        if not user or str(user.get("status", "")).strip().lower() not in ["approved", "active"]:
             return None
         expected = _make_auth_token_v60(user).split(":", 1)[1]
         if hmac.compare_digest(sig, expected):
@@ -9687,23 +9688,47 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
 
 def user_can_apply_v112():
     """
-    v156: Application access fix.
-    After returning from login, Streamlit session state is the main source of truth.
-    Some approved users were sent back to the application page but find_user/session
-    mismatch caused the page to ask for login again.
+    v157: Strong login persistence for application forms.
+    If the user is logged in, Apply must open the application form directly.
+    If Streamlit session was refreshed, restore from auth query before showing login lock.
     """
+    # First try to restore login from auth query/session token.
+    try:
+        restore_login_from_query_v60()
+    except Exception:
+        pass
+
+    # Direct auth-token fallback inside application page.
+    if not st.session_state.get("logged_in"):
+        try:
+            token_v157 = st.query_params.get("auth", "")
+            if isinstance(token_v157, list):
+                token_v157 = token_v157[0] if token_v157 else ""
+            if token_v157:
+                user_v157 = _verify_auth_token_v60(token_v157)
+                if user_v157:
+                    _set_login_session_from_user_v60(user_v157)
+        except Exception:
+            pass
+
     if not st.session_state.get("logged_in"):
         return False, "Please login with an approved partner or staff account to start an application."
 
     username = str(st.session_state.get("username", "")).strip()
     user = find_user(username) if username else None
 
-    # Prefer user data from users.json, but fall back to session_state after successful login.
-    role = str((user or {}).get("role", "") or st.session_state.get("role", "")).strip()
+    role_raw = str((user or {}).get("role", "") or st.session_state.get("role", "")).strip()
+    role = role_raw.lower().replace(" ", "_").replace("-", "_")
     status = str((user or {}).get("status", "") or st.session_state.get("status", "approved")).strip().lower()
 
-    # If the session is logged in as a partner/staff/agency user, allow it even if old
-    # user rows are missing a clean status field.
+    # Normalize older saved role/account names.
+    if role in ["agency_staff", "staff", "partner_staff"]:
+        role = "agency_staff"
+    elif role in ["agency_partner", "partner", "partner_agency"]:
+        role = "agency_partner"
+    elif role in ["agency_rep", "official_representative", "official_representative_agency", "agency_representative"]:
+        role = "agency_rep"
+
     allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff", "partner"]
     if role not in allowed_roles:
         return False, "Only registered staff, official representatives, and partner agencies can start applications."
@@ -9742,6 +9767,27 @@ APPLICATION_DOC_TYPES_V114 = [
     ("Bank Certificate", "bank_certificate", ["pdf"], "Upload bank certificate in PDF format."),
     ("Consent Form", "consent_form", ["pdf"], "Download the consent form, fill applicant details, sign it, and upload PDF."),
 ]
+
+
+GRADUATE_DOC_TYPES_V157 = [
+    ("Passport Size Photo", "passport_size_photo", ["jpg", "jpeg", "png"], "Upload passport size photo in JPG/PNG format."),
+    ("Passport Copy", "passport_copy", ["pdf", "jpg", "jpeg", "png"], "Upload passport copy in PDF/JPG/PNG format."),
+    ("Bachelor Graduation Certificate", "bachelor_graduation_certificate", ["pdf"], "Upload university bachelor graduation certificate in PDF format."),
+    ("Bachelor Transcript", "bachelor_transcript", ["pdf"], "Upload university bachelor transcript in PDF format."),
+    ("Family Relationship Certificate", "family_relationship_certificate", ["pdf"], "Upload family relationship certificate in PDF format."),
+    ("Family Members Id Notarized", "family_members_id_notarized", ["pdf"], "Upload family members ID copy and notarized document in PDF format."),
+    ("Embassy Verified Apostille", "embassy_verified_apostille", ["pdf"], "Upload embassy verified/apostille documents in PDF format."),
+    ("Language Certificate", "language_certificate", ["pdf"], "Upload IELTS/TOEFL/TOPIK or other language certificate in PDF format."),
+    ("Bank Certificate", "bank_certificate", ["pdf"], "Upload bank certificate in PDF format."),
+    ("Consent Form", "consent_form", ["pdf"], "Download the consent form, fill applicant details, sign it, and upload PDF."),
+]
+
+def application_doc_types_for_v157(program_category):
+    """Return correct document upload list by application program category."""
+    if str(program_category or "").strip().lower() == "graduate":
+        return GRADUATE_DOC_TYPES_V157
+    return APPLICATION_DOC_TYPES_V114
+
 
 def application_program_label_v114(program_slug, application_type=""):
     # v117 fix:
@@ -9878,6 +9924,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
     applicant_name = step1.get("Full_Name_As_Passport", "")
     passport_number = step1.get("Passport_Number", "")
     program_category = application_program_label_v114(program_slug, application_type)
+    doc_types_v157 = application_doc_types_for_v157(program_category)
     applicant_key = f"{passport_number}_{applicant_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
     st.markdown(f"""
@@ -9900,7 +9947,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
     uploaded_paths = {}
     missing_docs = []
     with st.form(f"application_docs_step2_v114_{safe_slug_v49(passport_number)}"):
-        for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+        for label, doc_key, file_types, instruction in doc_types_v157:
             st.markdown(f'<div class="doc-upload-row-title-v114">{_safe_html_v62(label)}</div>', unsafe_allow_html=True)
             c1, c2 = st.columns([1.15, .85])
             with c1:
@@ -9919,7 +9966,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
         submitted = st.form_submit_button("Submit Application", use_container_width=True)
 
         if submitted:
-            for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+            for label, doc_key, file_types, instruction in doc_types_v157:
                 if doc_key not in uploaded_paths:
                     missing_docs.append(label)
 
@@ -9927,7 +9974,7 @@ def render_application_documents_step_v114(u, program_slug, application_type):
                 st.error("Please upload all required documents: " + ", ".join(missing_docs))
             else:
                 saved_docs = {}
-                for label, doc_key, file_types, instruction in APPLICATION_DOC_TYPES_V114:
+                for label, doc_key, file_types, instruction in doc_types_v157:
                     saved_docs[doc_key] = save_application_upload_v114(uploaded_paths[doc_key], applicant_key, doc_key)
 
                 submitted_app_id_v119 = update_application_submitted_v116(step1, saved_docs)
@@ -10176,34 +10223,133 @@ def render_application_start_form_v109(u, program_slug, application_type):
                     st.rerun()
         return
 
-    with st.form(f"application_start_v114_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
-        c1, c2 = st.columns(2)
+    is_graduate_application = str(program_slug).lower() == "graduate"
+    with st.form(f"application_start_v157_{safe_slug_v49(u.get('University',''))}_{program_slug}_{safe_slug_v49(application_type)}"):
+        st.markdown("### Applicant Personal Information")
+        c1, c2, c3 = st.columns(3)
         with c1:
-            applicant_name = st.text_input("Applicant Full Name")
-            email = st.text_input("Email Address")
-            nationality = st.selectbox("Nationality", nationality_options_v112())
-            desired_major = st.selectbox("Select Major / Program Willing to Study", major_options)
+            passport_full_name = st.text_input("Full Name as in Passport *")
+            first_name = st.text_input("First Name *")
+            passport_number = st.text_input("Passport Number *")
+            nationality = st.selectbox("Nationality *", nationality_options_v112())
         with c2:
-            phone = st.text_input("Phone / WhatsApp")
-            passport = st.text_input("Passport Number")
-            note = st.text_area("Additional Notes", height=90)
+            middle_name = st.text_input("Middle Name")
+            last_name = st.text_input("Last Name *")
+            date_of_birth = st.date_input("Date of Birth *", value=None, min_value=date(1950, 1, 1), max_value=date(datetime.now().year, 12, 31))
+            applicant_contact = st.text_input("Applicant Contact Number *")
+        with c3:
+            applicant_email = st.text_input("Email Address *")
+            parents_full_name = st.text_input("Parents Full Name *")
+            guardian_contact = st.text_input("Parents / Guardian Contact Number *")
+            home_address = st.text_area("Home Country Address *", height=88)
+
+        st.markdown("### Intended Study Information")
+        desired_major = st.selectbox("Select Major / Program Willing to Study *", major_options)
+        desired_major_other = ""
+        if desired_major == "":
+            desired_major_other = st.text_input("If the major is not listed, write the major/program here")
+
+        st.markdown("### Academic Background")
+        c4, c5 = st.columns(2)
+        if is_graduate_application:
+            with c4:
+                bachelor_university_name = st.text_input("Bachelor University Name *")
+                bachelor_location = st.text_input("Bachelor University Location *")
+                bachelor_enroll_start = st.date_input("Bachelor Enrolled Period Start", value=None, key=f"grad_bach_start_{safe_slug_v49(u.get('University',''))}")
+                bachelor_enroll_end = st.date_input("Bachelor Enrolled Period End", value=None, key=f"grad_bach_end_{safe_slug_v49(u.get('University',''))}")
+            with c5:
+                bachelor_graduation_year = st.selectbox("Bachelor Graduation Year *", year_options_v112(1990, 1))
+                bachelor_major = st.text_input("Bachelor Major / Department")
+                bachelor_gpa = st.text_input("Bachelor GPA / Percentage")
+                note = st.text_area("Additional Notes", height=80)
+        else:
+            with c4:
+                high_school_name = st.text_input("High School Name *")
+                high_school_passout_year = st.selectbox("High School Passout Year *", year_options_v112(1990, 1))
+                high_school_location = st.text_input("High School Location *")
+            with c5:
+                note = st.text_area("Additional Notes", height=120)
+
+        st.markdown("### Financial Information")
+        c6, c7 = st.columns(2)
+        with c6:
+            bank_certificate_owner = st.selectbox("Financial / Bank Certificate Information *", ["Self", "Father", "Mother"])
+        with c7:
+            bank_amount_usd = st.number_input("Amount in USD *", min_value=0.0, step=100.0, format="%.2f")
+
+        st.markdown("### Written Statements")
+        self_intro = st.text_area("Self Introduction * (Max 500 words)", height=160)
+        study_plan = st.text_area("Study Plan * (Max 500 words)", height=160)
+        w1 = len(str(self_intro).split())
+        w2 = len(str(study_plan).split())
+        st.caption(f"Self Introduction word count: {w1}/500 · Study Plan word count: {w2}/500")
+
         submitted = st.form_submit_button("Next", use_container_width=True)
         if submitted:
-            if not applicant_name.strip() or not email.strip() or not passport.strip():
-                st.error("Applicant name, email, and passport number are required.")
+            selected_major = desired_major if desired_major else desired_major_other.strip()
+            required_missing = []
+            for label, val in [
+                ("Full Name as in Passport", passport_full_name),
+                ("First Name", first_name),
+                ("Last Name", last_name),
+                ("Passport Number", passport_number),
+                ("Major / Program Willing to Study", selected_major),
+                ("Email Address", applicant_email),
+                ("Applicant Contact Number", applicant_contact),
+                ("Parents Full Name", parents_full_name),
+                ("Parents / Guardian Contact Number", guardian_contact),
+                ("Home Country Address", home_address),
+                ("Self Introduction", self_intro),
+                ("Study Plan", study_plan),
+            ]:
+                if not str(val).strip():
+                    required_missing.append(label)
+            if is_graduate_application:
+                if not bachelor_university_name.strip(): required_missing.append("Bachelor University Name")
+                if not bachelor_location.strip(): required_missing.append("Bachelor University Location")
+            if bank_amount_usd <= 0:
+                required_missing.append("Amount in USD")
+            if w1 > 500:
+                required_missing.append("Self Introduction must be 500 words or less")
+            if w2 > 500:
+                required_missing.append("Study Plan must be 500 words or less")
+
+            if required_missing:
+                st.error("Please complete/fix: " + ", ".join(required_missing))
             else:
                 draft_data_v116 = {
-                    "Full_Name_As_Passport": applicant_name.strip(),
-                    "Passport_Number": passport.strip(),
+                    "Full_Name_As_Passport": passport_full_name.strip(),
+                    "First_Name": first_name.strip(),
+                    "Middle_Name": middle_name.strip(),
+                    "Last_Name": last_name.strip(),
+                    "Passport_Number": passport_number.strip(),
                     "Nationality": nationality,
-                    "Email": email.strip(),
-                    "Applicant_Contact": phone.strip(),
-                    "Desired_Major": desired_major,
+                    "Date_of_Birth": str(date_of_birth) if date_of_birth else "",
+                    "Email": applicant_email.strip(),
+                    "Applicant_Contact": applicant_contact.strip(),
+                    "Parents_Full_Name": parents_full_name.strip(),
+                    "Guardian_Contact": guardian_contact.strip(),
+                    "Home_Country_Address": home_address.strip(),
+                    "Desired_Major": selected_major,
+                    "Bank_Certificate_Owner": bank_certificate_owner,
+                    "Bank_Amount_USD": bank_amount_usd,
+                    "Self_Introduction": self_intro.strip(),
+                    "Study_Plan": study_plan.strip(),
                     "Notes": note.strip(),
                     "University": u.get("University", ""),
                     "Program_Category": program_slug,
                     "Application_Type": application_type,
                 }
+                if is_graduate_application:
+                    draft_data_v116.update({
+                        "Bachelor_University_Name": bachelor_university_name.strip(),
+                        "Bachelor_University_Location": bachelor_location.strip(),
+                        "Bachelor_Enrolled_Start": str(bachelor_enroll_start) if bachelor_enroll_start else "",
+                        "Bachelor_Enrolled_End": str(bachelor_enroll_end) if bachelor_enroll_end else "",
+                        "Bachelor_Graduation_Year": bachelor_graduation_year,
+                        "Bachelor_Major": bachelor_major.strip(),
+                        "Bachelor_GPA": bachelor_gpa.strip(),
+                    })
                 app_id_v116 = save_step1_draft_v116(draft_data_v116, status="Draft - Documents Pending")
                 draft_data_v116["Application_ID"] = app_id_v116
                 draft_data_v116["Status"] = "Draft - Documents Pending"
