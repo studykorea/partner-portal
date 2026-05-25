@@ -1072,3 +1072,12 @@ v160:
 - Removed the blocking login gate from the application form page.
 - Once a user clicks Apply, the application form opens directly instead of showing Login/Create Account again.
 - This keeps the graduate application improvements and bachelor document upload changes.
+
+
+v161:
+- Fixed the public top navigation for logged-in users.
+- Login and Partner Sign Up buttons are hidden after login.
+- Staff users see their staff/full name in the top-right navigation.
+- Partner/company users see their company/agency name in the top-right navigation.
+- A Logout button appears next to the name.
+- Added top-nav logout handling through nav=logout.

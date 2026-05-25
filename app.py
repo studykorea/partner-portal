@@ -697,6 +697,16 @@ def handle_top_nav_query_v70():
         "login": "Login",
         "signup": "Partner Sign Up",
     }
+    if nav == "logout":
+        for k in ["logged_in","role","username","agency_name","agency_id","full_name","account_type","auth_token","apply_access_granted_v158","application_login_verified_v158"]:
+            st.session_state.pop(k, None)
+        try:
+            st.query_params.clear()
+        except Exception:
+            pass
+        st.session_state.page = "Home"
+        st.rerun()
+
     if nav in nav_map:
         requested_page = nav_map[nav]
         # v110: Program detail links use nav=Universities + uni/programdetail.
@@ -6764,6 +6774,51 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     background:#F8FAFC !important;
 }
 
+
+/* v161 logged-in top navigation */
+.nav-user-box-v161 {
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+}
+.nav-user-name-v161 {
+    min-width:190px !important;
+    max-width:300px !important;
+    height:58px !important;
+    padding:0 22px !important;
+    border-radius:10px !important;
+    border:1px solid #D0D5DD !important;
+    background:#FFFFFF !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    font-weight:950 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+}
+.nav-logout-v161 {
+    min-width:150px !important;
+    height:58px !important;
+    padding:0 26px !important;
+    border-radius:10px !important;
+    background:#B42318 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-decoration:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-weight:950 !important;
+}
+.nav-logout-v161:hover {
+    background:#912018 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -6780,6 +6835,12 @@ def set_page(p):
 
 
 def header():
+    # v161: restore login before drawing top navigation so Login/Sign Up disappears for logged-in users.
+    try:
+        restore_login_from_query_v60()
+    except Exception:
+        pass
+
     current = st.session_state.get("page", "Home")
     pending_token = _current_pending_token_v76()
     pending_suffix = f"&pending={pending_token}" if pending_token else ""
@@ -6790,6 +6851,27 @@ def header():
     def nav_href(nav_key):
         auth_suffix = auth_query_suffix_v104("&")
         return f"?nav={nav_key}{pending_suffix}{auth_suffix}"
+
+    logged_in_v161 = bool(st.session_state.get("logged_in"))
+    role_v161 = str(st.session_state.get("role", "")).strip().lower()
+    if logged_in_v161:
+        if role_v161 in ["agency_staff", "staff"]:
+            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "Staff")
+        elif role_v161 == "admin":
+            display_name_v161 = st.session_state.get("full_name", "") or st.session_state.get("username", "Admin")
+        else:
+            display_name_v161 = st.session_state.get("agency_name", "") or st.session_state.get("full_name", "") or st.session_state.get("username", "Partner")
+        user_actions_v161 = (
+            '<div class="nav-user-box-v161">'
+            f'<span class="nav-user-name-v161">{_safe_html_v62(display_name_v161)}</span>'
+            '<a class="nav-logout-v161" href="?nav=logout">Logout</a>'
+            '</div>'
+        )
+    else:
+        user_actions_v161 = (
+            f'<a class="nav-login-v70" href="{nav_href("login")}">Login</a>'
+            f'<a class="nav-signup-v70" href="{nav_href("signup")}">👥&nbsp;&nbsp;Partner Sign Up</a>'
+        )
 
     nav_html = f"""
     <div class="top-nav-reference-v70">
@@ -6802,13 +6884,11 @@ def header():
         <a class="nav-link-v70" href="{nav_href('mou')}">MoU Contact</a>
       </div>
       <div class="nav-right-v70">
-        <a class="nav-login-v70" href="{nav_href('login')}">Login</a>
-        <a class="nav-signup-v70" href="{nav_href('signup')}">👥&nbsp;&nbsp;Partner Sign Up</a>
+        {user_actions_v161}
       </div>
     </div>
     """
     st.markdown(nav_html, unsafe_allow_html=True)
-
 
 def footer():
 
