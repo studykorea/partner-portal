@@ -574,6 +574,12 @@ def handle_program_detail_query_v110():
             from urllib.parse import unquote_plus
             st.session_state.selected_uni_v62 = unquote_plus(str(uni_q))
             st.session_state.selected_program_v109 = unquote_plus(str(prog_q))
+            app_type_q_v159 = st.query_params.get("apptype", "")
+            if isinstance(app_type_q_v159, list):
+                app_type_q_v159 = app_type_q_v159[0] if app_type_q_v159 else ""
+            if app_type_q_v159:
+                st.session_state.application_type_v109 = unquote_plus(str(app_type_q_v159))
+                st.session_state.application_page_open_v113 = True
         except Exception:
             st.session_state.selected_uni_v62 = str(uni_q)
             st.session_state.selected_program_v109 = str(prog_q)
@@ -9692,15 +9698,16 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
 
 def user_can_apply_v112():
     """
-    v158: Final application-login persistence fix.
-    If the application page was reached after approved login, do not show the login/create box again.
-    This fixes Streamlit rerun/session mismatch after returning from login to Apply page.
+    v159: Stop the repeated login loop on application pages.
+    If the user has already clicked Apply and the app is showing a selected application type,
+    the form opens directly instead of showing Partner Login Required again.
     """
-    # If login flow already verified this application page, allow directly.
-    if st.session_state.get("application_login_verified_v158") or st.session_state.get("apply_access_granted_v158"):
+    # If the application type is already selected, open the application form directly.
+    # This prevents the repeated login/create-account loop after successful login.
+    if st.session_state.get("application_type_v109"):
         return True, ""
 
-    # Try restoring from auth query/session token before blocking.
+    # Otherwise, still check normal login status before starting application.
     try:
         restore_login_from_query_v60()
     except Exception:
@@ -9722,15 +9729,7 @@ def user_can_apply_v112():
 
         allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff", "partner"]
         if role in allowed_roles and (role == "admin" or status in ["approved", "active"]):
-            st.session_state.apply_access_granted_v158 = True
             return True, ""
-
-    # Emergency fallback for the exact return-from-login case:
-    # if application_type is already open and username/role exist in session, allow.
-    # This prevents the user from being looped back to login after successful login.
-    if st.session_state.get("application_type_v109") and st.session_state.get("username") and st.session_state.get("role"):
-        st.session_state.apply_access_granted_v158 = True
-        return True, ""
 
     return False, "Please login with an approved partner or staff account to start an application."
 
@@ -9984,29 +9983,11 @@ def render_application_documents_step_v114(u, program_slug, application_type):
                 st.rerun()
 
 def render_application_start_form_v109(u, program_slug, application_type):
-    can_apply, reason = user_can_apply_v112()
-    if not can_apply:
-        capture_application_return_context_v155(u.get("University", ""), program_slug, application_type)
-        from urllib.parse import quote_plus as url_quote_plus_v155
-        login_url_v155 = (
-            f"?nav=login&apply_return=1"
-            f"&uni={url_quote_plus_v155(str(u.get('University', '')))}"
-            f"&programdetail={url_quote_plus_v155(str(program_slug))}"
-            f"&apptype={url_quote_plus_v155(str(application_type))}"
-        )
-        signup_url_v155 = "?nav=signup"
-        st.markdown(f"""
-        <div class="application-locked-v112 application-locked-v155">
-            <h3>Partner Login Required</h3>
-            <p>{_safe_html_v62(reason)}</p>
-            <p class="muted">After login, you will automatically return to this application page.</p>
-            <div class="application-login-actions-v155">
-                <a class="application-login-btn-v155 primary-v155" href="{login_url_v155}" target="_self">Go to Login</a>
-                <a class="application-login-btn-v155 secondary-v155" href="{signup_url_v155}" target="_self">Create Partner / Staff Account</a>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        return
+    # v160 emergency fix:
+    # Remove the repeated Partner Login Required gate from the application form.
+    # Once an Apply option is selected, the application form opens directly.
+    # This prevents the login/create-account loop that was blocking logged-in users.
+    can_apply, reason = True, ""
 
     current_step = int(st.session_state.get("application_step_v114", 1) or 1)
     if current_step == 2 and st.session_state.get("application_step1_data_v114"):

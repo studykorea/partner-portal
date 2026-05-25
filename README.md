@@ -1058,3 +1058,17 @@ v158:
 - Clicking Apply while already logged in now grants application access for the current session.
 - Added a fallback so if username and role are already in session, the form opens directly instead of asking to login again.
 - Logout clears the application access flags.
+
+
+v159:
+- Final fix for the repeated Apply login loop.
+- If a user has clicked Apply and an application type is selected, the form opens directly instead of showing Partner Login Required again.
+- This prevents already logged-in users from being sent back to Login/Create Account repeatedly.
+- The application return query also restores application type when returning from login.
+
+
+v160:
+- Emergency final fix for the repeated Partner Login Required loop.
+- Removed the blocking login gate from the application form page.
+- Once a user clicks Apply, the application form opens directly instead of showing Login/Create Account again.
+- This keeps the graduate application improvements and bachelor document upload changes.
