@@ -2747,9 +2747,26 @@ div[data-testid="stFileUploader"] label {
     align-items: center !important;
     justify-content: center !important;
     background: #EAF1FF !important;
-    color: #3459D1 !important;
-    font-size: 15px !important;
-    line-height: 1 !important;
+    border: 1px solid #D6E4FF !important;
+    position: relative !important;
+}
+.featured-v32 .uni-meta-icon-v166::before {
+    content: "" !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+}
+.featured-v32 .uni-meta-icon-v166.icon-location::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233459D1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s6-4.35 6-10a6 6 0 1 0-12 0c0 5.65 6 10 6 10Z'/><circle cx='12' cy='11' r='2.5'/></svg>") !important;
+}
+.featured-v32 .uni-meta-icon-v166.icon-students::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233459D1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2'/><circle cx='9.5' cy='7' r='3.2'/><path d='M21 21v-2a3.5 3.5 0 0 0-2.6-3.38'/><path d='M15.5 3.2a3.5 3.5 0 0 1 0 6.76'/></svg>") !important;
+}
+.featured-v32 .uni-meta-icon-v166.icon-global::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233459D1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M3 12h18'/><path d='M12 3a14.5 14.5 0 0 1 0 18'/><path d='M12 3a14.5 14.5 0 0 0 0 18'/></svg>") !important;
 }
 .featured-v32 .uni-meta-text-v166 {
     color: #31486B !important;
@@ -7695,19 +7712,19 @@ def home():
 
                 location_html = f"""
                   <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166">📍</span>
+                    <span class="uni-meta-icon-v166 icon-location"></span>
                     <span class="uni-meta-text-v166">{location_text}</span>
                   </div>
                 """ if location_text else ""
                 students_html = f"""
                   <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166">👥</span>
+                    <span class="uni-meta-icon-v166 icon-students"></span>
                     <span class="uni-meta-text-v166">{students_text}</span>
                   </div>
                 """ if students_text else ""
                 intl_html = f"""
                   <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166">🌍</span>
+                    <span class="uni-meta-icon-v166 icon-global"></span>
                     <span class="uni-meta-text-v166">{intl_text}</span>
                   </div>
                 """ if intl_text else ""
