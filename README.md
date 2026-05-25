@@ -1235,3 +1235,14 @@ v187:
 - Dashboard, Universities, Eligibility Check, Tuition & Scholarship, Contact Us, Login, Sign Up, and Logout now navigate through session_state in the same tab.
 - Removed home hero HTML links too.
 - Kept global target/window.open cleanup as backup.
+
+
+v188:
+- Strong fix for new-tab problem.
+- Removed browser JavaScript navigation helpers and hidden component scripts from navigation.
+- Disabled localStorage/auth-query navigation sync.
+- Disabled URL query navigation handlers for top nav and dashboard nav.
+- Replaced header with pure Streamlit button navigation only.
+- Removed auth query suffix generation.
+- Logout clears Streamlit session only.
+- No top-menu <a href> links, no target=_blank, no window.open.
