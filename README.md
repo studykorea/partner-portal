@@ -899,3 +899,10 @@ v130:
 - Clicking any agency opens a drill-down page with registered staff and submitted application count/list.
 - Staff list shows name, position, contact, email, and number of applications submitted.
 - Clicking any application from these pages sends super admin directly to the applicant detail page where application form/files can be downloaded and applicant status can be updated.
+
+
+v131:
+- Fixed duplicate Partner Portal header/navigation on the super admin application detail page.
+- Application detail page now renders inside the Applications page without creating a second dashboard shell.
+- Improved applicant detail hero layout with a larger university logo and organized University / Program / Major information cards.
+- Status badge is placed clearly on the right side of the applicant detail header.

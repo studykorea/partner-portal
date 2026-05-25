@@ -5749,6 +5749,117 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v131 application detail page layout fix */
+.admin-app-detail-hero-v131 {
+    display:grid !important;
+    grid-template-columns:170px minmax(0,1fr) auto !important;
+    gap:28px !important;
+    align-items:center !important;
+    background:linear-gradient(135deg,#F4F8FF 0%,#FFFFFF 100%) !important;
+    border:1px solid #BFD7FF !important;
+    border-radius:28px !important;
+    padding:32px 34px !important;
+    margin:22px 0 28px 0 !important;
+    box-shadow:0 18px 42px rgba(16,24,40,.08) !important;
+}
+.admin-app-detail-logo-v131 {
+    width:150px !important;
+    height:150px !important;
+    border-radius:24px !important;
+    background:#FFFFFF !important;
+    border:1px solid #DCE6F4 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    box-shadow:0 12px 28px rgba(16,24,40,.08) !important;
+}
+.admin-app-detail-logo-v131 img {
+    max-width:128px !important;
+    max-height:128px !important;
+    object-fit:contain !important;
+}
+.admin-app-detail-main-v131 {
+    min-width:0 !important;
+}
+.admin-app-detail-label-v131 {
+    display:inline-flex !important;
+    align-items:center !important;
+    padding:7px 12px !important;
+    border-radius:999px !important;
+    background:#EAF2FF !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    text-transform:uppercase !important;
+    letter-spacing:.05em !important;
+    margin-bottom:12px !important;
+}
+.admin-app-detail-hero-v131 h1 {
+    color:#101828 !important;
+    -webkit-text-fill-color:#101828 !important;
+    font-size:36px !important;
+    line-height:1.15 !important;
+    font-weight:950 !important;
+    margin:0 0 16px 0 !important;
+    text-transform:capitalize !important;
+}
+.admin-app-detail-meta-v131 {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:12px !important;
+}
+.admin-app-detail-meta-v131 span {
+    display:block !important;
+    background:#FFFFFF !important;
+    border:1px solid #E4EAF3 !important;
+    border-radius:16px !important;
+    padding:12px 14px !important;
+    color:#344054 !important;
+    -webkit-text-fill-color:#344054 !important;
+    font-weight:800 !important;
+    word-break:break-word !important;
+}
+.admin-app-detail-meta-v131 b {
+    display:block !important;
+    color:#005BDB !important;
+    -webkit-text-fill-color:#005BDB !important;
+    font-size:12px !important;
+    text-transform:uppercase !important;
+    letter-spacing:.04em !important;
+    margin-bottom:5px !important;
+}
+.admin-app-detail-status-v131 {
+    min-width:170px !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    align-items:center !important;
+}
+.admin-app-detail-status-v131 span,
+.admin-app-detail-status-v131 .status-pending,
+.admin-app-detail-status-v131 .status-approved,
+.admin-app-detail-status-v131 .status-rejected {
+    font-size:14px !important;
+    padding:12px 22px !important;
+    border-radius:999px !important;
+    font-weight:950 !important;
+    white-space:nowrap !important;
+}
+@media(max-width:1000px){
+    .admin-app-detail-hero-v131 {
+        grid-template-columns:1fr !important;
+        align-items:flex-start !important;
+    }
+    .admin-app-detail-meta-v131 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-detail-status-v131 {
+        justify-content:flex-start !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -12919,8 +13030,9 @@ def update_application_status_from_admin_v125(app_id, updates):
     write_applications_df_v116(df)
     return True
 
-def admin_application_detail_page_v125(app_id):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+def admin_application_detail_page_v125(app_id, render_shell=True):
+    if render_shell:
+        dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
     if st.button("← Back to Applications", key="admin_app_detail_back_v125", use_container_width=False):
         st.session_state.admin_app_selected_id_v125 = ""
         st.session_state.admin_app_view_v125 = "program"
@@ -12930,7 +13042,8 @@ def admin_application_detail_page_v125(app_id):
     match = df[df["Application_ID"].astype(str).str.strip() == str(app_id).strip()]
     if len(match) == 0:
         st.error("Application not found.")
-        close_shell()
+        if render_shell:
+            close_shell()
         return
     row = match.iloc[-1].to_dict()
     applicant = application_display_name_v116(row)
@@ -12940,12 +13053,18 @@ def admin_application_detail_page_v125(app_id):
     status = inferred_application_status_v119(row)
 
     st.markdown(f"""
-    <div class="admin-app-detail-hero-v125">
-        <div class="admin-app-detail-logo-v125">{admin_app_logo_html_v125(uni)}</div>
-        <div>
-            <span>Application Detail</span>
+    <div class="admin-app-detail-hero-v131">
+        <div class="admin-app-detail-logo-v131">{admin_app_logo_html_v125(uni)}</div>
+        <div class="admin-app-detail-main-v131">
+            <div class="admin-app-detail-label-v131">Application Detail</div>
             <h1>{_safe_html_v62(applicant)}</h1>
-            <p>{_safe_html_v62(uni)} · {_safe_html_v62(program_cat)} · {_safe_html_v62(major)}</p>
+            <div class="admin-app-detail-meta-v131">
+                <span><b>University</b>{_safe_html_v62(uni)}</span>
+                <span><b>Program</b>{_safe_html_v62(program_cat)}</span>
+                <span><b>Major</b>{_safe_html_v62(major)}</span>
+            </div>
+        </div>
+        <div class="admin-app-detail-status-v131">
             {application_status_badge_v116(status)}
         </div>
     </div>
@@ -13115,7 +13234,8 @@ def admin_application_detail_page_v125(app_id):
             else:
                 st.error("Could not update application status.")
 
-    close_shell()
+    if render_shell:
+        close_shell()
 
 def admin_applications_page_v125():
     dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
@@ -13132,7 +13252,8 @@ def admin_applications_page_v125():
         st.session_state.admin_app_selected_id_v125 = ""
 
     if st.session_state.admin_app_selected_id_v125:
-        admin_application_detail_page_v125(st.session_state.admin_app_selected_id_v125)
+        admin_application_detail_page_v125(st.session_state.admin_app_selected_id_v125, render_shell=False)
+        close_shell()
         return
 
     df = admin_apps_visible_df_v125()
