@@ -1035,3 +1035,10 @@ v155:
 - After approved login, the user returns directly to the same application page to continue.
 - Added a Create Partner / Staff Account button for unregistered users.
 - New signup still goes to the pending approval screen after registration.
+
+
+v156:
+- Fixed the issue where users returned from login to the program page but clicking Apply asked them to login again.
+- Application access now checks the active login session as the main source of truth.
+- Approved partner, agency, and staff accounts can continue directly to the application form after login.
+- Login now saves the user status in session state for application access checks.

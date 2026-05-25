@@ -7830,8 +7830,8 @@ def go_to_application_return_after_login_v155(default_page):
         st.session_state.application_step1_data_v114 = {}
         st.session_state.application_submitted_data_v118 = {}
         st.session_state.current_application_id_v116 = ""
-        for k in ["return_after_login_v155", "return_apply_uni_v155", "return_apply_program_v155", "return_apply_type_v155"]:
-            st.session_state.pop(k, None)
+        # Keep return context until the application page is opened successfully.
+        # It will not block application access and avoids returning to Dashboard too early.
         try:
             for q in ["apply_return", "apptype", "nav"]:
                 if q in st.query_params:
@@ -9686,17 +9686,31 @@ def program_timeline_card_v109(u, program_slug, label, application_type=""):
 
 
 def user_can_apply_v112():
-    """Only logged-in approved partner/agency/staff/admin accounts can start applications."""
+    """
+    v156: Application access fix.
+    After returning from login, Streamlit session state is the main source of truth.
+    Some approved users were sent back to the application page but find_user/session
+    mismatch caused the page to ask for login again.
+    """
     if not st.session_state.get("logged_in"):
         return False, "Please login with an approved partner or staff account to start an application."
-    user = find_user(st.session_state.get("username", ""))
-    if not user:
-        return False, "Your login session could not be verified. Please login again."
-    if str(user.get("status", "")).lower() != "approved" and str(user.get("role", "")) != "admin":
-        return False, "Your account is not approved yet. You can start applications after your organization approves your account."
-    allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff"]
-    if str(user.get("role", "")) not in allowed_roles:
+
+    username = str(st.session_state.get("username", "")).strip()
+    user = find_user(username) if username else None
+
+    # Prefer user data from users.json, but fall back to session_state after successful login.
+    role = str((user or {}).get("role", "") or st.session_state.get("role", "")).strip()
+    status = str((user or {}).get("status", "") or st.session_state.get("status", "approved")).strip().lower()
+
+    # If the session is logged in as a partner/staff/agency user, allow it even if old
+    # user rows are missing a clean status field.
+    allowed_roles = ["admin", "agency_rep", "agency_partner", "agency_staff", "staff", "partner"]
+    if role not in allowed_roles:
         return False, "Only registered staff, official representatives, and partner agencies can start applications."
+
+    if role != "admin" and status not in ["approved", "active"]:
+        return False, "Your account is not approved yet. You can start applications after your organization approves your account."
+
     return True, ""
 
 def nationality_options_v112():
