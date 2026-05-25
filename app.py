@@ -9271,7 +9271,7 @@ def partner_dashboard():
 
     if st.session_state.role in ["agency_rep", "agency_partner"]:
         portal_label = "Agency Representative Portal"
-        intro = "Monitor co-partner agency lists, staff activity, eligibility checks, tuition estimates, and student application activity within your organization."
+        intro = "Check students’ eligibility, tuition fees, and submit applications. You can also monitor staff activity within your organization."
     else:
         portal_label = "Agency Staff Portal"
         intro = "Check student eligibility, estimate tuition and scholarship, and manage your own student records."
