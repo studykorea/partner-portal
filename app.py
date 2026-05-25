@@ -6082,6 +6082,57 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v137 larger applicant photo without cropping */
+.admin-app-detail-hero-v131 {
+    grid-template-columns:300px minmax(0,1fr) auto !important;
+    gap:34px !important;
+    align-items:center !important;
+}
+.admin-app-detail-logo-v131 {
+    width:280px !important;
+    height:280px !important;
+    min-width:280px !important;
+    border:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+.applicant-photo-box-v134 {
+    width:280px !important;
+    height:280px !important;
+    border-radius:28px !important;
+    background:#FFFFFF !important;
+    padding:8px !important;
+    overflow:hidden !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border:1px solid #DCE6F4 !important;
+    box-shadow:0 14px 32px rgba(16,24,40,.10) !important;
+}
+.applicant-photo-box-v134 img {
+    width:100% !important;
+    height:100% !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important; /* show full uploaded photo, no cropping */
+    object-position:center center !important;
+    background:#FFFFFF !important;
+    display:block !important;
+    border-radius:20px !important;
+}
+@media(max-width:1000px){
+    .admin-app-detail-hero-v131 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-detail-logo-v131,
+    .applicant-photo-box-v134 {
+        width:240px !important;
+        height:240px !important;
+        min-width:240px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13316,7 +13367,7 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
 
     st.markdown(f"""
     <div class="admin-app-detail-hero-v131">
-        <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 220)}</div>
+        <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 260)}</div>
         <div class="admin-app-detail-main-v131">
             <div class="admin-app-detail-label-v131">Application Detail</div>
             <h1>{_safe_html_v62(applicant)}</h1>

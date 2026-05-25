@@ -936,3 +936,10 @@ v136:
 - Applicant photo now fills the full photo box.
 - Removed inner padding from the photo box.
 - Changed applicant photo display to object-fit: cover so the image appears larger and uses the full box area.
+
+
+v137:
+- Fixed applicant photo cropping issue again by overriding previous object-fit: cover with object-fit: contain.
+- Increased applicant photo display area to 280px.
+- Photo now appears larger while keeping the full uploaded image visible without cropping.
+- Added padding and white background so portrait photos keep their original shape inside the larger photo box.
