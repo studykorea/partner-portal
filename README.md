@@ -930,3 +930,9 @@ v135:
 - Applicant photo in the super admin application detail page is now larger.
 - Applicant photo now uses object-fit: contain, so the full uploaded image is shown without cropping.
 - Photo box increased to 220px and keeps the original image shape visible inside the card.
+
+
+v136:
+- Applicant photo now fills the full photo box.
+- Removed inner padding from the photo box.
+- Changed applicant photo display to object-fit: cover so the image appears larger and uses the full box area.

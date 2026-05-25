@@ -6051,6 +6051,37 @@ div[data-testid="stFormSubmitButton"] button:hover {
     }
 }
 
+
+/* v136 applicant photo fills the full photo box */
+.applicant-photo-box-v134 {
+    width:220px !important;
+    height:220px !important;
+    border-radius:26px !important;
+    background:#FFFFFF !important;
+    padding:0 !important;
+    overflow:hidden !important;
+}
+.applicant-photo-box-v134 img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important; /* make photo as big as the box */
+    object-position:center center !important;
+    display:block !important;
+}
+.admin-app-detail-logo-v131 {
+    width:220px !important;
+    height:220px !important;
+    min-width:220px !important;
+}
+@media(max-width:1000px){
+    .admin-app-detail-logo-v131,
+    .applicant-photo-box-v134 {
+        width:200px !important;
+        height:200px !important;
+        min-width:200px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
