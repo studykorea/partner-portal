@@ -11658,8 +11658,9 @@ def render_pending_approval_page_v150():
         recommended_by = display_clean_v50(req.get("official_representative", "") or req.get("partner_group", "") or req.get("sponsor_agency_id", "") or req.get("requested_approver_agency_id", ""))
         created_at = display_clean_v50(req.get("created_at", ""))
 
-        action_approve_url = f"?pending_action_v152=approve&pending_user_v152={quote(username)}&pending_email_v152={quote(email)}"
-        action_decline_url = f"?pending_action_v152=decline&pending_user_v152={quote(username)}&pending_email_v152={quote(email)}"
+        from urllib.parse import quote as url_quote_v153
+        action_approve_url = f"?pending_action_v152=approve&pending_user_v152={url_quote_v153(username)}&pending_email_v152={url_quote_v153(email)}"
+        action_decline_url = f"?pending_action_v152=decline&pending_user_v152={url_quote_v153(username)}&pending_email_v152={url_quote_v153(email)}"
 
         st.markdown(f"""
         <div class="pending-row-v152">

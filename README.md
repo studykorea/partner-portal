@@ -1012,3 +1012,9 @@ v152:
 - Approve button is green with bold white text.
 - Decline button is red with bold white text.
 - Buttons stay on the right side of the request card in the marked area.
+
+
+v153:
+- Fixed the Pending Approvals page error caused by quote not being defined.
+- Added a safe local urllib.parse quote import inside the pending approval page function.
+- The Approve/Decline colored action buttons should now load correctly without crashing.
