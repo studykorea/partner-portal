@@ -7626,6 +7626,35 @@ a[target="blank"] {
     cursor: default !important;
 }
 
+
+/* v190: program cards are visual only; Streamlit buttons handle same-tab navigation */
+.program-static-card-v190 {
+    cursor: default !important;
+    text-decoration: none !important;
+}
+.program-static-card-v190:hover {
+    transform: none !important;
+}
+.program-button-row-v190 {
+    margin-top: -12px !important;
+    margin-bottom: 12px !important;
+}
+.program-button-row-v190 div[data-testid="stButton"] > button {
+    background: #FFFFFF !important;
+    color: #3F5BD6 !important;
+    -webkit-text-fill-color: #3F5BD6 !important;
+    border: 1px solid #D7DEE9 !important;
+    border-radius: 12px !important;
+    min-height: 48px !important;
+    font-weight: 900 !important;
+    font-size: 14px !important;
+    box-shadow: 0 8px 18px rgba(16,24,40,.04) !important;
+}
+.program-button-row-v190 div[data-testid="stButton"] > button:hover {
+    background: #EEF5FF !important;
+    border-color: #3F5BD6 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10653,21 +10682,19 @@ def program_slug_v109(label):
         return "language"
     return re.sub(r"[^a-z0-9]+", "-", label_l).strip("-") or "program"
 
+
 def program_detail_href_v109(row, label):
-    from urllib.parse import quote_plus
-    uni = quote_plus(str(row.get("University", "")))
-    program = quote_plus(program_slug_v109(label))
-    auth = ""
-    try:
-        auth = auth_query_suffix_v104("&")
-    except Exception:
-        auth = ""
-    return f"?nav=Universities&uni={uni}&programdetail={program}{auth}"
+    """
+    v190: HTML program links are disabled to prevent new browser tabs.
+    Same-tab navigation is handled by Streamlit buttons.
+    """
+    return "#"
 
 def _program_specific_application_badges_v71(row):
     """
-    v109: Shows Undergraduate, Graduate, and KLP/EAP as clickable application cards.
-    Clicking a card opens a program-specific detail and application page.
+    v190: Shows Undergraduate, Graduate, and KLP/EAP as visual cards only.
+    No <a href> links here, because those links opened new browser tabs.
+    Actual navigation is handled by Streamlit buttons in _render_university_summary_v62.
     """
     general_open = row.get("Application_Open_Date", "")
     general_close = row.get("Application_Close_Date", "")
@@ -10686,15 +10713,14 @@ def _program_specific_application_badges_v71(row):
         status_class = _application_status_class_v63(status)
         open_txt = _format_date_v66(open_date) or "Not set"
         close_txt = _format_date_v66(close_date) or "Not set"
-        href = program_detail_href_v109(row, label)
         html += (
-            f'<a class="program-date-card-v71 program-click-card-v109" href="{href}">'
+            f'<div class="program-date-card-v71 program-click-card-v109 program-static-card-v190">'
             f'<b>{_safe_html_v62(label)}</b>'
             f'<span class="{status_class}">{_safe_html_v62(status)}</span>'
             f'<small>Open: {_safe_html_v62(open_txt)}</small>'
             f'<small>Close: {_safe_html_v62(close_txt)}</small>'
-            f'<em>View Details & Apply →</em>'
-            f'</a>'
+            f'<em>Click the button below</em>'
+            f'</div>'
         )
     return html
 
@@ -12239,8 +12265,34 @@ def _render_university_summary_v62(u, key_suffix):
 </div>'''
     st.markdown(summary_html, unsafe_allow_html=True)
 
-    if st.button("View Details", key=f"view_details_v62_{key_suffix}", use_container_width=True):
+    # v190: Same-tab program navigation. These are Streamlit buttons, not HTML links.
+    st.markdown('<div class="program-button-row-v190">', unsafe_allow_html=True)
+    prog_cols_v190 = st.columns(3, gap="medium")
+    programs_v190 = [
+        ("Undergraduate", "undergraduate"),
+        ("Graduate (Masters/Ph.D.)", "graduate"),
+        ("KLP/EAP", "language"),
+    ]
+    for prog_i_v190, (prog_label_v190, prog_slug_v190) in enumerate(programs_v190):
+        with prog_cols_v190[prog_i_v190]:
+            if st.button(f"View Details & Apply → {prog_label_v190}", key=f"program_same_tab_v190_{key_suffix}_{prog_slug_v190}", use_container_width=True):
+                st.session_state.selected_uni_v62 = str(u.get("University", ""))
+                st.session_state.selected_program_v109 = prog_slug_v190
+                st.session_state.application_page_open_v113 = False
+                st.session_state.page = "Universities"
+                try:
+                    for q in ["nav", "uni", "programdetail", "program", "apptype"]:
+                        if q in st.query_params:
+                            del st.query_params[q]
+                except Exception:
+                    pass
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.button("View University Details", key=f"view_details_v62_{key_suffix}", use_container_width=True):
         st.session_state.selected_uni_v62 = str(u.get("University", ""))
+        st.session_state.selected_program_v109 = ""
+        st.session_state.application_page_open_v113 = False
         st.rerun()
 
 

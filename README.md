@@ -1244,3 +1244,14 @@ v189:
 - Removed hidden browser JS logout script from the header.
 - Did not remove or damage the main CSS/design.
 - IEQAS badge fix from v185/v187 is preserved.
+
+
+v190:
+- Fixed the program cards (Undergraduate, Graduate, KLP/EAP) opening new browser tabs.
+- Removed HTML <a href> links from the program cards.
+- Program cards are now visual only.
+- Added Streamlit buttons under the cards for same-tab navigation:
+  View Details & Apply → Undergraduate
+  View Details & Apply → Graduate
+  View Details & Apply → KLP/EAP
+- Clicking these buttons changes the page using session_state, so no new browser tab opens.
