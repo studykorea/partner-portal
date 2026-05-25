@@ -924,3 +924,9 @@ v133:
 v134:
 - In the super admin application detail header, the left image now shows the applicant passport-size photo instead of the university logo.
 - If the applicant photo is missing, the page shows a clean fallback box with applicant initials and “No Photo”.
+
+
+v135:
+- Applicant photo in the super admin application detail page is now larger.
+- Applicant photo now uses object-fit: contain, so the full uploaded image is shown without cropping.
+- Photo box increased to 220px and keeps the original image shape visible inside the card.

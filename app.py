@@ -6013,6 +6013,44 @@ div[data-testid="stFormSubmitButton"] button:hover {
     box-shadow:none !important;
 }
 
+
+/* v135 full applicant photo, no crop */
+.applicant-photo-box-v134 {
+    width:220px !important;
+    height:220px !important;
+    border-radius:26px !important;
+    background:#FFFFFF !important;
+    padding:10px !important;
+}
+.applicant-photo-box-v134 img {
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important; /* show full uploaded image, do not crop */
+    object-position:center center !important;
+    background:#FFFFFF !important;
+    display:block !important;
+}
+.admin-app-detail-logo-v131 {
+    width:220px !important;
+    height:220px !important;
+    min-width:220px !important;
+}
+.admin-app-detail-hero-v131 {
+    grid-template-columns:240px minmax(0,1fr) auto !important;
+    align-items:center !important;
+}
+@media(max-width:1000px){
+    .admin-app-detail-hero-v131 {
+        grid-template-columns:1fr !important;
+    }
+    .admin-app-detail-logo-v131,
+    .applicant-photo-box-v134 {
+        width:200px !important;
+        height:200px !important;
+        min-width:200px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13247,7 +13285,7 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
 
     st.markdown(f"""
     <div class="admin-app-detail-hero-v131">
-        <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 160)}</div>
+        <div class="admin-app-detail-logo-v131">{applicant_photo_html_v134(row, applicant, 220)}</div>
         <div class="admin-app-detail-main-v131">
             <div class="admin-app-detail-label-v131">Application Detail</div>
             <h1>{_safe_html_v62(applicant)}</h1>
