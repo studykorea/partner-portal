@@ -7051,75 +7051,39 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
 .ieqas-badge-compact-v168 .ieqas-sub-text-v168 { font-size: 8px !important; }
 
 
-/* v169 excellent accreditation badge next to university name */
+
+
+
+/* v170 sample-style IEQAS excellent badge next to university name */
 .uni-detail-name-v99,
 .uni-name-accent-v93 {
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 14px !important;
     flex-wrap: wrap !important;
 }
-.ieqas-name-badge-v169 {
-    width: 58px !important;
-    height: 58px !important;
-    min-width: 58px !important;
+.ieqas-name-badge-v170 {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    position: relative !important;
-    border-radius: 50% !important;
-    vertical-align: middle !important;
+    width: 124px !important;
+    min-width: 124px !important;
+    height: 124px !important;
     background: transparent !important;
-    margin-left: 6px !important;
+    vertical-align: middle !important;
 }
-.ieqas-name-badge-ring-v169 {
-    position: absolute !important;
-    inset: 0 !important;
-    border-radius: 50% !important;
-    background:
-        radial-gradient(circle at center, #ffffff 0 42%, transparent 43%),
-        conic-gradient(from 0deg, #C8A64A, #F2D67A, #B89124, #F2D67A, #C8A64A) !important;
-    box-shadow: 0 8px 22px rgba(16,24,40,.16) !important;
+.ieqas-name-badge-svg-v170 {
+    width: 124px !important;
+    height: 124px !important;
+    display: block !important;
+    overflow: visible !important;
 }
-.ieqas-name-badge-ring-v169::after {
-    content: "IEQAS" !important;
-    position: absolute !important;
-    inset: 7px !important;
-    border-radius: 50% !important;
-    border: 1px solid rgba(0,43,91,.22) !important;
-    color: #002B5B !important;
-    font-size: 8px !important;
-    font-weight: 950 !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    padding-top: 5px !important;
-    letter-spacing: .2px !important;
-}
+.ieqas-badge-large-v168,
+.ieqas-badge-compact-v168,
+.ieqas-name-badge-v169,
+.ieqas-name-badge-ring-v169,
 .ieqas-name-badge-check-v169 {
-    width: 30px !important;
-    height: 30px !important;
-    border-radius: 50% !important;
-    background: #002B5B !important;
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    font-weight: 950 !important;
-    z-index: 2 !important;
-    line-height: 1 !important;
-}
-.ieqas-badge-large-v168 {
     display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-}
-.ieqas-badge-v168,
-.ieqas-name-badge-v169 {
-    font-family: inherit !important;
-    white-space: normal !important;
 }
 
 </style>
@@ -11394,17 +11358,99 @@ def university_excellent_accreditation_badge_html_v168(u, compact=False):
     )
 
 
+def split_badge_name_lines_v170(name, max_chars=18):
+    name = display_clean_v50(name)
+    if not name:
+        return ["University"]
+    words = name.split()
+    lines = []
+    current = ""
+    for word in words:
+        if len((current + " " + word).strip()) <= max_chars:
+            current = (current + " " + word).strip()
+        else:
+            if current:
+                lines.append(current)
+            current = word
+            if len(lines) == 1:
+                break
+    if current and len(lines) < 2:
+        lines.append(current)
+    if not lines:
+        lines = [name[:max_chars]]
+    if len(lines) == 1 and len(lines[0]) > max_chars:
+        lines = [lines[0][:max_chars], lines[0][max_chars:max_chars*2]]
+    return lines[:2]
+
+
 def university_excellent_accreditation_name_badge_v169(u):
-    """Small official-looking badge placed directly next to the university name."""
+    """Sample-style IEQAS excellent badge with university logo, name, and date."""
     status = display_clean_v50(u.get("Accreditation_Status", ""))
     if status.strip().lower() != "excellent accredited":
         return ""
+
+    name = display_clean_v50(u.get("University", ""))
     until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
     title = f"Excellent accredited until {until}" if until else "Excellent accredited"
+    logo_path = display_clean_v50(u.get("University_Logo", ""))
+    encoded_logo = b64(logo_path) if logo_path else ""
+    ext = str(logo_path).lower() if logo_path else ""
+    mime = "image/png"
+    if ext.endswith('.jpg') or ext.endswith('.jpeg'):
+        mime = 'image/jpeg'
+    elif ext.endswith('.svg'):
+        mime = 'image/svg+xml'
+    logo_href = f"data:{mime};base64,{encoded_logo}" if encoded_logo else ""
+
+    line1, line2 = (split_badge_name_lines_v170(name) + [""])[:2]
+    safe_line1 = html.escape(line1)
+    safe_line2 = html.escape(line2)
+    safe_title = _safe_html_v62(title)
+    safe_until = html.escape(until if until else "-")
+    safe_name = html.escape(name)
+    safe_logo = html.escape(logo_href)
+
+    logo_markup = (
+        f'<image href="{safe_logo}" x="49" y="52" width="42" height="42" preserveAspectRatio="xMidYMid meet"/>'
+        if logo_href else
+        '<text x="70" y="79" text-anchor="middle" font-size="24" font-weight="900" fill="#173E84">★</text>'
+    )
+
+    outer_text_top = 'MINISTRY OF EDUCATION • MINISTRY OF EDUCATION'
+    outer_text_bottom = 'IEQAS • EXCELLENT ACCREDITED INSTITUTION • IEQAS'
+
     return (
-        f'<span class="ieqas-name-badge-v169" title="{_safe_html_v62(title)}">'
-        f'<span class="ieqas-name-badge-ring-v169"></span>'
-        f'<span class="ieqas-name-badge-check-v169">✓</span>'
+        f'<span class="ieqas-name-badge-v170" title="{safe_title}">'
+        f'<svg class="ieqas-name-badge-svg-v170" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" aria-label="{safe_name} excellent accredited badge">'
+        f'<defs>'
+        f'<path id="ieqasArcTopV170" d="M 20 70 A 50 50 0 0 1 120 70" />'
+        f'<path id="ieqasArcBottomV170" d="M 120 70 A 50 50 0 0 1 20 70" />'
+        f'<linearGradient id="ieqasGoldV170" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F4E8BC"/><stop offset="50%" stop-color="#D7BB60"/><stop offset="100%" stop-color="#B79224"/></linearGradient>'
+        f'<linearGradient id="ieqasBlueV170" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#244E9A"/><stop offset="100%" stop-color="#0E2F72"/></linearGradient>'
+        f'</defs>'
+        f'<circle cx="70" cy="70" r="68" fill="url(#ieqasGoldV170)" />'
+        f'<circle cx="70" cy="70" r="56" fill="#F9F3DA" opacity="0.95" />'
+        f'<circle cx="70" cy="70" r="51" fill="#FFFFFF" stroke="#DCC36D" stroke-width="1.5" />'
+        f'<text font-size="6.4" font-weight="800" letter-spacing="0.6" fill="#111111">'
+        f'<textPath href="#ieqasArcTopV170" startOffset="50%" text-anchor="middle">{outer_text_top}</textPath>'
+        f'</text>'
+        f'<text font-size="5.5" font-weight="800" letter-spacing="0.45" fill="#111111">'
+        f'<textPath href="#ieqasArcBottomV170" startOffset="50%" text-anchor="middle">{outer_text_bottom}</textPath>'
+        f'</text>'
+        f'<circle cx="70" cy="21" r="5.3" fill="#FFFFFF" stroke="#C9A23C" stroke-width="0.8" />'
+        f'<path d="M70 16.5a4.4 4.4 0 1 1 0 8.8c-2.4 0-4.4-2-4.4-4.4 0-2.3 1.7-4.1 4-4.4-.8.6-1.3 1.6-1.3 2.7 0 1.9 1.5 3.4 3.4 3.4 1 0 1.9-.4 2.5-1.1-.2 2-1.9 3.6-4 3.6" fill="#0047A0"/>'
+        f'<path d="M72.4 16.9a4.4 4.4 0 0 1 0 8.3c1-.5 1.8-1.5 2-2.8a3.4 3.4 0 0 1-4.7-3.1c0-1.4.8-2.6 2-3.2" fill="#C60C30"/>'
+        f'<text x="70" y="34" text-anchor="middle" font-size="4.9" font-weight="800" fill="#111111">Ministry of Education Designated</text>'
+        f'<text x="70" y="40" text-anchor="middle" font-size="4.4" font-weight="700" fill="#111111">International Education Quality Assurance System</text>'
+        f'<rect x="29" y="44" width="82" height="11.2" rx="1.6" fill="url(#ieqasBlueV170)" />'
+        f'<text x="70" y="51.8" text-anchor="middle" font-size="7.3" font-weight="900" fill="#FFFFFF">Excellent Accredited</text>'
+        f'{logo_markup}'
+        f'<text x="70" y="100" text-anchor="middle" font-size="5.4" font-weight="900" fill="#153D84">ACCREDITED INSTITUTION</text>'
+        f'<text x="70" y="107" text-anchor="middle" font-size="4.7" font-weight="800" fill="#153D84">{safe_line1}</text>'
+        f'<text x="70" y="112.8" text-anchor="middle" font-size="4.7" font-weight="800" fill="#153D84">{safe_line2}</text>'
+        f'<text x="70" y="121" text-anchor="middle" font-size="7.6" font-weight="900" fill="#111111">IEQAS</text>'
+        f'<text x="70" y="127" text-anchor="middle" font-size="3.8" font-weight="700" fill="#111111">Valid until {safe_until}</text>'
+        f'</svg>'
         f'</span>'
     )
 

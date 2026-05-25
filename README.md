@@ -1124,3 +1124,9 @@ v169:
 - Moved the Excellent accredited badge directly next to the university name.
 - Removed the large badge from the right-side application/program area.
 - The badge appears only when the university accreditation status is Excellent accredited.
+
+
+v170:
+- Replaced the simple check-style accreditation icon with a sample-style IEQAS badge.
+- The badge now shows the university logo, university name, and accreditation valid-until date.
+- Badge remains transparent and appears next to the university name for Excellent accredited universities only.
