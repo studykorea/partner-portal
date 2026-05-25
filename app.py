@@ -6964,6 +6964,92 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display:none !important;
 }
 
+
+/* v168 IEQAS accreditation dynamic transparent badge */
+.ieqas-badge-v168 {
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 14px auto 0 auto !important;
+    position: relative !important;
+}
+.ieqas-badge-large-v168 { width: 260px !important; height: 260px !important; }
+.ieqas-badge-compact-v168 { width: 120px !important; height: 120px !important; margin-top: 12px !important; }
+.ieqas-ring-v168 {
+    position: absolute !important;
+    width: inherit !important;
+    height: inherit !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(255,255,255,0) 58%, rgba(238,212,132,.45) 59%, rgba(238,212,132,.65) 76%, rgba(255,255,255,0) 77%) !important;
+    border: 1px solid rgba(185,146,39,.24) !important;
+}
+.ieqas-inner-v168 {
+    position: relative !important;
+    width: 78% !important;
+    height: 78% !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.92) !important;
+    border: 1px solid rgba(215,188,105,.48) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 12px !important;
+    box-shadow: 0 10px 28px rgba(16,24,40,.08) !important;
+    overflow: hidden !important;
+}
+.ieqas-ring-v168 span {
+    position: absolute !important;
+    color: #7B6118 !important;
+    font-weight: 900 !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: .3px !important;
+}
+.ieqas-ring-v168 span:nth-child(1) { top: 8%; left: 25%; transform: rotate(-5deg); }
+.ieqas-ring-v168 span:nth-child(2) { bottom: 8%; left: 42%; }
+.ieqas-ring-v168 span:nth-child(3) { right: 2%; top: 42%; transform: rotate(84deg); }
+.ieqas-korean-symbol-v168 { color: #002B5B !important; font-size: 18px !important; line-height: 1 !important; margin-bottom: 3px !important; }
+.ieqas-small-title-v168 { color: #111827 !important; font-size: 8px !important; font-weight: 800 !important; line-height: 1.1 !important; }
+.ieqas-blue-ribbon-v168 {
+    margin: 5px 0 !important;
+    background: #002B5B !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    padding: 4px 8px !important;
+    border-radius: 3px !important;
+}
+.ieqas-logo-name-v168 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin: 2px 0 4px 0 !important;
+}
+.ieqas-logo-name-v168 img { width: 28px !important; height: 28px !important; object-fit: contain !important; }
+.ieqas-logo-fallback-v168 {
+    width: 24px !important; height: 24px !important; border-radius: 50% !important; background: #EEF5FF !important; color: #002B5B !important;
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+}
+.ieqas-logo-name-v168 strong { color: #002B5B !important; font-size: 10px !important; font-weight: 950 !important; line-height: 1.05 !important; }
+.ieqas-main-text-v168 { color: #002B5B !important; font-size: 13px !important; font-weight: 950 !important; letter-spacing: .5px !important; }
+.ieqas-sub-text-v168 { color: #111827 !important; font-size: 10px !important; font-weight: 900 !important; }
+.ieqas-valid-v168 { color: #111827 !important; font-size: 8px !important; font-weight: 800 !important; margin-top: 2px !important; }
+.ieqas-badge-compact-v168 .ieqas-ring-v168 span,
+.ieqas-badge-compact-v168 .ieqas-small-title-v168,
+.ieqas-badge-compact-v168 .ieqas-korean-symbol-v168,
+.ieqas-badge-compact-v168 .ieqas-valid-v168 { display: none !important; }
+.ieqas-badge-compact-v168 .ieqas-blue-ribbon-v168 { font-size: 7px !important; padding: 3px 5px !important; }
+.ieqas-badge-compact-v168 .ieqas-logo-name-v168 { flex-direction: column !important; gap: 2px !important; }
+.ieqas-badge-compact-v168 .ieqas-logo-name-v168 img { width: 24px !important; height: 24px !important; }
+.ieqas-badge-compact-v168 .ieqas-logo-name-v168 strong { font-size: 8px !important; }
+.ieqas-badge-compact-v168 .ieqas-main-text-v168 { font-size: 8px !important; }
+.ieqas-badge-compact-v168 .ieqas-sub-text-v168 { font-size: 8px !important; }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11190,6 +11276,57 @@ def google_map_embed_html_v99(u):
 
 
 
+
+def accreditation_until_label_v168(value):
+    value = display_clean_v50(value)
+    if not value:
+        return ""
+    try:
+        parts = value.split("-")
+        if len(parts) >= 2 and parts[0] and parts[1]:
+            return f"{parts[0]}. {int(parts[1])}"
+    except Exception:
+        pass
+    return value
+
+
+def university_excellent_accreditation_badge_html_v168(u, compact=False):
+    """Dynamic IEQAS-style badge shown only for Excellent accredited universities."""
+    status = display_clean_v50(u.get("Accreditation_Status", ""))
+    if status.strip().lower() != "excellent accredited":
+        return ""
+
+    name = display_clean_v50(u.get("University", ""))
+    until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
+    logo_path = display_clean_v50(u.get("University_Logo", ""))
+    encoded_logo = b64(logo_path) if logo_path else ""
+    logo_html = f'<img src="data:image/png;base64,{encoded_logo}" alt="{_safe_html_v62(name)} logo">' if encoded_logo else '<span class="ieqas-logo-fallback-v168">★</span>'
+    size_class = "ieqas-badge-compact-v168" if compact else "ieqas-badge-large-v168"
+
+    return f"""
+    <div class="ieqas-badge-v168 {size_class}">
+        <div class="ieqas-ring-v168">
+            <span>Ministry of Education</span>
+            <span>IEQAS</span>
+            <span>Excellent Accredited Institution</span>
+        </div>
+        <div class="ieqas-inner-v168">
+            <div class="ieqas-korean-symbol-v168">◉</div>
+            <div class="ieqas-small-title-v168">Ministry of Education Designated</div>
+            <div class="ieqas-small-title-v168">International Education Quality Assurance System</div>
+            <div class="ieqas-blue-ribbon-v168">Excellent Accredited Institution</div>
+            <div class="ieqas-logo-name-v168">
+                {logo_html}
+                <strong>{_safe_html_v62(name)}</strong>
+            </div>
+            <div class="ieqas-main-text-v168">ACCREDITED INSTITUTION</div>
+            <div class="ieqas-sub-text-v168">IEQAS</div>
+            <div class="ieqas-valid-v168">Accreditation valid until {_safe_html_v62(until) if until else "—"}</div>
+        </div>
+    </div>
+    """
+
+
 def _render_university_detail_v62(u):
     detail_name_style_v99 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", "")) if "university_name_style_v93" in globals() else ""
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
@@ -11199,6 +11336,7 @@ def _render_university_detail_v62(u):
     map_html = google_map_embed_html_v99(u)
     quick_links_html = university_quick_links_html_v103(u)
     student_stats_html = university_student_stats_html_v106(u)
+    accreditation_badge_html_v168 = university_excellent_accreditation_badge_html_v168(u)
 
     detail_html = f"""
 <div class="detail-card-v99">
@@ -11219,6 +11357,7 @@ def _render_university_detail_v62(u):
 
         <div class="detail-program-side-v99">
             {program_badges}
+            {accreditation_badge_html_v168}
         </div>
     </div>
 
@@ -11256,6 +11395,7 @@ def _render_university_summary_v62(u, key_suffix):
     logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
     name_style_v93 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", ""))
     program_badges_inline = _program_specific_application_badges_v71(u)
+    accreditation_badge_compact_v168 = university_excellent_accreditation_badge_html_v168(u, compact=True)
 
     summary_html = f'''<div class="uni-summary-card-v88">
 <div class="uni-summary-image-wrap-v88">
@@ -11273,6 +11413,7 @@ def _render_university_summary_v62(u, key_suffix):
     </div>
     <div class="uni-summary-programs-v88">
         {program_badges_inline}
+        {accreditation_badge_compact_v168}
     </div>
 </div>
 </div>'''
@@ -11305,7 +11446,7 @@ def universities_page(public=False):
         return
 
     for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Application_Close_Date", "UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date", "Graduate_Open_Date", "Graduate_Close_Date", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
-                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range"]:
+                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range", "Accreditation_Status", "Accreditation_Until"]:
         if col not in df.columns:
             df[col] = ""
 
@@ -13383,7 +13524,7 @@ def admin_university_management_v49():
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","UG_New_Open_Date","UG_New_Close_Date","UG_Transfer_Open_Date","UG_Transfer_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date","KLP_Open_Date","KLP_Close_Date","EAP_Open_Date","EAP_Close_Date",
         "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
-        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size"
+        "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size","Accreditation_Status","Accreditation_Until"
     ]
     df = ensure_columns_v49(df, required_cols)
 
@@ -13417,6 +13558,12 @@ def admin_university_management_v49():
                 fax = st.text_input("Representative Fax")
                 school_size = st.text_input("School Size")
                 intl_students = st.text_input("Foreign / International Students")
+                accreditation_status = st.selectbox("Accreditation", ["Excellent accredited", "Accredited", "Non accredited"], key="add_accreditation_status_v168")
+                acc_y1, acc_y2 = st.columns(2)
+                with acc_y1:
+                    accreditation_year = st.selectbox("Accreditation Until Year", [""] + [str(y) for y in range(datetime.now().year, datetime.now().year + 15)], key="add_accreditation_year_v168")
+                with acc_y2:
+                    accreditation_month = st.selectbox("Accreditation Until Month", [""] + [f"{m:02d}" for m in range(1, 13)], key="add_accreditation_month_v168")
             with c2:
                 address = st.text_area("Address", height=92)
                 overview = st.text_area("Overview", height=120)
@@ -13497,6 +13644,8 @@ def admin_university_management_v49():
                         "Location": location.strip(),
                         "Total_Students": school_size.strip(),
                         "International_Students": intl_students.strip(),
+                        "Accreditation_Status": accreditation_status,
+                        "Accreditation_Until": f"{accreditation_year}-{accreditation_month}" if accreditation_year and accreditation_month else "",
                         "Top_Majors": top_majors.strip(),
                         "Intake": intake.strip(),
                         "Application_Status": calculated_application_status,
@@ -13594,6 +13743,21 @@ def admin_university_management_v49():
                     fax = st.text_input("Representative Fax", value=display_clean_v50(row.get("Representative_Fax", "")), key=f"edit_uni_fax_{selected_key_v90}")
                     school_size = st.text_input("School Size", value=display_clean_v50(row.get("School_Size", "")), key=f"edit_uni_school_size_{selected_key_v90}")
                     intl_students = st.text_input("Foreign / International Students", value=display_clean_v50(row.get("International_Students", "")), key=f"edit_uni_intl_students_{selected_key_v90}")
+                    acc_options_v168 = ["Excellent accredited", "Accredited", "Non accredited"]
+                    current_acc_v168 = display_clean_v50(row.get("Accreditation_Status", "")) or "Non accredited"
+                    if current_acc_v168 not in acc_options_v168:
+                        current_acc_v168 = "Non accredited"
+                    accreditation_status = st.selectbox("Accreditation", acc_options_v168, index=acc_options_v168.index(current_acc_v168), key=f"edit_accreditation_status_v168_{selected_key_v90}")
+                    acc_until_v168 = display_clean_v50(row.get("Accreditation_Until", ""))
+                    acc_year_default_v168 = acc_until_v168.split("-")[0] if "-" in acc_until_v168 else ""
+                    acc_month_default_v168 = acc_until_v168.split("-")[1] if "-" in acc_until_v168 else ""
+                    acc_year_options_v168 = [""] + [str(y) for y in range(datetime.now().year - 5, datetime.now().year + 15)]
+                    acc_month_options_v168 = [""] + [f"{m:02d}" for m in range(1, 13)]
+                    acc_y1, acc_y2 = st.columns(2)
+                    with acc_y1:
+                        accreditation_year = st.selectbox("Accreditation Until Year", acc_year_options_v168, index=acc_year_options_v168.index(acc_year_default_v168) if acc_year_default_v168 in acc_year_options_v168 else 0, key=f"edit_accreditation_year_v168_{selected_key_v90}")
+                    with acc_y2:
+                        accreditation_month = st.selectbox("Accreditation Until Month", acc_month_options_v168, index=acc_month_options_v168.index(acc_month_default_v168) if acc_month_default_v168 in acc_month_options_v168 else 0, key=f"edit_accreditation_month_v168_{selected_key_v90}")
                 with c2:
                     address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92, key=f"edit_uni_address_{selected_key_v90}")
                     overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120, key=f"edit_uni_overview_{selected_key_v90}")
@@ -13705,6 +13869,8 @@ def admin_university_management_v49():
                     df.loc[idx, "School_Size"] = school_size.strip()
                     df.loc[idx, "Total_Students"] = school_size.strip()
                     df.loc[idx, "International_Students"] = intl_students.strip()
+                    df.loc[idx, "Accreditation_Status"] = accreditation_status
+                    df.loc[idx, "Accreditation_Until"] = f"{accreditation_year}-{accreditation_month}" if accreditation_year and accreditation_month else ""
                     df.loc[idx, "Overview"] = overview.strip()
                     df.loc[idx, "Intake"] = intake.strip()
                     df.loc[idx, "Application_Status"] = calculated_application_status

@@ -1108,3 +1108,12 @@ v164:
 v165:
 - Updated the agency representative dashboard hero description text.
 - New text: Check students’ eligibility, tuition fees, and submit applications. You can also monitor staff activity within your organization.
+
+
+v168:
+- Added Accreditation fields to Add/Edit Existing University for super admin.
+- Accreditation options: Excellent accredited, Accredited, Non accredited.
+- Added Accreditation Until Year and Month fields.
+- Saved accreditation data in universities.csv as Accreditation_Status and Accreditation_Until.
+- If a university is Excellent accredited, a dynamic IEQAS-style transparent badge appears automatically.
+- The badge uses the selected university logo and university name automatically and updates the valid-until year/month automatically.
