@@ -7480,6 +7480,57 @@ div[data-testid="column"]:has(.pending-action-panel-v151) button p {
     display: none !important;
 }
 
+
+/* v182 direct fixed IEQAS badge image */
+.uni-detail-name-v99,
+.uni-name-accent-v93,
+.program-detail-title-area-v178 .program-detail-uni-name-v178 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.ieqas-direct-badge-wrap-v182 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 108px !important;
+    height: 108px !important;
+    min-width: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    background: transparent !important;
+    vertical-align: middle !important;
+    overflow: visible !important;
+    margin-left: 8px !important;
+}
+.ieqas-direct-badge-img-v182 {
+    width: 108px !important;
+    height: 108px !important;
+    max-width: 108px !important;
+    max-height: 108px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10) !important;
+    display: block !important;
+}
+.ieqas-uploaded-badge-wrap-v181,
+.ieqas-uploaded-badge-wrap-v180,
+.ieqas-uploaded-badge-wrap-v179,
+.ieqas-uploaded-badge-wrap-v178,
+.ieqas-uploaded-badge-wrap-v177,
+.ieqas-uploaded-badge-wrap-v175,
+.ieqas-uploaded-badge-img-v181,
+.ieqas-uploaded-badge-img-v180,
+.ieqas-uploaded-badge-img-v179,
+.ieqas-uploaded-badge-img-v178,
+.ieqas-uploaded-badge-img-v177,
+.ieqas-uploaded-badge-img-v175 {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11975,29 +12026,69 @@ def resolve_ieqas_badge_path_v177(u):
 
 
 
-def university_excellent_accreditation_name_badge_v169(u):
+
+def direct_ieqas_badge_path_v182(university_name):
     """
-    v181: Render uploaded IEQAS badge from session/CSV/JSON DB.
-    This fixes the issue where the badge did not appear on the university list page.
+    v182: Direct fixed IEQAS badge image path.
+    No upload UI. Put the real badge image in assets/ieqas_badges/.
+    For Kyungsung University, use:
+    assets/ieqas_badges/kyungsung_university_ieqas_badge.png
     """
-    uni_name = display_clean_v50(u.get("University", ""))
-    data_uri = get_ieqas_badge_data_for_university_v181(
-        uni_name,
-        display_clean_v50(u.get("IEQAS_Badge_Image_Data", ""))
+    slug = safe_slug_v49(university_name or "")
+    mapping = {
+        "kyungsung_university": "assets/ieqas_badges/kyungsung_university_ieqas_badge.png",
+    }
+    mapped = mapping.get(slug, "")
+    if mapped:
+        p = BASE / mapped
+        if p.exists() and p.is_file():
+            return str(p)
+
+    # Generic fallback for any university by slug
+    for ext in [".png", ".jpg", ".jpeg", ".webp", ".svg"]:
+        p = BASE / "assets" / "ieqas_badges" / f"{slug}_ieqas_badge{ext}"
+        if p.exists() and p.is_file():
+            return str(p)
+    return ""
+
+
+def direct_ieqas_img_html_v182(university_name, status="", valid_until=""):
+    path = direct_ieqas_badge_path_v182(university_name)
+    if not path:
+        return ""
+
+    try:
+        encoded = base64.b64encode(Path(path).read_bytes()).decode("utf-8")
+    except Exception:
+        return ""
+
+    ext = str(path).lower()
+    mime = "image/png"
+    if ext.endswith(".jpg") or ext.endswith(".jpeg"):
+        mime = "image/jpeg"
+    elif ext.endswith(".webp"):
+        mime = "image/webp"
+    elif ext.endswith(".svg"):
+        mime = "image/svg+xml"
+
+    title = f"{status} {valid_until}".strip() or "IEQAS badge"
+    return (
+        f'<span class="ieqas-direct-badge-wrap-v182" title="{_safe_html_v62(title)}">'
+        f'<img class="ieqas-direct-badge-img-v182" src="data:{mime};base64,{encoded}" alt="IEQAS badge" />'
+        f'</span>'
     )
 
+
+
+def university_excellent_accreditation_name_badge_v169(u):
+    """
+    v182: Use direct fixed IEQAS badge image only.
+    Upload feature removed because it was unreliable.
+    """
+    university_name = display_clean_v50(u.get("University", ""))
     status = display_clean_v50(u.get("Accreditation_Status", ""))
     until = accreditation_until_label_v168(u.get("Accreditation_Until", ""))
-    title = f"{status} {until}".strip() or "IEQAS badge"
-
-    if data_uri.startswith("data:image"):
-        return (
-            f'<span class="ieqas-uploaded-badge-wrap-v181" title="{_safe_html_v62(title)}">'
-            f'<img class="ieqas-uploaded-badge-img-v181" src="{data_uri}" alt="IEQAS badge" />'
-            f'</span>'
-        )
-
-    return ""
+    return direct_ieqas_img_html_v182(university_name, status, until)
 
 
 def _render_university_detail_v62(u):
@@ -14405,36 +14496,7 @@ def admin_university_management_v49():
             )
 
             st.markdown("#### IEQAS Badge Image")
-            instant_ieqas_badge_v180 = st.file_uploader(
-                "Upload IEQAS Badge Image",
-                type=["png", "jpg", "jpeg", "webp"],
-                key=f"instant_ieqas_badge_upload_v180_{selected_key_v90}",
-                help="Upload the official IEQAS badge image. It will save immediately and appear beside the university name."
-            )
-            if instant_ieqas_badge_v180 is not None:
-                if "IEQAS_Badge_Image" not in df.columns:
-                    df["IEQAS_Badge_Image"] = ""
-                if "IEQAS_Badge_Image_Data" not in df.columns:
-                    df["IEQAS_Badge_Image_Data"] = ""
-                saved_ieqas_path_v180 = save_uploaded_ieqas_badge_v175(instant_ieqas_badge_v180, selected)
-                saved_ieqas_data_v180 = save_ieqas_badge_for_university_v181(selected, instant_ieqas_badge_v180)
-                if saved_ieqas_path_v180:
-                    df.loc[idx, "IEQAS_Badge_Image"] = saved_ieqas_path_v180
-                if saved_ieqas_data_v180:
-                    df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v180
-                    st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[safe_slug_v49(selected)] = saved_ieqas_data_v180
-                write_csv(uni_file, df)
-                reload_data_v49()
-                st.success("IEQAS badge image saved. It will now appear beside the university name.")
-                st.rerun()
-
-            current_ieqas_data_v180 = display_clean_v50(row.get("IEQAS_Badge_Image_Data", ""))
-            current_ieqas_path_v180 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
-            if current_ieqas_data_v180.startswith("data:image") or current_ieqas_path_v180:
-                st.caption("IEQAS badge is currently saved for this university.")
-            else:
-                st.caption("No IEQAS badge is saved yet. Upload the official badge image above.")
-
+            st.info("IEQAS upload option was removed. The badge is now controlled by a fixed image file in the GitHub project: assets/ieqas_badges/kyungsung_university_ieqas_badge.png")
             st.download_button("Download Student Statistics Excel Format", data=student_stats_template_bytes_v106(), file_name="university_student_statistics_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True, key=f"download_student_stats_template_v106_{selected_key_v90}")
             st.caption("Optional student statistics file: use this template for enrollment numbers and top nationality data. The same template download is also shown next to the Excel upload field below.")
 
@@ -14470,18 +14532,8 @@ def admin_university_management_v49():
                         accreditation_year = st.selectbox("Accreditation Until Year", acc_year_options_v168, index=acc_year_options_v168.index(acc_year_default_v168) if acc_year_default_v168 in acc_year_options_v168 else 0, key=f"edit_accreditation_year_v168_{selected_key_v90}")
                     with acc_y2:
                         accreditation_month = st.selectbox("Accreditation Until Month", acc_month_options_v168, index=acc_month_options_v168.index(acc_month_default_v168) if acc_month_default_v168 in acc_month_options_v168 else 0, key=f"edit_accreditation_month_v168_{selected_key_v90}")
-                    current_ieqas_badge_v175 = display_clean_v50(row.get("IEQAS_Badge_Image", ""))
-                    current_ieqas_badge_data_v179 = display_clean_v50(row.get("IEQAS_Badge_Image_Data", ""))
-                    if current_ieqas_badge_data_v179 or current_ieqas_badge_v175:
-                        st.caption("Current IEQAS badge image is saved. Upload a new image only if you want to replace it.")
-                    else:
-                        st.caption("No IEQAS badge image saved yet. Please upload the official IEQAS badge image if you want it to appear beside the university name.")
-                    ieqas_badge_upload = st.file_uploader(
-                        "Upload IEQAS Badge Image (optional)",
-                        type=["png", "jpg", "jpeg", "webp"],
-                        key=f"edit_ieqas_badge_upload_v175_{selected_key_v90}",
-                        help="Upload the official IEQAS badge image for this university. It will appear beside the university name."
-                    )
+                    st.caption("IEQAS badge upload field removed in v182. Use the direct file path: assets/ieqas_badges/kyungsung_university_ieqas_badge.png")
+                    ieqas_badge_upload = None
                 with c2:
                     address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92, key=f"edit_uni_address_{selected_key_v90}")
                     overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120, key=f"edit_uni_overview_{selected_key_v90}")

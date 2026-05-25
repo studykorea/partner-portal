@@ -1199,3 +1199,13 @@ v181:
 - The badge renderer now checks session state, IEQAS_Badge_Image_Data, and ieqas_badges.json.
 - Uploading the badge in Edit University should make it appear immediately on the university list, details, and program detail pages.
 - This avoids CSV/path/cache problems that prevented the badge from appearing.
+
+
+v182:
+- Removed the IEQAS upload option because it was not working reliably.
+- Removed CSV/JSON upload-based badge display logic from the visible badge renderer.
+- Badge now uses a direct fixed project file:
+  assets/ieqas_badges/kyungsung_university_ieqas_badge.png
+- To show the badge, add the real IEQAS badge image to that path in GitHub.
+- The code will automatically display it beside Kyungsung University name.
+- The screenshot provided in chat was included only as reference_screenshot_not_badge.png, not used as the badge.
