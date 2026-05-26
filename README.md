@@ -1322,3 +1322,9 @@ v200:
 - Cleaned the uploaded badge image and removed the outer white/checker background.
 - Saved it as a transparent footer badge asset.
 - Kept the blue badges and all other footer layout/design unchanged.
+
+
+v201:
+- Changed ONLY the "Certified Information" footer badge to the newly provided logo/image.
+- Kept the other footer badges unchanged.
+- Removed the outer white/checker background from the new badge asset and saved it as transparent.
