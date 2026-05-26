@@ -1315,3 +1315,10 @@ v199:
 - Cropped the badge assets tightly so the logo fills the circle area.
 - Increased footer badge display size and removed the extra white circular holder.
 - Badge background is transparent and the badge now appears as large as the marked circle.
+
+
+v200:
+- Replaced the gold footer badge image with the newly provided Korea License Approval Development Institute logo.
+- Cleaned the uploaded badge image and removed the outer white/checker background.
+- Saved it as a transparent footer badge asset.
+- Kept the blue badges and all other footer layout/design unchanged.
