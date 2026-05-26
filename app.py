@@ -8076,7 +8076,7 @@ def footer():
 
     trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Trusted partner badge")
     certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Certified information badge")
-    eligibility_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Eligibility guidance badge")
+    eligibility_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "Eligibility guidance badge")
     scholarship_badge = _footer_badge_icon_html_v197("assets/kladi_badge_gold_transparent.png", "Scholarship support badge")
 
     st.markdown(f"""

@@ -1328,3 +1328,9 @@ v201:
 - Changed ONLY the "Certified Information" footer badge to the newly provided logo/image.
 - Kept the other footer badges unchanged.
 - Removed the outer white/checker background from the new badge asset and saved it as transparent.
+
+
+v202:
+- Replaced ONLY the footer badge for "Eligibility Made Easy" with the provided IEEE logo/image.
+- Kept all other footer badges unchanged.
+- Saved the IEEE logo as a transparent PNG asset.
