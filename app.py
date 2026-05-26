@@ -869,6 +869,12 @@ h1,h2,h3,h4,h5,h6,p,div,span,label,li {color:var(--black);}
 .features {display:grid;grid-template-columns:repeat(4,1fr);gap:15px;background:#EEF5FF;padding:22px 56px;}
 .feature {display:flex;gap:12px;align-items:center;}
 .icon {width:42px;height:42px;border-radius:50%;background:white;color:#005BDB!important;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+.footer-feature-icon-wrap-v197{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;flex:0 0 42px;box-shadow:0 2px 6px rgba(16,24,40,.08);overflow:hidden;}
+.footer-feature-badge-v197{width:28px;height:28px;object-fit:contain;display:block;filter:drop-shadow(0 1px 1px rgba(16,24,40,.10));}
+.feature .footer-feature-icon-wrap-v197{margin-right:0;}
+@media(max-width:1000px){.footer-feature-icon-wrap-v197{width:38px;height:38px;flex-basis:38px}.footer-feature-badge-v197{width:24px;height:24px}}
+
 .footer {background:#002B5B;padding:30px 56px;color:white!important;}
 .footer * {color:white!important;}
 .footer-grid {display:grid;grid-template-columns:2fr 1.4fr 1.4fr 1.7fr 1.3fr;gap:20px;}
@@ -8019,14 +8025,26 @@ def header():
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
+def _footer_badge_icon_html_v197(asset_path, alt_text="badge"):
+    encoded = b64(asset_path)
+    if not encoded:
+        return '<div class="icon">✓</div>'
+    return f'<div class="footer-feature-icon-wrap-v197"><img class="footer-feature-badge-v197" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(alt_text)}"></div>'
+
 def footer():
 
-    st.markdown("""
+    trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Trusted partner badge")
+    certified_badge = _footer_badge_icon_html_v197("assets/kladi_badge_gold_transparent.png", "Certified information badge")
+    eligibility_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Eligibility guidance badge")
+    scholarship_badge = _footer_badge_icon_html_v197("assets/kladi_badge_gold_transparent.png", "Scholarship support badge")
+
+    st.markdown(f"""
     <div class="features">
-      <div class="feature"><div class="icon">✓</div><div><b>Trusted Partnerships</b><br><span class="muted">Work with verified universities</span></div></div>
-      <div class="feature"><div class="icon">i</div><div><b>Accurate Information</b><br><span class="muted">Up-to-date admission & fee details</span></div></div>
-      <div class="feature"><div class="icon">✓</div><div><b>Eligibility Made Easy</b><br><span class="muted">Quick checks for better guidance</span></div></div>
-      <div class="feature"><div class="icon">☆</div><div><b>Scholarship Support</b><br><span class="muted">Maximize opportunities for students</span></div></div>
+      <div class="feature">{trusted_badge}<div><b>Trusted Partnerships</b><br><span class="muted">Work with verified universities</span></div></div>
+      <div class="feature">{certified_badge}<div><b>Certified Information</b><br><span class="muted">Up-to-date admission & fee details</span></div></div>
+      <div class="feature">{eligibility_badge}<div><b>Eligibility Made Easy</b><br><span class="muted">Quick checks for better guidance</span></div></div>
+      <div class="feature">{scholarship_badge}<div><b>Scholarship Support</b><br><span class="muted">Maximize opportunities for students</span></div></div>
     </div>
 
     <div class="footer-lite-v27">
@@ -8045,9 +8063,6 @@ def footer():
       <p class="copyright-v27">© 2026 Partner Portal for University Recruitment. All rights reserved.</p>
     </div>
     """, unsafe_allow_html=True)
-
-
-
 
 
 

@@ -1296,3 +1296,10 @@ v196:
 - Increased program card height and bottom padding.
 - Added an internal divider above “View Details & Apply →” for a cleaner professional look.
 - Removed the issue where the apply text touched/overlapped the card border line.
+
+
+v197:
+- Added small transparent badge icons to the footer feature strip.
+- Used the uploaded certification/trusted-partner badge images with transparent backgrounds.
+- Replaced the plain footer icons for Trusted Partnerships, Certified Information, Eligibility Made Easy, and Scholarship Support.
+- Kept the badges small and clean for a professional footer look.
