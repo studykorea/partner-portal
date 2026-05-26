@@ -7906,6 +7906,46 @@ a[target="blank"] {
     bottom: auto !important;
 }
 
+
+/* v199: footer badges fill the circle with no extra outer whitespace */
+.footer-feature-icon-wrap-v197 {
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    flex: 0 0 68px !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+.footer-feature-badge-v197 {
+    width: 66px !important;
+    height: 66px !important;
+    max-width: 66px !important;
+    max-height: 66px !important;
+    object-fit: contain !important;
+    display: block !important;
+    background: transparent !important;
+    filter: drop-shadow(0 3px 5px rgba(16,24,40,.14)) !important;
+}
+.feature {
+    gap: 18px !important;
+}
+@media(max-width:1000px){
+    .footer-feature-icon-wrap-v197 {
+        width: 56px !important;
+        height: 56px !important;
+        min-width: 56px !important;
+        flex-basis: 56px !important;
+    }
+    .footer-feature-badge-v197 {
+        width: 54px !important;
+        height: 54px !important;
+        max-width: 54px !important;
+        max-height: 54px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 

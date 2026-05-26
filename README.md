@@ -1308,3 +1308,10 @@ v197:
 v198:
 - Increased footer badge display size so the badge fills the circular icon area more closely.
 - Slightly enlarged the white circular holder for a better balanced look.
+
+
+v199:
+- Reprocessed the footer badge images to remove outer white/background space.
+- Cropped the badge assets tightly so the logo fills the circle area.
+- Increased footer badge display size and removed the extra white circular holder.
+- Badge background is transparent and the badge now appears as large as the marked circle.
