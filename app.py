@@ -7946,6 +7946,24 @@ a[target="blank"] {
     }
 }
 
+
+/* v203: make application major/program selectbox visible and readable */
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    min-height: 48px !important;
+}
+div[data-testid="stSelectbox"] div[data-baseweb="select"] span {
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+}
+div[data-testid="stSelectbox"] label {
+    color: #101828 !important;
+    -webkit-text-fill-color: #101828 !important;
+    font-weight: 800 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11515,24 +11533,64 @@ def render_application_start_form_v109(u, program_slug, application_type):
     </div>
     """, unsafe_allow_html=True)
 
-    major_options = [""]
+    # v203: Build the major/program dropdown robustly.
+    # Previous logic accidentally removed all undergraduate rows because "undergraduate" contains "graduate".
+    major_options = ["Select major / program"]
     try:
         dfc = criteria()
-        if len(dfc) and "University" in dfc.columns:
-            sub = dfc[dfc["University"].astype(str).str.strip().str.lower() == str(u.get("University","")).strip().lower()]
+        if dfc is not None and len(dfc) and "University" in dfc.columns:
+            sub = dfc[dfc["University"].astype(str).str.strip().str.lower() == str(u.get("University","")).strip().lower()].copy()
+
             if "Program" in sub.columns:
                 category = application_program_label_v114(program_slug, application_type).lower()
-                ptxt = sub["Program"].astype(str).str.lower()
+                ptxt = sub["Program"].astype(str).str.strip().str.lower()
+
+                is_undergraduate_v203 = (
+                    ptxt.str.contains(r"\bundergraduate\b|\bbachelor\b|\bbba\b|\bba\b|\bbs\b", regex=True, na=False)
+                    & ~ptxt.str.contains(r"\bgraduate\b|\bmaster\b|\bmasters\b|\bph\.?d\b|\bdoctoral\b", regex=True, na=False)
+                )
+                is_graduate_v203 = (
+                    ptxt.str.contains(r"\bgraduate\b|\bmaster\b|\bmasters\b|\bph\.?d\b|\bdoctoral\b|\bmba\b|\bma\b|\bms\b", regex=True, na=False)
+                    & ~ptxt.str.contains(r"\bundergraduate\b|\bbachelor\b", regex=True, na=False)
+                )
+                is_language_v203 = ptxt.str.contains(r"\blanguage\b|\bklp\b|\beap\b|\bkorean\b", regex=True, na=False)
+
                 if category == "undergraduate":
-                    sub = sub[ptxt.str.contains("undergraduate|bachelor|bba|ba|bs", regex=True, na=False) & ~ptxt.str.contains("graduate|master|ph", regex=True, na=False)]
+                    sub = sub[is_undergraduate_v203]
                 elif category == "graduate":
-                    sub = sub[ptxt.str.contains("graduate|master|ph|mba|ma|ms", regex=True, na=False) & ~ptxt.str.contains("undergraduate|bachelor", regex=True, na=False)]
+                    sub = sub[is_graduate_v203]
                 else:
-                    sub = sub[ptxt.str.contains("language|klp|eap|korean", regex=True, na=False)]
+                    sub = sub[is_language_v203]
+
             if "Major" in sub.columns:
-                major_options += sorted([x for x in sub["Major"].dropna().astype(str).unique().tolist() if x.strip()])
+                cleaned_majors_v203 = []
+                for x in sub["Major"].dropna().astype(str).tolist():
+                    x = x.strip()
+                    if x and x.lower() not in ["nan", "none", "null", "<na>"]:
+                        cleaned_majors_v203.append(x)
+                major_options += sorted(list(dict.fromkeys(cleaned_majors_v203)))
+
+        # Fallback: use the university's Top_Majors column if criteria filtering returns nothing.
+        if len(major_options) == 1:
+            top_majors_v203 = str(u.get("Top_Majors", "") or "")
+            for x in re.split(r";|,|\n", top_majors_v203):
+                x = x.strip()
+                if x and x.lower() not in ["nan", "none", "null", "<na>", "not provided"]:
+                    major_options.append(x)
+
     except Exception:
         pass
+
+    if len(major_options) == 1:
+        major_options += [
+            "Global Business Administration",
+            "Global Hospitality Management",
+            "Global Korean Studies",
+            "Global IT Engineering",
+        ]
+
+    if "Other / Not listed" not in major_options:
+        major_options.append("Other / Not listed")
 
     is_undergraduate_new = (
         str(program_slug).lower() == "undergraduate"
@@ -11565,8 +11623,8 @@ def render_application_start_form_v109(u, program_slug, application_type):
                 home_address = st.text_area("Home Country Address *", height=88)
 
             st.markdown("### Intended Study Information")
-            desired_major = st.selectbox("Select Major / Program Willing to Study *", major_options)
-            if desired_major == "":
+            desired_major = st.selectbox("Select Major / Program Willing to Study *", major_options, index=0)
+            if desired_major in ["Select major / program", "Other / Not listed", ""]:
                 desired_major_other = st.text_input("If the major is not listed, write the major/program here")
             else:
                 desired_major_other = ""
@@ -11604,7 +11662,7 @@ def render_application_start_form_v109(u, program_slug, application_type):
 
             if submitted_next:
                 selected_nationality = nationality_other.strip() if nationality == "Other" and nationality_other.strip() else nationality
-                selected_major = desired_major if desired_major else desired_major_other.strip()
+                selected_major = desired_major_other.strip() if desired_major in ["Select major / program", "Other / Not listed", ""] else desired_major
 
                 required_missing = []
                 if not passport_full_name.strip(): required_missing.append("Full Name as in Passport")

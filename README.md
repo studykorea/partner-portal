@@ -1334,3 +1334,11 @@ v202:
 - Replaced ONLY the footer badge for "Eligibility Made Easy" with the provided IEEE logo/image.
 - Kept all other footer badges unchanged.
 - Saved the IEEE logo as a transparent PNG asset.
+
+
+v203:
+- Fixed the blank “Select Major / Program Willing to Study” dropdown.
+- Corrected undergraduate filtering so it no longer removes undergraduate rows by mistake.
+- Added fallback from each university’s Top_Majors field when admission criteria do not return majors.
+- Added “Other / Not listed” option so staff can manually type a program if needed.
+- Added CSS to make selectbox text visible and readable.
