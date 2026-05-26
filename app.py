@@ -7848,6 +7848,58 @@ a[target="blank"] {
     align-items: stretch !important;
 }
 
+
+/* v196: keep View Details & Apply fully inside program cards */
+.uni-summary-programs-v88 {
+    align-items: stretch !important;
+    gap: 22px !important;
+}
+
+.program-card-form-v195 {
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.program-submit-card-v195 {
+    height: 198px !important;
+    min-height: 198px !important;
+    padding: 20px 22px 22px 22px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+}
+
+.program-submit-card-v195 span {
+    margin: 4px 0 4px 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.program-submit-card-v195 small {
+    line-height: 1.25 !important;
+    flex-shrink: 0 !important;
+}
+
+.program-submit-card-v195 em {
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid #E3EAF5 !important;
+    width: 100% !important;
+    display: block !important;
+    line-height: 1.25 !important;
+    flex-shrink: 0 !important;
+    position: static !important;
+    bottom: auto !important;
+}
+
+.program-click-card-v109 em {
+    position: static !important;
+    bottom: auto !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 

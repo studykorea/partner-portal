@@ -1289,3 +1289,10 @@ v195:
 - Removed the separate View Details & Apply buttons below the cards.
 - Program cards use HTML forms with target=_self, not anchor links, so they open in the same browser tab.
 - Dashboard same-tab fix from v194 is preserved.
+
+
+v196:
+- Fixed the program cards so “View Details & Apply →” stays fully inside each card.
+- Increased program card height and bottom padding.
+- Added an internal divider above “View Details & Apply →” for a cleaner professional look.
+- Removed the issue where the apply text touched/overlapped the card border line.
