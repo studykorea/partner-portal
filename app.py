@@ -870,10 +870,10 @@ h1,h2,h3,h4,h5,h6,p,div,span,label,li {color:var(--black);}
 .feature {display:flex;gap:12px;align-items:center;}
 .icon {width:42px;height:42px;border-radius:50%;background:white;color:#005BDB!important;display:flex;align-items:center;justify-content:center;font-weight:900;}
 
-.footer-feature-icon-wrap-v197{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;flex:0 0 42px;box-shadow:0 2px 6px rgba(16,24,40,.08);overflow:hidden;}
-.footer-feature-badge-v197{width:28px;height:28px;object-fit:contain;display:block;filter:drop-shadow(0 1px 1px rgba(16,24,40,.10));}
+.footer-feature-icon-wrap-v197{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;flex:0 0 44px;box-shadow:0 2px 6px rgba(16,24,40,.08);overflow:hidden;}
+.footer-feature-badge-v197{width:40px;height:40px;object-fit:contain;display:block;filter:drop-shadow(0 1px 1px rgba(16,24,40,.10));}
 .feature .footer-feature-icon-wrap-v197{margin-right:0;}
-@media(max-width:1000px){.footer-feature-icon-wrap-v197{width:38px;height:38px;flex-basis:38px}.footer-feature-badge-v197{width:24px;height:24px}}
+@media(max-width:1000px){.footer-feature-icon-wrap-v197{width:40px;height:40px;flex-basis:40px}.footer-feature-badge-v197{width:36px;height:36px}}
 
 .footer {background:#002B5B;padding:30px 56px;color:white!important;}
 .footer * {color:white!important;}

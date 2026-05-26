@@ -1303,3 +1303,8 @@ v197:
 - Used the uploaded certification/trusted-partner badge images with transparent backgrounds.
 - Replaced the plain footer icons for Trusted Partnerships, Certified Information, Eligibility Made Easy, and Scholarship Support.
 - Kept the badges small and clean for a professional footer look.
+
+
+v198:
+- Increased footer badge display size so the badge fills the circular icon area more closely.
+- Slightly enlarged the white circular holder for a better balanced look.
