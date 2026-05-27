@@ -10601,6 +10601,322 @@ html, body, [data-testid="stAppViewContainer"], .stApp{
     }
 }
 
+
+/* v223: fix only marked navbar, hero, and filter area */
+
+/* Remove the empty markdown shells that appeared as thin rounded blank bars */
+.top-nav-button-shell-v187,
+.uni-filter-panel-v214{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:hidden !important;
+}
+
+/* Remove excessive top whitespace */
+.block-container{
+    padding-top: 0 !important;
+}
+[data-testid="stAppViewContainer"] > .main{
+    padding-top:0 !important;
+}
+
+/* Style the actual Streamlit horizontal block that contains the public navbar */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+    width: calc(100% - 48px) !important;
+    max-width: 1440px !important;
+    margin: 8px auto 16px auto !important;
+    padding: 10px 14px !important;
+    border: 1px solid #DDE6F3 !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,.98) !important;
+    box-shadow: 0 14px 34px rgba(15,23,42,.09) !important;
+    align-items: center !important;
+}
+
+/* Brand: bigger and clearer */
+.premium-public-brand-v223{
+    height: 48px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+}
+.premium-public-brand-mark-v223{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    border-radius:12px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(135deg,#3F5BD6,#061A40) !important;
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+    font-size:16px !important;
+    box-shadow:0 10px 22px rgba(6,26,64,.22) !important;
+}
+.premium-public-brand-v223 strong{
+    display:block !important;
+    font-size:18px !important;
+    line-height:1.06 !important;
+    font-weight:950 !important;
+    letter-spacing:-.02em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+}
+.premium-public-brand-v223 span{
+    display:block !important;
+    margin-top:3px !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    font-weight:750 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+}
+
+/* Navbar buttons */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button{
+    height:46px !important;
+    border-radius:13px !important;
+    border:1px solid transparent !important;
+    background:transparent !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:14px !important;
+    font-weight:850 !important;
+    box-shadow:none !important;
+    padding:0 10px !important;
+    white-space:nowrap !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button:hover{
+    background:#F3F7FF !important;
+    border-color:#D7E4F7 !important;
+    color:#2F4FDB !important;
+    -webkit-text-fill-color:#2F4FDB !important;
+}
+
+/* Active Universities item in public navbar */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:nth-child(3) div[data-testid="stButton"] > button{
+    background:#EEF4FF !important;
+    border-color:#DDE8FF !important;
+    color:#1E3A8A !important;
+    -webkit-text-fill-color:#1E3A8A !important;
+}
+
+/* Login secondary and Partner Sign Up primary */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button{
+    background:#FFFFFF !important;
+    border:1px solid #CBD5E1 !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:800 !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:last-child div[data-testid="stButton"] > button{
+    background:linear-gradient(135deg,#061A40,#123B8A) !important;
+    border:none !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:900 !important;
+    box-shadow:0 12px 26px rgba(6,26,64,.24) !important;
+}
+
+/* Universities page container */
+.universities-wrap-v214{
+    width: calc(100% - 48px) !important;
+    max-width:1440px !important;
+    margin:0 auto !important;
+    padding:0 0 28px 0 !important;
+}
+
+/* Hero: less empty, stronger premium background */
+.uni-list-heading-v214{
+    min-height:0 !important;
+    margin:0 0 0 0 !important;
+    padding:40px 44px !important;
+    border-radius:24px !important;
+    border:1px solid #DDE8F7 !important;
+    background:
+      radial-gradient(circle at 72% 30%, rgba(63,91,214,.18), transparent 27%),
+      radial-gradient(circle at 92% 10%, rgba(14,165,233,.12), transparent 22%),
+      linear-gradient(135deg,#FFFFFF 0%,#F7FBFF 42%,#EEF5FF 100%) !important;
+    box-shadow:0 18px 44px rgba(15,23,42,.08) !important;
+    overflow:hidden !important;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+}
+.uni-list-heading-v214::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:
+      repeating-linear-gradient(135deg, rgba(30,58,138,.06) 0 1px, transparent 1px 15px),
+      radial-gradient(ellipse at 78% 58%, rgba(6,26,64,.06), transparent 34%) !important;
+    pointer-events:none !important;
+}
+.uni-hero-copy-v223,
+.uni-list-heading-v214 .how-it-works-v214{
+    position:relative !important;
+    z-index:2 !important;
+}
+.uni-breadcrumb-v223{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:7px 12px !important;
+    border-radius:999px !important;
+    background:#FFFFFF !important;
+    border:1px solid #E2E8F0 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-size:12px !important;
+    font-weight:850 !important;
+    margin-bottom:14px !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+.uni-breadcrumb-v223 span{
+    color:#94A3B8 !important;
+    -webkit-text-fill-color:#94A3B8 !important;
+}
+.uni-list-heading-v214 h1{
+    font-size:44px !important;
+    line-height:1.06 !important;
+    font-weight:950 !important;
+    letter-spacing:-.035em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    margin:0 0 12px 0 !important;
+}
+.uni-list-heading-v214 p{
+    max-width:650px !important;
+    font-size:17px !important;
+    line-height:1.45 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.how-it-works-v214{
+    height:52px !important;
+    padding:0 24px !important;
+    border-radius:14px !important;
+    border:1px solid #E2E8F0 !important;
+    background:#FFFFFF !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:15px !important;
+    font-weight:900 !important;
+    box-shadow:0 12px 26px rgba(15,23,42,.10) !important;
+}
+
+/* Style the actual Streamlit filter row as one search/filter card */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+    width:100% !important;
+    margin:-18px auto 22px auto !important;
+    padding:22px 22px !important;
+    border:1px solid #E2E8F0 !important;
+    border-radius:20px !important;
+    background:#FFFFFF !important;
+    box-shadow:0 18px 45px rgba(15,23,42,.08) !important;
+    align-items:end !important;
+    position:relative !important;
+    z-index:5 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) label{
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:13px !important;
+    font-weight:800 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div{
+    min-height:52px !important;
+    border-radius:12px !important;
+    border:1px solid #CBD5E1 !important;
+    background:#FFFFFF !important;
+    box-shadow:none !important;
+    font-size:15px !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input:focus,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div:focus-within{
+    border-color:#3F5BD6 !important;
+    box-shadow:0 0 0 3px rgba(63,91,214,.10) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-testid="stButton"] > button{
+    height:52px !important;
+    border-radius:12px !important;
+    border:none !important;
+    background:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:900 !important;
+    font-size:15px !important;
+    box-shadow:0 10px 24px rgba(6,26,64,.20) !important;
+}
+
+/* Keep info bar clean below filters */
+.uni-info-bar-v214{
+    margin-top:0 !important;
+    margin-bottom:24px !important;
+}
+
+/* Mobile/tablet */
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+        position:relative !important;
+        width:calc(100% - 22px) !important;
+        padding:10px !important;
+        overflow-x:auto !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 24px) !important;
+    }
+    .uni-list-heading-v214{
+        padding:30px 24px !important;
+        flex-direction:column !important;
+        align-items:flex-start !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:34px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+        margin-top:12px !important;
+    }
+}
+@media(max-width:760px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+        width:calc(100% - 16px) !important;
+        border-radius:14px !important;
+    }
+    .premium-public-brand-v223 strong{
+        font-size:16px !important;
+    }
+    .premium-public-brand-mark-v223{
+        width:38px !important;
+        height:38px !important;
+        min-width:38px !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 18px) !important;
+    }
+    .uni-list-heading-v214{
+        padding:24px 18px !important;
+        border-radius:18px !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:30px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10696,11 +11012,11 @@ def header():
                 _logout_v187()
     else:
         # Public view
-        nav_cols = st.columns([1.55, .72, 1.0, 1.25, 1.25, 1.0, 1.05, 1.05, 1.05, 1.45], gap="small")
+        nav_cols = st.columns([1.75, .82, 1.08, 1.36, 1.18, 1.06, 1.14, .95, 1.35], gap="small")
         with nav_cols[0]:
             st.markdown(
-                '<div class="premium-public-brand-v222">'
-                '<div class="premium-public-brand-mark-v222">◆</div>'
+                '<div class="premium-public-brand-v223">'
+                '<div class="premium-public-brand-mark-v223">◆</div>'
                 '<div><strong>Korea University</strong><span>Admissions</span></div>'
                 '</div>',
                 unsafe_allow_html=True
@@ -10718,10 +11034,10 @@ def header():
             with nav_cols[i]:
                 if st.button(label + active, key=f"top_nav_public_btn_v187_{label}_{page_name}", use_container_width=True):
                     _go_page_v187(page_name)
-        with nav_cols[8]:
+        with nav_cols[7]:
             if st.button("Login", key="top_nav_login_btn_v187", use_container_width=True):
                 _go_page_v187("Login")
-        with nav_cols[9]:
+        with nav_cols[8]:
             if st.button("Partner Sign Up", key="top_nav_signup_btn_v187", use_container_width=True):
                 _go_page_v187("Partner Sign Up")
 
@@ -15706,7 +16022,8 @@ def universities_page(public=False):
 
     st.markdown("""
     <div class="uni-list-heading-v214">
-        <div>
+        <div class="uni-hero-copy-v223">
+            <div class="uni-breadcrumb-v223">Home <span>›</span> Universities</div>
             <h1>Universities Information</h1>
             <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
         </div>

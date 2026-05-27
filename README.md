@@ -1497,3 +1497,15 @@ v222:
 - Added a polished filter card with aligned controls and a dark navy Filter button.
 - Improved the info bar styling.
 - Kept university cards, dynamic admin/CMS data, admission logic, buttons, and filters intact.
+
+
+v223:
+- Fixed only marked top navigation, hero/header, and filter area.
+- Removed the empty rounded blank bars caused by markdown wrapper divs.
+- Made brand/logo bigger and clearer.
+- Removed unused navbar spacing column.
+- Made Partner Sign Up primary dark navy gradient and Login secondary.
+- Made hero/header more premium with breadcrumb, gradient, and pattern.
+- Styled the actual filter row as one clean rounded search/filter card.
+- Made Filter button dark navy primary.
+- Did not change university card logic, admission logic, database logic, or admin data.
