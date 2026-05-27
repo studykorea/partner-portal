@@ -1488,3 +1488,12 @@ v221:
 - Default logoScale is now 1.15.
 - Admin can still set logoScale such as 1.3, 1.4, or 1.5 for logos with built-in white padding.
 - Placeholder text is not enlarged.
+
+
+v222:
+- Updated only the Universities Information page visual shell.
+- Added premium public navbar styling with brand area, outlined Login, and primary Partner Sign Up.
+- Improved the Universities Information hero/title area with gradient, rounded card, and cleaner hierarchy.
+- Added a polished filter card with aligned controls and a dark navy Filter button.
+- Improved the info bar styling.
+- Kept university cards, dynamic admin/CMS data, admission logic, buttons, and filters intact.

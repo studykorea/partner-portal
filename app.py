@@ -10317,6 +10317,290 @@ section.main > div,
     padding-top: 52px !important;
 }
 
+
+/* v222: premium Universities Information page shell, navbar, hero, filter, info bar only */
+html, body, [data-testid="stAppViewContainer"], .stApp{
+    background:#FFFFFF !important;
+}
+[data-testid="stHeader"]{
+    background:transparent !important;
+    height:0 !important;
+}
+.block-container{
+    padding-top:0 !important;
+}
+
+/* Premium public navbar */
+.top-nav-button-shell-v187{
+    width:calc(100% - 32px) !important;
+    max-width:1520px !important;
+    margin:14px auto 18px auto !important;
+    padding:10px 14px !important;
+    border:1px solid rgba(214,225,240,.92) !important;
+    border-radius:16px !important;
+    background:rgba(255,255,255,.96) !important;
+    box-shadow:0 14px 36px rgba(15,23,42,.10) !important;
+    backdrop-filter:blur(14px) !important;
+    position:sticky !important;
+    top:8px !important;
+    z-index:999 !important;
+    box-sizing:border-box !important;
+}
+.premium-public-brand-v222{
+    height:44px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    overflow:hidden !important;
+    white-space:nowrap !important;
+}
+.premium-public-brand-mark-v222{
+    width:30px !important;
+    height:30px !important;
+    border-radius:9px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(135deg,#3F5BD6,#0B2B63) !important;
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+    font-size:13px !important;
+    box-shadow:0 8px 18px rgba(63,91,214,.25) !important;
+}
+.premium-public-brand-v222 strong{
+    display:block !important;
+    font-size:13px !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:-.01em !important;
+}
+.premium-public-brand-v222 span{
+    display:block !important;
+    margin-top:2px !important;
+    font-size:11px !important;
+    line-height:1 !important;
+    color:#64748B !important;
+    -webkit-text-fill-color:#64748B !important;
+    font-weight:800 !important;
+}
+.top-nav-button-shell-v187 div[data-testid="stButton"] > button{
+    height:42px !important;
+    border-radius:12px !important;
+    border:1px solid transparent !important;
+    background:transparent !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:850 !important;
+    font-size:13px !important;
+    box-shadow:none !important;
+    transition:all .15s ease !important;
+    padding:0 8px !important;
+}
+.top-nav-button-shell-v187 div[data-testid="stButton"] > button:hover{
+    background:#F3F6FF !important;
+    border-color:#DCE6F8 !important;
+    color:#2F4FDB !important;
+    -webkit-text-fill-color:#2F4FDB !important;
+}
+/* Login and Partner Sign Up buttons on the right */
+.top-nav-button-shell-v187 div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button{
+    border:1px solid #D7DEE9 !important;
+    background:#FFFFFF !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    box-shadow:0 8px 18px rgba(16,24,40,.04) !important;
+}
+.top-nav-button-shell-v187 div[data-testid="column"]:last-child div[data-testid="stButton"] > button{
+    border:1px solid #061A40 !important;
+    background:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    box-shadow:0 10px 22px rgba(6,26,64,.18) !important;
+}
+
+/* Page wrapper removes blank upper space and creates premium background */
+.universities-wrap-v214{
+    width:calc(100% - 44px) !important;
+    max-width:1520px !important;
+    margin:0 auto !important;
+    padding:0 0 28px 0 !important;
+    background:transparent !important;
+}
+
+/* Premium header/hero area */
+.uni-list-heading-v214{
+    position:relative !important;
+    overflow:hidden !important;
+    display:flex !important;
+    justify-content:space-between !important;
+    align-items:center !important;
+    gap:22px !important;
+    margin:0 0 20px 0 !important;
+    padding:30px 34px !important;
+    border:1px solid #E4ECF7 !important;
+    border-radius:22px !important;
+    background:
+      radial-gradient(circle at 88% 18%, rgba(70,119,255,.16), transparent 30%),
+      linear-gradient(135deg,#FFFFFF 0%,#F7FAFF 48%,#EEF6FF 100%) !important;
+    box-shadow:0 18px 42px rgba(15,23,42,.08) !important;
+}
+.uni-list-heading-v214::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:
+      repeating-linear-gradient(135deg, rgba(30,58,138,.055) 0 1px, transparent 1px 14px),
+      radial-gradient(circle at 18% 80%, rgba(14,165,233,.10), transparent 24%) !important;
+    pointer-events:none !important;
+}
+.uni-list-heading-v214 > div,
+.uni-list-heading-v214 .how-it-works-v214{
+    position:relative !important;
+    z-index:1 !important;
+}
+.uni-list-heading-v214 h1{
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    font-size:38px !important;
+    line-height:1.06 !important;
+    font-weight:950 !important;
+    letter-spacing:-.03em !important;
+    margin:0 0 9px 0 !important;
+}
+.uni-list-heading-v214 p{
+    color:#516174 !important;
+    -webkit-text-fill-color:#516174 !important;
+    font-size:15.5px !important;
+    line-height:1.5 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.how-it-works-v214{
+    min-width:142px !important;
+    height:46px !important;
+    padding:0 18px !important;
+    border-radius:13px !important;
+    border:1px solid #D7E3F5 !important;
+    background:rgba(255,255,255,.88) !important;
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    font-weight:900 !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.08) !important;
+}
+
+/* Premium filter card */
+.uni-filter-panel-v214{
+    border:1px solid #E0E8F4 !important;
+    box-shadow:0 16px 38px rgba(15,23,42,.08) !important;
+    padding:16px !important;
+    margin:0 0 20px 0 !important;
+    background:#FFFFFF !important;
+    border-radius:18px !important;
+}
+.uni-filter-panel-v214 label{
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    font-weight:800 !important;
+    font-size:12px !important;
+    letter-spacing:.01em !important;
+}
+.uni-filter-panel-v214 input,
+.uni-filter-panel-v214 div[data-baseweb="select"] > div{
+    min-height:48px !important;
+    border-radius:11px !important;
+    border:1px solid #D9E2F1 !important;
+    background:#FFFFFF !important;
+    box-shadow:0 7px 18px rgba(16,24,40,.035) !important;
+}
+.uni-filter-panel-v214 input:focus,
+.uni-filter-panel-v214 div[data-baseweb="select"] > div:focus-within{
+    border-color:#3F5BD6 !important;
+    box-shadow:0 0 0 3px rgba(63,91,214,.10) !important;
+}
+.filter-button-spacer-v222{
+    height:25px !important;
+}
+.uni-filter-panel-v214 div[data-testid="column"]:last-child div[data-testid="stButton"] > button{
+    height:48px !important;
+    border-radius:11px !important;
+    border:1px solid #061A40 !important;
+    background:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:900 !important;
+    box-shadow:0 12px 22px rgba(6,26,64,.16) !important;
+}
+
+/* Info bar */
+.uni-info-bar-v214{
+    display:flex !important;
+    align-items:center !important;
+    gap:11px !important;
+    background:#F5F9FF !important;
+    border:1px solid #DCE9FA !important;
+    color:#344054 !important;
+    -webkit-text-fill-color:#344054 !important;
+    border-radius:14px !important;
+    padding:14px 18px !important;
+    margin:0 0 24px 0 !important;
+    font-size:14px !important;
+    line-height:1.45 !important;
+    box-shadow:0 8px 22px rgba(16,24,40,.035) !important;
+}
+.uni-info-icon-v214{
+    width:24px !important;
+    height:24px !important;
+    border-radius:50% !important;
+    border:1px solid #3B82F6 !important;
+    color:#2563EB !important;
+    -webkit-text-fill-color:#2563EB !important;
+    background:#FFFFFF !important;
+    font-weight:950 !important;
+    flex:0 0 24px !important;
+}
+
+/* Keep university grid intact but improve surrounding spacing */
+.uni-row-gap-v214{
+    height:10px !important;
+}
+
+@media(max-width:1100px){
+    .top-nav-button-shell-v187{
+        position:relative !important;
+        top:auto !important;
+        width:calc(100% - 20px) !important;
+        padding:10px !important;
+    }
+    .premium-public-brand-v222{
+        justify-content:center !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 24px) !important;
+    }
+    .uni-list-heading-v214{
+        flex-direction:column !important;
+        align-items:flex-start !important;
+        padding:26px 22px !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:31px !important;
+    }
+}
+@media(max-width:760px){
+    .universities-wrap-v214{
+        width:calc(100% - 18px) !important;
+    }
+    .uni-list-heading-v214{
+        border-radius:18px !important;
+        padding:22px 18px !important;
+    }
+    .uni-filter-panel-v214{
+        padding:12px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -10412,7 +10696,15 @@ def header():
                 _logout_v187()
     else:
         # Public view
-        nav_cols = st.columns([0.75, 1.0, 1.25, 1.35, 1.0, 1.0, 1.0, 1.25, 1.55])
+        nav_cols = st.columns([1.55, .72, 1.0, 1.25, 1.25, 1.0, 1.05, 1.05, 1.05, 1.45], gap="small")
+        with nav_cols[0]:
+            st.markdown(
+                '<div class="premium-public-brand-v222">'
+                '<div class="premium-public-brand-mark-v222">◆</div>'
+                '<div><strong>Korea University</strong><span>Admissions</span></div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
         nav_items = [
             ("Home", "Home"),
             ("Universities", "Universities"),
@@ -10421,15 +10713,15 @@ def header():
             ("Contact Us", "Contact Us"),
             ("MoU Contact", "Contact Us"),
         ]
-        for i, (label, page_name) in enumerate(nav_items):
+        for i, (label, page_name) in enumerate(nav_items, start=1):
             active = " ▸" if current == page_name else ""
             with nav_cols[i]:
                 if st.button(label + active, key=f"top_nav_public_btn_v187_{label}_{page_name}", use_container_width=True):
                     _go_page_v187(page_name)
-        with nav_cols[7]:
+        with nav_cols[8]:
             if st.button("Login", key="top_nav_login_btn_v187", use_container_width=True):
                 _go_page_v187("Login")
-        with nav_cols[8]:
+        with nav_cols[9]:
             if st.button("Partner Sign Up", key="top_nav_signup_btn_v187", use_container_width=True):
                 _go_page_v187("Partner Sign Up")
 
@@ -15454,7 +15746,7 @@ def universities_page(public=False):
     df["_Soonest_Close_v214"] = df.apply(lambda r: _soonest_close_v214(r, r.get("_Crit_Text_v214", "")), axis=1)
 
     st.markdown('<div class="uni-filter-panel-v214">', unsafe_allow_html=True)
-    f1, f2, f3, f4, f5, f6 = st.columns([2.05, .95, .95, .95, .95, 1.05], gap="medium")
+    f1, f2, f3, f4, f5, f6, f7 = st.columns([2.15, .95, .95, .95, .95, 1.05, .72], gap="medium")
 
     with f1:
         search = st.text_input("Search", placeholder="Search university, city, program, keyword...", key="uni_search_v214")
@@ -15469,6 +15761,9 @@ def universities_page(public=False):
         round_filter = st.selectbox("Intake / Round", ["All", "Round 1", "Round 2", "March Intake", "September Intake", "Spring Intake", "Fall Intake"], key="uni_round_v214")
     with f6:
         sort_filter = st.selectbox("Sort By", ["Default", "Name", "Highest International Students", "Highest Total Students", "Soonest Closing Admission"], key="uni_sort_v214")
+    with f7:
+        st.markdown('<div class="filter-button-spacer-v222"></div>', unsafe_allow_html=True)
+        st.button("Filter", key="uni_filter_visual_btn_v222", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     filtered = df.copy()
