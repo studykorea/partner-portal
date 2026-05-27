@@ -1349,3 +1349,11 @@ v204:
 - “Apply for Partner Access” is now clickable and navigates in the same tab to Partner Sign Up.
 - “Explore Universities” is now clickable and navigates in the same tab to Universities.
 - Added hero button styling while keeping the same visual placement.
+
+
+v205:
+- Moved the Home hero buttons back to their original position inside the hero section.
+- Kept “Apply for Partner Access” clickable.
+- Kept “Explore Universities” clickable.
+- Replaced the separate lower Streamlit buttons with clickable HTML form buttons in the original visual location.
+- Forms use target=_self, so they stay in the same browser tab.
