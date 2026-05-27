@@ -1342,3 +1342,10 @@ v203:
 - Added fallback from each university’s Top_Majors field when admission criteria do not return majors.
 - Added “Other / Not listed” option so staff can manually type a program if needed.
 - Added CSS to make selectbox text visible and readable.
+
+
+v204:
+- Fixed the Home hero action buttons.
+- “Apply for Partner Access” is now clickable and navigates in the same tab to Partner Sign Up.
+- “Explore Universities” is now clickable and navigates in the same tab to Universities.
+- Added hero button styling while keeping the same visual placement.

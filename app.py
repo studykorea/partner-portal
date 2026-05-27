@@ -7964,6 +7964,52 @@ div[data-testid="stSelectbox"] label {
     font-weight: 800 !important;
 }
 
+
+/* v204: clickable hero actions on home page */
+.hero-click-actions-wrap-v204 {
+    margin-top: -170px;
+    margin-left: 68px;
+    margin-bottom: 88px;
+    position: relative;
+    z-index: 30;
+    max-width: 760px;
+}
+.hero-click-actions-wrap-v204 .stButton > button {
+    min-height: 46px !important;
+    border-radius: 14px !important;
+    font-size: 1.02rem !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 18px rgba(7, 25, 72, 0.18) !important;
+}
+.hero-click-actions-wrap-v204 [data-testid="column"]:first-child .stButton > button {
+    background: #4a67da !important;
+    color: #ffffff !important;
+    border: 1px solid #6d84e5 !important;
+}
+.hero-click-actions-wrap-v204 [data-testid="column"]:first-child .stButton > button:hover {
+    background: #3f5dd2 !important;
+    border-color: #6d84e5 !important;
+}
+.hero-click-actions-wrap-v204 [data-testid="column"]:nth-child(2) .stButton > button {
+    background: rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.70) !important;
+    backdrop-filter: blur(6px) !important;
+}
+.hero-click-actions-wrap-v204 [data-testid="column"]:nth-child(2) .stButton > button:hover {
+    background: rgba(255,255,255,0.16) !important;
+    border-color: rgba(255,255,255,0.90) !important;
+}
+@media (max-width: 900px) {
+    .hero-click-actions-wrap-v204 {
+        margin-top: -140px;
+        margin-left: 24px;
+        margin-right: 24px;
+        margin-bottom: 76px;
+        max-width: none;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -8808,14 +8854,23 @@ def home():
         <div class="hero-step-v69"><span>Step 1</span><b>Home Page</b></div>
         <h1>Partner Portal for<br>University Recruitment</h1>
         <p class="hero-lead-v69">Approved partner agencies can access university details, application requirements, eligibility checking, and tuition/scholarship calculation.</p>
-        <div class="hero-buttons-v69">
-          <span class="hero-btn-primary-v69">👤&nbsp;&nbsp;Apply for Partner Access</span>
-          <span class="hero-btn-outline-v69">🏛️&nbsp;&nbsp;Explore Universities</span>
-        </div>
+        <div class="hero-buttons-v69 hero-buttons-note-v204"></div>
         <p class="hero-lock-v69">🔒 Detailed information is available only for approved partners.</p>
       </div>
     </section>
     """, unsafe_allow_html=True)
+
+    st.markdown('<div class="hero-click-actions-wrap-v204">', unsafe_allow_html=True)
+    hero_btn_col1, hero_btn_col2, _hero_spacer = st.columns([1.25, 1.15, 4.6], gap="small")
+    with hero_btn_col1:
+        if st.button("👤 Apply for Partner Access", key="home_apply_partner_access_v204", use_container_width=True):
+            set_page("Partner Sign Up")
+            st.rerun()
+    with hero_btn_col2:
+        if st.button("🏛️ Explore Universities", key="home_explore_universities_v204", use_container_width=True):
+            set_page("Universities")
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section featured-v32"><h2>Featured Universities</h2>', unsafe_allow_html=True)
     unis = universities().reset_index(drop=True)
