@@ -9657,6 +9657,265 @@ section.main > div,
     }
 }
 
+
+/* v217: fix university card header only - logo, name, and location as one organized block */
+.uni-list-card-v214 .uni-list-body-v214{
+    padding-top: 0 !important;
+}
+.uni-list-card-v214 .uni-list-head-v216,
+.uni-list-card-v214 .uni-list-head-v215{
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+    margin-top: -42px !important;
+    margin-bottom: 12px !important;
+    min-height: 104px !important;
+    position: relative !important;
+    z-index: 7 !important;
+}
+.uni-list-card-v214 .uni-list-logo-wrap-v214{
+    width: 82px !important;
+    height: 82px !important;
+    flex: 0 0 82px !important;
+    border-radius: 50% !important;
+    background: #FFFFFF !important;
+    border: 4px solid #FFFFFF !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    position: static !important;
+}
+.uni-list-card-v214 .uni-list-logo-img-v214{
+    width: 68px !important;
+    height: 68px !important;
+    object-fit: contain !important;
+}
+.uni-list-card-v214 .uni-list-logo-placeholder-v214{
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 50% !important;
+}
+.uni-list-card-v214 .uni-list-title-block-v215{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    padding-top: 50px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+.uni-list-card-v214 .uni-list-title-block-v215 h3,
+.uni-list-card-v214 .uni-list-body-v214 h3{
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    letter-spacing: -0.015em !important;
+    min-height: 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+.uni-list-card-v214 .location-row-v216,
+.uni-list-card-v214 .uni-list-location-v214{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 20px !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+}
+.uni-list-card-v214 .location-pin-svg-v216{
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    color: #1E3A8A !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+}
+.uni-list-card-v214 .location-row-v216 em,
+.uni-list-card-v214 .uni-list-location-v214 em{
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    font-style: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.uni-list-card-v214 .stat-grid-v216,
+.uni-list-card-v214 .uni-list-stats-v214{
+    margin-top: 0 !important;
+}
+@media(max-width:1200px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        gap: 15px !important;
+        min-height: 100px !important;
+    }
+    .uni-list-card-v214 .uni-list-logo-wrap-v214{
+        width: 78px !important;
+        height: 78px !important;
+        flex-basis: 78px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215{
+        padding-top: 48px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215 h3,
+    .uni-list-card-v214 .uni-list-body-v214 h3{
+        font-size: 20px !important;
+    }
+}
+@media(max-width:900px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        margin-top: -38px !important;
+    }
+}
+
+
+/* v218: stronger header fix - name and location directly beside logo with no floating gap */
+.uni-list-card-v214 .uni-list-cover-v214,
+.uni-list-card-v214 .uni-list-cover-img-v214,
+.uni-list-card-v214 .uni-list-cover-placeholder-v214{
+    height: 158px !important;
+}
+.uni-list-card-v214 .uni-list-body-v214{
+    padding: 0 18px 16px 18px !important;
+}
+.uni-list-card-v214 .uni-list-head-v216,
+.uni-list-card-v214 .uni-list-head-v215{
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+    margin-top: -41px !important;
+    margin-bottom: 6px !important;
+    min-height: 92px !important;
+    max-height: 92px !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+.uni-list-card-v214 .uni-list-logo-wrap-v214{
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+    flex: 0 0 82px !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    border: 4px solid #fff !important;
+    box-shadow: 0 10px 24px rgba(15,23,42,.14) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+.uni-list-card-v214 .uni-list-logo-img-v214{
+    width: 68px !important;
+    height: 68px !important;
+    object-fit: contain !important;
+}
+.uni-list-card-v214 .uni-list-title-block-v215{
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 82px !important;
+    padding-top: 39px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+}
+.uni-list-card-v214 .uni-list-title-block-v215 h3{
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-height: 54px !important;
+    font-size: 22px !important;
+    line-height: 1.18 !important;
+    font-weight: 950 !important;
+    letter-spacing: -0.015em !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+.uni-list-card-v214 .uni-list-location-v214.location-row-v216,
+.uni-list-card-v214 .uni-list-location-v214{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 18px !important;
+    max-height: 20px !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+    position: static !important;
+}
+.uni-list-card-v214 .uni-list-location-v214 svg.location-pin-svg-v216{
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    color: #1E3A8A !important;
+    flex: 0 0 15px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+.uni-list-card-v214 .uni-list-location-v214 em{
+    font-size: 14.5px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    font-style: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.uni-list-card-v214 .uni-list-stats-v214{
+    margin-top: 2px !important;
+}
+/* remove any older header spacing that made location look separated */
+.uni-list-card-v214 .uni-list-body-v214 > h3,
+.uni-list-card-v214 .uni-list-body-v214 > .uni-list-location-v214{
+    margin-top: 0 !important;
+}
+@media(max-width:1200px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        gap: 15px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215 h3{
+        font-size: 20px !important;
+    }
+}
+@media(max-width:900px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        margin-top: -38px !important;
+        min-height: 88px !important;
+        max-height: 88px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 

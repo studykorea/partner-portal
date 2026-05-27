@@ -1449,3 +1449,17 @@ v216:
 - Admissions Snapshot now always shows Undergraduate, Graduate, and KLP/EAP rows.
 - Missing program admission dates now show “Not fixed yet” and update automatically once admin dates are added.
 - Improved text sizes and compact spacing while keeping the existing design style.
+
+
+v217:
+- Fixed only the University Information card header area.
+- Logo, university name, and location now work as one aligned header block.
+- Location pin and text are directly under the university name.
+- Removed the separated/floating location layout without changing stats, admissions, buttons, filters, or other sections.
+
+
+v218:
+- Stronger fix for only the university card header.
+- Reduced header height and removed floating location spacing.
+- University name and location are now tightly grouped beside the overlapping logo.
+- Stats section starts directly after the header block.
