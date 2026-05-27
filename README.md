@@ -1439,3 +1439,13 @@ v215:
 - Moved university logo, university name, and location into one aligned header row.
 - Reduced card height/spacing so all university cards look more consistent.
 - Kept dynamic admin/CMS data behavior unchanged.
+
+
+v216:
+- Updated only the University Information card component and related CSS.
+- Fixed location row with a clean SVG location pin icon.
+- Replaced unclear stat icons with clean SVG group and globe icons.
+- Made all cards equal height on desktop/tablet.
+- Admissions Snapshot now always shows Undergraduate, Graduate, and KLP/EAP rows.
+- Missing program admission dates now show “Not fixed yet” and update automatically once admin dates are added.
+- Improved text sizes and compact spacing while keeping the existing design style.

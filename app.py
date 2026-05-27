@@ -9386,6 +9386,277 @@ section.main > div,
     .uni-list-head-v215{margin-top:-34px!important}
 }
 
+
+/* v216: card spacing, clean icons, equal height, always-3 admission rows */
+.university-card-v216,
+.uni-list-card-v214{
+    height: 520px !important;
+    min-height: 520px !important;
+    max-height: 520px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
+.uni-list-cover-v214,
+.uni-list-cover-img-v214,
+.uni-list-cover-placeholder-v214{
+    height: 158px !important;
+}
+.uni-list-cover-img-v214{
+    object-fit: cover !important;
+}
+.card-body-v216,
+.uni-list-body-v214{
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 18px 16px 18px !important;
+}
+.uni-list-head-v216,
+.uni-list-head-v215{
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    min-height: 92px !important;
+    margin-top: -42px !important;
+    margin-bottom: 6px !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+.uni-list-logo-wrap-v214{
+    width: 82px !important;
+    height: 82px !important;
+    flex: 0 0 82px !important;
+    position: static !important;
+    border-radius: 999px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, .13) !important;
+}
+.uni-list-logo-img-v214{
+    width: 68px !important;
+    height: 68px !important;
+    object-fit: contain !important;
+}
+.uni-list-logo-placeholder-v214{
+    width: 68px !important;
+    height: 68px !important;
+    font-size: 12px !important;
+}
+.uni-list-title-block-v215{
+    padding-top: 38px !important;
+    min-width: 0 !important;
+}
+.uni-list-body-v214 h3{
+    font-size: 22px !important;
+    line-height: 1.16 !important;
+    font-weight: 950 !important;
+    margin: 0 0 8px 0 !important;
+    min-height: 0 !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    letter-spacing: -0.02em !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+.location-row-v216,
+.uni-list-location-v214{
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    min-height: 22px !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+}
+.location-pin-svg-v216{
+    width: 16px !important;
+    height: 16px !important;
+    color: #1E3A8A !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+}
+.location-row-v216 em,
+.uni-list-location-v214 em{
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    font-style: normal !important;
+}
+.stat-grid-v216,
+.uni-list-stats-v214{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    margin: 8px 0 12px 0 !important;
+}
+.stat-grid-v216 .stat-box-v216,
+.uni-list-stats-v214 > div{
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 64px !important;
+    padding: 11px 12px !important;
+    border: 1px solid #E2E8F0 !important;
+    background: #F8FAFC !important;
+    border-radius: 12px !important;
+}
+.stat-grid-v216 .stat-box-v216:last-child,
+.uni-list-stats-v214 div:last-child{
+    border-right: 1px solid #E2E8F0 !important;
+}
+.stat-icon-v216,
+.stat-icon-v214{
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px !important;
+    border-radius: 10px !important;
+    background: #EEF4FF !important;
+    color: #0B1F3A !important;
+    -webkit-text-fill-color: #0B1F3A !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.stat-svg-v216{
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+}
+.stat-box-v216 section{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    min-width: 0 !important;
+}
+.uni-list-stats-v214 small{
+    font-size: 13px !important;
+    line-height: 1.1 !important;
+    font-weight: 700 !important;
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+}
+.uni-list-stats-v214 b{
+    font-size: 16px !important;
+    line-height: 1.1 !important;
+    font-weight: 900 !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    white-space: nowrap !important;
+}
+.admission-title-v214{
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    margin: 2px 0 8px 0 !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+}
+.admissions-snapshot-v216,
+.admission-list-v214{
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin-bottom: 8px !important;
+}
+.admission-row-v214{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 30px !important;
+    gap: 12px !important;
+}
+.admission-program-v214{
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.admission-badge-v214{
+    padding: 5px 11px !important;
+    border-radius: 999px !important;
+    font-size: 13px !important;
+    line-height: 1.1 !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    flex: 0 0 auto !important;
+}
+.admission-open-v214,
+.admission-left-v214{
+    background: #DCFCE7 !important;
+    color: #166534 !important;
+    -webkit-text-fill-color: #166534 !important;
+}
+.admission-soon-v214{
+    background: #FEF3C7 !important;
+    color: #B45309 !important;
+    -webkit-text-fill-color: #B45309 !important;
+}
+.admission-closed-v214{
+    background: #FEE2E2 !important;
+    color: #991B1B !important;
+    -webkit-text-fill-color: #991B1B !important;
+}
+.admission-not-fixed-v214{
+    background: #F1F5F9 !important;
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+}
+.admission-round2-v214{
+    background: #DBEAFE !important;
+    color: #1E40AF !important;
+    -webkit-text-fill-color: #1E40AF !important;
+}
+.scholarship-link-v214{
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    margin: 0 0 8px 0 !important;
+}
+.view-details-button-v216,
+.uni-detail-form-v214{
+    margin-top: auto !important;
+}
+.uni-detail-btn-v214{
+    min-height: 48px !important;
+    border-radius: 11px !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+}
+@media(max-width:1200px){
+    .university-card-v216,.uni-list-card-v214{
+        height: 540px !important;
+        min-height: 540px !important;
+        max-height: 540px !important;
+    }
+    .uni-list-body-v214 h3{font-size:20px !important;}
+    .admission-program-v214{font-size:14px !important;}
+    .admission-badge-v214{font-size:12px !important;padding:5px 9px !important;}
+}
+@media(max-width:900px){
+    .university-card-v216,.uni-list-card-v214{
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+    }
+    .uni-list-cover-v214,
+    .uni-list-cover-img-v214,
+    .uni-list-cover-placeholder-v214{
+        height: 150px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -14329,18 +14600,20 @@ def _admission_snapshot_v214(row, crit_text=""):
     programs = [("Undergraduate", "undergraduate"), ("Graduate (Masters/Ph.D.)", "graduate"), ("KLP / EAP", "language")]
     rows = []
     for label, slug in programs:
-        if not _has_program_v214(row, slug, crit_text):
-            continue
         use_round2 = _round2_exists_v214(row, slug)
         open_d, close_d = _program_dates_v214(row, slug, "Round 2" if use_round2 else "")
-        status, cls = _program_status_v214(open_d, close_d, row.get("Application_Status", ""), "Round 2" if use_round2 else "")
+        has_any_date = bool(display_clean_v50(open_d) or display_clean_v50(close_d))
+        if has_any_date:
+            status, cls = _program_status_v214(open_d, close_d, row.get("Application_Status", ""), "Round 2" if use_round2 else "")
+            if use_round2:
+                cls = "round2"
+        else:
+            status, cls = "Not fixed yet", "not-fixed"
         rows.append({"label": label, "slug": slug, "status": status, "class": cls, "open": open_d, "close": close_d, "round": "Round 2" if use_round2 else "Round 1"})
     return rows
 
 def _admission_snapshot_html_v214(row, crit_text=""):
     rows = _admission_snapshot_v214(row, crit_text)
-    if not rows:
-        return '<div class="admission-empty-v214">Admission dates not updated</div>'
     html = ""
     for r in rows:
         html += f'<div class="admission-row-v214"><span class="admission-program-v214">{_safe_html_v62(r["label"])}</span><span class="admission-badge-v214 admission-{_safe_html_v62(r["class"])}-v214">{_safe_html_v62(r["status"])}</span></div>'
@@ -14410,24 +14683,24 @@ def _render_university_listing_card_v214(row, key_suffix):
     intl_students = _uni_list_clean_number_v214(intl_count_v53(row), "1,000")
     admission_html = _admission_snapshot_html_v214(row, crit_text)
     scholarship_link = '<div class="scholarship-link-v214">Scholarship details →</div>' if _scholarship_has_details_v214(uni) else ""
-    html = f"""<div class="uni-list-card-v214">
+    html = f"""<div class="uni-list-card-v214 university-card-v216">
 <div class="uni-list-cover-v214">{cover_html}<div class="uni-list-heart-v214">♡</div></div>
-<div class="uni-list-body-v214">
-    <div class="uni-list-head-v215">
+<div class="uni-list-body-v214 card-body-v216">
+    <div class="uni-list-head-v215 uni-list-head-v216">
         <div class="uni-list-logo-wrap-v214">{logo_html}</div>
         <div class="uni-list-title-block-v215">
             <h3>{_safe_html_v62(uni)}</h3>
-            <div class="uni-list-location-v214"><span>⌖</span><em>{_safe_html_v62(location)}</em></div>
+            <div class="uni-list-location-v214 location-row-v216"><svg class="location-pin-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="currentColor"/></svg><em>{_safe_html_v62(location)}</em></div>
         </div>
     </div>
-<div class="uni-list-stats-v214">
-<div><span class="stat-icon-v214">♙</span><small>Total Students</small><b>{_safe_html_v62(total_students)}</b></div>
-<div><span class="stat-icon-v214">◎</span><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></div>
+<div class="uni-list-stats-v214 stat-grid-v216">
+<div class="stat-box-v216"><span class="stat-icon-v214 stat-icon-v216"><svg class="stat-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0-8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 8.5a3 3 0 0 1 2.8 4.1M5 8.5a3 3 0 0 0-2.8 4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><section><small>Total Students</small><b>{_safe_html_v62(total_students)}</b></section></div>
+<div class="stat-box-v216"><span class="stat-icon-v214 stat-icon-v216"><svg class="stat-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 12h17M12 3c2.4 2.6 3.5 5.6 3.5 9s-1.1 6.4-3.5 9M12 3c-2.4 2.6-3.5 5.6-3.5 9s1.1 6.4 3.5 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><section><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></section></div>
 </div>
 <div class="admission-title-v214">Admissions Snapshot</div>
-<div class="admission-list-v214">{admission_html}</div>
+<div class="admission-list-v214 admissions-snapshot-v216">{admission_html}</div>
 {scholarship_link}
-<form method="get" target="_self" class="uni-detail-form-v214">
+<form method="get" target="_self" class="uni-detail-form-v214 view-details-button-v216">
 <input type="hidden" name="unidetail" value="{_safe_html_v62(uni)}">
 <button type="submit" class="uni-detail-btn-v214"><span>View Details</span><b>→</b></button>
 </form>
