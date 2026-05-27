@@ -1509,3 +1509,13 @@ v223:
 - Styled the actual filter row as one clean rounded search/filter card.
 - Made Filter button dark navy primary.
 - Did not change university card logic, admission logic, database logic, or admin data.
+
+
+v224:
+- Fixed the marked areas again with stronger final CSS overrides.
+- Removed the visible blank rounded bars around navbar/filter.
+- Improved navbar brand size, spacing, and Partner Sign Up button.
+- Reduced awkward hero emptiness and made the background more intentional.
+- Connected hero and filter into a cleaner premium section.
+- Made Filter button dark navy and aligned fields better.
+- Did not change university card, admission, database, or admin data logic.

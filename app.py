@@ -10917,6 +10917,344 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]
     }
 }
 
+
+/* v224: final polish for marked navbar, hero, and filter area only */
+
+/* General top spacing control */
+html, body, .stApp, [data-testid="stAppViewContainer"]{
+    background:#FFFFFF !important;
+}
+.block-container{
+    padding-top:0 !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
+
+/* Remove any empty visual wrapper bars from previous versions */
+.top-nav-button-shell-v187,
+.uni-filter-panel-v214{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:hidden !important;
+    background:transparent !important;
+}
+
+/* Premium navbar: shorter, cleaner, no huge empty top gap */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 14px auto 26px auto !important;
+    padding: 10px 16px !important;
+    min-height: 76px !important;
+    border: 1px solid #DCE6F4 !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,.98) !important;
+    box-shadow: 0 14px 34px rgba(15,23,42,.08) !important;
+    align-items: center !important;
+}
+
+/* Brand: more balanced and professional */
+.premium-public-brand-v223{
+    height:54px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+}
+.premium-public-brand-mark-v223{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(135deg,#3153D4 0%,#061A40 100%) !important;
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+    font-size:17px !important;
+    box-shadow:0 10px 22px rgba(6,26,64,.24) !important;
+}
+.premium-public-brand-v223 strong{
+    display:block !important;
+    font-size:18px !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:-.02em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+}
+.premium-public-brand-v223 span{
+    display:block !important;
+    margin-top:4px !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    font-weight:750 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+}
+
+/* Navbar buttons: cleaner pill style */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button{
+    height:48px !important;
+    min-height:48px !important;
+    border-radius:13px !important;
+    border:1px solid transparent !important;
+    background:transparent !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:14px !important;
+    font-weight:850 !important;
+    box-shadow:none !important;
+    padding:0 12px !important;
+    white-space:nowrap !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button:hover{
+    background:#F3F7FF !important;
+    border-color:#D8E4F8 !important;
+    color:#1E3A8A !important;
+    -webkit-text-fill-color:#1E3A8A !important;
+}
+
+/* Active Universities item */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:nth-child(3) div[data-testid="stButton"] > button{
+    background:#EEF4FF !important;
+    border-color:#DCE8FF !important;
+    color:#1E3A8A !important;
+    -webkit-text-fill-color:#1E3A8A !important;
+    box-shadow: inset 0 0 0 1px rgba(30,58,138,.04) !important;
+}
+
+/* Login and Partner Sign Up */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button{
+    background:#FFFFFF !important;
+    border:1px solid #CBD5E1 !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:850 !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:last-child div[data-testid="stButton"] > button{
+    background:linear-gradient(135deg,#061A40 0%,#123B8A 100%) !important;
+    border:none !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+    box-shadow:0 12px 26px rgba(6,26,64,.24) !important;
+}
+
+/* Main Universities page width */
+.universities-wrap-v214{
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:0 auto !important;
+    padding:0 0 30px 0 !important;
+}
+
+/* Hero: reduce empty middle area and make it look intentional */
+.uni-list-heading-v214{
+    min-height:230px !important;
+    margin:0 !important;
+    padding:38px 48px !important;
+    border-radius:24px 24px 0 0 !important;
+    border:1px solid #DDE8F7 !important;
+    border-bottom:0 !important;
+    background:
+      radial-gradient(circle at 76% 40%, rgba(63,91,214,.15), transparent 24%),
+      radial-gradient(circle at 92% 12%, rgba(14,165,233,.13), transparent 20%),
+      linear-gradient(135deg,#FFFFFF 0%,#F8FBFF 45%,#EEF5FF 100%) !important;
+    box-shadow:0 18px 42px rgba(15,23,42,.075) !important;
+    overflow:hidden !important;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+}
+.uni-list-heading-v214::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:
+      repeating-linear-gradient(135deg, rgba(30,58,138,.055) 0 1px, transparent 1px 16px),
+      linear-gradient(90deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.55) 42%, rgba(255,255,255,.18) 100%) !important;
+    pointer-events:none !important;
+}
+.uni-list-heading-v214::after{
+    content:"" !important;
+    position:absolute !important;
+    right:110px !important;
+    top:42px !important;
+    width:360px !important;
+    height:150px !important;
+    border-radius:50% !important;
+    background:radial-gradient(circle, rgba(30,58,138,.08), transparent 68%) !important;
+    pointer-events:none !important;
+}
+.uni-hero-copy-v223,
+.uni-list-heading-v214 .how-it-works-v214{
+    position:relative !important;
+    z-index:2 !important;
+}
+.uni-breadcrumb-v223{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:7px 14px !important;
+    border-radius:999px !important;
+    background:#FFFFFF !important;
+    border:1px solid #E2E8F0 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-size:12px !important;
+    font-weight:850 !important;
+    margin-bottom:14px !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+.uni-list-heading-v214 h1{
+    font-size:44px !important;
+    line-height:1.06 !important;
+    font-weight:950 !important;
+    letter-spacing:-.035em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    margin:0 0 13px 0 !important;
+}
+.uni-list-heading-v214 p{
+    max-width:700px !important;
+    font-size:17px !important;
+    line-height:1.45 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.how-it-works-v214{
+    height:54px !important;
+    min-width:160px !important;
+    padding:0 24px !important;
+    border-radius:15px !important;
+    border:1px solid #E2E8F0 !important;
+    background:#FFFFFF !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:15px !important;
+    font-weight:950 !important;
+    box-shadow:0 12px 26px rgba(15,23,42,.10) !important;
+}
+
+/* Filter card: one real modern card, no extra blank line, aligned fields */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+    width:100% !important;
+    margin:0 auto 22px auto !important;
+    padding:24px 24px !important;
+    border:1px solid #E2E8F0 !important;
+    border-radius:0 0 24px 24px !important;
+    background:#FFFFFF !important;
+    box-shadow:0 18px 45px rgba(15,23,42,.08) !important;
+    align-items:end !important;
+    position:relative !important;
+    z-index:5 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) label{
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:13px !important;
+    font-weight:850 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div{
+    min-height:52px !important;
+    height:52px !important;
+    border-radius:12px !important;
+    border:1px solid #CBD5E1 !important;
+    background:#FFFFFF !important;
+    box-shadow:none !important;
+    font-size:15px !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input:focus,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div:focus-within{
+    border-color:#3F5BD6 !important;
+    box-shadow:0 0 0 3px rgba(63,91,214,.10) !important;
+}
+/* Make select text centered vertically and less awkward */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] span{
+    line-height:1.2 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-testid="stButton"] > button{
+    height:52px !important;
+    min-height:52px !important;
+    border-radius:12px !important;
+    border:none !important;
+    background:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+    font-size:15px !important;
+    box-shadow:0 10px 24px rgba(6,26,64,.22) !important;
+}
+
+/* Info bar spacing after filter */
+.uni-info-bar-v214{
+    margin-top:4px !important;
+    margin-bottom:24px !important;
+}
+
+/* Keep responsiveness */
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+        width:calc(100% - 22px) !important;
+        overflow-x:auto !important;
+        margin-bottom:18px !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 24px) !important;
+    }
+    .uni-list-heading-v214{
+        min-height:0 !important;
+        padding:30px 24px !important;
+        flex-direction:column !important;
+        align-items:flex-start !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:34px !important;
+    }
+}
+@media(max-width:760px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+        width:calc(100% - 16px) !important;
+        border-radius:14px !important;
+    }
+    .premium-public-brand-v223 strong{
+        font-size:16px !important;
+    }
+    .premium-public-brand-mark-v223{
+        width:38px !important;
+        height:38px !important;
+        min-width:38px !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 18px) !important;
+    }
+    .uni-list-heading-v214{
+        padding:24px 18px !important;
+        border-radius:18px 18px 0 0 !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:30px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+        border-radius:0 0 18px 18px !important;
+        padding:16px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
