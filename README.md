@@ -1528,3 +1528,13 @@ v225:
 - Added right-side hero chips to remove the empty-looking hero area.
 - Fixed select boxes by hiding the unwanted cursor/vertical line inside Streamlit select controls.
 - Kept all dynamic university data, card data, admission logic, admin logic, and page functionality unchanged.
+
+
+v226:
+- Added Super Admin menu/page: Hero Advertisements.
+- Super Admin can upload hero slider posters/images with title, subtitle, optional link URL, display order, and active/inactive status.
+- Universities Information hero now has a right-side advertisement slider.
+- Slider uses active Super Admin ads first; if none exist, it falls back temporarily to existing university images.
+- Slider auto-fades every 2 seconds, has dot indicators, pauses on hover, and supports clickable slide links.
+- Removed previous static hero chips.
+- Kept university cards, admission logic, university admin data, and filters unchanged.

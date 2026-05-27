@@ -25,6 +25,7 @@ OFFICIAL_REP_ICON = "assets/official_representative_verified.svg"
 ELIG_LOGS = DATA / "eligibility_logs.csv"
 TUIT_LOGS = DATA / "tuition_logs.csv"
 INQUIRIES = DATA / "inquiries.csv"
+HERO_ADS = DATA / "hero_advertisements.json"
 DATABASE_URL_KEY = "DATABASE_URL"
 
 CSV_TABLE_MAP = {
@@ -38,6 +39,7 @@ CSV_TABLE_MAP = {
 JSON_TABLE_MAP = {
     "users.json": "users",
     "agencies.json": "agencies",
+    "hero_advertisements.json": "hero_advertisements",
 }
 
 
@@ -11611,6 +11613,57 @@ div[data-testid="column"]:has(.filter-primary-marker-v225) div[data-testid="stBu
     }
 }
 
+
+/* v226: premium navbar and Super Admin hero advertisement slider */
+.block-container{padding-top:0!important;padding-left:0!important;padding-right:0!important;}
+.universities-wrap-v214{width:calc(100% - 56px)!important;max-width:1480px!important;margin:0 auto!important;padding:0 0 30px 0!important;}
+.top-nav-button-shell-v187,.uni-filter-panel-v214{display:none!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden!important;}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+    width:calc(100% - 56px)!important;max-width:1480px!important;margin:12px auto 24px auto!important;padding:10px 16px!important;min-height:76px!important;
+    border:1px solid #DCE6F4!important;border-radius:18px!important;background:rgba(255,255,255,.98)!important;box-shadow:0 14px 34px rgba(15,23,42,.08)!important;align-items:center!important;
+}
+.premium-public-brand-v223{height:54px!important;display:flex!important;align-items:center!important;gap:14px!important;white-space:nowrap!important;overflow:visible!important;}
+.premium-public-brand-mark-v223{width:46px!important;height:46px!important;min-width:46px!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:linear-gradient(135deg,#3153D4 0%,#061A40 100%)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:17px!important;box-shadow:0 10px 22px rgba(6,26,64,.24)!important;}
+.premium-public-brand-v223 strong{display:block!important;font-size:18px!important;line-height:1.05!important;font-weight:950!important;letter-spacing:-.02em!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;}
+.premium-public-brand-v223 span{display:block!important;margin-top:4px!important;font-size:13px!important;line-height:1!important;font-weight:750!important;color:#475569!important;-webkit-text-fill-color:#475569!important;}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"]>button{height:48px!important;min-height:48px!important;border-radius:13px!important;border:1px solid transparent!important;background:transparent!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;font-size:14px!important;font-weight:850!important;box-shadow:none!important;padding:0 12px!important;white-space:nowrap!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+div[data-testid="column"]:has(.nav-login-marker-v225) div[data-testid="stButton"]>button{background:#fff!important;border:1px solid #CBD5E1!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;font-weight:850!important;box-shadow:0 8px 18px rgba(15,23,42,.04)!important;}
+div[data-testid="column"]:has(.nav-signup-marker-v225) div[data-testid="stButton"]>button{background:linear-gradient(135deg,#061A40 0%,#123B8A 100%)!important;border:1px solid #061A40!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:950!important;box-shadow:0 12px 26px rgba(6,26,64,.24)!important;}
+
+.uni-list-heading-v226{min-height:330px!important;margin:0!important;padding:42px 48px!important;border-radius:28px 28px 0 0!important;border:1px solid #DDE8F7!important;border-bottom:0!important;background:radial-gradient(circle at 72% 42%,rgba(63,91,214,.14),transparent 28%),radial-gradient(circle at 92% 18%,rgba(14,165,233,.13),transparent 21%),linear-gradient(135deg,#fff 0%,#F8FBFF 45%,#EEF5FF 100%)!important;box-shadow:0 18px 42px rgba(15,23,42,.075)!important;overflow:hidden!important;position:relative!important;display:grid!important;grid-template-columns:.9fr 1.1fr!important;align-items:center!important;gap:36px!important;}
+.uni-list-heading-v226::before{content:""!important;position:absolute!important;inset:0!important;background:repeating-linear-gradient(135deg,rgba(30,58,138,.045) 0 1px,transparent 1px 16px),linear-gradient(90deg,rgba(255,255,255,.88) 0%,rgba(255,255,255,.50) 44%,rgba(255,255,255,.08) 100%)!important;pointer-events:none!important;}
+.uni-hero-copy-v226,.uni-hero-slider-wrap-v226{position:relative!important;z-index:2!important;}
+.uni-list-heading-v226 h1{font-size:44px!important;line-height:1.06!important;font-weight:950!important;letter-spacing:-.035em!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;margin:0 0 14px 0!important;}
+.uni-list-heading-v226 p{max-width:650px!important;font-size:17px!important;line-height:1.6!important;color:#475569!important;-webkit-text-fill-color:#475569!important;font-weight:650!important;margin:0!important;}
+.uni-breadcrumb-v223{display:inline-flex!important;align-items:center!important;gap:8px!important;padding:7px 14px!important;border-radius:999px!important;background:#fff!important;border:1px solid #E2E8F0!important;color:#475569!important;-webkit-text-fill-color:#475569!important;font-size:12px!important;font-weight:850!important;margin-bottom:14px!important;box-shadow:0 8px 18px rgba(15,23,42,.04)!important;}
+
+.ad-slider-v226{height:260px!important;border-radius:24px!important;overflow:hidden!important;background:#fff!important;box-shadow:0 18px 45px rgba(15,23,42,.14)!important;position:relative!important;border:1px solid rgba(226,232,240,.90)!important;}
+.ad-slide-v226{position:absolute!important;inset:0!important;opacity:0!important;animation-name:adFadeV226!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;}
+.ad-slider-v226:hover .ad-slide-v226,.ad-slider-v226:hover .ad-slider-dots-v226 i{animation-play-state:paused!important;}
+.ad-slide-v226 a{display:block!important;width:100%!important;height:100%!important;color:inherit!important;text-decoration:none!important;}
+.ad-slide-v226 img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;}
+.ad-slider-shade-v226{position:absolute!important;inset:0!important;background:linear-gradient(180deg,rgba(6,26,64,.05) 20%,rgba(6,26,64,.74) 100%)!important;}
+.ad-slider-overlay-v226{position:absolute!important;left:24px!important;bottom:24px!important;right:24px!important;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+.ad-slider-overlay-v226 strong{display:block!important;font-size:24px!important;line-height:1.15!important;font-weight:950!important;margin-bottom:7px!important;text-shadow:0 2px 12px rgba(0,0,0,.28)!important;}
+.ad-slider-overlay-v226 span{display:block!important;font-size:14px!important;line-height:1.4!important;font-weight:650!important;opacity:.94!important;text-shadow:0 2px 12px rgba(0,0,0,.25)!important;}
+.ad-slider-dots-v226{position:absolute!important;right:18px!important;top:18px!important;display:flex!important;gap:7px!important;z-index:3!important;}
+.ad-slider-dots-v226 i{width:7px!important;height:7px!important;border-radius:999px!important;background:rgba(255,255,255,.55)!important;display:block!important;animation-name:adDotV226!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;}
+.ad-slider-empty-v226{display:flex!important;align-items:center!important;justify-content:center!important;color:#475569!important;-webkit-text-fill-color:#475569!important;text-align:center!important;}
+.ad-slider-empty-v226 b{display:block!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;font-size:22px!important;margin-bottom:6px!important;}
+@keyframes adFadeV226{0%{opacity:0;transform:scale(1.02)}8%{opacity:1;transform:scale(1)}40%{opacity:1;transform:scale(1)}50%{opacity:0;transform:scale(1.02)}100%{opacity:0;transform:scale(1.02)}}
+@keyframes adDotV226{0%,45%{background:#fff;transform:scale(1.25)}50%,100%{background:rgba(255,255,255,.55);transform:scale(1)}}
+
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){width:100%!important;margin:0 auto 22px auto!important;padding:24px!important;border:1px solid #E2E8F0!important;border-radius:0 0 28px 28px!important;background:#fff!important;box-shadow:0 18px 45px rgba(15,23,42,.08)!important;align-items:end!important;position:relative!important;z-index:5!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) label{color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;font-size:13px!important;font-weight:850!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input,div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"]>div{min-height:52px!important;height:52px!important;border-radius:12px!important;border:1px solid #CBD5E1!important;background:#fff!important;box-shadow:none!important;font-size:15px!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] input{caret-color:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent!important;width:1px!important;min-width:1px!important;padding:0!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] div,div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] span{font-size:15px!important;font-weight:750!important;color:#0F172A!important;-webkit-text-fill-color:#0F172A!important;}
+div[data-testid="column"]:has(.filter-primary-marker-v225) div[data-testid="stButton"]>button{height:52px!important;min-height:52px!important;border-radius:12px!important;border:none!important;background:#061A40!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:950!important;font-size:15px!important;box-shadow:0 10px 24px rgba(6,26,64,.22)!important;}
+
+@media(max-width:1100px){.uni-list-heading-v226{grid-template-columns:1fr!important;padding:32px 24px!important;min-height:0!important}.ad-slider-v226{height:230px!important}div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),.universities-wrap-v214{width:calc(100% - 24px)!important}}
+@media(max-width:760px){.uni-list-heading-v226{padding:24px 18px!important;border-radius:20px 20px 0 0!important}.uni-list-heading-v226 h1{font-size:31px!important}.ad-slider-v226{height:210px!important;border-radius:18px!important}div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){border-radius:0 0 20px 20px!important;padding:16px!important}}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13146,6 +13199,8 @@ def dash_shell(items):
             "Contact Us": "✉",
             "Applications": "▤",
             "Application Samples": "▤",
+            "Hero Advertisements": "🖼",
+            "Advertisement Slider": "🖼",
             "Logout": "↪",
         }
         return icon_map.get(item, "•")
@@ -16691,6 +16746,258 @@ def _render_university_listing_card_v214(row, key_suffix):
 
 
 
+
+# v226: Super Admin managed Hero Advertisement Slider for Universities Information page
+def hero_ads_list_v226():
+    try:
+        data = read_json(HERO_ADS)
+        if isinstance(data, list):
+            return data
+    except Exception:
+        pass
+    return []
+
+def save_hero_ads_v226(data):
+    try:
+        DATA.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+    write_json(HERO_ADS, data if isinstance(data, list) else [])
+
+def save_uploaded_hero_ad_image_v226(uploaded_file, title="advertisement"):
+    if uploaded_file is None:
+        return ""
+    try:
+        from PIL import Image, ImageEnhance
+        slug = safe_slug_v49(title or "advertisement")
+        stamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        out_dir = BASE / "assets" / "hero_ads"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"{stamp}_{slug}.jpg"
+
+        img = Image.open(uploaded_file).convert("RGB")
+        target_size = (1600, 900)
+        target_ratio = target_size[0] / target_size[1]
+        w, h = img.size
+        ratio = w / h if h else target_ratio
+
+        if ratio > target_ratio:
+            new_w = int(h * target_ratio)
+            left = max(0, (w - new_w) // 2)
+            img = img.crop((left, 0, left + new_w, h))
+        else:
+            new_h = int(w / target_ratio)
+            top = max(0, (h - new_h) // 2)
+            img = img.crop((0, top, w, top + new_h))
+
+        img = img.resize(target_size, Image.Resampling.LANCZOS)
+        img = ImageEnhance.Sharpness(img).enhance(1.05)
+        img.save(out_path, quality=92, optimize=True)
+        return f"assets/hero_ads/{stamp}_{slug}.jpg"
+    except Exception:
+        try:
+            slug = safe_slug_v49(title or "advertisement")
+            stamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            out_dir = BASE / "assets" / "hero_ads"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            suffix = Path(getattr(uploaded_file, "name", "upload.jpg")).suffix.lower() or ".jpg"
+            out_path = out_dir / f"{stamp}_{slug}{suffix}"
+            out_path.write_bytes(uploaded_file.getbuffer())
+            return str(out_path.relative_to(BASE))
+        except Exception:
+            return ""
+
+def active_hero_ads_v226():
+    ads = hero_ads_list_v226()
+    active = []
+    for ad in ads:
+        if not isinstance(ad, dict):
+            continue
+        active_val = str(ad.get("active", "True")).strip().lower()
+        if active_val in ["true", "1", "yes", "active", "on"]:
+            image_path = display_clean_v50(ad.get("image_path", ""))
+            if image_path and b64(image_path):
+                active.append(ad)
+    try:
+        active.sort(key=lambda x: int(float(str(x.get("display_order", 999)).strip() or 999)))
+    except Exception:
+        pass
+    return active
+
+def fallback_university_slides_v226(df):
+    slides = []
+    if df is None or len(df) == 0:
+        return slides
+    for _, row in df.head(6).iterrows():
+        image_path = display_clean_v50(row.get("Image", "")) or display_clean_v50(row.get("University_Image", "")) or display_clean_v50(row.get("Cover_Image", ""))
+        if image_path and b64(image_path):
+            uni = display_clean_v50(row.get("University", "University"))
+            loc = display_clean_v50(row.get("Location", ""))
+            slides.append({
+                "image_path": image_path,
+                "title": uni,
+                "subtitle": loc or "Official university information",
+                "link_url": "",
+                "display_order": len(slides) + 1,
+                "active": True,
+            })
+    return slides
+
+def hero_slider_html_v226(df):
+    slides = active_hero_ads_v226()
+    if not slides:
+        slides = fallback_university_slides_v226(df)
+
+    if not slides:
+        return "<div class=\"ad-slider-v226 ad-slider-empty-v226\"><div><b>University Updates</b><span>Super Admin can upload hero advertisements here.</span></div></div>"
+
+    slide_html = []
+    dot_html = []
+    count = len(slides)
+    for i, ad in enumerate(slides):
+        img_path = display_clean_v50(ad.get("image_path", ""))
+        encoded = b64(img_path)
+        if not encoded:
+            continue
+        title = _safe_html_v62(display_clean_v50(ad.get("title", "")) or "University Updates")
+        subtitle = _safe_html_v62(display_clean_v50(ad.get("subtitle", "")) or "Explore official admission information.")
+        url = display_clean_v50(ad.get("link_url", ""))
+        safe_url = _safe_html_v62(url)
+        duration = max(count * 2, 2)
+        delay = i * 2
+        item_inner = (
+            f'<img src="data:image/jpeg;base64,{encoded}" loading="lazy" alt="{title}">'
+            f'<div class="ad-slider-shade-v226"></div>'
+            f'<div class="ad-slider-overlay-v226"><strong>{title}</strong><span>{subtitle}</span></div>'
+        )
+        if url:
+            item_inner = f'<a href="{safe_url}" target="_blank" rel="noopener noreferrer">{item_inner}</a>'
+        slide_html.append(f'<div class="ad-slide-v226" style="animation-delay:{delay}s; animation-duration:{duration}s;">{item_inner}</div>')
+        dot_html.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+
+    if not slide_html:
+        return '<div class="ad-slider-v226 ad-slider-empty-v226"><div><b>University Updates</b><span>No active advertisement image found.</span></div></div>'
+
+    return f'<div class="ad-slider-v226" aria-label="Hero advertisement slider">{"".join(slide_html)}<div class="ad-slider-dots-v226">{"".join(dot_html)}</div></div>'
+
+def render_universities_hero_v226(df):
+    slider = hero_slider_html_v226(df)
+    st.markdown(f'''
+    <div class="uni-list-heading-v214 uni-list-heading-v226">
+        <div class="uni-hero-copy-v223 uni-hero-copy-v226">
+            <div class="uni-breadcrumb-v223">Home <span>›</span> Universities</div>
+            <h1>Universities Information</h1>
+            <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
+        </div>
+        <div class="uni-hero-slider-wrap-v226">
+            {slider}
+        </div>
+    </div>
+    ''', unsafe_allow_html=True)
+
+def admin_hero_advertisements_v226():
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
+    st.subheader("Hero Advertisements / Advertisement Slider")
+    st.caption("Upload and manage posters/images shown in the Universities Information hero slider. Only active advertisements appear on the public page.")
+
+    ads = hero_ads_list_v226()
+    tabs = st.tabs(["Add Advertisement", "Manage Advertisements"])
+
+    with tabs[0]:
+        with st.form("add_hero_ad_v226", clear_on_submit=True):
+            c1, c2 = st.columns([1.2, 1])
+            with c1:
+                title = st.text_input("Advertisement Title")
+                subtitle = st.text_area("Subtitle", height=80)
+                link_url = st.text_input("Optional Link URL")
+            with c2:
+                display_order = st.number_input("Display Order", min_value=1, value=(len(ads) + 1), step=1)
+                active = st.checkbox("Active", value=True)
+                image_upload = st.file_uploader("Upload Poster / Image", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_upload_v226")
+
+            submitted = st.form_submit_button("Save Advertisement", use_container_width=True)
+            if submitted:
+                if image_upload is None:
+                    st.error("Please upload an advertisement image.")
+                else:
+                    image_path = save_uploaded_hero_ad_image_v226(image_upload, title or "advertisement")
+                    new_ad = {
+                        "id": datetime.now().strftime("%Y%m%d%H%M%S%f"),
+                        "title": title,
+                        "subtitle": subtitle,
+                        "link_url": link_url,
+                        "display_order": str(display_order),
+                        "active": bool(active),
+                        "image_path": image_path,
+                        "created_at": datetime.now().isoformat(timespec="seconds"),
+                    }
+                    ads.append(new_ad)
+                    save_hero_ads_v226(ads)
+                    st.success("Advertisement saved.")
+                    st.rerun()
+
+    with tabs[1]:
+        if not ads:
+            st.info("No advertisements added yet. The Universities page will temporarily use university images as fallback slides.")
+        else:
+            try:
+                ads_sorted = sorted(enumerate(ads), key=lambda x: int(float(str(x[1].get("display_order", 999)).strip() or 999)))
+            except Exception:
+                ads_sorted = list(enumerate(ads))
+
+            for idx, ad in ads_sorted:
+                ad_id = str(ad.get("id", idx))
+                st.markdown("---")
+                p1, p2 = st.columns([1, 2])
+                with p1:
+                    enc = b64(ad.get("image_path", ""))
+                    if enc:
+                        st.image(f"data:image/jpeg;base64,{enc}", use_container_width=True)
+                    else:
+                        st.warning("Image not found.")
+                with p2:
+                    with st.form(f"edit_hero_ad_{ad_id}_v226"):
+                        title = st.text_input("Title", value=display_clean_v50(ad.get("title", "")), key=f"title_{ad_id}_v226")
+                        subtitle = st.text_area("Subtitle", value=display_clean_v50(ad.get("subtitle", "")), height=80, key=f"sub_{ad_id}_v226")
+                        link_url = st.text_input("Optional Link URL", value=display_clean_v50(ad.get("link_url", "")), key=f"link_{ad_id}_v226")
+                        c21, c22, c23 = st.columns(3)
+                        with c21:
+                            try:
+                                order_val = int(float(str(ad.get("display_order", 999)) or 999))
+                            except Exception:
+                                order_val = 999
+                            display_order = st.number_input("Display Order", min_value=1, value=order_val, step=1, key=f"order_{ad_id}_v226")
+                        with c22:
+                            active = st.checkbox("Active", value=str(ad.get("active", "True")).lower() in ["true","1","yes","active","on"], key=f"active_{ad_id}_v226")
+                        with c23:
+                            replace_upload = st.file_uploader("Replace Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_{ad_id}_v226")
+                        s1, s2 = st.columns(2)
+                        with s1:
+                            save_edit = st.form_submit_button("Update", use_container_width=True)
+                        with s2:
+                            delete_ad = st.form_submit_button("Delete", use_container_width=True)
+
+                        if save_edit:
+                            ads[idx]["title"] = title
+                            ads[idx]["subtitle"] = subtitle
+                            ads[idx]["link_url"] = link_url
+                            ads[idx]["display_order"] = str(display_order)
+                            ads[idx]["active"] = bool(active)
+                            if replace_upload is not None:
+                                ads[idx]["image_path"] = save_uploaded_hero_ad_image_v226(replace_upload, title or "advertisement")
+                            save_hero_ads_v226(ads)
+                            st.success("Advertisement updated.")
+                            st.rerun()
+
+                        if delete_ad:
+                            ads.pop(idx)
+                            save_hero_ads_v226(ads)
+                            st.warning("Advertisement deleted.")
+                            st.rerun()
+
+    close_shell()
+
+
 def universities_page(public=False):
     if public:
         header()
@@ -16716,25 +17023,8 @@ def universities_page(public=False):
         except Exception:
             pass
 
-    st.markdown("""
-    <div class="uni-list-heading-v214">
-        <div class="uni-hero-copy-v223">
-            <div class="uni-breadcrumb-v223">Home <span>›</span> Universities</div>
-            <h1>Universities Information</h1>
-            <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
-        </div>
-        <div class="uni-hero-side-v225">
-            <button class="how-it-works-v214">ⓘ How It Works</button>
-            <div class="uni-hero-mini-grid-v225">
-                <span>Official Data</span>
-                <span>Program Dates</span>
-                <span>Smart Filters</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
     df = universities().copy()
+    render_universities_hero_v226(df)
     if df is None or len(df) == 0:
         st.info("No university data found.")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -17997,7 +18287,7 @@ def handle_admin_dashboard_jump_v148():
 
 
 def admin():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     handle_admin_dashboard_jump_v148()
 
     users_list = read_json(USERS)
@@ -18314,7 +18604,7 @@ def add_user_record_v58(new_row):
 
 
 def admin_partner_management_v58():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Partner Management")
     st.caption("Edit, approve/reject, or delete partner users. Admin account cannot be deleted here for safety.")
 
@@ -18435,7 +18725,7 @@ def admin_partner_management_v58():
     close_shell()
 
 def admin_table(title, df):
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader(title)
     st.dataframe(clean_df_v50(df), use_container_width=True, hide_index=True)
     st.info("Later, we can add Add/Edit/Delete forms here.")
@@ -18465,7 +18755,7 @@ def editable_table_v48(title, path, key, help_text=""):
     Used by Eligibility Rules, Tuition Rules, and Scholarship Rules.
     Shows university name with logo, selected-university-only records, Add New Rule, search, filters, and clean table format.
     """
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
 
     is_eligibility = "eligibility" in str(title).lower() or "criteria" in str(title).lower()
     is_tuition = "tuition" in str(title).lower()
@@ -18712,7 +19002,7 @@ def editable_table_v48(title, path, key, help_text=""):
 
 
 def admin_universities_edit_v48():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Universities Management")
     st.caption("Edit school information directly. Uploading a photo will update the selected school's image path automatically.")
 
@@ -18793,7 +19083,7 @@ def admin_tuition_edit_v48():
 
 
 def admin_university_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("University Management")
     st.caption("Add, edit, or update university information. New universities will appear on the Home and Universities pages. To appear in Eligibility, add at least one major in Eligibility Rules after adding the university.")
 
@@ -19222,7 +19512,7 @@ def admin_university_management_v49():
 
 
 def admin_criteria_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Eligibility Criteria / Program & Major Management")
     st.caption("Select one university first, then edit only that university’s program level, major, GPA, and language criteria.")
 
@@ -19356,7 +19646,7 @@ def admin_criteria_management_v49():
 
 
 def admin_scholarship_management_v49():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Scholarship Rule Management")
     st.caption("Add or edit scholarship rules by university and program.")
 
@@ -19475,7 +19765,7 @@ def admin_scholarship_management_v49():
 
 
 def admin_application_samples_v114():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Application Document Sample Management")
     st.caption("First choose the application program type. Then choose nationality and upload all sample images for that program/country.")
 
@@ -20463,7 +20753,7 @@ def applicant_photo_html_v134(row, applicant_name="", size=150):
 
 def admin_application_detail_page_v125(app_id, render_shell=True):
     if render_shell:
-        dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+        dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     if st.button("← Back to Applications", key="admin_app_detail_back_v125", use_container_width=False):
         st.session_state.admin_app_selected_id_v125 = ""
         st.session_state.admin_app_view_v125 = "program"
@@ -20673,7 +20963,7 @@ def admin_application_detail_page_v125(app_id, render_shell=True):
         close_shell()
 
 def admin_applications_page_v125():
-    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples"])
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
     st.subheader("Applications Management")
     st.caption("Review submitted student applications by university and program. Open an applicant to download the application form and uploaded files, and update application status.")
 
@@ -20835,6 +21125,8 @@ else:
             admin_applications_page_v125()
         elif st.session_state.page == "Application Samples":
             admin_application_samples_v114()
+        elif st.session_state.page in ["Hero Advertisements", "Advertisement Slider"]:
+            admin_hero_advertisements_v226()
         else:
             admin()
     else:
