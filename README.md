@@ -1419,3 +1419,9 @@ v212:
 - Made the footer world map clearer and larger like the reference image.
 - Reduced bottom/footer spacing while keeping the section full width.
 - Kept the rest of the website unchanged.
+
+
+v213:
+- Removed the remaining white space below the footer by overriding Streamlit bottom padding and extending footer background.
+- Replaced the abstract dotted map with a real world map graphic generated from Basemap.
+- Kept the footer layout and the rest of the website unchanged.

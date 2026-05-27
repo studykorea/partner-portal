@@ -9133,6 +9133,65 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     }
 }
 
+
+/* v213: remove footer bottom whitespace and use genuine world map image */
+html, body {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+[data-testid="stAppViewContainer"] {
+    padding-bottom: 0 !important;
+}
+section.main > div,
+[data-testid="stMainBlockContainer"],
+.block-container {
+    padding-bottom: 0 !important;
+}
+.element-container:has(.premium-footer-v211),
+.element-container:has(.premium-footer-v212) {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.premium-footer-v211,
+.premium-footer-v212 {
+    margin-bottom: -1px !important;
+    padding-bottom: 0 !important;
+}
+.premium-footer-v212 .premium-footer-bottom-v211 {
+    margin-bottom: 0 !important;
+}
+.footer-map-layer-v212 {
+    right: clamp(38px, 5vw, 90px) !important;
+    top: 38px !important;
+    width: min(46vw, 650px) !important;
+    height: auto !important;
+    opacity: .62 !important;
+}
+.footer-map-img-v212 {
+    width: 100% !important;
+    height: auto !important;
+    opacity: .92 !important;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,.22)) !important;
+}
+/* cover Streamlit's default bottom padding under the footer with footer color */
+.premium-footer-v212::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: -260px !important;
+    height: 260px !important;
+    background: linear-gradient(135deg, #00142F 0%, #002B5B 55%, #001733 100%) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+@media(max-width:1100px) {
+    .footer-map-layer-v212 {
+        opacity: .28 !important;
+        width: min(70vw, 560px) !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9263,7 +9322,7 @@ def footer():
     trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Korean Licence Education Association logo")
     certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Korea Licence Development Institute logo")
     ieee_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "IEEE award logo")
-    map_encoded_v212 = b64("assets/footer_world_map_v212.png")
+    map_encoded_v212 = b64("assets/footer_world_map_v213.png")
     scholarship_icon = '<div class="credential-logo-wrap-v211 credential-scholarship-icon-v212" aria-label="Scholarship support icon"><div class="scholarship-cap-v212"></div></div>'
     map_html_v212 = f'<img class="footer-map-img-v212" src="data:image/png;base64,{map_encoded_v212}" alt="World map pattern">' if map_encoded_v212 else ""
 
