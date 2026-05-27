@@ -1411,3 +1411,11 @@ v211:
 - Rebuilt the footer function with clean v211 classes to avoid previous raw-code/overlay issues.
 - Added a clearer dotted world map PNG asset on the right side of the footer.
 - Kept only the credential/footer section changed; other website sections are unchanged.
+
+
+v212:
+- Fixed the raw HTML/code boxes appearing in the Scholarship card and footer contact area.
+- Rebuilt the footer HTML as compact safe HTML so Streamlit does not render it as a code block.
+- Made the footer world map clearer and larger like the reference image.
+- Reduced bottom/footer spacing while keeping the section full width.
+- Kept the rest of the website unchanged.

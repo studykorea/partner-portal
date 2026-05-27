@@ -9056,6 +9056,83 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     }
 }
 
+
+/* v212: final footer fix - no raw HTML boxes, clearer map, better spacing */
+.credential-scholarship-icon-v212 {
+    background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #F8FBFF 58%, #EEF5FF 100%) !important;
+    border: 1px solid rgba(228,234,243,.95) !important;
+    position: relative !important;
+}
+.scholarship-cap-v212 {
+    width: 70px !important;
+    height: 52px !important;
+    position: relative !important;
+}
+.scholarship-cap-v212:before {
+    content: "" !important;
+    position: absolute !important;
+    left: 2px !important;
+    top: 7px !important;
+    width: 66px !important;
+    height: 38px !important;
+    background: #061A40 !important;
+    clip-path: polygon(50% 0, 100% 38%, 50% 76%, 0 38%) !important;
+    border-radius: 4px !important;
+}
+.scholarship-cap-v212:after {
+    content: "" !important;
+    position: absolute !important;
+    left: 23px !important;
+    top: 34px !important;
+    width: 26px !important;
+    height: 15px !important;
+    background: #061A40 !important;
+    border-radius: 0 0 16px 16px !important;
+}
+.premium-footer-v212 {
+    padding-top: 56px !important;
+    padding-bottom: 0 !important;
+    min-height: 345px !important;
+}
+.footer-map-layer-v212 {
+    right: clamp(46px, 5vw, 95px) !important;
+    top: 44px !important;
+    width: min(47vw, 610px) !important;
+    height: 260px !important;
+    opacity: .62 !important;
+    z-index: 1 !important;
+}
+.footer-map-img-v212 {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    opacity: .95 !important;
+    filter: drop-shadow(0 10px 26px rgba(0,0,0,.16)) !important;
+}
+.premium-footer-v212 .premium-footer-grid-v211 {
+    min-height: 214px !important;
+}
+.premium-footer-v212 .footer-brand-v211,
+.premium-footer-v212 .footer-contact-card-v211 {
+    min-height: 205px !important;
+}
+.premium-footer-v212 .premium-footer-bottom-v211 {
+    margin-top: 34px !important;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+.credential-card-v211,
+.credential-card-v211 *,
+.premium-footer-v211,
+.premium-footer-v211 * {
+    box-sizing: border-box !important;
+}
+@media(max-width:1100px) {
+    .footer-map-layer-v212 {
+        display: none !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9186,96 +9263,29 @@ def footer():
     trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Korean Licence Education Association logo")
     certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Korea Licence Development Institute logo")
     ieee_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "IEEE award logo")
-    map_encoded_v211 = b64("assets/footer_world_map_v211.png")
+    map_encoded_v212 = b64("assets/footer_world_map_v212.png")
+    scholarship_icon = '<div class="credential-logo-wrap-v211 credential-scholarship-icon-v212" aria-label="Scholarship support icon"><div class="scholarship-cap-v212"></div></div>'
+    map_html_v212 = f'<img class="footer-map-img-v212" src="data:image/png;base64,{map_encoded_v212}" alt="World map pattern">' if map_encoded_v212 else ""
 
-    scholarship_icon = """
-    <div class="credential-logo-wrap-v211 credential-scholarship-icon-v211" aria-label="Scholarship support icon">
-      <div class="scholarship-cap-v211"></div>
-    </div>
-    """
-
-    map_html_v211 = f'<img class="footer-map-img-v211" src="data:image/png;base64,{map_encoded_v211}" alt="World map pattern">' if map_encoded_v211 else ""
-
-    st.markdown(f"""
-    <section class="credentials-section-v211">
-      <div class="credentials-grid-v211">
-        <div class="credential-card-v211">
-          {trusted_badge}
-          <h3>Trusted Partnerships</h3>
-          <div class="credential-line-v211"></div>
-          <p>Work with verified universities and trusted education partners.</p>
-        </div>
-        <div class="credential-card-v211">
-          {certified_badge}
-          <h3>Certified Information</h3>
-          <div class="credential-line-v211"></div>
-          <p>Access up-to-date admission requirements and fee details you can trust.</p>
-        </div>
-        <div class="credential-card-v211">
-          {ieee_badge}
-          <h3>Awarded by IEEE</h3>
-          <div class="credential-line-v211"></div>
-          <p>Recognized for excellence in technology and education partnerships.</p>
-        </div>
-        <div class="credential-card-v211">
-          {scholarship_icon}
-          <h3>Scholarship Support</h3>
-          <div class="credential-line-v211"></div>
-          <p>Discover and maximize scholarship opportunities to achieve your dreams.</p>
-        </div>
-      </div>
-    </section>
-
-    <footer class="premium-footer-v211">
-      <div class="footer-map-layer-v211">{map_html_v211}</div>
-
-      <div class="premium-footer-grid-v211">
-        <div class="footer-brand-v211">
-          <h3>Partner Portal for<br>University Recruitment</h3>
-          <div class="footer-blue-line-v211"></div>
-          <p>Empowering global education partnerships and connecting students with the right opportunities worldwide.</p>
-        </div>
-
-        <div class="footer-contact-card-v211">
-          <div class="footer-contact-icon-v211">☎</div>
-          <h4>Phone</h4>
-          <div class="footer-blue-line-v211 small"></div>
-          <b>+82 51 711 2773</b>
-          <p>Mon – Fri, 9:00 AM – 6:00 PM (KST)</p>
-        </div>
-
-        <div class="footer-contact-card-v211">
-          <div class="footer-contact-icon-v211">✉</div>
-          <h4>Email</h4>
-          <div class="footer-blue-line-v211 small"></div>
-          <b>koreastudypartner@gmail.com</b>
-          <p>We’ll get back to you as soon as possible.</p>
-        </div>
-
-        <div class="footer-contact-card-v211">
-          <div class="footer-contact-icon-v211">⌖</div>
-          <h4>Location</h4>
-          <div class="footer-blue-line-v211 small"></div>
-          <b>Busan, Republic of Korea</b>
-          <p>Our headquarters in the heart of Busan.</p>
-        </div>
-      </div>
-
-      <div class="premium-footer-bottom-v211">
-        <p>© 2026 Partner Portal for University Recruitment. All rights reserved.</p>
-        <div class="footer-bottom-links-v211">
-          <span>Privacy Policy</span>
-          <span>Terms of Use</span>
-          <span>Help Center</span>
-          <span>Follow us</span>
-          <span class="footer-social-v211">f</span>
-          <span class="footer-social-v211">in</span>
-          <span class="footer-social-v211">◎</span>
-          <span class="footer-social-v211">▶</span>
-        </div>
-      </div>
-    </footer>
-    """, unsafe_allow_html=True)
+    footer_html_v212 = f"""<section class="credentials-section-v211">
+<div class="credentials-grid-v211">
+<div class="credential-card-v211">{trusted_badge}<h3>Trusted Partnerships</h3><div class="credential-line-v211"></div><p>Work with verified universities and trusted education partners.</p></div>
+<div class="credential-card-v211">{certified_badge}<h3>Certified Information</h3><div class="credential-line-v211"></div><p>Access up-to-date admission requirements and fee details you can trust.</p></div>
+<div class="credential-card-v211">{ieee_badge}<h3>Awarded by IEEE</h3><div class="credential-line-v211"></div><p>Recognized for excellence in technology and education partnerships.</p></div>
+<div class="credential-card-v211">{scholarship_icon}<h3>Scholarship Support</h3><div class="credential-line-v211"></div><p>Discover and maximize scholarship opportunities to achieve your dreams.</p></div>
+</div>
+</section>
+<footer class="premium-footer-v211 premium-footer-v212">
+<div class="footer-map-layer-v211 footer-map-layer-v212">{map_html_v212}</div>
+<div class="premium-footer-grid-v211">
+<div class="footer-brand-v211"><h3>Partner Portal for<br>University Recruitment</h3><div class="footer-blue-line-v211"></div><p>Empowering global education partnerships and connecting students with the right opportunities worldwide.</p></div>
+<div class="footer-contact-card-v211"><div class="footer-contact-icon-v211">☎</div><h4>Phone</h4><div class="footer-blue-line-v211 small"></div><b>+82 51 711 2773</b><p>Mon – Fri, 9:00 AM – 6:00 PM (KST)</p></div>
+<div class="footer-contact-card-v211"><div class="footer-contact-icon-v211">✉</div><h4>Email</h4><div class="footer-blue-line-v211 small"></div><b>koreastudypartner@gmail.com</b><p>We’ll get back to you as soon as possible.</p></div>
+<div class="footer-contact-card-v211"><div class="footer-contact-icon-v211">⌖</div><h4>Location</h4><div class="footer-blue-line-v211 small"></div><b>Busan, Republic of Korea</b><p>Our headquarters in the heart of Busan.</p></div>
+</div>
+<div class="premium-footer-bottom-v211"><p>© 2026 Partner Portal for University Recruitment. All rights reserved.</p><div class="footer-bottom-links-v211"><span>Privacy Policy</span><span>Terms of Use</span><span>Help Center</span><span>Follow us</span><span class="footer-social-v211">f</span><span class="footer-social-v211">in</span><span class="footer-social-v211">◎</span><span class="footer-social-v211">▶</span></div></div>
+</footer>"""
+    st.markdown(footer_html_v212, unsafe_allow_html=True)
 
 def format_money_v37(x):
     try:
