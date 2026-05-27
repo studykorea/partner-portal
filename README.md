@@ -1385,3 +1385,13 @@ v208:
 - Cards now have consistent height and internal spacing.
 - View Programs button is now inside the card, full width, dark navy, white text, and arrow-aligned right.
 - Dynamic data behavior is preserved. Missing values still show 1,000 or Location not updated.
+
+
+v209:
+- Updated only the partnership/credential section and footer section.
+- Added four premium credential cards with larger official uploaded logos/images.
+- Changed IEEE card title to “Awarded by IEEE”.
+- Replaced scholarship logo with a simple education/scholarship icon and removed UniQuest from this section.
+- Added dark navy gradient footer with four columns: Portal, Phone, Email, Location.
+- Updated email to koreastudypartner@gmail.com and kept phone/location as requested.
+- Added bottom footer links and responsive mobile stacking.

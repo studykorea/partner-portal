@@ -8398,6 +8398,269 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     }
 }
 
+
+/* v209 premium credentials and footer only */
+.credentials-section-v209 {
+    background: linear-gradient(180deg, #F8FBFF 0%, #EFF6FF 100%) !important;
+    padding: 54px 56px 50px 56px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.credentials-section-v209:before {
+    content: "" !important;
+    position: absolute !important;
+    inset: auto 0 0 0 !important;
+    height: 120px !important;
+    background: radial-gradient(ellipse at left bottom, rgba(0,91,219,.10), transparent 55%), radial-gradient(ellipse at right bottom, rgba(0,31,72,.08), transparent 60%) !important;
+    pointer-events: none !important;
+}
+.credentials-grid-v209 {
+    position: relative !important;
+    z-index: 2 !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+    max-width: 1480px !important;
+    margin: 0 auto !important;
+}
+.credential-card-v209 {
+    background: rgba(255,255,255,.92) !important;
+    border: 1px solid rgba(220,230,244,.95) !important;
+    border-radius: 22px !important;
+    min-height: 306px !important;
+    padding: 34px 28px 28px 28px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 45px rgba(16,24,40,.08) !important;
+    backdrop-filter: blur(8px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+}
+.credential-card-v209:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 24px 52px rgba(16,24,40,.12) !important;
+}
+.credential-logo-wrap-v209,
+.credential-logo-placeholder-v209 {
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,.98) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 22px auto !important;
+    box-shadow: 0 14px 30px rgba(16,24,40,.12) !important;
+    border: 1px solid rgba(228,234,243,.95) !important;
+    overflow: hidden !important;
+}
+.credential-logo-img-v209 {
+    width: 98px !important;
+    height: 98px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+.credential-logo-placeholder-v209 {
+    color: #98A2B3 !important;
+    -webkit-text-fill-color: #98A2B3 !important;
+    font-weight: 900 !important;
+    font-size: 14px !important;
+}
+.credential-scholarship-icon-v209 svg {
+    width: 104px !important;
+    height: 104px !important;
+    display: block !important;
+}
+.credential-card-v209 h3 {
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-size: 21px !important;
+    line-height: 1.25 !important;
+    font-weight: 950 !important;
+    letter-spacing: -.01em !important;
+    margin: 0 !important;
+}
+.credential-line-v209,
+.footer-blue-line-v209 {
+    width: 36px !important;
+    height: 3px !important;
+    border-radius: 999px !important;
+    background: #1687E8 !important;
+    margin: 14px auto 16px auto !important;
+}
+.credential-card-v209 p {
+    color: #475467 !important;
+    -webkit-text-fill-color: #475467 !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    font-weight: 550 !important;
+    margin: 0 !important;
+    max-width: 260px !important;
+}
+.premium-footer-v209 {
+    position: relative !important;
+    overflow: hidden !important;
+    background: linear-gradient(135deg, #00142F 0%, #002A5E 58%, #001A3E 100%) !important;
+    color: #FFFFFF !important;
+    padding: 64px 56px 0 56px !important;
+}
+.premium-footer-v209:after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0) !important;
+    background-size: 18px 18px !important;
+    opacity: .20 !important;
+    pointer-events: none !important;
+}
+.footer-map-pattern-v209 {
+    position: absolute !important;
+    right: 60px !important;
+    top: 42px !important;
+    width: 430px !important;
+    height: 210px !important;
+    opacity: .20 !important;
+    background:
+      radial-gradient(circle at 20% 40%, rgba(255,255,255,.9) 1.2px, transparent 1.8px),
+      radial-gradient(circle at 38% 44%, rgba(255,255,255,.8) 1.1px, transparent 1.8px),
+      radial-gradient(circle at 56% 38%, rgba(255,255,255,.7) 1.1px, transparent 1.8px),
+      radial-gradient(circle at 75% 45%, rgba(255,255,255,.9) 1.2px, transparent 1.8px);
+    background-size: 18px 18px, 16px 16px, 15px 15px, 18px 18px !important;
+    border-radius: 50% !important;
+    filter: blur(.1px) !important;
+    pointer-events: none !important;
+}
+.premium-footer-grid-v209 {
+    position: relative !important;
+    z-index: 2 !important;
+    display: grid !important;
+    grid-template-columns: 1.35fr .85fr 1.05fr .95fr !important;
+    gap: 0 !important;
+    max-width: 1480px !important;
+    margin: 0 auto !important;
+}
+.footer-brand-v209,
+.footer-contact-card-v209 {
+    padding: 0 32px !important;
+    border-right: 1px solid rgba(255,255,255,.13) !important;
+}
+.footer-contact-card-v209:last-child {border-right: 0 !important;}
+.footer-brand-v209 {padding-left: 0 !important;}
+.footer-brand-v209 h3 {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-size: 26px !important;
+    line-height: 1.25 !important;
+    font-weight: 950 !important;
+    margin: 0 !important;
+}
+.footer-blue-line-v209 {
+    margin: 22px 0 22px 0 !important;
+    width: 52px !important;
+}
+.footer-blue-line-v209.small {
+    margin: 12px 0 18px 0 !important;
+    width: 34px !important;
+}
+.footer-brand-v209 p,
+.footer-contact-card-v209 p {
+    color: rgba(255,255,255,.72) !important;
+    -webkit-text-fill-color: rgba(255,255,255,.72) !important;
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+    margin: 0 !important;
+}
+.footer-contact-icon-v209 {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(22,135,232,.14) !important;
+    border: 1px solid rgba(22,135,232,.35) !important;
+    color: #1687E8 !important;
+    -webkit-text-fill-color: #1687E8 !important;
+    font-size: 24px !important;
+    margin-bottom: 22px !important;
+}
+.footer-contact-card-v209 h4 {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-size: 18px !important;
+    line-height: 1.2 !important;
+    font-weight: 950 !important;
+    margin: 0 !important;
+}
+.footer-contact-card-v209 b {
+    display: block !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+    font-weight: 900 !important;
+    margin: 0 0 12px 0 !important;
+    word-break: break-word !important;
+}
+.premium-footer-bottom-v209 {
+    position: relative !important;
+    z-index: 2 !important;
+    max-width: 1480px !important;
+    margin: 60px auto 0 auto !important;
+    padding: 26px 0 !important;
+    border-top: 1px solid rgba(255,255,255,.13) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+}
+.premium-footer-bottom-v209 p {
+    color: rgba(255,255,255,.70) !important;
+    -webkit-text-fill-color: rgba(255,255,255,.70) !important;
+    font-size: 14px !important;
+    margin: 0 !important;
+}
+.footer-bottom-links-v209 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+    flex-wrap: wrap !important;
+    color: rgba(255,255,255,.72) !important;
+    -webkit-text-fill-color: rgba(255,255,255,.72) !important;
+    font-size: 14px !important;
+    font-weight: 650 !important;
+}
+.footer-social-v209 {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-weight: 850 !important;
+}
+@media(max-width:1200px) {
+    .credentials-grid-v209 {grid-template-columns: repeat(2, minmax(0, 1fr)) !important;}
+    .premium-footer-grid-v209 {grid-template-columns: repeat(2, minmax(0, 1fr)) !important; row-gap: 42px !important;}
+    .footer-brand-v209, .footer-contact-card-v209 {border-right: 0 !important; padding: 0 22px !important;}
+    .footer-brand-v209 {padding-left: 22px !important;}
+}
+@media(max-width:760px) {
+    .credentials-section-v209 {padding: 36px 20px !important;}
+    .credentials-grid-v209 {grid-template-columns: 1fr !important; gap: 18px !important;}
+    .credential-card-v209 {min-height: auto !important; padding: 30px 22px !important;}
+    .premium-footer-v209 {padding: 44px 22px 0 22px !important;}
+    .premium-footer-grid-v209 {grid-template-columns: 1fr !important; gap: 34px !important;}
+    .footer-brand-v209, .footer-contact-card-v209 {padding: 0 !important;}
+    .premium-footer-bottom-v209 {flex-direction: column !important; align-items: flex-start !important; margin-top: 42px !important;}
+    .footer-bottom-links-v209 {gap: 14px !important;}
+    .footer-map-pattern-v209 {display: none !important;}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -8521,40 +8784,103 @@ def header():
 def _footer_badge_icon_html_v197(asset_path, alt_text="badge"):
     encoded = b64(asset_path)
     if not encoded:
-        return '<div class="icon">✓</div>'
-    return f'<div class="footer-feature-icon-wrap-v197"><img class="footer-feature-badge-v197" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(alt_text)}"></div>'
+        return '<div class="credential-logo-placeholder-v209">Logo</div>'
+    return f'<div class="credential-logo-wrap-v209"><img class="credential-logo-img-v209" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(alt_text)}"></div>'
 
 def footer():
 
-    trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Trusted partner badge")
-    certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Certified information badge")
-    eligibility_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "Eligibility guidance badge")
-    scholarship_badge = _footer_badge_icon_html_v197("assets/kladi_badge_gold_transparent.png", "Scholarship support badge")
+    trusted_badge = _footer_badge_icon_html_v197("assets/kladi_badge_blue_transparent.png", "Korean Licence Education Association logo")
+    certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Korea Licence Development Institute logo")
+    ieee_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "IEEE award logo")
+
+    scholarship_icon = """
+    <div class="credential-logo-wrap-v209 credential-scholarship-icon-v209" aria-label="Scholarship support icon">
+      <svg viewBox="0 0 96 96" role="img" focusable="false">
+        <circle cx="48" cy="48" r="44" fill="#F8FBFF" stroke="#E4EAF3" stroke-width="2"/>
+        <path d="M48 25 22 38l26 13 26-13-26-13Z" fill="#061A40"/>
+        <path d="M32 46v13c0 5 7 10 16 10s16-5 16-10V46L48 54 32 46Z" fill="#061A40" opacity=".92"/>
+        <path d="M70 41v17" stroke="#B99A42" stroke-width="4" stroke-linecap="round"/>
+        <path d="M25 62c7 9 15 13 23 13s16-4 23-13" fill="none" stroke="#B99A42" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    """
 
     st.markdown(f"""
-    <div class="features">
-      <div class="feature">{trusted_badge}<div><b>Trusted Partnerships</b><br><span class="muted">Work with verified universities</span></div></div>
-      <div class="feature">{certified_badge}<div><b>Certified Information</b><br><span class="muted">Up-to-date admission & fee details</span></div></div>
-      <div class="feature">{eligibility_badge}<div><b>Eligibility Made Easy</b><br><span class="muted">Quick checks for better guidance</span></div></div>
-      <div class="feature">{scholarship_badge}<div><b>Scholarship Support</b><br><span class="muted">Maximize opportunities for students</span></div></div>
-    </div>
-
-    <div class="footer-lite-v27">
-      <div class="footer-lite-grid-v27">
-        <div>
-          <h3>Partner Portal for<br>University Recruitment</h3>
-          <p>Empowering global education partnerships.</p>
+    <section class="credentials-section-v209">
+      <div class="credentials-grid-v209">
+        <div class="credential-card-v209">
+          {trusted_badge}
+          <h3>Trusted Partnerships</h3>
+          <div class="credential-line-v209"></div>
+          <p>Work with verified universities and trusted education partners.</p>
         </div>
-        <div class="footer-contact-row-v27">
-          <span>☎ +82 51 711 2773</span>
-          <span>✉ uniqueststudy@gmail.com</span>
-          <span>📍 Busan, Republic of Korea</span>
+        <div class="credential-card-v209">
+          {certified_badge}
+          <h3>Certified Information</h3>
+          <div class="credential-line-v209"></div>
+          <p>Access up-to-date admission requirements and fee details you can trust.</p>
+        </div>
+        <div class="credential-card-v209">
+          {ieee_badge}
+          <h3>Awarded by IEEE</h3>
+          <div class="credential-line-v209"></div>
+          <p>Recognized for excellence in technology and education partnerships.</p>
+        </div>
+        <div class="credential-card-v209">
+          {scholarship_icon}
+          <h3>Scholarship Support</h3>
+          <div class="credential-line-v209"></div>
+          <p>Discover and maximize scholarship opportunities to achieve your dreams.</p>
         </div>
       </div>
-      <hr>
-      <p class="copyright-v27">© 2026 Partner Portal for University Recruitment. All rights reserved.</p>
-    </div>
+    </section>
+
+    <footer class="premium-footer-v209">
+      <div class="footer-map-pattern-v209"></div>
+      <div class="premium-footer-grid-v209">
+        <div class="footer-brand-v209">
+          <h3>Partner Portal for<br>University Recruitment</h3>
+          <div class="footer-blue-line-v209"></div>
+          <p>Empowering global education partnerships and connecting students with the right opportunities worldwide.</p>
+        </div>
+        <div class="footer-contact-card-v209">
+          <div class="footer-contact-icon-v209">☎</div>
+          <h4>Phone</h4>
+          <div class="footer-blue-line-v209 small"></div>
+          <b>+82 51 711 2773</b>
+          <p>Mon – Fri, 9:00 AM – 6:00 PM (KST)</p>
+        </div>
+        <div class="footer-contact-card-v209">
+          <div class="footer-contact-icon-v209">✉</div>
+          <h4>Email</h4>
+          <div class="footer-blue-line-v209 small"></div>
+          <b>koreastudypartner@gmail.com</b>
+          <p>We’ll get back to you as soon as possible.</p>
+        </div>
+        <div class="footer-contact-card-v209">
+          <div class="footer-contact-icon-v209">⌖</div>
+          <h4>Location</h4>
+          <div class="footer-blue-line-v209 small"></div>
+          <b>Busan, Republic of Korea</b>
+          <p>Our headquarters in the heart of Busan.</p>
+        </div>
+      </div>
+      <div class="premium-footer-bottom-v209">
+        <p>© 2026 Partner Portal for University Recruitment. All rights reserved.</p>
+        <div class="footer-bottom-links-v209">
+          <span>Privacy Policy</span>
+          <span>Terms of Use</span>
+          <span>Help Center</span>
+          <span>Follow us</span>
+          <span class="footer-social-v209">f</span>
+          <span class="footer-social-v209">in</span>
+          <span class="footer-social-v209">◎</span>
+          <span class="footer-social-v209">▶</span>
+        </div>
+      </div>
+    </footer>
     """, unsafe_allow_html=True)
+
 
 
 
