@@ -1471,3 +1471,12 @@ v219:
 - Uploaded logo now fills the logo area with object-fit: contain.
 - Logo, university name, and location remain grouped together beside the cover image.
 - Stats, admissions snapshot, scholarship link, filters, and buttons are unchanged.
+
+
+v220:
+- Fixed only the university card header and logo alignment.
+- Restored a consistent 82x82 premium circular logo container.
+- Added dynamic admin field support for logoScale / LogoScale / Logo_Scale / University_Logo_Scale / Logo Scale.
+- Uploaded logos are centered with object-fit: contain and can be visually enlarged using logoScale.
+- Moved university name and location slightly lower so they do not touch the cover image line.
+- Kept stats, admissions, buttons, colors, filters, and data behavior unchanged.

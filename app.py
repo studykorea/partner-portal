@@ -10087,6 +10087,180 @@ section.main > div,
     }
 }
 
+
+/* v220: university card header/logo balance only */
+.uni-list-card-v214 .uni-list-cover-v214,
+.uni-list-card-v214 .uni-list-cover-img-v214,
+.uni-list-card-v214 .uni-list-cover-placeholder-v214{
+    height: 158px !important;
+}
+
+/* Header: logo overlaps image, text starts lower, location directly under name */
+.uni-list-card-v214 .uni-list-head-v216,
+.uni-list-card-v214 .uni-list-head-v215{
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+    margin-top: -38px !important;
+    margin-bottom: 12px !important;
+    min-height: 104px !important;
+    max-height: 104px !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Restore a consistent premium logo container instead of removing it */
+.uni-list-card-v214 .uni-list-logo-wrap-v214{
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    min-height: 82px !important;
+    max-width: 82px !important;
+    max-height: 82px !important;
+    flex: 0 0 82px !important;
+    border-radius: 50% !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 8px !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+/* Logo image is centered and can be enlarged by admin logoScale */
+.uni-list-card-v214 .uni-list-logo-img-v214{
+    width: 72% !important;
+    height: 72% !important;
+    max-width: 72% !important;
+    max-height: 72% !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    transform-origin: center center !important;
+}
+
+/* Missing logo placeholder only */
+.uni-list-card-v214 .uni-list-logo-placeholder-v214{
+    width: 82px !important;
+    height: 82px !important;
+    border-radius: 50% !important;
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 800 !important;
+    font-size: 13px !important;
+}
+
+/* Title block: move text lower so it does not touch the cover image boundary */
+.uni-list-card-v214 .uni-list-title-block-v215{
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 82px !important;
+    padding-top: 52px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+}
+
+.uni-list-card-v214 .uni-list-title-block-v215 h3{
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-height: 56px !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.015em !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+
+.uni-list-card-v214 .uni-list-location-v214,
+.uni-list-card-v214 .location-row-v216{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 20px !important;
+    max-height: 22px !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+    position: static !important;
+}
+
+.uni-list-card-v214 .uni-list-location-v214 svg.location-pin-svg-v216,
+.uni-list-card-v214 .location-row-v216 svg.location-pin-svg-v216{
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    flex: 0 0 16px !important;
+    color: #1E3A8A !important;
+    display: inline-block !important;
+}
+
+.uni-list-card-v214 .uni-list-location-v214 em,
+.uni-list-card-v214 .location-row-v216 em{
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    font-style: normal !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.uni-list-card-v214 .uni-list-stats-v214,
+.uni-list-card-v214 .stat-grid-v216{
+    margin-top: 0 !important;
+}
+
+@media(max-width:1200px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        gap: 16px !important;
+        min-height: 100px !important;
+        max-height: 100px !important;
+    }
+    .uni-list-card-v214 .uni-list-logo-wrap-v214,
+    .uni-list-card-v214 .uni-list-logo-placeholder-v214{
+        width: 78px !important;
+        height: 78px !important;
+        min-width: 78px !important;
+        min-height: 78px !important;
+        max-width: 78px !important;
+        max-height: 78px !important;
+        flex-basis: 78px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215{
+        padding-top: 50px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215 h3{
+        font-size: 20px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -14915,8 +15089,25 @@ def _uni_list_cover_html_v214(row):
 
 def _uni_list_logo_html_v214(row):
     encoded = b64(row.get("University_Logo", ""))
+    scale_raw = (
+        row.get("logoScale", "")
+        or row.get("LogoScale", "")
+        or row.get("Logo_Scale", "")
+        or row.get("University_Logo_Scale", "")
+        or row.get("Logo Scale", "")
+        or 1
+    )
+    try:
+        logo_scale = float(str(scale_raw).strip())
+        if logo_scale <= 0:
+            logo_scale = 1.0
+        if logo_scale > 2.2:
+            logo_scale = 2.2
+    except Exception:
+        logo_scale = 1.0
+
     if encoded:
-        return f'<img class="uni-list-logo-img-v214" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(row.get("University", "University"))} logo">'
+        return f'<img class="uni-list-logo-img-v214" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(row.get("University", "University"))} logo" style="transform: scale({logo_scale});">'
     return '<div class="uni-list-logo-placeholder-v214">Logo</div>'
 
 def _date_val_v214(row, candidates):
@@ -15193,7 +15384,7 @@ def universities_page(public=False):
         "UG_Round2_Open_Date", "UG_Round2_Close_Date", "UG_Round_2_Open_Date", "UG_Round_2_Close_Date",
         "Graduate_Round2_Open_Date", "Graduate_Round2_Close_Date", "Graduate_Round_2_Open_Date", "Graduate_Round_2_Close_Date",
         "KLP_EAP_Round2_Open_Date", "KLP_EAP_Round2_Close_Date", "KLP_EAP_Round_2_Open_Date", "KLP_EAP_Round_2_Close_Date",
-        "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Address", "School_Size", "Total_Students",
+        "Overview", "Image", "Image_Gallery", "University_Logo", "logoScale", "LogoScale", "Logo_Scale", "University_Logo_Scale", "Logo Scale", "Homepage", "Address", "School_Size", "Total_Students",
         "International_Students", "Foreign_Students", "Tuition_Range", "detailPageUrl", "Detail_Page_URL"
     ]
     for col in needed_cols_v214:
