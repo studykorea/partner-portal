@@ -1366,3 +1366,13 @@ v206:
 - Added st.rerun() after changing page so the app immediately opens the correct page.
 - Apply for Partner Access now opens Partner Sign Up.
 - Explore Universities now opens the Universities page.
+
+
+v207:
+- Redesigned the Home page Featured Universities section into modern professional university application cards.
+- Cards now use only dynamic admin/CMS data: University, Location/Region, School_Size, International_Students, Image, and University_Logo.
+- No fake logos are created. If University_Logo is missing, the card shows a simple “Logo” placeholder.
+- If student/location fields are missing, the card uses the requested temporary placeholders: 1,000 and Location not updated.
+- Added search bar and filter chips.
+- Added clean white cards, soft shadows, rounded corners, image area, overlapping logo circle, two stat boxes, and navy View Programs buttons.
+- View Programs opens the correct selected university in the Universities page.

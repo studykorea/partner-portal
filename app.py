@@ -8000,6 +8000,243 @@ div[data-testid="stSelectbox"] label {
     transform: translateY(-1px) !important;
 }
 
+
+/* v207 modern Featured Universities section */
+.home-featured-section-v207 {
+    padding: 54px 56px 8px 56px !important;
+    background: #FFFFFF !important;
+}
+.home-featured-head-v207 {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    margin-bottom: 22px !important;
+}
+.home-featured-head-v207 h2 {
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-size: 38px !important;
+    line-height: 1.1 !important;
+    font-weight: 950 !important;
+    letter-spacing: -0.02em !important;
+    margin: 0 0 8px 0 !important;
+}
+.home-featured-head-v207 p {
+    color: #667085 !important;
+    -webkit-text-fill-color: #667085 !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+}
+.home-featured-viewall-form-v207 {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.home-featured-viewall-form-v207 button {
+    height: 48px !important;
+    padding: 0 24px !important;
+    border-radius: 12px !important;
+    border: 1px solid #D7DEE9 !important;
+    background: #FFFFFF !important;
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+    box-shadow: 0 8px 18px rgba(16,24,40,.05) !important;
+}
+.home-featured-viewall-form-v207 button span {
+    font-size: 24px !important;
+    vertical-align: -2px !important;
+    margin-left: 8px !important;
+}
+div[data-testid="stRadio"] [role="radiogroup"] {
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+div[data-testid="stRadio"] label {
+    background: #FFFFFF !important;
+    border: 1px solid #D7DEE9 !important;
+    border-radius: 999px !important;
+    padding: 8px 18px !important;
+    min-height: 42px !important;
+    box-shadow: 0 4px 12px rgba(16,24,40,.04) !important;
+}
+.home-uni-card-v207 {
+    position: relative !important;
+    background: #FFFFFF !important;
+    border: 1px solid #DCE6F4 !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
+    margin-top: 22px !important;
+    min-height: 472px !important;
+}
+.home-uni-card-v207:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 18px 42px rgba(16,24,40,.12) !important;
+    border-color: #C9D8EF !important;
+}
+.home-uni-image-wrap-v207 {
+    position: relative !important;
+    height: 168px !important;
+    overflow: hidden !important;
+    background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+}
+.home-featured-photo-v207 {
+    width: 100% !important;
+    height: 168px !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+.home-featured-photo-placeholder-v207 {
+    height: 168px !important;
+    background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+    color: #667085 !important;
+    -webkit-text-fill-color: #667085 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 850 !important;
+}
+.home-uni-featured-pill-v207 {
+    position: absolute !important;
+    top: 16px !important;
+    left: 16px !important;
+    background: #001F48 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    padding: 8px 14px !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    box-shadow: 0 8px 16px rgba(0,31,72,.22) !important;
+}
+.home-uni-logo-overlap-v207 {
+    position: absolute !important;
+    left: 24px !important;
+    top: 132px !important;
+    width: 76px !important;
+    height: 76px !important;
+    border-radius: 50% !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E4EAF3 !important;
+    box-shadow: 0 10px 24px rgba(16,24,40,.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    z-index: 3 !important;
+}
+.home-featured-logo-v207 {
+    width: 62px !important;
+    height: 62px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+.home-featured-logo-placeholder-v207 {
+    width: 62px !important;
+    height: 62px !important;
+    border-radius: 50% !important;
+    background: #F4F7FB !important;
+    color: #98A2B3 !important;
+    -webkit-text-fill-color: #98A2B3 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+}
+.home-uni-body-v207 {
+    padding: 54px 16px 18px 16px !important;
+}
+.home-uni-body-v207 h3 {
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+    font-weight: 950 !important;
+    letter-spacing: -0.02em !important;
+    min-height: 58px !important;
+    margin: 0 0 18px 0 !important;
+}
+.home-uni-location-v207 {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    color: #344054 !important;
+    margin-bottom: 18px !important;
+    min-height: 44px !important;
+}
+.home-uni-location-v207 span {
+    color: #667085 !important;
+    -webkit-text-fill-color: #667085 !important;
+    font-size: 19px !important;
+}
+.home-uni-location-v207 em {
+    color: #344054 !important;
+    -webkit-text-fill-color: #344054 !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    font-style: normal !important;
+    font-weight: 650 !important;
+}
+.home-uni-stats-v207 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+}
+.home-uni-stats-v207 div {
+    border: 1px solid #E4EAF3 !important;
+    border-radius: 10px !important;
+    background: #FBFCFF !important;
+    padding: 10px 7px !important;
+    min-height: 70px !important;
+}
+.home-uni-stats-v207 small {
+    display: block !important;
+    color: #475467 !important;
+    -webkit-text-fill-color: #475467 !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+}
+.home-uni-stats-v207 b {
+    display: block !important;
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-size: 15px !important;
+    line-height: 1.15 !important;
+    font-weight: 950 !important;
+}
+div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
+    border-radius: 12px !important;
+}
+.home-featured-note-v207 {
+    text-align: center !important;
+    color: #667085 !important;
+    -webkit-text-fill-color: #667085 !important;
+    font-weight: 650 !important;
+    font-size: 14px !important;
+    margin: 28px 0 34px 0 !important;
+}
+.home-featured-note-v207 span {
+    color: #667085 !important;
+    -webkit-text-fill-color: #667085 !important;
+    margin-right: 8px !important;
+}
+@media(max-width:1200px) {
+    .home-uni-body-v207 h3 {font-size: 19px !important;}
+    .home-uni-card-v207 {min-height: 485px !important;}
+}
+@media(max-width:900px) {
+    .home-featured-section-v207 {padding: 36px 24px 8px 24px !important;}
+    .home-featured-head-v207 {flex-direction: column !important;}
+    .home-featured-head-v207 h2 {font-size: 30px !important;}
+    .home-uni-card-v207 {margin-bottom: 16px !important;}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -8820,6 +9057,44 @@ def intl_count_v53(u):
             return display_value_v53(val)
     return ""
 
+
+def _home_featured_img_html_v207(path):
+    encoded = b64(path)
+    if not encoded:
+        return '<div class="home-featured-photo-placeholder-v207">University image</div>'
+    return f'<img class="home-featured-photo-v207" src="data:image/jpeg;base64,{encoded}" alt="University image">'
+
+def _home_featured_logo_html_v207(path, uni_name=""):
+    encoded = b64(path)
+    if not encoded:
+        return '<div class="home-featured-logo-placeholder-v207">Logo</div>'
+    return f'<img class="home-featured-logo-v207" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(uni_name)} logo">'
+
+def _home_location_v207(u):
+    val = display_value_v53(u.get("Location", ""))
+    if not val:
+        val = display_value_v53(u.get("Region", ""))
+    return val if val else "Location not updated"
+
+def _home_total_students_v207(u):
+    val = student_count_v53(u)
+    return val if val else "1,000"
+
+def _home_international_students_v207(u):
+    val = intl_count_v53(u)
+    return val if val else "1,000"
+
+def _home_filter_text_v207(u):
+    parts = [
+        display_value_v53(u.get("University", "")),
+        display_value_v53(u.get("Location", "")),
+        display_value_v53(u.get("Region", "")),
+        display_value_v53(u.get("Overview", "")),
+        display_value_v53(u.get("Top_Majors", "")),
+    ]
+    return " ".join([p for p in parts if p]).lower()
+
+
 def chunk_records_v53(records, size=5):
     for i in range(0, len(records), size):
         yield records[i:i+size]
@@ -8859,57 +9134,115 @@ def home():
     </section>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section featured-v32"><h2>Featured Universities</h2>', unsafe_allow_html=True)
+    st.markdown("""
+    <section class="home-featured-section-v207">
+        <div class="home-featured-head-v207">
+            <div>
+                <h2>Featured Universities</h2>
+                <p>Explore top partner universities in Korea.</p>
+            </div>
+            <form method="get" target="_self" class="home-featured-viewall-form-v207">
+                <input type="hidden" name="go" value="universities">
+                <button type="submit">View All <span>›</span></button>
+            </form>
+        </div>
+    </section>
+    """, unsafe_allow_html=True)
+
     unis = universities().reset_index(drop=True)
-    uni_records = list(unis.iterrows())
+    if unis is None or len(unis) == 0:
+        st.info("No university data found.")
+    else:
+        search_col, chip_col = st.columns([1.55, 3.45], gap="medium")
+        with search_col:
+            featured_search_v207 = st.text_input(
+                "Search featured universities",
+                placeholder="Search universities or locations...",
+                key="home_featured_search_v207",
+                label_visibility="collapsed",
+            )
+        with chip_col:
+            chip_options_v207 = ["All", "Seoul", "Busan", "Gyeongsang", "Jeolla", "More"]
+            selected_chip_v207 = st.radio(
+                "Featured university region filter",
+                chip_options_v207,
+                horizontal=True,
+                key="home_featured_chip_v207",
+                label_visibility="collapsed",
+            )
 
-    for row_idx, row_items in enumerate(chunk_records_v53(uni_records, 5)):
-        cols = st.columns(5, gap="medium")
-        for col_idx, (i, u) in enumerate(row_items):
-            with cols[col_idx]:
-                image_html = asset_img_html(u.get("Image", ""), "uni-photo")
-                location_text = display_value_v53(u.get("Location", ""))
-                students_text = student_count_v53(u)
-                intl_text = intl_count_v53(u)
+        featured_df_v207 = unis.copy()
+        for col in ["University", "Location", "Region", "Overview", "Image", "University_Logo", "School_Size", "International_Students"]:
+            if col not in featured_df_v207.columns:
+                featured_df_v207[col] = ""
 
-                location_html = f"""
-                  <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166 icon-location"></span>
-                    <span class="uni-meta-text-v166">{location_text}</span>
-                  </div>
-                """ if location_text else ""
-                students_html = f"""
-                  <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166 icon-students"></span>
-                    <span class="uni-meta-text-v166">{students_text}</span>
-                  </div>
-                """ if students_text else ""
-                intl_html = f"""
-                  <div class="uni-meta-item-v166">
-                    <span class="uni-meta-icon-v166 icon-global"></span>
-                    <span class="uni-meta-text-v166">{intl_text}</span>
-                  </div>
-                """ if intl_text else ""
+        if featured_search_v207:
+            s_v207 = str(featured_search_v207).strip().lower()
+            featured_df_v207 = featured_df_v207[
+                featured_df_v207.apply(lambda r: s_v207 in _home_filter_text_v207(r), axis=1)
+            ]
 
-                st.markdown(f"""
-                <div class="card uni-card-v53">
-                  {image_html}
-                  <h3>{display_value_v53(u.get('University',''))}</h3>
-                  <div class="uni-meta-list-v166">
-                    {location_html}
-                    {students_html}
-                    {intl_html}
-                  </div>
-                </div>
-                """, unsafe_allow_html=True)
+        if selected_chip_v207 != "All":
+            if selected_chip_v207 == "More":
+                common_v207 = ["seoul", "busan", "gyeongsang", "jeolla"]
+                featured_df_v207 = featured_df_v207[
+                    ~featured_df_v207.apply(
+                        lambda r: any(x in _home_filter_text_v207(r) for x in common_v207),
+                        axis=1
+                    )
+                ]
+            else:
+                chip_s_v207 = selected_chip_v207.lower()
+                featured_df_v207 = featured_df_v207[
+                    featured_df_v207.apply(lambda r: chip_s_v207 in _home_filter_text_v207(r), axis=1)
+                ]
 
-                if st.button("View Details", key=f"view_v53_{i}", use_container_width=True):
-                    st.session_state.selected_uni = u["University"]
-                    set_page("Universities")
-        if row_idx < (len(uni_records) - 1) // 5:
-            st.markdown('<div class="home-row-gap-v53"></div>', unsafe_allow_html=True)
+        if len(featured_df_v207) == 0:
+            st.warning("No featured universities match your search/filter.")
+        else:
+            show_df_v207 = featured_df_v207.head(5).reset_index(drop=True)
+            cols_v207 = st.columns(len(show_df_v207), gap="medium")
+            for idx_v207, (_, u) in enumerate(show_df_v207.iterrows()):
+                uni_name_v207 = display_value_v53(u.get("University", "")) or "University"
+                location_v207 = _home_location_v207(u)
+                total_students_v207 = _home_total_students_v207(u)
+                intl_students_v207 = _home_international_students_v207(u)
+                image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""))
+                logo_html_v207 = _home_featured_logo_html_v207(u.get("University_Logo", ""), uni_name_v207)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+                with cols_v207[idx_v207]:
+                    st.markdown(f"""
+                    <div class="home-uni-card-v207">
+                        <div class="home-uni-image-wrap-v207">
+                            {image_html_v207}
+                            <div class="home-uni-featured-pill-v207">★ Featured</div>
+                        </div>
+                        <div class="home-uni-logo-overlap-v207">{logo_html_v207}</div>
+                        <div class="home-uni-body-v207">
+                            <h3>{_safe_html_v62(uni_name_v207)}</h3>
+                            <div class="home-uni-location-v207">
+                                <span>⌖</span><em>{_safe_html_v62(location_v207)}</em>
+                            </div>
+                            <div class="home-uni-stats-v207">
+                                <div><small>Total Students</small><b>{_safe_html_v62(total_students_v207)}</b></div>
+                                <div><small>International Students</small><b>{_safe_html_v62(intl_students_v207)}</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    if st.button("View Programs  →", key=f"home_view_programs_v207_{idx_v207}_{uni_name_v207}", use_container_width=True):
+                        st.session_state.selected_uni_v62 = str(uni_name_v207)
+                        st.session_state.selected_program_v109 = ""
+                        st.session_state.application_page_open_v113 = False
+                        set_page("Universities")
+                        st.rerun()
+
+        st.markdown("""
+        <div class="home-featured-note-v207">
+            <span>◇</span> All universities are official partners and recognized by the Korean Ministry of Education.
+        </div>
+        """, unsafe_allow_html=True)
 
     footer()
 
