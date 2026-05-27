@@ -8661,6 +8661,72 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     .footer-map-pattern-v209 {display: none !important;}
 }
 
+
+/* v210: fix scholarship credential icon and footer map overlap */
+.credential-scholarship-icon-v210 {
+    background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #F8FBFF 58%, #EEF5FF 100%) !important;
+    border: 1px solid rgba(228,234,243,.95) !important;
+    position: relative !important;
+}
+.credential-scholarship-icon-v210:before,
+.credential-scholarship-icon-v210:after {
+    content: "" !important;
+    position: absolute !important;
+    top: 20px !important;
+    bottom: 20px !important;
+    width: 2px !important;
+    background: #D5B45A !important;
+    opacity: .75 !important;
+}
+.credential-scholarship-icon-v210:before { left: 25px !important; transform: rotate(-22deg) !important; }
+.credential-scholarship-icon-v210:after { right: 25px !important; transform: rotate(22deg) !important; }
+.credential-scholarship-emoji-v210 {
+    position: relative !important;
+    z-index: 2 !important;
+    font-size: 48px !important;
+    line-height: 1 !important;
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    filter: drop-shadow(0 2px 4px rgba(16,24,40,.12)) !important;
+}
+.credential-card-v209,
+.credential-card-v209 * {
+    overflow-wrap: normal !important;
+}
+
+/* Move/subdue the map pattern so it does not cover the Location column */
+.premium-footer-v209 {
+    isolation: isolate !important;
+}
+.footer-map-pattern-v209 {
+    right: 24px !important;
+    top: 74px !important;
+    width: 330px !important;
+    height: 160px !important;
+    opacity: .08 !important;
+    z-index: 0 !important;
+}
+.premium-footer-v209:after {
+    z-index: 0 !important;
+}
+.premium-footer-grid-v209,
+.premium-footer-bottom-v209 {
+    position: relative !important;
+    z-index: 3 !important;
+}
+.footer-contact-card-v209:last-child {
+    background: rgba(0,20,47,.20) !important;
+    border-radius: 18px !important;
+}
+@media(max-width:1100px) {
+    .footer-map-pattern-v209 {
+        display: none !important;
+    }
+    .footer-contact-card-v209:last-child {
+        background: transparent !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -8793,15 +8859,10 @@ def footer():
     certified_badge = _footer_badge_icon_html_v197("assets/certified_information_badge_custom.png", "Korea Licence Development Institute logo")
     ieee_badge = _footer_badge_icon_html_v197("assets/eligibility_ieee_logo.png", "IEEE award logo")
 
+    # v210: Safe scholarship icon. Avoid inline SVG rendering issue that showed raw HTML/code block.
     scholarship_icon = """
-    <div class="credential-logo-wrap-v209 credential-scholarship-icon-v209" aria-label="Scholarship support icon">
-      <svg viewBox="0 0 96 96" role="img" focusable="false">
-        <circle cx="48" cy="48" r="44" fill="#F8FBFF" stroke="#E4EAF3" stroke-width="2"/>
-        <path d="M48 25 22 38l26 13 26-13-26-13Z" fill="#061A40"/>
-        <path d="M32 46v13c0 5 7 10 16 10s16-5 16-10V46L48 54 32 46Z" fill="#061A40" opacity=".92"/>
-        <path d="M70 41v17" stroke="#B99A42" stroke-width="4" stroke-linecap="round"/>
-        <path d="M25 62c7 9 15 13 23 13s16-4 23-13" fill="none" stroke="#B99A42" stroke-width="4" stroke-linecap="round"/>
-      </svg>
+    <div class="credential-logo-wrap-v209 credential-scholarship-icon-v210" aria-label="Scholarship support icon">
+      <span class="credential-scholarship-emoji-v210">🎓</span>
     </div>
     """
 

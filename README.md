@@ -1395,3 +1395,11 @@ v209:
 - Added dark navy gradient footer with four columns: Portal, Phone, Email, Location.
 - Updated email to koreastudypartner@gmail.com and kept phone/location as requested.
 - Added bottom footer links and responsive mobile stacking.
+
+
+v210:
+- Fixed the Scholarship Support credential card issue where raw HTML/code appeared over the card.
+- Replaced the inline SVG scholarship icon with a safe simple scholarship/education icon.
+- Fixed the footer world-map pattern so it no longer overlaps or hides the Location column.
+- Reduced and repositioned the map pattern opacity/size.
+- Kept the rest of the website unchanged.
