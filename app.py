@@ -724,18 +724,23 @@ def handle_home_query_navigation_v69():
         go = ""
     if isinstance(go, list):
         go = go[0] if go else ""
+    go = str(go or "").strip().lower()
+
     if go == "signup":
         st.session_state.page = "Partner Sign Up"
         try:
             del st.query_params["go"]
         except Exception:
             pass
+        st.rerun()
+
     elif go == "universities":
         st.session_state.page = "Universities"
         try:
             del st.query_params["go"]
         except Exception:
             pass
+        st.rerun()
 
 
 
@@ -16779,6 +16784,10 @@ def admin_applications_page_v125():
 
     close_shell()
 
+
+# v206: process Home hero button query parameters before routing
+# This makes Apply for Partner Access and Explore Universities actually navigate.
+handle_home_query_navigation_v69()
 
 # Routing
 if not st.session_state.logged_in:

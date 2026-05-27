@@ -1357,3 +1357,12 @@ v205:
 - Kept “Explore Universities” clickable.
 - Replaced the separate lower Streamlit buttons with clickable HTML form buttons in the original visual location.
 - Forms use target=_self, so they stay in the same browser tab.
+
+
+v206:
+- Fixed the Home hero buttons actually navigating.
+- v205 made the buttons clickable, but the ?go=signup / ?go=universities handler was not being called before routing.
+- Added handle_home_query_navigation_v69() before the main routing block.
+- Added st.rerun() after changing page so the app immediately opens the correct page.
+- Apply for Partner Access now opens Partner Sign Up.
+- Explore Universities now opens the Universities page.
