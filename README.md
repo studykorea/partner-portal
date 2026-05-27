@@ -1425,3 +1425,9 @@ v213:
 - Removed the remaining white space below the footer by overriding Streamlit bottom padding and extending footer background.
 - Replaced the abstract dotted map with a real world map graphic generated from Basemap.
 - Kept the footer layout and the rest of the website unchanged.
+
+
+v214:
+- Updated only the Universities Information listing section.
+- Added professional 3-column university cards with admin-uploaded images/logos only.
+- Added dynamic program-level Admissions Snapshot and filters for location, program type, status, intake/round, and sort.

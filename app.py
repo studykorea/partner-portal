@@ -9192,6 +9192,39 @@ section.main > div,
     }
 }
 
+
+/* v214: Universities Information modern listing grid only */
+.universities-wrap-v214{padding:22px 26px 0 26px!important;background:#fff!important}
+.uni-list-heading-v214{display:flex!important;justify-content:space-between!important;align-items:flex-start!important;gap:20px!important;margin:10px 0 24px 0!important}
+.uni-list-heading-v214 h1{color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-size:36px!important;line-height:1.1!important;font-weight:950!important;letter-spacing:-.02em!important;margin:0 0 8px 0!important}
+.uni-list-heading-v214 p{color:#667085!important;-webkit-text-fill-color:#667085!important;font-size:15px!important;margin:0!important}
+.how-it-works-v214{height:44px!important;padding:0 18px!important;border-radius:10px!important;border:1px solid #DCE6F4!important;background:#fff!important;color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-weight:850!important;box-shadow:0 8px 20px rgba(16,24,40,.06)!important}
+.uni-filter-panel-v214{background:#fff!important;border:1px solid #E5ECF6!important;border-radius:18px!important;padding:16px!important;box-shadow:0 14px 32px rgba(16,24,40,.06)!important;margin-bottom:18px!important}
+.uni-info-bar-v214{display:flex!important;align-items:center!important;gap:10px!important;background:#F7FAFF!important;border:1px solid #DCE6F4!important;color:#344054!important;-webkit-text-fill-color:#344054!important;border-radius:12px!important;padding:13px 16px!important;margin:18px 0 22px 0!important;font-size:14px!important}
+.uni-info-icon-v214{width:20px!important;height:20px!important;border-radius:50%!important;border:1px solid #1687E8!important;color:#1687E8!important;-webkit-text-fill-color:#1687E8!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-weight:950!important;flex:0 0 auto!important}
+.uni-list-card-v214{background:#fff!important;border:1px solid #DCE6F4!important;border-radius:18px!important;overflow:hidden!important;box-shadow:0 16px 36px rgba(16,24,40,.08)!important;min-height:520px!important;display:flex!important;flex-direction:column!important;position:relative!important;margin-bottom:24px!important}
+.uni-list-cover-v214{height:142px!important;background:linear-gradient(135deg,#EAF1FA,#F8FBFF)!important;position:relative!important;overflow:hidden!important}
+.uni-list-cover-img-v214{width:100%!important;height:142px!important;object-fit:cover!important;display:block!important}
+.uni-list-cover-placeholder-v214{height:142px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#98A2B3!important;-webkit-text-fill-color:#98A2B3!important;font-weight:850!important}
+.uni-list-heart-v214{position:absolute!important;top:14px!important;right:14px!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:25px!important;font-weight:900!important;text-shadow:0 3px 10px rgba(0,0,0,.35)!important}
+.uni-list-logo-wrap-v214{position:absolute!important;top:104px!important;left:28px!important;width:76px!important;height:76px!important;border-radius:50%!important;background:#fff!important;border:1px solid #E4EAF3!important;box-shadow:0 10px 24px rgba(16,24,40,.13)!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:3!important;overflow:hidden!important}
+.uni-list-logo-img-v214{width:62px!important;height:62px!important;object-fit:contain!important;display:block!important}
+.uni-list-logo-placeholder-v214{width:62px!important;height:62px!important;border-radius:50%!important;background:#F4F7FB!important;color:#98A2B3!important;-webkit-text-fill-color:#98A2B3!important;display:flex!important;align-items:center!important;justify-content:center!important;font-weight:850!important;font-size:12px!important}
+.uni-list-body-v214{padding:58px 20px 18px 20px!important;flex:1 1 auto!important;display:flex!important;flex-direction:column!important}
+.uni-list-body-v214 h3{color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-size:20px!important;line-height:1.22!important;font-weight:950!important;letter-spacing:-.01em!important;margin:0 0 10px 0!important;min-height:50px!important}
+.uni-list-location-v214{display:flex!important;align-items:center!important;gap:8px!important;min-height:26px!important;margin:0 0 14px 0!important}
+.uni-list-location-v214 span{color:#344054!important;-webkit-text-fill-color:#344054!important;font-size:16px!important;flex:0 0 auto!important}
+.uni-list-location-v214 em{color:#344054!important;-webkit-text-fill-color:#344054!important;font-style:normal!important;font-weight:650!important;font-size:13px!important;line-height:1.3!important}
+.uni-list-stats-v214{display:grid!important;grid-template-columns:1fr 1fr!important;border:1px solid #E4EAF3!important;border-radius:10px!important;overflow:hidden!important;margin:8px 0 14px 0!important}
+.uni-list-stats-v214 div{min-height:62px!important;padding:10px 12px!important;background:#fff!important;border-right:1px solid #E4EAF3!important;position:relative!important;display:grid!important;grid-template-columns:26px 1fr!important;column-gap:8px!important;align-items:center!important}
+.uni-list-stats-v214 div:last-child{border-right:0!important}.stat-icon-v214{grid-row:1/span 2!important;width:26px!important;height:26px!important;border-radius:8px!important;background:#F3F7FC!important;color:#061A40!important;-webkit-text-fill-color:#061A40!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:15px!important}
+.uni-list-stats-v214 small{color:#667085!important;-webkit-text-fill-color:#667085!important;font-size:11px!important;line-height:1.15!important;font-weight:750!important}.uni-list-stats-v214 b{color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-size:14px!important;line-height:1.15!important;font-weight:950!important;white-space:nowrap!important}
+.admission-title-v214{color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-size:13px!important;font-weight:950!important;margin:2px 0 8px 0!important}.admission-list-v214{display:flex!important;flex-direction:column!important;gap:6px!important;margin-bottom:10px!important}.admission-row-v214{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;min-height:22px!important}.admission-program-v214{color:#061A40!important;-webkit-text-fill-color:#061A40!important;font-size:12.5px!important;font-weight:800!important}.admission-badge-v214{border-radius:999px!important;padding:5px 9px!important;font-size:11px!important;font-weight:900!important;white-space:nowrap!important}
+.admission-open-v214,.admission-left-v214{background:#DFF6E6!important;color:#067A35!important;-webkit-text-fill-color:#067A35!important}.admission-soon-v214{background:#FFF1CE!important;color:#B35C00!important;-webkit-text-fill-color:#B35C00!important}.admission-closed-v214{background:#FEE4E2!important;color:#B42318!important;-webkit-text-fill-color:#B42318!important}.admission-empty-v214{color:#667085!important;-webkit-text-fill-color:#667085!important;font-size:12px!important;padding:8px 0!important}.scholarship-link-v214{color:#005BDB!important;-webkit-text-fill-color:#005BDB!important;font-size:12px!important;font-weight:850!important;margin:2px 0 10px 0!important}
+.uni-detail-form-v214{margin:auto 0 0 0!important;padding:0!important;width:100%!important}.uni-detail-btn-v214{width:100%!important;min-height:48px!important;border:0!important;border-radius:10px!important;background:#001F48!important;color:#fff!important;-webkit-text-fill-color:#fff!important;padding:0 18px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:16px!important;font-size:14px!important;font-weight:950!important;cursor:pointer!important;box-shadow:0 10px 20px rgba(0,31,72,.16)!important;position:relative!important}.uni-detail-btn-v214 span,.uni-detail-btn-v214 b{color:#fff!important;-webkit-text-fill-color:#fff!important}.uni-detail-btn-v214 b{position:absolute!important;right:18px!important;font-size:20px!important}.uni-detail-btn-v214:hover{background:#053B7A!important;transform:translateY(-1px)!important}.uni-row-gap-v214{height:4px!important}
+@media(max-width:1200px){.uni-list-card-v214{min-height:545px!important}.uni-list-body-v214 h3{font-size:18px!important}.admission-badge-v214{font-size:10px!important;padding:5px 7px!important}}
+@media(max-width:900px){.universities-wrap-v214{padding:18px 16px 0 16px!important}.uni-list-heading-v214{flex-direction:column!important}.uni-list-heading-v214 h1{font-size:30px!important}.uni-list-card-v214{min-height:auto!important}}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -13993,16 +14026,286 @@ def _render_university_summary_v62(u, key_suffix):
         st.rerun()
 
 
+def _uni_list_clean_number_v214(value, fallback="1,000"):
+    s = display_clean_v50(value)
+    if not s:
+        return fallback
+    s = re.sub(r"\s*(international\s+students?|foreign\s+students?|total\s+students?|students?)\s*$", "", s, flags=re.I).strip()
+    return s or fallback
+
+def _uni_list_location_v214(row):
+    loc = display_clean_v50(row.get("Location", ""))
+    reg = display_clean_v50(row.get("Region", ""))
+    country = display_clean_v50(row.get("Country", ""))
+    if loc and country and country.lower() not in loc.lower():
+        return f"{loc}, {country}"
+    if loc:
+        return loc
+    if reg:
+        return reg
+    return "Location not updated"
+
+def _uni_list_cover_html_v214(row):
+    encoded = b64(row.get("Image", ""))
+    if encoded:
+        return f'<img class="uni-list-cover-img-v214" src="data:image/jpeg;base64,{encoded}" alt="University cover image">'
+    return '<div class="uni-list-cover-placeholder-v214">University image</div>'
+
+def _uni_list_logo_html_v214(row):
+    encoded = b64(row.get("University_Logo", ""))
+    if encoded:
+        return f'<img class="uni-list-logo-img-v214" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(row.get("University", "University"))} logo">'
+    return '<div class="uni-list-logo-placeholder-v214">Logo</div>'
+
+def _date_val_v214(row, candidates):
+    for c in candidates:
+        v = row.get(c, "")
+        if display_clean_v50(v):
+            return v
+    return ""
+
+def _program_presence_text_v214(university_name):
+    try:
+        crit = criteria()
+        if crit is not None and len(crit) and "University" in crit.columns:
+            sub = crit[crit["University"].astype(str).str.strip().str.lower() == str(university_name).strip().lower()]
+            if len(sub):
+                return " ".join(map(str, sub.values.flatten())).lower()
+    except Exception:
+        pass
+    return ""
+
+def _has_program_v214(row, slug, crit_text=""):
+    slug = str(slug or "").lower()
+    if slug == "undergraduate":
+        date_cols = ["UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date", "Undergraduate_Open_Date", "Undergraduate_Close_Date"]
+        text_hit = bool(re.search(r"\bundergraduate\b|\bbachelor\b|\bbba\b|\bba\b|\bbs\b", crit_text))
+    elif slug == "graduate":
+        date_cols = ["Graduate_Open_Date", "Graduate_Close_Date", "Masters_Open_Date", "Masters_Close_Date", "PhD_Open_Date", "PhD_Close_Date"]
+        text_hit = bool(re.search(r"\bgraduate\b|\bmaster\b|\bmasters\b|\bph\.?d\b|\bphd\b|\bdoctoral\b|\bmba\b|\bma\b|\bms\b", crit_text))
+    else:
+        date_cols = ["KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date", "Language_Open_Date", "Language_Close_Date"]
+        text_hit = bool(re.search(r"\bklp\b|\beap\b|\bkorean language\b|\blanguage program\b|\benglish academic\b", crit_text))
+    has_dates = any(display_clean_v50(row.get(c, "")) for c in date_cols)
+    return bool(has_dates or text_hit)
+
+def _program_dates_v214(row, slug, round_name=""):
+    general_open = row.get("Application_Open_Date", "") or row.get("Application Open Date", "")
+    general_close = row.get("Application_Close_Date", "") or row.get("Application Close Date", "")
+    slug = str(slug or "").lower()
+    r2 = "2" in str(round_name or "").lower()
+
+    if slug == "undergraduate":
+        if r2:
+            open_cols = ["UG_Round2_Open_Date", "UG_Round_2_Open_Date", "Undergraduate_Round2_Open_Date", "Undergraduate_Round_2_Open_Date", "UG_Second_Round_Open_Date"]
+            close_cols = ["UG_Round2_Close_Date", "UG_Round_2_Close_Date", "Undergraduate_Round2_Close_Date", "Undergraduate_Round_2_Close_Date", "UG_Second_Round_Close_Date"]
+        else:
+            open_cols = ["UG_Open_Date", "UG_New_Open_Date", "UG_Transfer_Open_Date", "Undergraduate_Open_Date"]
+            close_cols = ["UG_Close_Date", "UG_New_Close_Date", "UG_Transfer_Close_Date", "Undergraduate_Close_Date"]
+    elif slug == "graduate":
+        if r2:
+            open_cols = ["Graduate_Round2_Open_Date", "Graduate_Round_2_Open_Date", "Grad_Round2_Open_Date", "Masters_Round2_Open_Date"]
+            close_cols = ["Graduate_Round2_Close_Date", "Graduate_Round_2_Close_Date", "Grad_Round2_Close_Date", "Masters_Round2_Close_Date"]
+        else:
+            open_cols = ["Graduate_Open_Date", "Masters_Open_Date", "PhD_Open_Date"]
+            close_cols = ["Graduate_Close_Date", "Masters_Close_Date", "PhD_Close_Date"]
+    else:
+        if r2:
+            open_cols = ["KLP_EAP_Round2_Open_Date", "KLP_EAP_Round_2_Open_Date", "KLP_Round2_Open_Date", "EAP_Round2_Open_Date", "Language_Round2_Open_Date"]
+            close_cols = ["KLP_EAP_Round2_Close_Date", "KLP_EAP_Round_2_Close_Date", "KLP_Round2_Close_Date", "EAP_Round2_Close_Date", "Language_Round2_Close_Date"]
+        else:
+            open_cols = ["KLP_EAP_Open_Date", "KLP_Open_Date", "EAP_Open_Date", "Language_Open_Date"]
+            close_cols = ["KLP_EAP_Close_Date", "KLP_Close_Date", "EAP_Close_Date", "Language_Close_Date"]
+
+    open_d = _date_val_v214(row, open_cols)
+    close_d = _date_val_v214(row, close_cols)
+    return open_d or general_open, close_d or general_close
+
+def _program_status_v214(open_date_value, close_date_value, fallback_status="", round_label=""):
+    today = datetime.now().date()
+    open_d = _parse_date_v66(open_date_value)
+    close_d = _parse_date_v66(close_date_value)
+    prefix = f"{round_label}: " if round_label else ""
+
+    if open_d and today < open_d:
+        days_until = (open_d - today).days
+        if days_until <= 5:
+            return f"{round_label} Opening Soon" if round_label else "Opening Soon", "soon"
+        return f"{round_label} Closed" if round_label else "Admission Closed", "closed"
+    if open_d and close_d and open_d <= today <= close_d:
+        days_left = (close_d - today).days + 1
+        if days_left <= 4:
+            return f"{prefix}{days_left} Day{'s' if days_left != 1 else ''} Left", "left"
+        return f"{round_label} Open" if round_label else "Admission Open", "open"
+    if close_d and today > close_d:
+        return f"{round_label} Closed" if round_label else "Admission Closed", "closed"
+    if close_d and today <= close_d:
+        days_left = (close_d - today).days + 1
+        if days_left <= 4:
+            return f"{prefix}{days_left} Day{'s' if days_left != 1 else ''} Left", "left"
+        return f"{round_label} Open" if round_label else "Admission Open", "open"
+
+    fs = str(fallback_status or "").lower()
+    if "soon" in fs:
+        return f"{round_label} Opening Soon" if round_label else "Opening Soon", "soon"
+    if "open" in fs:
+        return f"{round_label} Open" if round_label else "Admission Open", "open"
+    if "closed" in fs or "close" in fs:
+        return f"{round_label} Closed" if round_label else "Admission Closed", "closed"
+    return "Admission Closed", "closed"
+
+def _round2_exists_v214(row, slug):
+    slug = str(slug or "").lower()
+    if slug == "undergraduate":
+        cols = ["UG_Round2_Open_Date", "UG_Round_2_Open_Date", "Undergraduate_Round2_Open_Date", "Undergraduate_Round_2_Open_Date", "UG_Second_Round_Open_Date"]
+    elif slug == "graduate":
+        cols = ["Graduate_Round2_Open_Date", "Graduate_Round_2_Open_Date", "Grad_Round2_Open_Date", "Masters_Round2_Open_Date"]
+    else:
+        cols = ["KLP_EAP_Round2_Open_Date", "KLP_EAP_Round_2_Open_Date", "KLP_Round2_Open_Date", "EAP_Round2_Open_Date", "Language_Round2_Open_Date"]
+    return any(display_clean_v50(row.get(c, "")) for c in cols)
+
+def _admission_snapshot_v214(row, crit_text=""):
+    programs = [("Undergraduate", "undergraduate"), ("Graduate (Masters/Ph.D.)", "graduate"), ("KLP / EAP", "language")]
+    rows = []
+    for label, slug in programs:
+        if not _has_program_v214(row, slug, crit_text):
+            continue
+        use_round2 = _round2_exists_v214(row, slug)
+        open_d, close_d = _program_dates_v214(row, slug, "Round 2" if use_round2 else "")
+        status, cls = _program_status_v214(open_d, close_d, row.get("Application_Status", ""), "Round 2" if use_round2 else "")
+        rows.append({"label": label, "slug": slug, "status": status, "class": cls, "open": open_d, "close": close_d, "round": "Round 2" if use_round2 else "Round 1"})
+    return rows
+
+def _admission_snapshot_html_v214(row, crit_text=""):
+    rows = _admission_snapshot_v214(row, crit_text)
+    if not rows:
+        return '<div class="admission-empty-v214">Admission dates not updated</div>'
+    html = ""
+    for r in rows:
+        html += f'<div class="admission-row-v214"><span class="admission-program-v214">{_safe_html_v62(r["label"])}</span><span class="admission-badge-v214 admission-{_safe_html_v62(r["class"])}-v214">{_safe_html_v62(r["status"])}</span></div>'
+    return html
+
+def _row_matches_program_v214(row, program_filter, crit_text=""):
+    if program_filter == "All":
+        return True
+    slug = {"Undergraduate": "undergraduate", "Graduate": "graduate", "KLP / EAP": "language"}.get(program_filter, "")
+    return _has_program_v214(row, slug, crit_text)
+
+def _row_matches_status_v214(row, status_filter, program_filter, crit_text=""):
+    if status_filter == "All":
+        return True
+    wanted = str(status_filter).lower()
+    rows = _admission_snapshot_v214(row, crit_text)
+    if program_filter != "All":
+        slug = {"Undergraduate": "undergraduate", "Graduate": "graduate", "KLP / EAP": "language"}.get(program_filter, "")
+        rows = [r for r in rows if r["slug"] == slug]
+    for r in rows:
+        s = r["status"].lower()
+        c = r["class"].lower()
+        if wanted == "open" and (c == "open" or ("open" in s and "soon" not in s)):
+            return True
+        if wanted == "opening soon" and (c == "soon" or "opening soon" in s):
+            return True
+        if wanted == "days left" and (c == "left" or "day" in s):
+            return True
+        if wanted == "closed" and (c == "closed" or "closed" in s):
+            return True
+    return False
+
+def _row_matches_round_v214(row, round_filter, program_filter, crit_text=""):
+    if round_filter == "All":
+        return True
+    rows = _admission_snapshot_v214(row, crit_text)
+    if program_filter != "All":
+        slug = {"Undergraduate": "undergraduate", "Graduate": "graduate", "KLP / EAP": "language"}.get(program_filter, "")
+        rows = [r for r in rows if r["slug"] == slug]
+    return any(str(r.get("round", "")).lower() == str(round_filter).lower() for r in rows)
+
+def _soonest_close_v214(row, crit_text=""):
+    dates = []
+    for r in _admission_snapshot_v214(row, crit_text):
+        d = _parse_date_v66(r.get("close", ""))
+        if d:
+            dates.append(d)
+    return min(dates).toordinal() if dates else 99999999
+
+def _scholarship_has_details_v214(university_name):
+    try:
+        sch = scholarship_rules()
+        if sch is not None and len(sch) and "University" in sch.columns:
+            sub = sch[sch["University"].astype(str).str.strip().str.lower() == str(university_name).strip().lower()]
+            return len(sub) > 0
+    except Exception:
+        pass
+    return False
+
+def _render_university_listing_card_v214(row, key_suffix):
+    uni = display_clean_v50(row.get("University", "")) or "University"
+    crit_text = _program_presence_text_v214(uni)
+    cover_html = _uni_list_cover_html_v214(row)
+    logo_html = _uni_list_logo_html_v214(row)
+    location = _uni_list_location_v214(row)
+    total_students = _uni_list_clean_number_v214(student_count_v53(row), "1,000")
+    intl_students = _uni_list_clean_number_v214(intl_count_v53(row), "1,000")
+    admission_html = _admission_snapshot_html_v214(row, crit_text)
+    scholarship_link = '<div class="scholarship-link-v214">Scholarship details →</div>' if _scholarship_has_details_v214(uni) else ""
+    html = f'''<div class="uni-list-card-v214">
+<div class="uni-list-cover-v214">{cover_html}<div class="uni-list-heart-v214">♡</div></div>
+<div class="uni-list-logo-wrap-v214">{logo_html}</div>
+<div class="uni-list-body-v214">
+<h3>{_safe_html_v62(uni)}</h3>
+<div class="uni-list-location-v214"><span>⌖</span><em>{_safe_html_v62(location)}</em></div>
+<div class="uni-list-stats-v214">
+<div><span class="stat-icon-v214">♙</span><small>Total Students</small><b>{_safe_html_v62(total_students)}</b></div>
+<div><span class="stat-icon-v214">◎</span><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></div>
+</div>
+<div class="admission-title-v214">Admissions Snapshot</div>
+<div class="admission-list-v214">{admission_html}</div>
+{scholarship_link}
+<form method="get" target="_self" class="uni-detail-form-v214">
+<input type="hidden" name="unidetail" value="{_safe_html_v62(uni)}">
+<button type="submit" class="uni-detail-btn-v214"><span>View Details</span><b>→</b></button>
+</form>
+</div>
+</div>'''
+    st.markdown(html, unsafe_allow_html=True)
+
+
+
 def universities_page(public=False):
     if public:
         header()
-        st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
+        st.markdown('<div class="universities-wrap-v214">', unsafe_allow_html=True)
     else:
         dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
-        st.markdown('<div class="universities-wrap-v32">', unsafe_allow_html=True)
+        st.markdown('<div class="universities-wrap-v214">', unsafe_allow_html=True)
 
-    st.title("Universities Information")
-    st.caption("Filter universities by location/city, application status, intake, and scholarship level.")
+    try:
+        uni_detail_q_v214 = st.query_params.get("unidetail", "")
+    except Exception:
+        uni_detail_q_v214 = ""
+    if isinstance(uni_detail_q_v214, list):
+        uni_detail_q_v214 = uni_detail_q_v214[0] if uni_detail_q_v214 else ""
+    if uni_detail_q_v214:
+        try:
+            from urllib.parse import unquote_plus
+            st.session_state.selected_uni_v62 = unquote_plus(str(uni_detail_q_v214))
+            st.session_state.selected_program_v109 = ""
+            st.session_state.application_page_open_v113 = False
+            del st.query_params["unidetail"]
+            st.rerun()
+        except Exception:
+            pass
+
+    st.markdown("""
+    <div class="uni-list-heading-v214">
+        <div>
+            <h1>Universities Information</h1>
+            <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
+        </div>
+        <button class="how-it-works-v214">ⓘ How It Works</button>
+    </div>
+    """, unsafe_allow_html=True)
 
     df = universities().copy()
     if df is None or len(df) == 0:
@@ -14014,104 +14317,87 @@ def universities_page(public=False):
             close_shell()
         return
 
-    for col in ["University", "Location", "Region", "Intake", "Application_Status", "Application_Open_Date", "Application_Close_Date", "UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date", "Graduate_Open_Date", "Graduate_Close_Date", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date", "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Language_School_Homepage", "Promotional_Materials", "Facebook_Link", "Instagram_Link", "YouTube_Link", "SNS_Information", "Address", "School_Size",
-                "Representative_Phone", "Representative_Fax", "International_Students", "Tuition_Range", "Accreditation_Status", "Accreditation_Until", "IEQAS_Badge_Image", "IEQAS_Badge_Image_Data"]:
+    needed_cols_v214 = [
+        "University", "Location", "Region", "Country", "Intake", "Application_Status",
+        "Application_Open_Date", "Application_Close_Date",
+        "UG_Open_Date", "UG_Close_Date", "UG_New_Open_Date", "UG_New_Close_Date", "UG_Transfer_Open_Date", "UG_Transfer_Close_Date",
+        "Graduate_Open_Date", "Graduate_Close_Date", "KLP_EAP_Open_Date", "KLP_EAP_Close_Date", "KLP_Open_Date", "KLP_Close_Date", "EAP_Open_Date", "EAP_Close_Date",
+        "UG_Round2_Open_Date", "UG_Round2_Close_Date", "UG_Round_2_Open_Date", "UG_Round_2_Close_Date",
+        "Graduate_Round2_Open_Date", "Graduate_Round2_Close_Date", "Graduate_Round_2_Open_Date", "Graduate_Round_2_Close_Date",
+        "KLP_EAP_Round2_Open_Date", "KLP_EAP_Round2_Close_Date", "KLP_EAP_Round_2_Open_Date", "KLP_EAP_Round_2_Close_Date",
+        "Overview", "Image", "Image_Gallery", "University_Logo", "Homepage", "Address", "School_Size", "Total_Students",
+        "International_Students", "Foreign_Students", "Tuition_Range", "detailPageUrl", "Detail_Page_URL"
+    ]
+    for col in needed_cols_v214:
         if col not in df.columns:
             df[col] = ""
 
-    scholarship_map = university_max_scholarship_map_v62()
-    df["_Max_Scholarship"] = df["University"].astype(str).map(lambda x: scholarship_map.get(x.strip(), 0.0))
     df["_Location_Filter"] = df.apply(_location_value_v62, axis=1)
+    df["_Crit_Text_v214"] = df["University"].astype(str).map(_program_presence_text_v214)
+    df["_Total_Students_Num_v214"] = df.apply(lambda r: _scholarship_percent_to_number_v62(str(student_count_v53(r)).replace(",", "")), axis=1)
+    df["_Intl_Students_Num_v214"] = df.apply(lambda r: _scholarship_percent_to_number_v62(str(intl_count_v53(r)).replace(",", "")), axis=1)
+    df["_Soonest_Close_v214"] = df.apply(lambda r: _soonest_close_v214(r, r.get("_Crit_Text_v214", "")), axis=1)
 
-    st.markdown('<div class="filter-panel-v61">', unsafe_allow_html=True)
-    f1, f2, f3, f4 = st.columns([1.25, 1.0, 1.25, 1.55], gap="medium")
+    st.markdown('<div class="uni-filter-panel-v214">', unsafe_allow_html=True)
+    f1, f2, f3, f4, f5, f6 = st.columns([2.05, .95, .95, .95, .95, 1.05], gap="medium")
 
     with f1:
-        search = st.text_input("Search", placeholder="University, city, major, keyword")
+        search = st.text_input("Search", placeholder="Search university, city, program, keyword...", key="uni_search_v214")
     with f2:
-        location_values = sorted([
-            x for x in set(
-                list(df["Location"].dropna().astype(str).str.strip()) +
-                list(df["Region"].dropna().astype(str).str.strip())
-            )
-            if x and x.lower() not in ["nan", "none", "null"]
-        ])
-        location_filter = st.selectbox("Location / City", ["All"] + location_values)
+        location_values = sorted([x for x in set(list(df["Location"].dropna().astype(str).str.strip()) + list(df["Region"].dropna().astype(str).str.strip())) if x and x.lower() not in ["nan", "none", "null", "<na>"]])
+        location_filter = st.selectbox("Location / City", ["All"] + location_values, key="uni_location_v214")
     with f3:
-        intake_filter = st.selectbox(
-            "Application Status / Intake",
-            ["All", "Application Open", "Application Closed", "Application Opens Soon", "March Intake", "September Intake", "Spring Intake", "Fall Intake"]
-        )
+        program_filter = st.selectbox("Program Type", ["All", "Undergraduate", "Graduate", "KLP / EAP"], key="uni_program_v214")
     with f4:
-        sort_filter = st.selectbox(
-            "Sort",
-            ["Default", "Scholarship High to Low", "Scholarship Low to High", "University Name A-Z"]
-        )
-
+        status_filter = st.selectbox("Admission Status", ["All", "Open", "Opening Soon", "Days Left", "Closed"], key="uni_status_v214")
+    with f5:
+        round_filter = st.selectbox("Intake / Round", ["All", "Round 1", "Round 2", "March Intake", "September Intake", "Spring Intake", "Fall Intake"], key="uni_round_v214")
+    with f6:
+        sort_filter = st.selectbox("Sort By", ["Default", "Name", "Highest International Students", "Highest Total Students", "Soonest Closing Admission"], key="uni_sort_v214")
     st.markdown('</div>', unsafe_allow_html=True)
 
     filtered = df.copy()
 
     if search:
-        s = search.lower()
-        crit = criteria()
-        major_text = {}
-        if crit is not None and len(crit) and "University" in crit.columns:
-            for uni, group in crit.groupby("University"):
-                major_text[str(uni)] = " ".join(map(str, group.values.flatten())).lower()
-
-        filtered = filtered[
-            filtered.apply(
-                lambda r: (
-                    s in " ".join(map(str, r.values)).lower()
-                    or s in major_text.get(str(r.get("University", "")), "")
-                ),
-                axis=1
-            )
-        ]
+        s = str(search).lower().strip()
+        filtered = filtered[filtered.apply(lambda r: (s in " ".join(map(str, r.values)).lower() or s in str(r.get("_Crit_Text_v214", "")).lower()), axis=1)]
 
     if location_filter != "All":
         lf = location_filter.lower()
-        filtered = filtered[
-            filtered.apply(
-                lambda r: lf in str(r.get("Location", "")).lower() or lf in str(r.get("Region", "")).lower(),
-                axis=1
-            )
-        ]
+        filtered = filtered[filtered.apply(lambda r: lf in str(r.get("Location", "")).lower() or lf in str(r.get("Region", "")).lower() or lf in str(r.get("Country", "")).lower(), axis=1)]
 
-    if intake_filter != "All":
-        if intake_filter in ["Application Open", "Application Closed", "Application Opens Soon"]:
-            filtered = filtered[
-                filtered.apply(lambda r: _application_status_v66_from_row(r) == intake_filter, axis=1)
-            ]
-        elif intake_filter == "March Intake":
+    if program_filter != "All":
+        filtered = filtered[filtered.apply(lambda r: _row_matches_program_v214(r, program_filter, r.get("_Crit_Text_v214", "")), axis=1)]
+
+    if status_filter != "All":
+        filtered = filtered[filtered.apply(lambda r: _row_matches_status_v214(r, status_filter, program_filter, r.get("_Crit_Text_v214", "")), axis=1)]
+
+    if round_filter != "All":
+        if round_filter in ["Round 1", "Round 2"]:
+            filtered = filtered[filtered.apply(lambda r: _row_matches_round_v214(r, round_filter, program_filter, r.get("_Crit_Text_v214", "")), axis=1)]
+        elif round_filter == "March Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("march", na=False)]
-        elif intake_filter == "September Intake":
+        elif round_filter == "September Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("september", na=False)]
-        elif intake_filter == "Spring Intake":
+        elif round_filter == "Spring Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("spring|march", regex=True, na=False)]
-        elif intake_filter == "Fall Intake":
+        elif round_filter == "Fall Intake":
             filtered = filtered[filtered["Intake"].astype(str).str.lower().str.contains("fall|september", regex=True, na=False)]
 
-    if sort_filter == "Scholarship High to Low":
-        filtered = filtered.sort_values(["_Max_Scholarship", "University"], ascending=[False, True])
-    elif sort_filter == "Scholarship Low to High":
-        filtered = filtered.sort_values(["_Max_Scholarship", "University"], ascending=[True, True])
-    elif sort_filter == "University Name A-Z":
+    if sort_filter == "Name":
         filtered = filtered.sort_values("University", ascending=True)
+    elif sort_filter == "Highest International Students":
+        filtered = filtered.sort_values(["_Intl_Students_Num_v214", "University"], ascending=[False, True])
+    elif sort_filter == "Highest Total Students":
+        filtered = filtered.sort_values(["_Total_Students_Num_v214", "University"], ascending=[False, True])
+    elif sort_filter == "Soonest Closing Admission":
+        filtered = filtered.sort_values(["_Soonest_Close_v214", "University"], ascending=[True, True])
 
-    st.markdown(
-        f'''<div class="filter-summary-v61">
-Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
-<span>· Application status can be managed as Open, Closed, or Opens Soon. Scholarship sort uses the highest scholarship percentage in Scholarship Rules.</span>
-</div>''',
-        unsafe_allow_html=True,
-    )
+    st.markdown(f'''<div class="uni-info-bar-v214"><span class="uni-info-icon-v214">i</span><b>Showing {len(filtered)} of {len(df)} universities</b><span>· Admission status updates automatically based on official program dates. Dates may differ by Undergraduate, Graduate, KLP/EAP, and admission round.</span></div>''', unsafe_allow_html=True)
 
     if len(filtered) == 0:
         st.warning("No universities match the selected filters. Please adjust the filter options.")
 
-    # v109: open program detail page from clickable Undergraduate/Graduate/KLP-EAP cards.
     try:
         uni_query_v109 = st.query_params.get("uni", "")
         prog_query_v109 = st.query_params.get("programdetail", "")
@@ -14125,12 +14411,7 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
         from urllib.parse import unquote_plus
         new_uni_v109 = unquote_plus(str(uni_query_v109))
         new_prog_v109 = unquote_plus(str(prog_query_v109))
-        # v113: only clear application form when user changes university/program.
-        # Do not clear it on normal rerun after clicking Apply.
-        if (
-            st.session_state.get("selected_uni_v62", "") != new_uni_v109
-            or st.session_state.get("selected_program_v109", "") != new_prog_v109
-        ):
+        if (st.session_state.get("selected_uni_v62", "") != new_uni_v109 or st.session_state.get("selected_program_v109", "") != new_prog_v109):
             st.session_state.application_type_v109 = ""
             st.session_state.application_page_open_v113 = False
         st.session_state.selected_uni_v62 = new_uni_v109
@@ -14152,17 +14433,14 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
                     else:
                         st.session_state.selected_uni_v62 = ""
                     try:
-                        for q in ["uni", "programdetail"]:
+                        for q in ["uni", "programdetail", "unidetail"]:
                             if q in st.query_params:
                                 del st.query_params[q]
                     except Exception:
                         pass
                     st.rerun()
             with c_title:
-                if program_selected_v109:
-                    st.markdown(f"### Program Details for {selected}")
-                else:
-                    st.markdown(f"### Details for {selected}")
+                st.markdown(f"### {'Program Details for' if program_selected_v109 else 'Details for'} {selected}")
             if program_selected_v109:
                 render_program_detail_page_v109(selected_rows.iloc[0], program_selected_v109)
             else:
@@ -14171,17 +14449,20 @@ Showing <b>{len(filtered)}</b> of <b>{len(df)}</b> universities
             st.session_state.selected_uni_v62 = ""
             st.rerun()
     else:
-        for i, (_, u) in enumerate(filtered.iterrows()):
-            _render_university_summary_v62(u, i)
+        records = list(filtered.iterrows())
+        for row_start in range(0, len(records), 3):
+            cols = st.columns(3, gap="large")
+            for col_idx, item in enumerate(records[row_start:row_start+3]):
+                _, u = item
+                with cols[col_idx]:
+                    _render_university_listing_card_v214(u, f"{row_start}_{col_idx}")
+            st.markdown('<div class="uni-row-gap-v214"></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
     if public:
         footer()
     else:
         close_shell()
-
-
-
 
 
 def program_applies(rule_program, selected_program):
