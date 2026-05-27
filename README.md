@@ -1519,3 +1519,12 @@ v224:
 - Connected hero and filter into a cleaner premium section.
 - Made Filter button dark navy and aligned fields better.
 - Did not change university card, admission, database, or admin data logic.
+
+
+v225:
+- Fixed the marked navbar and filter buttons using marker-based CSS targeting.
+- Partner Sign Up is now targeted exactly via nav-signup-marker-v225.
+- Filter button is now targeted exactly via filter-primary-marker-v225.
+- Added right-side hero chips to remove the empty-looking hero area.
+- Fixed select boxes by hiding the unwanted cursor/vertical line inside Streamlit select controls.
+- Kept all dynamic university data, card data, admission logic, admin logic, and page functionality unchanged.

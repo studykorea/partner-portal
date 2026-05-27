@@ -11255,6 +11255,362 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]
     }
 }
 
+
+/* v225: real fix for marked navbar, hero empty area, and filter select/button issue */
+
+/* Remove accidental empty wrapper bars from previous patches */
+.top-nav-button-shell-v187,
+.uni-filter-panel-v214{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    overflow:hidden !important;
+}
+
+/* Page width and top spacing */
+.block-container{
+    padding-top:0 !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
+.universities-wrap-v214{
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:0 auto !important;
+    padding:0 0 30px 0 !important;
+}
+
+/* Actual navbar block */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:14px auto 26px auto !important;
+    padding:10px 16px !important;
+    min-height:76px !important;
+    border:1px solid #DCE6F4 !important;
+    border-radius:18px !important;
+    background:rgba(255,255,255,.98) !important;
+    box-shadow:0 14px 34px rgba(15,23,42,.08) !important;
+    align-items:center !important;
+}
+
+/* Better brand mark and text */
+.premium-public-brand-v223{
+    height:54px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+}
+.premium-public-brand-mark-v223{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(135deg,#3153D4 0%,#061A40 100%) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:17px !important;
+    box-shadow:0 10px 22px rgba(6,26,64,.24) !important;
+}
+.premium-public-brand-v223 strong{
+    display:block !important;
+    font-size:18px !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:-.02em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+}
+.premium-public-brand-v223 span{
+    display:block !important;
+    margin-top:4px !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    font-weight:750 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+}
+
+/* Base navbar button */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button{
+    height:48px !important;
+    min-height:48px !important;
+    border-radius:13px !important;
+    border:1px solid transparent !important;
+    background:transparent !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:14px !important;
+    font-weight:850 !important;
+    box-shadow:none !important;
+    padding:0 12px !important;
+    white-space:nowrap !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="stButton"] > button:hover{
+    background:#F3F7FF !important;
+    border-color:#D8E4F8 !important;
+    color:#1E3A8A !important;
+    -webkit-text-fill-color:#1E3A8A !important;
+}
+
+/* Marker-based exact styling for Login and Partner Sign Up */
+div[data-testid="column"]:has(.nav-login-marker-v225) div[data-testid="stButton"] > button{
+    background:#FFFFFF !important;
+    border:1px solid #CBD5E1 !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-weight:850 !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+div[data-testid="column"]:has(.nav-signup-marker-v225) div[data-testid="stButton"] > button{
+    background:linear-gradient(135deg,#061A40 0%,#123B8A 100%) !important;
+    border:1px solid #061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+    box-shadow:0 12px 26px rgba(6,26,64,.24) !important;
+}
+
+/* Hero: filled but clean, not empty */
+.uni-list-heading-v214{
+    min-height:235px !important;
+    margin:0 !important;
+    padding:38px 48px !important;
+    border-radius:24px 24px 0 0 !important;
+    border:1px solid #DDE8F7 !important;
+    border-bottom:0 !important;
+    background:
+      radial-gradient(circle at 72% 42%, rgba(63,91,214,.16), transparent 26%),
+      radial-gradient(circle at 90% 18%, rgba(14,165,233,.13), transparent 21%),
+      linear-gradient(135deg,#FFFFFF 0%,#F8FBFF 45%,#EEF5FF 100%) !important;
+    box-shadow:0 18px 42px rgba(15,23,42,.075) !important;
+    overflow:hidden !important;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:34px !important;
+}
+.uni-list-heading-v214::before{
+    content:"" !important;
+    position:absolute !important;
+    inset:0 !important;
+    background:
+      repeating-linear-gradient(135deg, rgba(30,58,138,.055) 0 1px, transparent 1px 16px),
+      linear-gradient(90deg, rgba(255,255,255,.90) 0%, rgba(255,255,255,.55) 43%, rgba(255,255,255,.10) 100%) !important;
+    pointer-events:none !important;
+}
+.uni-list-heading-v214::after{
+    content:"" !important;
+    position:absolute !important;
+    right:315px !important;
+    top:34px !important;
+    width:300px !important;
+    height:160px !important;
+    border-radius:999px !important;
+    background:radial-gradient(circle, rgba(49,83,212,.10), transparent 68%) !important;
+    pointer-events:none !important;
+}
+.uni-hero-copy-v223,
+.uni-hero-side-v225{
+    position:relative !important;
+    z-index:2 !important;
+}
+.uni-hero-copy-v223{
+    flex:1 1 auto !important;
+}
+.uni-breadcrumb-v223{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:7px 14px !important;
+    border-radius:999px !important;
+    background:#FFFFFF !important;
+    border:1px solid #E2E8F0 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-size:12px !important;
+    font-weight:850 !important;
+    margin-bottom:14px !important;
+    box-shadow:0 8px 18px rgba(15,23,42,.04) !important;
+}
+.uni-list-heading-v214 h1{
+    font-size:44px !important;
+    line-height:1.06 !important;
+    font-weight:950 !important;
+    letter-spacing:-.035em !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    margin:0 0 13px 0 !important;
+}
+.uni-list-heading-v214 p{
+    max-width:700px !important;
+    font-size:17px !important;
+    line-height:1.45 !important;
+    color:#475569 !important;
+    -webkit-text-fill-color:#475569 !important;
+    font-weight:650 !important;
+    margin:0 !important;
+}
+.uni-hero-side-v225{
+    width:260px !important;
+    flex:0 0 260px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:14px !important;
+}
+.how-it-works-v214{
+    height:54px !important;
+    width:100% !important;
+    padding:0 24px !important;
+    border-radius:15px !important;
+    border:1px solid #E2E8F0 !important;
+    background:#FFFFFF !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:15px !important;
+    font-weight:950 !important;
+    box-shadow:0 12px 26px rgba(15,23,42,.10) !important;
+}
+.uni-hero-mini-grid-v225{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+}
+.uni-hero-mini-grid-v225 span{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    height:34px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.75) !important;
+    border:1px solid rgba(203,213,225,.82) !important;
+    color:#334155 !important;
+    -webkit-text-fill-color:#334155 !important;
+    font-size:12px !important;
+    font-weight:850 !important;
+    box-shadow:0 6px 16px rgba(15,23,42,.04) !important;
+}
+
+/* Filter actual row/card */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+    width:100% !important;
+    margin:0 auto 22px auto !important;
+    padding:24px 24px !important;
+    border:1px solid #E2E8F0 !important;
+    border-radius:0 0 24px 24px !important;
+    background:#FFFFFF !important;
+    box-shadow:0 18px 45px rgba(15,23,42,.08) !important;
+    align-items:end !important;
+    position:relative !important;
+    z-index:5 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) label{
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:13px !important;
+    font-weight:850 !important;
+}
+
+/* Inputs/selects: remove ugly vertical cursor line in select text area */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div{
+    min-height:52px !important;
+    height:52px !important;
+    border-radius:12px !important;
+    border:1px solid #CBD5E1 !important;
+    background:#FFFFFF !important;
+    box-shadow:none !important;
+    font-size:15px !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] input{
+    caret-color:transparent !important;
+    color:transparent !important;
+    -webkit-text-fill-color:transparent !important;
+    width:1px !important;
+    min-width:1px !important;
+    padding:0 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] div,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] span{
+    font-size:15px !important;
+    font-weight:750 !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) input:focus,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] > div:focus-within{
+    border-color:#3F5BD6 !important;
+    box-shadow:0 0 0 3px rgba(63,91,214,.10) !important;
+}
+
+/* Marker-based Filter button */
+div[data-testid="column"]:has(.filter-primary-marker-v225) div[data-testid="stButton"] > button{
+    height:52px !important;
+    min-height:52px !important;
+    border-radius:12px !important;
+    border:none !important;
+    background:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-weight:950 !important;
+    font-size:15px !important;
+    box-shadow:0 10px 24px rgba(6,26,64,.22) !important;
+}
+
+/* Responsive */
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+        width:calc(100% - 22px) !important;
+        overflow-x:auto !important;
+        margin-bottom:18px !important;
+    }
+    .universities-wrap-v214{
+        width:calc(100% - 24px) !important;
+    }
+    .uni-list-heading-v214{
+        min-height:0 !important;
+        padding:30px 24px !important;
+        flex-direction:column !important;
+        align-items:flex-start !important;
+    }
+    .uni-hero-side-v225{
+        width:100% !important;
+        flex:auto !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:34px !important;
+    }
+}
+@media(max-width:760px){
+    .universities-wrap-v214{
+        width:calc(100% - 18px) !important;
+    }
+    .uni-list-heading-v214{
+        padding:24px 18px !important;
+        border-radius:18px 18px 0 0 !important;
+    }
+    .uni-list-heading-v214 h1{
+        font-size:30px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){
+        border-radius:0 0 18px 18px !important;
+        padding:16px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -11373,9 +11729,11 @@ def header():
                 if st.button(label + active, key=f"top_nav_public_btn_v187_{label}_{page_name}", use_container_width=True):
                     _go_page_v187(page_name)
         with nav_cols[7]:
+            st.markdown('<span class="nav-login-marker-v225"></span>', unsafe_allow_html=True)
             if st.button("Login", key="top_nav_login_btn_v187", use_container_width=True):
                 _go_page_v187("Login")
         with nav_cols[8]:
+            st.markdown('<span class="nav-signup-marker-v225"></span>', unsafe_allow_html=True)
             if st.button("Partner Sign Up", key="top_nav_signup_btn_v187", use_container_width=True):
                 _go_page_v187("Partner Sign Up")
 
@@ -16365,7 +16723,14 @@ def universities_page(public=False):
             <h1>Universities Information</h1>
             <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
         </div>
-        <button class="how-it-works-v214">ⓘ How It Works</button>
+        <div class="uni-hero-side-v225">
+            <button class="how-it-works-v214">ⓘ How It Works</button>
+            <div class="uni-hero-mini-grid-v225">
+                <span>Official Data</span>
+                <span>Program Dates</span>
+                <span>Smart Filters</span>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -16417,7 +16782,7 @@ def universities_page(public=False):
     with f6:
         sort_filter = st.selectbox("Sort By", ["Default", "Name", "Highest International Students", "Highest Total Students", "Soonest Closing Admission"], key="uni_sort_v214")
     with f7:
-        st.markdown('<div class="filter-button-spacer-v222"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="filter-button-spacer-v222"></div><span class="filter-primary-marker-v225"></span>', unsafe_allow_html=True)
         st.button("Filter", key="uni_filter_visual_btn_v222", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
