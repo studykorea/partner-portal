@@ -1463,3 +1463,11 @@ v218:
 - Reduced header height and removed floating location spacing.
 - University name and location are now tightly grouped beside the overlapping logo.
 - Stats section starts directly after the header block.
+
+
+v219:
+- Fixed only the university card header and logo style.
+- Removed the large white circular container/padding around uploaded university logos.
+- Uploaded logo now fills the logo area with object-fit: contain.
+- Logo, university name, and location remain grouped together beside the cover image.
+- Stats, admissions snapshot, scholarship link, filters, and buttons are unchanged.

@@ -9916,6 +9916,177 @@ section.main > div,
     }
 }
 
+
+/* v219: fix only university card header and logo style - remove large outer white logo circle */
+.uni-list-card-v214 .uni-list-cover-v214,
+.uni-list-card-v214 .uni-list-cover-img-v214,
+.uni-list-card-v214 .uni-list-cover-placeholder-v214{
+    height: 158px !important;
+}
+
+/* Header block: logo + name + location grouped together */
+.uni-list-card-v214 .uni-list-head-v216,
+.uni-list-card-v214 .uni-list-head-v215{
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+    margin-top: -44px !important;
+    margin-bottom: 10px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Uploaded logo should be the visible logo, not inside a big white container */
+.uni-list-card-v214 .uni-list-logo-wrap-v214{
+    width: 86px !important;
+    height: 86px !important;
+    min-width: 86px !important;
+    max-width: 86px !important;
+    flex: 0 0 86px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Make official uploaded logo fill the logo area */
+.uni-list-card-v214 .uni-list-logo-img-v214{
+    width: 86px !important;
+    height: 86px !important;
+    max-width: 86px !important;
+    max-height: 86px !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+/* Placeholder only when no logo is uploaded */
+.uni-list-card-v214 .uni-list-logo-placeholder-v214{
+    width: 86px !important;
+    height: 86px !important;
+    border-radius: 50% !important;
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 800 !important;
+    font-size: 13px !important;
+}
+
+/* Name and location block beside logo */
+.uni-list-card-v214 .uni-list-title-block-v215{
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 86px !important;
+    padding-top: 42px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+}
+
+.uni-list-card-v214 .uni-list-title-block-v215 h3{
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-height: 56px !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.015em !important;
+    color: #0F172A !important;
+    -webkit-text-fill-color: #0F172A !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+
+/* Location directly below university name */
+.uni-list-card-v214 .uni-list-location-v214,
+.uni-list-card-v214 .location-row-v216{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 20px !important;
+    max-height: 22px !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+    position: static !important;
+}
+
+.uni-list-card-v214 .uni-list-location-v214 svg.location-pin-svg-v216,
+.uni-list-card-v214 .location-row-v216 svg.location-pin-svg-v216{
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    flex: 0 0 16px !important;
+    color: #1E3A8A !important;
+    display: inline-block !important;
+}
+
+.uni-list-card-v214 .uni-list-location-v214 em,
+.uni-list-card-v214 .location-row-v216 em{
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    font-style: normal !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Keep the rest close after header without changing card sections */
+.uni-list-card-v214 .uni-list-stats-v214,
+.uni-list-card-v214 .stat-grid-v216{
+    margin-top: 2px !important;
+}
+
+@media(max-width:1200px){
+    .uni-list-card-v214 .uni-list-head-v216,
+    .uni-list-card-v214 .uni-list-head-v215{
+        gap: 16px !important;
+        margin-top: -42px !important;
+    }
+    .uni-list-card-v214 .uni-list-logo-wrap-v214,
+    .uni-list-card-v214 .uni-list-logo-img-v214,
+    .uni-list-card-v214 .uni-list-logo-placeholder-v214{
+        width: 82px !important;
+        height: 82px !important;
+        min-width: 82px !important;
+        max-width: 82px !important;
+        flex-basis: 82px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215{
+        padding-top: 40px !important;
+    }
+    .uni-list-card-v214 .uni-list-title-block-v215 h3{
+        font-size: 20px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
