@@ -1403,3 +1403,11 @@ v210:
 - Fixed the footer world-map pattern so it no longer overlaps or hides the Location column.
 - Reduced and repositioned the map pattern opacity/size.
 - Kept the rest of the website unchanged.
+
+
+v211:
+- Fixed the large side whitespace around the credential/footer sections by making them full browser width.
+- Removed unnecessary bottom whitespace in the footer.
+- Rebuilt the footer function with clean v211 classes to avoid previous raw-code/overlay issues.
+- Added a clearer dotted world map PNG asset on the right side of the footer.
+- Kept only the credential/footer section changed; other website sections are unchanged.
