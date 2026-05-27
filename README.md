@@ -1480,3 +1480,11 @@ v220:
 - Uploaded logos are centered with object-fit: contain and can be visually enlarged using logoScale.
 - Moved university name and location slightly lower so they do not touch the cover image line.
 - Kept stats, admissions, buttons, colors, filters, and data behavior unchanged.
+
+
+v221:
+- Fixed only the actual university logo image size inside the existing logo circle.
+- Logo circle remains the same size, but uploaded logos now use 94% of the circle area.
+- Default logoScale is now 1.15.
+- Admin can still set logoScale such as 1.3, 1.4, or 1.5 for logos with built-in white padding.
+- Placeholder text is not enlarged.

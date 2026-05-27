@@ -10261,6 +10261,62 @@ section.main > div,
     }
 }
 
+
+/* v221: fix only actual university logo image size inside existing circle */
+.uni-list-card-v214 .uni-list-logo-wrap-v214{
+    width: 86px !important;
+    height: 86px !important;
+    min-width: 86px !important;
+    min-height: 86px !important;
+    max-width: 86px !important;
+    max-height: 86px !important;
+    flex: 0 0 86px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+/* Make uploaded official logo much larger and clearer */
+.uni-list-card-v214 .uni-list-logo-img-v214{
+    width: 94% !important;
+    height: 94% !important;
+    max-width: 94% !important;
+    max-height: 94% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    transform-origin: center center !important;
+}
+
+/* Keep placeholder clean; do not enlarge placeholder text */
+.uni-list-card-v214 .uni-list-logo-placeholder-v214{
+    width: 86px !important;
+    height: 86px !important;
+    border-radius: 50% !important;
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+    font-weight: 800 !important;
+    font-size: 13px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Keep title spacing safe after larger logo */
+.uni-list-card-v214 .uni-list-title-block-v215{
+    padding-top: 52px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -15095,16 +15151,16 @@ def _uni_list_logo_html_v214(row):
         or row.get("Logo_Scale", "")
         or row.get("University_Logo_Scale", "")
         or row.get("Logo Scale", "")
-        or 1
+        or 1.15
     )
     try:
         logo_scale = float(str(scale_raw).strip())
         if logo_scale <= 0:
-            logo_scale = 1.0
+            logo_scale = 1.15
         if logo_scale > 2.2:
             logo_scale = 2.2
     except Exception:
-        logo_scale = 1.0
+        logo_scale = 1.15
 
     if encoded:
         return f'<img class="uni-list-logo-img-v214" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(row.get("University", "University"))} logo" style="transform: scale({logo_scale});">'
