@@ -1431,3 +1431,11 @@ v214:
 - Updated only the Universities Information listing section.
 - Added professional 3-column university cards with admin-uploaded images/logos only.
 - Added dynamic program-level Admissions Snapshot and filters for location, program type, status, intake/round, and sort.
+
+
+v215:
+- Adjusted only the Universities Information listing section.
+- Made filter controls cleaner and closer to the reference design.
+- Moved university logo, university name, and location into one aligned header row.
+- Reduced card height/spacing so all university cards look more consistent.
+- Kept dynamic admin/CMS data behavior unchanged.

@@ -9225,6 +9225,167 @@ section.main > div,
 @media(max-width:1200px){.uni-list-card-v214{min-height:545px!important}.uni-list-body-v214 h3{font-size:18px!important}.admission-badge-v214{font-size:10px!important;padding:5px 7px!important}}
 @media(max-width:900px){.universities-wrap-v214{padding:18px 16px 0 16px!important}.uni-list-heading-v214{flex-direction:column!important}.uni-list-heading-v214 h1{font-size:30px!important}.uni-list-card-v214{min-height:auto!important}}
 
+
+/* v215: make Universities Information cards match reference more closely */
+.universities-wrap-v214{
+    padding: 26px 30px 0 30px !important;
+}
+.uni-list-heading-v214{
+    margin-bottom: 20px !important;
+}
+.uni-list-heading-v214 h1{
+    font-size: 34px !important;
+}
+.uni-filter-panel-v214{
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 0 20px 0 !important;
+    background: transparent !important;
+}
+.uni-filter-panel-v214 label{
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    font-weight:750 !important;
+    font-size:13px !important;
+}
+.uni-filter-panel-v214 input,
+.uni-filter-panel-v214 div[data-baseweb="select"] > div{
+    min-height:54px !important;
+    border-radius:10px !important;
+    border:1px solid #D9E2F1 !important;
+    background:#fff !important;
+    box-shadow:0 8px 18px rgba(16,24,40,.04) !important;
+}
+.uni-info-bar-v214{
+    margin-top: 8px !important;
+    margin-bottom: 22px !important;
+}
+.uni-list-card-v214{
+    min-height: 430px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 28px rgba(16,24,40,.08) !important;
+    margin-bottom: 22px !important;
+}
+.uni-list-cover-v214,
+.uni-list-cover-img-v214,
+.uni-list-cover-placeholder-v214{
+    height: 130px !important;
+}
+.uni-list-body-v214{
+    padding: 0 18px 16px 18px !important;
+}
+.uni-list-head-v215{
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    min-height:96px !important;
+    margin-top:-38px !important;
+    margin-bottom: 4px !important;
+    position:relative !important;
+    z-index:4 !important;
+}
+.uni-list-logo-wrap-v214{
+    position: static !important;
+    width:76px !important;
+    height:76px !important;
+    flex:0 0 76px !important;
+    border-radius:50% !important;
+    background:#fff !important;
+    border:1px solid #E5ECF6 !important;
+    box-shadow:0 10px 24px rgba(16,24,40,.14) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+}
+.uni-list-logo-img-v214{
+    width:62px !important;
+    height:62px !important;
+    object-fit:contain !important;
+}
+.uni-list-title-block-v215{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    padding-top:32px !important;
+}
+.uni-list-body-v214 h3{
+    font-size:19px !important;
+    line-height:1.22 !important;
+    min-height:0 !important;
+    margin:0 0 7px 0 !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+}
+.uni-list-location-v214{
+    margin:0 !important;
+    min-height:20px !important;
+    gap:6px !important;
+}
+.uni-list-location-v214 span{
+    font-size:14px !important;
+    line-height:1 !important;
+}
+.uni-list-location-v214 em{
+    font-size:12.5px !important;
+    white-space:normal !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+}
+.uni-list-stats-v214{
+    margin: 8px 0 12px 0 !important;
+}
+.uni-list-stats-v214 div{
+    min-height:58px !important;
+    padding:9px 10px !important;
+    grid-template-columns:28px 1fr !important;
+}
+.stat-icon-v214{
+    width:28px !important;
+    height:28px !important;
+}
+.uni-list-stats-v214 small{
+    font-size:11px !important;
+}
+.uni-list-stats-v214 b{
+    font-size:13.5px !important;
+}
+.admission-title-v214{
+    margin:0 0 7px 0 !important;
+}
+.admission-list-v214{
+    gap:5px !important;
+    margin-bottom:10px !important;
+}
+.admission-row-v214{
+    min-height:21px !important;
+}
+.admission-program-v214{
+    font-size:12.5px !important;
+}
+.admission-badge-v214{
+    font-size:10.5px !important;
+    padding:4px 8px !important;
+}
+.uni-detail-btn-v214{
+    min-height:42px !important;
+    border-radius:8px !important;
+}
+@media(max-width:1200px){
+    .uni-list-card-v214{min-height:450px!important}
+    .uni-list-head-v215{gap:12px!important}
+    .uni-list-logo-wrap-v214{width:70px!important;height:70px!important;flex-basis:70px!important}
+    .uni-list-logo-img-v214{width:56px!important;height:56px!important}
+}
+@media(max-width:900px){
+    .uni-list-card-v214{min-height:auto!important}
+    .uni-list-head-v215{margin-top:-34px!important}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -14249,12 +14410,16 @@ def _render_university_listing_card_v214(row, key_suffix):
     intl_students = _uni_list_clean_number_v214(intl_count_v53(row), "1,000")
     admission_html = _admission_snapshot_html_v214(row, crit_text)
     scholarship_link = '<div class="scholarship-link-v214">Scholarship details →</div>' if _scholarship_has_details_v214(uni) else ""
-    html = f'''<div class="uni-list-card-v214">
+    html = f"""<div class="uni-list-card-v214">
 <div class="uni-list-cover-v214">{cover_html}<div class="uni-list-heart-v214">♡</div></div>
-<div class="uni-list-logo-wrap-v214">{logo_html}</div>
 <div class="uni-list-body-v214">
-<h3>{_safe_html_v62(uni)}</h3>
-<div class="uni-list-location-v214"><span>⌖</span><em>{_safe_html_v62(location)}</em></div>
+    <div class="uni-list-head-v215">
+        <div class="uni-list-logo-wrap-v214">{logo_html}</div>
+        <div class="uni-list-title-block-v215">
+            <h3>{_safe_html_v62(uni)}</h3>
+            <div class="uni-list-location-v214"><span>⌖</span><em>{_safe_html_v62(location)}</em></div>
+        </div>
+    </div>
 <div class="uni-list-stats-v214">
 <div><span class="stat-icon-v214">♙</span><small>Total Students</small><b>{_safe_html_v62(total_students)}</b></div>
 <div><span class="stat-icon-v214">◎</span><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></div>
@@ -14267,7 +14432,7 @@ def _render_university_listing_card_v214(row, key_suffix):
 <button type="submit" class="uni-detail-btn-v214"><span>View Details</span><b>→</b></button>
 </form>
 </div>
-</div>'''
+</div>"""
     st.markdown(html, unsafe_allow_html=True)
 
 
