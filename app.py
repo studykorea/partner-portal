@@ -735,9 +735,25 @@ def handle_home_query_navigation_v69():
         st.rerun()
 
     elif go == "universities":
+        try:
+            homeuni_v208 = st.query_params.get("homeuni", "")
+        except Exception:
+            homeuni_v208 = ""
+        if isinstance(homeuni_v208, list):
+            homeuni_v208 = homeuni_v208[0] if homeuni_v208 else ""
+        homeuni_v208 = str(homeuni_v208 or "").strip()
+        if homeuni_v208:
+            st.session_state.selected_uni_v62 = homeuni_v208
+            st.session_state.selected_program_v109 = ""
+            st.session_state.application_page_open_v113 = False
+
         st.session_state.page = "Universities"
         try:
             del st.query_params["go"]
+        except Exception:
+            pass
+        try:
+            del st.query_params["homeuni"]
         except Exception:
             pass
         st.rerun()
@@ -8237,6 +8253,151 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     .home-uni-card-v207 {margin-bottom: 16px !important;}
 }
 
+
+/* v208: Featured card circled-area fixes only */
+.home-uni-card-v207 {
+    min-height: 540px !important;
+    height: 540px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.home-uni-body-v207 {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 52px 18px 18px 18px !important;
+}
+.home-uni-body-v207 h3 {
+    min-height: 60px !important;
+    margin-bottom: 12px !important;
+    font-size: 21px !important;
+    line-height: 1.28 !important;
+}
+.home-uni-location-v207 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 30px !important;
+    margin: 0 0 18px 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+.home-location-pin-v208 {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.home-location-pin-v208 svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: #475467 !important;
+    display: block !important;
+}
+.home-uni-location-v207 em {
+    color: #344054 !important;
+    -webkit-text-fill-color: #344054 !important;
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+}
+.home-uni-stats-v207 {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 10px !important;
+    margin: 0 0 16px 0 !important;
+}
+.home-uni-stats-v207 div {
+    min-width: 0 !important;
+    min-height: 78px !important;
+    padding: 12px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+.home-uni-stats-v207 small {
+    color: #475467 !important;
+    -webkit-text-fill-color: #475467 !important;
+    font-size: 11px !important;
+    line-height: 1.18 !important;
+    font-weight: 800 !important;
+    margin: 0 0 7px 0 !important;
+    white-space: normal !important;
+    word-break: normal !important;
+}
+.home-uni-stats-v207 b {
+    color: #061A40 !important;
+    -webkit-text-fill-color: #061A40 !important;
+    font-size: 16px !important;
+    line-height: 1.18 !important;
+    font-weight: 950 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.home-view-programs-form-v208 {
+    margin: auto 0 0 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+.home-view-programs-btn-v208 {
+    width: 100% !important;
+    min-height: 54px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: #001F48 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    padding: 0 18px !important;
+    font-family: inherit !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-shadow: 0 10px 20px rgba(0,31,72,.16) !important;
+}
+.home-view-programs-btn-v208 span,
+.home-view-programs-btn-v208 b {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+.home-view-programs-btn-v208 b {
+    font-size: 22px !important;
+    line-height: 1 !important;
+}
+.home-view-programs-btn-v208:hover {
+    background: #053B7A !important;
+    transform: translateY(-1px) !important;
+}
+@media(max-width:1200px) {
+    .home-uni-card-v207 {
+        min-height: 550px !important;
+        height: 550px !important;
+    }
+    .home-uni-body-v207 h3 {
+        font-size: 19px !important;
+    }
+}
+@media(max-width:900px) {
+    .home-uni-card-v207 {
+        min-height: auto !important;
+        height: auto !important;
+    }
+    .home-uni-body-v207 {
+        min-height: 330px !important;
+    }
+    .home-uni-location-v207 {
+        white-space: normal !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -9078,11 +9239,21 @@ def _home_location_v207(u):
 
 def _home_total_students_v207(u):
     val = student_count_v53(u)
-    return val if val else "1,000"
+    return _home_clean_student_number_v208(val)
 
 def _home_international_students_v207(u):
     val = intl_count_v53(u)
-    return val if val else "1,000"
+    return _home_clean_student_number_v208(val)
+
+
+def _home_clean_student_number_v208(value):
+    """Keep dynamic value, but remove repeated label words such as 'students' from the displayed number."""
+    s = display_value_v53(value)
+    if not s:
+        return "1,000"
+    s = re.sub(r"\s*(international\s+students?|foreign\s+students?|total\s+students?|students?)\s*$", "", s, flags=re.I).strip()
+    return s if s else "1,000"
+
 
 def _home_filter_text_v207(u):
     parts = [
@@ -9221,22 +9392,27 @@ def home():
                         <div class="home-uni-body-v207">
                             <h3>{_safe_html_v62(uni_name_v207)}</h3>
                             <div class="home-uni-location-v207">
-                                <span>⌖</span><em>{_safe_html_v62(location_v207)}</em>
+                                <span class="home-location-pin-v208" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M12 2.25c-3.73 0-6.75 3.02-6.75 6.75 0 5.06 6.75 12.75 6.75 12.75S18.75 14.06 18.75 9c0-3.73-3.02-6.75-6.75-6.75Zm0 9.25A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>
+                                    </svg>
+                                </span>
+                                <em>{_safe_html_v62(location_v207)}</em>
                             </div>
                             <div class="home-uni-stats-v207">
                                 <div><small>Total Students</small><b>{_safe_html_v62(total_students_v207)}</b></div>
                                 <div><small>International Students</small><b>{_safe_html_v62(intl_students_v207)}</b></div>
                             </div>
+                            <form method="get" target="_self" class="home-view-programs-form-v208">
+                                <input type="hidden" name="go" value="universities">
+                                <input type="hidden" name="homeuni" value="{_safe_html_v62(uni_name_v207)}">
+                                <button type="submit" class="home-view-programs-btn-v208">
+                                    <span>View Programs</span><b>→</b>
+                                </button>
+                            </form>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
-
-                    if st.button("View Programs  →", key=f"home_view_programs_v207_{idx_v207}_{uni_name_v207}", use_container_width=True):
-                        st.session_state.selected_uni_v62 = str(uni_name_v207)
-                        st.session_state.selected_program_v109 = ""
-                        st.session_state.application_page_open_v113 = False
-                        set_page("Universities")
-                        st.rerun()
 
         st.markdown("""
         <div class="home-featured-note-v207">

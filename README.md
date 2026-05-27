@@ -1376,3 +1376,12 @@ v207:
 - Added search bar and filter chips.
 - Added clean white cards, soft shadows, rounded corners, image area, overlapping logo circle, two stat boxes, and navy View Programs buttons.
 - View Programs opens the correct selected university in the Universities page.
+
+
+v208:
+- Fixed only the circled areas in the Featured Universities cards.
+- Location row now uses a clean aligned location pin icon.
+- Student stat boxes are equal-width, less crowded, and no longer repeat “students” under the number.
+- Cards now have consistent height and internal spacing.
+- View Programs button is now inside the card, full width, dark navy, white text, and arrow-aligned right.
+- Dynamic data behavior is preserved. Missing values still show 1,000 or Location not updated.
