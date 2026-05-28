@@ -13390,6 +13390,197 @@ div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universi
     }
 }
 
+
+/* v240: WIDE shared container based on the hero width. Do not shrink hero. */
+:root{
+    --v240-page-width: calc(100% - 48px);
+    --v240-page-max: 1720px;
+}
+
+/* Let the page use full browser width; the shared container controls side spacing */
+.block-container,
+section.main > div,
+main .block-container{
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Navbar: enlarge to match the wider hero width */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin: 4px auto 18px auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Hero: restore/keep wide hero width as the standard */
+.uni-hero-wrap-v230{
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin: 0 auto 0 auto !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+/* Streamlit component iframe must use the same WIDE width, not 1440px */
+div[data-testid="stElementContainer"]:has(iframe),
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe,
+iframe{
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep hero height/logic unchanged; just remove extra vertical reserve */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe,
+iframe{
+    height: 482px !important;
+    min-height: 482px !important;
+    max-height: 482px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border: 0 !important;
+    display: block !important;
+}
+
+/* Filter card: stretch to match hero width */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin: 18px auto 0 auto !important;
+    padding: 18px 18px !important;
+    box-sizing: border-box !important;
+}
+
+/* Info bar: match hero width */
+div[data-testid="stAlert"]{
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin: 18px auto 0 auto !important;
+    box-sizing: border-box !important;
+}
+
+/* University grid/list wrappers: match hero width */
+.university-grid-wrapper,
+.university-grid,
+.universities-grid,
+.universities-grid-wrapper,
+.uni-card-grid,
+.uni-grid,
+.cards-grid,
+.university-list-wrapper,
+.universities-list-wrapper{
+    width: var(--v240-page-width) !important;
+    max-width: var(--v240-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Hide older unused hero blocks/spacers without touching current slider logic */
+.uni-list-heading-v226,
+.uni-list-heading-v227,
+.uni-list-heading-v228,
+.uni-hero-wrap-v229,
+.hero-promo-slider-v227,
+.hero-promo-slider-v228,
+.hero-slider-v229,
+.ad-slider-v226{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    opacity:0 !important;
+    overflow:hidden !important;
+}
+
+/* Make sure hero content fills the iframe/container and does not use a smaller max-width */
+.hero-section,
+.hero-slider,
+.hero-promo-slider-v230,
+.hero-promo-slider-v231,
+.hero-promo-slider-v232,
+.hero-promo-slider-v233,
+.hero-promo-slider-v234,
+.hero-promo-slider-v235,
+.hero-promo-slider-v236,
+.hero-promo-slider-v237,
+.hero-promo-slider-v238,
+.hero-promo-slider-v239{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Tablet */
+@media(max-width:1100px){
+    :root{
+        --v240-page-width: calc(100% - 40px);
+        --v240-page-max: 1720px;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe,
+    iframe{
+        height: 432px !important;
+        min-height: 432px !important;
+        max-height: 432px !important;
+    }
+}
+
+/* Mobile */
+@media(max-width:680px){
+    :root{
+        --v240-page-width: calc(100% - 24px);
+        --v240-page-max: 1720px;
+    }
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+        margin-bottom: 14px !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe,
+    iframe{
+        height: 422px !important;
+        min-height: 422px !important;
+        max-height: 422px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        margin-top: 16px !important;
+        padding: 14px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -19446,9 +19637,9 @@ def hero_slider_component_html_v230(df):
         try{{
             var frame = window.frameElement;
             if(!frame){{ return; }}
-            var w = "min(calc(100vw - 48px), 1440px)";
+            var w = "calc(100vw - 48px)";
             frame.style.width = w;
-            frame.style.maxWidth = "1440px";
+            frame.style.maxWidth = "1720px";
             frame.style.height = "482px";
             frame.style.minHeight = "482px";
             frame.style.maxHeight = "482px";
@@ -19461,7 +19652,7 @@ def hero_slider_component_html_v230(df):
             var steps = 0;
             while(parent && steps < 9){{
                 parent.style.width = w;
-                parent.style.maxWidth = "1440px";
+                parent.style.maxWidth = "1720px";
                 parent.style.marginLeft = "auto";
                 parent.style.marginRight = "auto";
                 parent.style.marginTop = "0";

@@ -1641,3 +1641,11 @@ v239:
 - Added iframe-level container alignment because Streamlit components can escape normal markdown wrapper CSS.
 - Set navbar-to-hero and hero-to-filter spacing to about 16px.
 - Did not change hero slider logic, filter logic, cards, admission logic, admin upload logic, or database logic.
+
+
+v240:
+- Fixed only width, alignment, and top-section spacing.
+- Restored the hero as the standard wide section.
+- Enlarged navbar, filter/search card, info bar, and grid wrappers to match the hero width.
+- Shared container is now width: calc(100% - 48px), max-width: 1720px.
+- Kept hero slider logic, filter logic, cards, admission logic, admin upload logic, and database logic unchanged.
