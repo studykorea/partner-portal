@@ -1703,3 +1703,11 @@ v247:
 - Partner Sign Up is navy primary; Login is outlined secondary.
 - Same-tab navigation uses existing ?nav=login and ?nav=signup handler.
 - Hero, filters, cards, admin logic, database logic, and admission logic unchanged.
+
+
+v248:
+- Restored reliable Streamlit button navigation for all navbar items.
+- Fixed Login and Partner Sign Up as styled navbar action buttons using column markers and targeted CSS.
+- Login is outlined; Partner Sign Up is navy primary.
+- Removed the HTML-link navbar that caused navigation clicks not to work.
+- Hero, filters, cards, admin logic, database logic, and admission logic unchanged.
