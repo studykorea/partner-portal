@@ -1664,3 +1664,11 @@ v242:
 - Added a smart iframe-side gap fix that measures navbar-to-hero and hero-to-filter spacing and removes only excessive blank space.
 - Target spacing is about 10px between navbar -> hero and hero -> filter.
 - Kept hero width, hero design, hero slider logic, admin advertisement logic, filters, cards, admission logic, and database logic unchanged.
+
+
+v243:
+- Fixed only navbar style, brand/logo area, Login/Partner Sign Up buttons, hero/filter alignment, and vertical gaps.
+- Removed the empty Streamlit markdown wrapper around the hero iframe to reduce spacing.
+- Navbar, hero, filter card, info bar, and grid use the same shared wide container: width calc(100% - 32px), max-width 1760px.
+- Target spacing: 12–18px around navbar -> hero -> filter.
+- Hero slider design/logic, admin advertisement logic, filters, cards, admission logic, and database logic were not changed.
