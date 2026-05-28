@@ -1749,3 +1749,10 @@ v253:
 - Emergency fix for startup crash: defines DATA = Path("data") before DATA / "student_applications.csv" is used.
 - Keeps v252 real navbar structure and working ?nav= routing.
 - No changes to hero slider, filters, university cards, admission logic, admin upload logic, or database logic.
+
+
+v254:
+- Emergency fix for startup crash: defines BASE = Path(__file__).resolve().parent before BASE / "assets" is used.
+- Keeps v253 DATA fix.
+- Keeps v252/v253 real navbar structure and working ?nav= routing.
+- No changes to hero slider, filters, university cards, admission logic, admin upload logic, or database logic.

@@ -15,6 +15,14 @@ from sqlalchemy import create_engine, text
 st.set_page_config(page_title="Partner Portal Partner Portal", page_icon="🎓", layout="wide")
 
 
+# v254: safety base directory definition
+# Required before paths such as BASE / "assets" are declared.
+BASE = Path(__file__).resolve().parent
+ASSETS = BASE / "assets"
+ASSETS.mkdir(parents=True, exist_ok=True)
+
+
+
 # v253: safety data directory definition
 # Required before files such as student_applications.csv are declared.
 DATA = Path("data")
