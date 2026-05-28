@@ -1538,3 +1538,13 @@ v226:
 - Slider auto-fades every 2 seconds, has dot indicators, pauses on hover, and supports clickable slide links.
 - Removed previous static hero chips.
 - Kept university cards, admission logic, university admin data, and filters unchanged.
+
+
+v227:
+- Changed Universities Information hero into one full-banner promotion/university image slider.
+- Fixed hero layout so uploaded images use object-fit: cover and object-position based on admin focal point.
+- Added dark gradient overlay to keep hero text readable over any uploaded image.
+- Added desktop image, optional mobile image, button text, link URL, order, active status, and focal point support in Super Admin Hero Advertisements.
+- Added admin preview for each saved slide.
+- Hero falls back to existing university cover images if no active advertisements are uploaded.
+- University cards, admission logic, and university data logic are unchanged.

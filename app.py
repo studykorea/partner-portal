@@ -11664,6 +11664,43 @@ div[data-testid="column"]:has(.filter-primary-marker-v225) div[data-testid="stBu
 @media(max-width:1100px){.uni-list-heading-v226{grid-template-columns:1fr!important;padding:32px 24px!important;min-height:0!important}.ad-slider-v226{height:230px!important}div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),.universities-wrap-v214{width:calc(100% - 24px)!important}}
 @media(max-width:760px){.uni-list-heading-v226{padding:24px 18px!important;border-radius:20px 20px 0 0!important}.uni-list-heading-v226 h1{font-size:31px!important}.ad-slider-v226{height:210px!important;border-radius:18px!important}div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){border-radius:0 0 20px 20px!important;padding:16px!important}}
 
+
+/* v227: Full hero promotion slider. Fixed banner, background image, readable left overlay, normalized uploaded images. */
+.uni-list-heading-v226{display:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;}
+.uni-list-heading-v227{width:100%!important;max-width:1480px!important;margin:0 auto!important;padding:0!important;border:0!important;background:transparent!important;}
+.hero-promo-slider-v227{width:100%!important;height:420px!important;min-height:420px!important;border-radius:28px!important;overflow:hidden!important;position:relative!important;background:#061A40!important;box-shadow:0 22px 55px rgba(15,23,42,.14)!important;border:1px solid rgba(226,232,240,.75)!important;}
+.hero-promo-slide-v227{position:absolute!important;inset:0!important;opacity:0!important;animation-name:heroFadeV227!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;background:#061A40!important;}
+.hero-promo-slider-v227:hover .hero-promo-slide-v227,.hero-promo-slider-v227:hover .hero-promo-dots-v227 i{animation-play-state:paused!important;}
+.hero-slide-link-v227{position:absolute!important;inset:0!important;display:block!important;color:inherit!important;text-decoration:none!important;}
+.hero-promo-slide-v227 picture,.hero-promo-slide-v227 img{width:100%!important;height:100%!important;display:block!important;}
+.hero-promo-slide-v227 img{object-fit:cover!important;object-position:center center;transform:scale(1.002);}
+.hero-promo-overlay-v227{position:absolute!important;inset:0!important;z-index:1!important;background:linear-gradient(90deg,rgba(6,26,64,0.86) 0%,rgba(6,26,64,0.68) 36%,rgba(6,26,64,0.28) 72%,rgba(6,26,64,0.14) 100%),linear-gradient(180deg,rgba(6,26,64,0.16) 0%,rgba(6,26,64,0.28) 100%)!important;}
+.hero-promo-content-v227{position:absolute!important;left:56px!important;top:50%!important;transform:translateY(-50%)!important;max-width:580px!important;color:#fff!important;-webkit-text-fill-color:#fff!important;z-index:2!important;pointer-events:none!important;}
+.hero-eyebrow-v227{display:inline-flex!important;align-items:center!important;gap:8px!important;padding:10px 14px!important;border-radius:999px!important;background:rgba(255,255,255,.13)!important;border:1px solid rgba(255,255,255,.18)!important;backdrop-filter:blur(10px)!important;font-size:13px!important;line-height:1!important;font-weight:900!important;letter-spacing:.02em!important;text-transform:uppercase!important;margin-bottom:22px!important;}
+.hero-eyebrow-v227::before{content:"🏛"!important;font-size:15px!important;}
+.hero-promo-content-v227 h1{font-size:56px!important;line-height:1.05!important;font-weight:950!important;letter-spacing:-.045em!important;margin:0 0 20px 0!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 8px 26px rgba(0,0,0,.28)!important;}
+.hero-promo-content-v227 p{font-size:19px!important;line-height:1.65!important;font-weight:650!important;max-width:540px!important;margin:0!important;color:rgba(255,255,255,.94)!important;-webkit-text-fill-color:rgba(255,255,255,.94)!important;text-shadow:0 6px 20px rgba(0,0,0,.28)!important;}
+.hero-actions-v227{display:flex!important;align-items:center!important;gap:14px!important;margin-top:28px!important;pointer-events:auto!important;}
+.hero-btn-secondary-v227,.hero-btn-primary-v227{min-height:52px!important;padding:0 24px!important;border-radius:12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;font-size:15px!important;font-weight:900!important;line-height:1!important;box-shadow:0 12px 24px rgba(0,0,0,.16)!important;}
+.hero-btn-secondary-v227{background:#fff!important;color:#061A40!important;-webkit-text-fill-color:#061A40!important;}
+.hero-btn-primary-v227{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+.hero-btn-primary-v227 b{font-size:22px!important;line-height:1!important;}
+.hero-promo-dots-v227{position:absolute!important;left:50%!important;bottom:22px!important;transform:translateX(-50%)!important;z-index:4!important;display:flex!important;align-items:center!important;gap:10px!important;}
+.hero-promo-dots-v227 i{width:9px!important;height:9px!important;border-radius:999px!important;background:rgba(255,255,255,.58)!important;border:1px solid rgba(255,255,255,.45)!important;animation-name:heroDotV227!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;}
+.hero-arrow-v227{position:absolute!important;top:50%!important;transform:translateY(-50%)!important;z-index:4!important;width:46px!important;height:46px!important;border-radius:999px!important;border:1px solid rgba(255,255,255,.35)!important;background:rgba(255,255,255,.92)!important;color:#061A40!important;-webkit-text-fill-color:#061A40!important;box-shadow:0 12px 28px rgba(0,0,0,.14)!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:32px!important;font-weight:650!important;line-height:1!important;}
+.hero-arrow-left-v227{left:18px!important;}.hero-arrow-right-v227{right:18px!important;}
+.hero-promo-default-bg-v227{position:absolute!important;inset:0!important;background:radial-gradient(circle at 72% 42%,rgba(63,91,214,.45),transparent 32%),linear-gradient(135deg,#061A40 0%,#102E73 52%,#1E40AF 100%)!important;}
+@keyframes heroFadeV227{0%{opacity:0;transform:scale(1.012)}7%{opacity:1;transform:scale(1)}42%{opacity:1;transform:scale(1)}50%{opacity:0;transform:scale(1.012)}100%{opacity:0;transform:scale(1.012)}}
+@keyframes heroDotV227{0%,45%{background:#fff;transform:scale(1.25)}50%,100%{background:rgba(255,255,255,.58);transform:scale(1)}}
+.hero-preview-v227{height:260px!important;border-radius:22px!important;overflow:hidden!important;position:relative!important;background:#061A40!important;margin:14px 0 18px 0!important;box-shadow:0 16px 38px rgba(15,23,42,.14)!important;}
+.hero-preview-v227 picture,.hero-preview-v227 img{width:100%!important;height:100%!important;display:block!important;}.hero-preview-v227 img{object-fit:cover!important;}
+.hero-preview-overlay-v227{position:absolute!important;inset:0!important;background:linear-gradient(90deg,rgba(6,26,64,0.86) 0%,rgba(6,26,64,0.58) 48%,rgba(6,26,64,0.16) 100%)!important;}
+.hero-preview-content-v227{position:absolute!important;left:30px!important;top:50%!important;transform:translateY(-50%)!important;z-index:2!important;max-width:430px!important;color:#fff!important;}.hero-preview-content-v227 span{display:inline-block!important;padding:8px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.13)!important;font-size:12px!important;font-weight:900!important;margin-bottom:14px!important;}.hero-preview-content-v227 h3{font-size:30px!important;line-height:1.1!important;margin:0 0 10px 0!important;color:#fff!important;}.hero-preview-content-v227 p{font-size:15px!important;line-height:1.45!important;margin:0 0 14px 0!important;color:rgba(255,255,255,.92)!important;}.hero-preview-content-v227 b{display:inline-flex!important;padding:10px 15px!important;border-radius:10px!important;background:#fff!important;color:#061A40!important;}.hero-preview-empty-v227{border:1px dashed #CBD5E1!important;border-radius:18px!important;padding:24px!important;color:#64748B!important;background:#F8FAFC!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]){margin-top:22px!important;border-radius:24px!important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]) div[data-baseweb="select"] input{caret-color:transparent!important;color:transparent!important;-webkit-text-fill-color:transparent!important;width:1px!important;min-width:1px!important;opacity:0!important;}
+@media(max-width:1100px){.hero-promo-slider-v227{height:390px!important;min-height:390px!important;border-radius:24px!important}.hero-promo-content-v227{left:38px!important;max-width:540px!important}.hero-promo-content-v227 h1{font-size:44px!important}.hero-promo-content-v227 p{font-size:17px!important}}
+@media(max-width:680px){.hero-promo-slider-v227{height:520px!important;min-height:520px!important;border-radius:20px!important}.hero-promo-overlay-v227{background:linear-gradient(180deg,rgba(6,26,64,0.80) 0%,rgba(6,26,64,0.72) 52%,rgba(6,26,64,0.50) 100%)!important}.hero-promo-content-v227{left:22px!important;right:22px!important;top:auto!important;bottom:58px!important;transform:none!important;max-width:none!important}.hero-promo-content-v227 h1{font-size:34px!important}.hero-promo-content-v227 p{font-size:15px!important}.hero-actions-v227{flex-direction:column!important;align-items:stretch!important;gap:10px!important}.hero-btn-secondary-v227,.hero-btn-primary-v227{width:100%!important}.hero-arrow-v227{display:none!important}}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -16998,6 +17035,173 @@ def admin_hero_advertisements_v226():
     close_shell()
 
 
+
+# v227: Full-width premium hero promotion slider with fixed layout, background image, overlay, focal point, mobile image, and admin preview.
+def hero_object_position_v227(focal_x="Center", focal_y="Center"):
+    x_map = {"left": "left", "center": "center", "right": "right", "Left": "left", "Center": "center", "Right": "right"}
+    y_map = {"top": "top", "center": "center", "bottom": "bottom", "Top": "top", "Center": "center", "Bottom": "bottom"}
+    return f"{x_map.get(str(focal_x), 'center')} {y_map.get(str(focal_y), 'center')}"
+
+def fallback_university_slides_v227(df):
+    slides = []
+    if df is None or len(df) == 0:
+        return slides
+    for _, row in df.head(8).iterrows():
+        image_path = (display_clean_v50(row.get("Image", "")) or display_clean_v50(row.get("University_Image", "")) or display_clean_v50(row.get("Cover_Image", "")) or display_clean_v50(row.get("coverImageUrl", "")))
+        if image_path and b64(image_path):
+            uni = display_clean_v50(row.get("University", "")) or display_clean_v50(row.get("name", "")) or "University Information"
+            loc = display_clean_v50(row.get("Location", "")) or display_clean_v50(row.get("city", "")) or "Official university information"
+            slides.append({"image_path": image_path, "mobile_image_path": "", "title": uni, "subtitle": loc, "button_text": "View Details", "link_url": "", "display_order": len(slides)+1, "active": True, "focal_x": "Center", "focal_y": "Center", "source": "university_fallback"})
+    return slides
+
+def hero_promotion_slider_html_v227(df):
+    slides = active_hero_ads_v226()
+    if not slides:
+        slides = fallback_university_slides_v227(df)
+    if not slides:
+        return '''<div class="hero-promo-slider-v227 hero-promo-empty-v227"><div class="hero-promo-default-bg-v227"></div><div class="hero-promo-overlay-v227"></div><div class="hero-promo-content-v227"><div class="hero-eyebrow-v227">Explore Korean Universities</div><h1>Universities Information</h1><p>Filter universities by location/city, program type, admission status, intake, and more.</p><div class="hero-actions-v227"><span class="hero-btn-secondary-v227">ⓘ How It Works</span></div></div></div>'''
+    slide_html = []
+    dot_html = []
+    count = len(slides)
+    duration = max(count * 2, 2)
+    for i, ad in enumerate(slides):
+        img_path = display_clean_v50(ad.get("image_path", ""))
+        mobile_img_path = display_clean_v50(ad.get("mobile_image_path", ""))
+        encoded = b64(img_path)
+        if not encoded:
+            continue
+        mobile_encoded = b64(mobile_img_path) if mobile_img_path else ""
+        title = _safe_html_v62(display_clean_v50(ad.get("title", "")) or "Universities Information")
+        subtitle = _safe_html_v62(display_clean_v50(ad.get("subtitle", "")) or "Filter universities by location/city, program type, admission status, intake, and more.")
+        button_text = _safe_html_v62(display_clean_v50(ad.get("button_text", "")) or "Explore Universities")
+        url = display_clean_v50(ad.get("link_url", ""))
+        safe_url = _safe_html_v62(url)
+        focal = hero_object_position_v227(ad.get("focal_x", "Center"), ad.get("focal_y", "Center"))
+        delay = i * 2
+        mobile_source = f'<source media="(max-width: 680px)" srcset="data:image/jpeg;base64,{mobile_encoded}">' if mobile_encoded else ""
+        image_block = f'<picture>{mobile_source}<img src="data:image/jpeg;base64,{encoded}" loading="lazy" alt="{title}" style="object-position:{focal};"></picture>'
+        actions = '<span class="hero-btn-secondary-v227">ⓘ How It Works</span>'
+        if url:
+            actions += f'<span class="hero-btn-primary-v227">{button_text}<b>→</b></span>'
+            wrapper_start = f'<a href="{safe_url}" target="_blank" rel="noopener noreferrer" class="hero-slide-link-v227">'
+            wrapper_end = '</a>'
+        else:
+            actions += '<span class="hero-btn-primary-v227">Explore Universities<b>→</b></span>'
+            wrapper_start = ''
+            wrapper_end = ''
+        slide_html.append(f'''<div class="hero-promo-slide-v227" style="animation-delay:{delay}s; animation-duration:{duration}s;">{wrapper_start}{image_block}<div class="hero-promo-overlay-v227"></div><div class="hero-promo-content-v227"><div class="hero-eyebrow-v227">Explore Korean Universities</div><h1>{title}</h1><p>{subtitle}</p><div class="hero-actions-v227">{actions}</div></div>{wrapper_end}</div>''')
+        dot_html.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+    if not slide_html:
+        return '''<div class="hero-promo-slider-v227 hero-promo-empty-v227"><div class="hero-promo-default-bg-v227"></div><div class="hero-promo-overlay-v227"></div><div class="hero-promo-content-v227"><div class="hero-eyebrow-v227">Explore Korean Universities</div><h1>Universities Information</h1><p>Filter universities by location/city, program type, admission status, intake, and more.</p></div></div>'''
+    arrows = '<button class="hero-arrow-v227 hero-arrow-left-v227" aria-label="Previous slide">‹</button><button class="hero-arrow-v227 hero-arrow-right-v227" aria-label="Next slide">›</button>'
+    return f'<div class="hero-promo-slider-v227" aria-label="Hero promotion slider">{"".join(slide_html)}{arrows}<div class="hero-promo-dots-v227">{"".join(dot_html)}</div></div>'
+
+def render_universities_hero_v227(df):
+    slider = hero_promotion_slider_html_v227(df)
+    st.markdown(f'''<div class="uni-list-heading-v227">{slider}</div>''', unsafe_allow_html=True)
+
+def hero_ad_preview_html_v227(image_path, mobile_image_path="", title="Preview Title", subtitle="Preview subtitle", button_text="Explore Universities", focal_x="Center", focal_y="Center"):
+    enc = b64(image_path)
+    if not enc:
+        return '<div class="hero-preview-empty-v227">Upload an image to preview the hero banner.</div>'
+    mobile_enc = b64(mobile_image_path) if mobile_image_path else ""
+    focal = hero_object_position_v227(focal_x, focal_y)
+    mobile_source = f'<source media="(max-width: 680px)" srcset="data:image/jpeg;base64,{mobile_enc}">' if mobile_enc else ""
+    return f'''<div class="hero-preview-v227"><picture>{mobile_source}<img src="data:image/jpeg;base64,{enc}" style="object-position:{focal};"></picture><div class="hero-preview-overlay-v227"></div><div class="hero-preview-content-v227"><span>Explore Korean Universities</span><h3>{_safe_html_v62(title or "Preview Title")}</h3><p>{_safe_html_v62(subtitle or "Preview subtitle")}</p><b>{_safe_html_v62(button_text or "Explore Universities")} →</b></div></div>'''
+
+def admin_hero_advertisements_v227():
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
+    st.subheader("Hero Advertisements / Promotion Slider")
+    st.caption("Manage the full Universities Information hero banner. Preferred desktop image: 1600×900 or 1920×900. Preferred mobile image: 1080×1350 or 1080×1600. Other sizes are automatically cropped with object-fit: cover.")
+    st.info("Uploaded images are displayed inside one fixed banner with a dark gradient overlay. Use focal point fields to control which part remains visible after cropping.")
+    ads = hero_ads_list_v226()
+    tabs = st.tabs(["Add Promotion Slide", "Manage Slides"])
+    with tabs[0]:
+        with st.form("add_hero_ad_v227", clear_on_submit=True):
+            c1, c2 = st.columns([1.2, 1])
+            with c1:
+                title = st.text_input("Slide Title")
+                subtitle = st.text_area("Subtitle", height=90)
+                button_text = st.text_input("Optional Button Text", value="Explore Universities")
+                link_url = st.text_input("Optional Link URL")
+            with c2:
+                display_order = st.number_input("Display Order", min_value=1, value=(len(ads)+1), step=1)
+                active = st.checkbox("Active", value=True)
+                focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=1)
+                focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=1)
+                desktop_upload = st.file_uploader("Desktop Image / Poster", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_desktop_upload_v227")
+                mobile_upload = st.file_uploader("Optional Mobile Image", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_mobile_upload_v227")
+            submitted = st.form_submit_button("Save Promotion Slide", use_container_width=True)
+            if submitted:
+                if desktop_upload is None:
+                    st.error("Please upload a desktop image/poster.")
+                else:
+                    image_path = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                    mobile_image_path = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile") if mobile_upload is not None else ""
+                    ads.append({"id": datetime.now().strftime("%Y%m%d%H%M%S%f"), "title": title, "subtitle": subtitle, "button_text": button_text, "link_url": link_url, "display_order": str(display_order), "active": bool(active), "image_path": image_path, "mobile_image_path": mobile_image_path, "focal_x": focal_x, "focal_y": focal_y, "created_at": datetime.now().isoformat(timespec="seconds")})
+                    save_hero_ads_v226(ads)
+                    st.success("Promotion slide saved.")
+                    st.rerun()
+    with tabs[1]:
+        if not ads:
+            st.info("No promotion slides have been added yet. The hero will temporarily use university cover images.")
+        else:
+            try:
+                ads_sorted = sorted(enumerate(ads), key=lambda x: int(float(str(x[1].get("display_order", 999)).strip() or 999)))
+            except Exception:
+                ads_sorted = list(enumerate(ads))
+            for idx, ad in ads_sorted:
+                ad_id = str(ad.get("id", idx))
+                st.markdown("---")
+                st.markdown(hero_ad_preview_html_v227(ad.get("image_path", ""), ad.get("mobile_image_path", ""), ad.get("title", ""), ad.get("subtitle", ""), ad.get("button_text", ""), ad.get("focal_x", "Center"), ad.get("focal_y", "Center")), unsafe_allow_html=True)
+                with st.form(f"edit_hero_ad_v227_{ad_id}"):
+                    c1, c2 = st.columns([1.2, 1])
+                    with c1:
+                        title = st.text_input("Slide Title", value=display_clean_v50(ad.get("title", "")), key=f"title_v227_{ad_id}")
+                        subtitle = st.text_area("Subtitle", value=display_clean_v50(ad.get("subtitle", "")), height=90, key=f"subtitle_v227_{ad_id}")
+                        button_text = st.text_input("Optional Button Text", value=display_clean_v50(ad.get("button_text", "")) or "Explore Universities", key=f"btn_v227_{ad_id}")
+                        link_url = st.text_input("Optional Link URL", value=display_clean_v50(ad.get("link_url", "")), key=f"link_v227_{ad_id}")
+                    with c2:
+                        try:
+                            order_value = int(float(str(ad.get("display_order", 999)) or 999))
+                        except Exception:
+                            order_value = 999
+                        display_order = st.number_input("Display Order", min_value=1, value=order_value, step=1, key=f"order_v227_{ad_id}")
+                        active = st.checkbox("Active", value=str(ad.get("active", "True")).lower() in ["true","1","yes","active","on"], key=f"active_v227_{ad_id}")
+                        fx_val = display_clean_v50(ad.get("focal_x", "Center")) if display_clean_v50(ad.get("focal_x", "Center")) in ["Left", "Center", "Right"] else "Center"
+                        fy_val = display_clean_v50(ad.get("focal_y", "Center")) if display_clean_v50(ad.get("focal_y", "Center")) in ["Top", "Center", "Bottom"] else "Center"
+                        focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=["Left", "Center", "Right"].index(fx_val), key=f"fx_v227_{ad_id}")
+                        focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=["Top", "Center", "Bottom"].index(fy_val), key=f"fy_v227_{ad_id}")
+                        desktop_upload = st.file_uploader("Replace Desktop Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_desktop_v227_{ad_id}")
+                        mobile_upload = st.file_uploader("Replace / Add Mobile Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_mobile_v227_{ad_id}")
+                    s1, s2 = st.columns(2)
+                    with s1:
+                        update_clicked = st.form_submit_button("Update Slide", use_container_width=True)
+                    with s2:
+                        delete_clicked = st.form_submit_button("Delete Slide", use_container_width=True)
+                    if update_clicked:
+                        ads[idx]["title"] = title
+                        ads[idx]["subtitle"] = subtitle
+                        ads[idx]["button_text"] = button_text
+                        ads[idx]["link_url"] = link_url
+                        ads[idx]["display_order"] = str(display_order)
+                        ads[idx]["active"] = bool(active)
+                        ads[idx]["focal_x"] = focal_x
+                        ads[idx]["focal_y"] = focal_y
+                        if desktop_upload is not None:
+                            ads[idx]["image_path"] = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                        if mobile_upload is not None:
+                            ads[idx]["mobile_image_path"] = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile")
+                        save_hero_ads_v226(ads)
+                        st.success("Promotion slide updated.")
+                        st.rerun()
+                    if delete_clicked:
+                        ads.pop(idx)
+                        save_hero_ads_v226(ads)
+                        st.warning("Promotion slide deleted.")
+                        st.rerun()
+    close_shell()
+
 def universities_page(public=False):
     if public:
         header()
@@ -17024,7 +17228,7 @@ def universities_page(public=False):
             pass
 
     df = universities().copy()
-    render_universities_hero_v226(df)
+    render_universities_hero_v227(df)
     if df is None or len(df) == 0:
         st.info("No university data found.")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -21126,7 +21330,7 @@ else:
         elif st.session_state.page == "Application Samples":
             admin_application_samples_v114()
         elif st.session_state.page in ["Hero Advertisements", "Advertisement Slider"]:
-            admin_hero_advertisements_v226()
+            admin_hero_advertisements_v227()
         else:
             admin()
     else:
