@@ -1695,3 +1695,11 @@ v246:
 - Login is a real outlined button with icon.
 - Partner Sign Up is a real navy primary button with icon.
 - Hero, filters, university cards, admin logic, database logic, and admission logic unchanged.
+
+
+v247:
+- Replaced the public navbar with a real HTML navbar for the public view.
+- Login and Partner Sign Up are actual styled anchor buttons, not Streamlit buttons/plain text.
+- Partner Sign Up is navy primary; Login is outlined secondary.
+- Same-tab navigation uses existing ?nav=login and ?nav=signup handler.
+- Hero, filters, cards, admin logic, database logic, and admission logic unchanged.
