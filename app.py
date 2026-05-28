@@ -12552,6 +12552,101 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities
     }
 }
 
+
+/* v233: precise vertical spacing only around navbar, hero, and filter */
+.block-container{
+    padding-top: 0 !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 4px auto 12px auto !important;
+    padding: 0 !important;
+    align-items: center !important;
+}
+
+.uni-hero-wrap-v230{
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 0 auto 0 auto !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+div[data-testid="stElementContainer"]:has(iframe){
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+iframe{
+    margin-top: -72px !important;
+    margin-bottom: -10px !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 20px auto 0 auto !important;
+    padding: 18px 18px !important;
+    border-radius: 22px !important;
+}
+
+div[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230),
+div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search university"]),
+div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universities"]){
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225),
+    .uni-hero-wrap-v230,
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 28px) !important;
+    }
+    iframe{
+        margin-top: -56px !important;
+        margin-bottom: -8px !important;
+    }
+}
+
+@media(max-width:680px){
+    .block-container{
+        padding-top: 0 !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+        margin-bottom: 10px !important;
+    }
+    .uni-hero-wrap-v230{
+        width: calc(100% - 18px) !important;
+    }
+    iframe{
+        margin-top: -38px !important;
+        margin-bottom: -6px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 18px) !important;
+        margin-top: 18px !important;
+        padding: 14px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -18564,13 +18659,51 @@ def hero_slider_component_html_v230(df):
             <div class="arrow right">›</div>
             <div class="dots">{"".join(dot_markup)}</div>
         </section>
-    </body>
+    
+    <script>
+    function v233TightenHeroFrame(){{
+        try{{
+            var frame = window.frameElement;
+            if(!frame){{ return; }}
+
+            frame.style.display = "block";
+            frame.style.width = "100%";
+            frame.style.height = "604px";
+            frame.style.minHeight = "604px";
+            frame.style.maxHeight = "604px";
+            frame.style.border = "0";
+            frame.style.marginTop = "-72px";
+            frame.style.marginBottom = "-10px";
+            frame.style.padding = "0";
+
+            var parent = frame.parentElement;
+            var steps = 0;
+            while(parent && steps < 8){{
+                parent.style.marginTop = "0";
+                parent.style.paddingTop = "0";
+                parent.style.marginBottom = "0";
+                parent.style.paddingBottom = "0";
+                parent.style.border = "0";
+                parent.style.overflow = "visible";
+                parent = parent.parentElement;
+                steps++;
+            }}
+        }}catch(e){{}}
+    }}
+    window.addEventListener("load", v233TightenHeroFrame);
+    window.addEventListener("resize", v233TightenHeroFrame);
+    setTimeout(v233TightenHeroFrame, 100);
+    setTimeout(v233TightenHeroFrame, 500);
+    setTimeout(v233TightenHeroFrame, 1200);
+    </script>
+
+</body>
     </html>
     """
 
 def render_universities_hero_v230(df):
     st.markdown('<div class="uni-hero-wrap-v230">', unsafe_allow_html=True)
-    components.html(hero_slider_component_html_v230(df), height=620, scrolling=False)
+    components.html(hero_slider_component_html_v230(df), height=604, scrolling=False)
     st.markdown('</div>', unsafe_allow_html=True)
 
 def universities_page(public=False):

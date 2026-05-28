@@ -1589,3 +1589,10 @@ v232:
 - Pulled hero much closer to the navbar.
 - Increased desktop hero iframe/component height to 600–640px so the banner fills the area better.
 - Kept hero image rendering, admin advertisements, university fallback images, filters, cards, admission logic, and database structure unchanged.
+
+
+v233:
+- Fixed only vertical spacing around navbar, hero iframe, and filter card.
+- Added iframe-level spacing correction because Streamlit components.html creates a separate iframe outside the markdown wrapper.
+- Pulled hero upward while keeping the hero design, images, slider logic, cards, filters, admission logic, and database unchanged.
+- Filter card now sits closer below the hero.
