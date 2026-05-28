@@ -24222,7 +24222,7 @@ def hero_slider_component_html_v230(df):
     .content{{position:relative;z-index:3;max-width:560px;padding:70px 56px;color:#fff;box-sizing:border-box}}.eyebrow{{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.20);backdrop-filter:blur(10px);font-size:13px;line-height:1;font-weight:900;letter-spacing:.02em;text-transform:uppercase;margin-bottom:22px;color:#fff}}
     h1{{margin:0 0 20px;font-size:56px;line-height:1.05;font-weight:950;letter-spacing:-.045em;color:#fff;text-shadow:0 8px 28px rgba(0,0,0,.30)}}p{{margin:0;max-width:540px;font-size:19px;line-height:1.65;font-weight:650;color:rgba(255,255,255,.95);text-shadow:0 6px 20px rgba(0,0,0,.25)}}
     .actions{{display:flex;align-items:center;gap:14px;margin-top:28px}}.btn{{min-height:52px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:900;line-height:1;box-shadow:0 12px 24px rgba(0,0,0,.16);box-sizing:border-box}}.secondary{{background:#fff;color:#061A40}}.primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff}}.primary b{{font-size:22px}}
-    .caption{{position:absolute;right:56px;bottom:36px;z-index:4;min-width:360px;max-width:500px;padding:18px 22px;border-radius:18px;background:rgba(6,26,64,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);color:#fff;box-sizing:border-box;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease;pointer-events:auto}}a.caption:hover{{transform:translateY(-2px);background:rgba(6,26,64,.84);box-shadow:0 18px 42px rgba(0,0,0,.26)}}.caption strong{{display:block;font-size:18px;font-weight:950;line-height:1.25;margin-bottom:5px;color:#fff}}.caption span{{display:block;font-size:13px;font-weight:650;line-height:1.35;color:rgba(255,255,255,.92)}}
+    .caption{{position:absolute;right:56px;bottom:36px;z-index:4;min-width:360px;max-width:500px;padding:18px 22px;border-radius:18px;background:rgba(6,26,64,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);color:#fff;box-sizing:border-box;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease;pointer-events:auto;user-select:none}}a.caption:hover{{transform:translateY(-2px);background:rgba(6,26,64,.84);box-shadow:0 18px 42px rgba(0,0,0,.26)}}.caption strong{{display:block;font-size:18px;font-weight:950;line-height:1.25;margin-bottom:5px;color:#fff}}.caption span{{display:block;font-size:13px;font-weight:650;line-height:1.35;color:rgba(255,255,255,.92)}}
     .linked-caption{{display:flex;align-items:center;gap:18px;min-width:390px;padding:16px 18px}}.caption-logo{{width:62px;height:62px;min-width:62px;border-radius:16px;background:#fff;border:1px solid rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 10px 22px rgba(0,0,0,.18)}}.caption-logo img{{position:static;width:88%;height:88%;object-fit:contain;display:block;filter:none}}.caption-logo span{{font-size:12px;font-weight:900;color:#64748B}}.caption-copy{{display:flex;flex-direction:column;min-width:0}}.caption-copy strong{{font-size:20px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}.caption-copy span{{font-size:14px;margin-bottom:7px}}.caption-copy em{{font-style:normal;font-size:13px;font-weight:900;color:#DCEBFF}}
     .arrow{{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:46px;height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.92);color:#061A40;box-shadow:0 12px 28px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:650;line-height:1;box-sizing:border-box}}.left{{left:18px}}.right{{right:18px}}.dots{{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px}}.dots i{{width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.45);animation-name:dot;animation-timing-function:ease-in-out;animation-iteration-count:infinite}}.hero:hover .slide,.hero:hover .dots i{{animation-play-state:paused}}
     @keyframes fade{{0%{{opacity:0}}6%{{opacity:1}}42%{{opacity:1}}50%{{opacity:0}}100%{{opacity:0}}}}@keyframes dot{{0%,45%{{background:#fff;transform:scale(1.25)}}50%,100%{{background:rgba(255,255,255,.58);transform:scale(1)}}}}
@@ -24419,9 +24419,9 @@ def university_detail_url_v260(row):
         name = university_display_name_v260(row)
         uid = university_id_v260(row)
         if name:
-            return f"?unidetail={_quote_plus_v260(name)}"
+            return f"/?unidetail={_quote_plus_v260(name)}"
         if uid:
-            return f"?unidetail={_quote_plus_v260(uid)}"
+            return f"/?unidetail={_quote_plus_v260(uid)}"
         return "?nav=universities"
     except Exception:
         return "?nav=universities"
@@ -24579,7 +24579,16 @@ def hero_linked_caption_html_v260(slide):
 
         logo_html = f'<img src="{logo_url}" alt="{name} logo" style="transform:scale({logo_scale});">' if logo_url else '<span>Logo</span>' 
         return f"""
-        <a class="hero-info-box clickable" href="{detail}" target="_parent" aria-label="View {name} details">
+        <a class="hero-info-box clickable"
+           href="{detail}"
+           target="_parent"
+           role="link"
+           tabindex="0"
+           aria-label="View {name} details"
+           data-href="{detail}"
+           data-linked-university="{name}"
+           onclick="console.log('Hero linkedUniversity:', this.getAttribute('data-linked-university')); console.log('Detail URL:', this.getAttribute('data-href')); event.preventDefault(); event.stopPropagation(); window.parent.location.href=this.getAttribute('data-href'); return false;"
+           onkeydown="if(event.key==='Enter'||event.key===' '){{event.preventDefault(); window.parent.location.href=this.getAttribute('data-href');}}">
           <div class="hero-info-logo">{logo_html}</div>
           <div class="hero-info-content">
             <h3>{name}</h3>
@@ -24639,7 +24648,7 @@ def hero_slider_component_html_v230(df):
     .actions{{display:flex;align-items:center;gap:14px;margin-top:28px}}.btn{{min-height:52px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:900;line-height:1;box-shadow:0 12px 24px rgba(0,0,0,.16);box-sizing:border-box}}
     .secondary{{background:#fff;color:#061A40}}.primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff}}.primary b{{font-size:22px}}
 
-    .hero-info-box{{position:absolute;right:56px;bottom:56px;z-index:8;width:460px;padding:24px;border-radius:20px;background:rgba(6,26,64,.90);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}
+    .hero-info-box{{position:absolute;right:56px;bottom:56px;z-index:20;width:460px;padding:24px;border-radius:20px;background:rgba(6,26,64,.90);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}
     .hero-info-box.clickable{{cursor:pointer}}
     .hero-info-box.clickable:hover{{transform:translateY(-2px);background:rgba(6,26,64,.96);box-shadow:0 22px 46px rgba(0,0,0,.28)}}
     .hero-info-logo{{width:82px;height:82px;min-width:82px;min-height:82px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.8);box-shadow:0 8px 22px rgba(0,0,0,.18)}}

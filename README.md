@@ -1724,3 +1724,12 @@ v261:
 - Increased info box z-index and pointer safety so overlay does not block clicks.
 - Click target remains selected university detail page; fallback uses Streamlit-safe ?unidetail=... route.
 - Did not change hero design, cards, filters, admission logic, admin upload logic, navbar, footer, or unrelated pages.
+
+
+v262:
+- Fixed hero info box click/navigation behavior inside Streamlit iframe.
+- The entire linked university info box now navigates the parent page using window.parent.location.href.
+- Added keyboard accessibility with Enter/Space.
+- Raised hero info box z-index to 20 and kept overlay pointer-events disabled.
+- Detail route now uses /?unidetail=... fallback for more reliable parent navigation.
+- Did not change hero design, navbar, filters, university cards, admission logic, admin upload design, or unrelated pages.
