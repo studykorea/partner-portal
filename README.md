@@ -1711,3 +1711,12 @@ v248:
 - Login is outlined; Partner Sign Up is navy primary.
 - Removed the HTML-link navbar that caused navigation clicks not to work.
 - Hero, filters, cards, admin logic, database logic, and admission logic unchanged.
+
+
+v249:
+- Fixed only navbar brand layout, Login/Partner Sign Up styling, and navbar-hero-filter spacing.
+- Keeps working Streamlit buttons for all navbar navigation.
+- Groups Korea University Admissions logo/text neatly inside navbar.
+- Login is an outlined button; Partner Sign Up is a navy primary button.
+- Adds stronger CSS overrides to remove old conflicting navbar/spacing rules.
+- University cards, filters, admission logic, admin upload logic, and database logic unchanged.
