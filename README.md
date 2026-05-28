@@ -1728,3 +1728,18 @@ v250:
 - Kept working Streamlit button navigation.
 - Kept brand logo/text grouped inside navbar.
 - No changes to university cards, filters, admin upload logic, admission logic, or database logic.
+
+
+v251:
+- Replaced public navbar with the real requested HTML structure: site-header > navbar > brand/nav-menu/nav-actions.
+- Added query-param routing so HTML links work in Streamlit (?nav=universities, ?nav=login, ?nav=signup, etc.).
+- Login is a real outlined link button; Partner Sign Up is a real navy primary link button.
+- Brand logo/text are aligned inside the navbar.
+- Tightened navbar-to-hero spacing through the actual structure.
+- Did not change hero slider logic, filters, university cards, admission logic, admin logic, or database logic.
+
+
+v252:
+- Added missing Streamlit query-param router for the real HTML navbar links.
+- Navbar links now work through ?nav=home, ?nav=universities, ?nav=login, ?nav=signup, etc.
+- Keeps v251 real navbar structure and styling.
