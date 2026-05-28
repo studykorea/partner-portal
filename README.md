@@ -1657,3 +1657,10 @@ v241:
 - Navbar, hero slider, filter card, info bar, and university grid now use the same wide container.
 - Hero was not shrunk; navbar/filter/info/grid were widened to match the wide layout.
 - Kept hero slider logic, admin advertisement logic, filter logic, admission logic, and university cards unchanged.
+
+
+v242:
+- Fixed only the remaining vertical gaps on the Universities Information page.
+- Added a smart iframe-side gap fix that measures navbar-to-hero and hero-to-filter spacing and removes only excessive blank space.
+- Target spacing is about 10px between navbar -> hero and hero -> filter.
+- Kept hero width, hero design, hero slider logic, admin advertisement logic, filters, cards, admission logic, and database logic unchanged.

@@ -19674,6 +19674,85 @@ def hero_slider_component_html_v230(df):
     setTimeout(v239ExactContainerFix, 1000);
     </script>
 
+
+    <script>
+    function v242SmartVerticalGapFix(){{
+        try{{
+            var frame = window.frameElement;
+            if(!frame){{ return; }}
+            var doc = window.parent && window.parent.document ? window.parent.document : document;
+
+            frame.style.width = "calc(100vw - 32px)";
+            frame.style.maxWidth = "1760px";
+            frame.style.height = "482px";
+            frame.style.minHeight = "482px";
+            frame.style.maxHeight = "482px";
+            frame.style.display = "block";
+            frame.style.border = "0";
+            frame.style.padding = "0";
+            frame.style.marginLeft = "auto";
+            frame.style.marginRight = "auto";
+
+            var parent = frame.parentElement;
+            var steps = 0;
+            while(parent && steps < 8){{
+                parent.style.width = "calc(100vw - 32px)";
+                parent.style.maxWidth = "1760px";
+                parent.style.marginLeft = "auto";
+                parent.style.marginRight = "auto";
+                parent.style.paddingLeft = "0";
+                parent.style.paddingRight = "0";
+                parent.style.paddingTop = "0";
+                parent.style.paddingBottom = "0";
+                parent.style.boxSizing = "border-box";
+                parent = parent.parentElement;
+                steps++;
+            }}
+
+            var nav = doc.querySelector('div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223), div[data-testid="stHorizontalBlock"]:has(.public-brand-v220), div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225)');
+            var filter = doc.querySelector('div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]), div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"])');
+
+            // Remove excessive gap above hero.
+            if(nav){{
+                var nr = nav.getBoundingClientRect();
+                var fr = frame.getBoundingClientRect();
+                var gapTop = fr.top - nr.bottom;
+                if(gapTop > 12){{
+                    var currentTop = parseFloat(frame.style.marginTop || "0") || 0;
+                    var reduceTop = Math.min(gapTop - 10, 180);
+                    frame.style.marginTop = (currentTop - reduceTop) + "px";
+                }} else if(gapTop < 6){{
+                    frame.style.marginTop = "8px";
+                }}
+            }}
+
+            // After top adjustment, remove excessive gap below hero.
+            setTimeout(function(){{
+                try{{
+                    if(filter){{
+                        var fr2 = frame.getBoundingClientRect();
+                        var flr = filter.getBoundingClientRect();
+                        var gapBottom = flr.top - fr2.bottom;
+                        if(gapBottom > 12){{
+                            var currentBottom = parseFloat(frame.style.marginBottom || "0") || 0;
+                            var reduceBottom = Math.min(gapBottom - 10, 180);
+                            frame.style.marginBottom = (currentBottom - reduceBottom) + "px";
+                        }} else if(gapBottom < 6){{
+                            frame.style.marginBottom = "8px";
+                        }}
+                    }}
+                }}catch(e){{}}
+            }}, 80);
+        }}catch(e){{}}
+    }}
+    window.addEventListener("load", v242SmartVerticalGapFix);
+    window.addEventListener("resize", v242SmartVerticalGapFix);
+    setTimeout(v242SmartVerticalGapFix, 80);
+    setTimeout(v242SmartVerticalGapFix, 400);
+    setTimeout(v242SmartVerticalGapFix, 1000);
+    setTimeout(v242SmartVerticalGapFix, 1800);
+    </script>
+
 </body>
     </html>
     """
@@ -23825,3 +23904,7 @@ else:
 
 # v241 final wide container CSS injection
 st.markdown('\n<style>\n/* v241 FINAL: wide page container with small side margins only\n   Scope: navbar, hero, filter card, info bar, and university grid alignment/spacing only. */\n:root{\n    --v241-page-width: calc(100% - 32px);\n    --v241-page-max: 1760px;\n    --v240-page-width: calc(100% - 32px);\n    --v240-page-max: 1760px;\n    --v239-page-width: calc(100% - 32px);\n    --v239-page-max: 1760px;\n    --v238-page-width: calc(100% - 32px);\n    --v238-page-max: 1760px;\n}\n\n/* Remove Streamlit\'s default centered/narrow page constraint */\nhtml, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] > .main{\n    width: 100% !important;\n    max-width: 100% !important;\n    overflow-x: hidden !important;\n}\n.block-container,\nsection.main > div,\nmain .block-container,\n[data-testid="stMainBlockContainer"]{\n    width: 100% !important;\n    max-width: 100% !important;\n    padding-left: 0 !important;\n    padding-right: 0 !important;\n    padding-top: 0 !important;\n    margin-left: 0 !important;\n    margin-right: 0 !important;\n    box-sizing: border-box !important;\n}\n\n/* Shared wide container: navbar */\ndiv[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),\ndiv[data-testid="stHorizontalBlock"]:has(.public-brand-v220),\ndiv[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){\n    width: var(--v241-page-width) !important;\n    max-width: var(--v241-page-max) !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    margin-top: 4px !important;\n    margin-bottom: 16px !important;\n    padding-left: 0 !important;\n    padding-right: 0 !important;\n    box-sizing: border-box !important;\n}\n\n/* Shared wide container: hero and Streamlit iframe wrappers */\n.uni-hero-wrap-v230,\ndiv[data-testid="stElementContainer"]:has(.uni-hero-wrap-v230),\ndiv[data-testid="stElementContainer"]:has(iframe),\ndiv[data-testid="stIFrame"],\ndiv[data-testid="stIFrame"] > div,\n.uni-hero-wrap-v230 iframe,\ndiv[data-testid="stIFrame"] iframe,\ndiv[data-testid="stElementContainer"]:has(iframe) iframe{\n    width: var(--v241-page-width) !important;\n    max-width: var(--v241-page-max) !important;\n    min-width: 0 !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    padding-left: 0 !important;\n    padding-right: 0 !important;\n    box-sizing: border-box !important;\n}\n\n/* Hero iframe height and spacing */\n.uni-hero-wrap-v230{\n    margin-top: 0 !important;\n    margin-bottom: 0 !important;\n    line-height: 0 !important;\n    display: block !important;\n}\n.uni-hero-wrap-v230 iframe,\ndiv[data-testid="stIFrame"] iframe,\ndiv[data-testid="stElementContainer"]:has(iframe) iframe{\n    height: 482px !important;\n    min-height: 482px !important;\n    max-height: 482px !important;\n    margin-top: 0 !important;\n    margin-bottom: 0 !important;\n    padding: 0 !important;\n    border: 0 !important;\n    display: block !important;\n}\n\n/* Shared wide container: filter/search card */\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){\n    width: var(--v241-page-width) !important;\n    max-width: var(--v241-page-max) !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    margin-top: 16px !important;\n    padding: 18px 18px !important;\n    box-sizing: border-box !important;\n}\n\n/* Shared wide container: info bar */\ndiv[data-testid="stAlert"]{\n    width: var(--v241-page-width) !important;\n    max-width: var(--v241-page-max) !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    margin-top: 16px !important;\n    box-sizing: border-box !important;\n}\n\n/* Shared wide container: university grid/list */\n.university-grid-wrapper,\n.university-grid,\n.universities-grid,\n.universities-grid-wrapper,\n.uni-card-grid,\n.uni-grid,\n.cards-grid,\n.university-list-wrapper,\n.universities-list-wrapper,\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v230),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v231),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v232),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v233),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v234),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v235),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v236),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v237),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v238),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v239),\ndiv[data-testid="stHorizontalBlock"]:has(.university-card-v240){\n    width: var(--v241-page-width) !important;\n    max-width: var(--v241-page-max) !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    box-sizing: border-box !important;\n}\n\n/* Remove spacer effects around these top sections */\ndiv[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search university"]),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universities"]){\n    margin-top: 0 !important;\n    padding-top: 0 !important;\n    margin-bottom: 0 !important;\n    padding-bottom: 0 !important;\n}\n\n/* Prevent old/narrow hero or heading wrappers from taking space */\n.uni-list-heading-v226,\n.uni-list-heading-v227,\n.uni-list-heading-v228,\n.uni-hero-wrap-v229,\n.hero-promo-slider-v227,\n.hero-promo-slider-v228,\n.hero-slider-v229,\n.ad-slider-v226{\n    display:none !important;\n    height:0 !important;\n    min-height:0 !important;\n    max-height:0 !important;\n    padding:0 !important;\n    margin:0 !important;\n    opacity:0 !important;\n    overflow:hidden !important;\n}\n\n/* Hero content inside iframe should fill the wide iframe */\n.hero-section,\n.hero-slider,\n.hero-promo-slider-v230,\n.hero-promo-slider-v231,\n.hero-promo-slider-v232,\n.hero-promo-slider-v233,\n.hero-promo-slider-v234,\n.hero-promo-slider-v235,\n.hero-promo-slider-v236,\n.hero-promo-slider-v237,\n.hero-promo-slider-v238,\n.hero-promo-slider-v239,\n.hero-promo-slider-v240{\n    width: 100% !important;\n    max-width: 100% !important;\n    box-sizing: border-box !important;\n}\n\n/* Tablet */\n@media(max-width:768px){\n    :root{\n        --v241-page-width: calc(100% - 24px);\n        --v240-page-width: calc(100% - 24px);\n        --v239-page-width: calc(100% - 24px);\n        --v238-page-width: calc(100% - 24px);\n    }\n    .uni-hero-wrap-v230 iframe,\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height: 432px !important;\n        min-height: 432px !important;\n        max-height: 432px !important;\n    }\n}\n\n/* Mobile */\n@media(max-width:480px){\n    :root{\n        --v241-page-width: calc(100% - 16px);\n        --v240-page-width: calc(100% - 16px);\n        --v239-page-width: calc(100% - 16px);\n        --v238-page-width: calc(100% - 16px);\n    }\n    .uni-hero-wrap-v230 iframe,\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height: 422px !important;\n        min-height: 422px !important;\n        max-height: 422px !important;\n    }\n}\n</style>\n', unsafe_allow_html=True)
+
+
+# v242 final vertical gap CSS injection
+st.markdown('\n<style>\n/* v242: remaining vertical gap removal only. Width, hero design, filter/cards/logic unchanged. */\n:root{\n    --v242-page-width: calc(100% - 32px);\n    --v242-page-max: 1760px;\n    --v241-page-width: calc(100% - 32px);\n    --v241-page-max: 1760px;\n}\n\n/* Keep the same wide container from v241 */\ndiv[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),\ndiv[data-testid="stHorizontalBlock"]:has(.public-brand-v220),\ndiv[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225),\n.uni-hero-wrap-v230,\ndiv[data-testid="stElementContainer"]:has(iframe),\ndiv[data-testid="stIFrame"],\ndiv[data-testid="stIFrame"] > div,\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]),\ndiv[data-testid="stAlert"]{\n    width: var(--v242-page-width) !important;\n    max-width: var(--v242-page-max) !important;\n    margin-left: auto !important;\n    margin-right: auto !important;\n    box-sizing: border-box !important;\n}\n\n/* Navbar to hero: reduce default bottom spacing */\ndiv[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),\ndiv[data-testid="stHorizontalBlock"]:has(.public-brand-v220),\ndiv[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){\n    margin-bottom: 10px !important;\n    padding-bottom: 0 !important;\n}\n\n/* Hero wrapper: no padding and no added gap */\n.uni-hero-wrap-v230,\ndiv[data-testid="stElementContainer"]:has(iframe),\ndiv[data-testid="stIFrame"],\ndiv[data-testid="stIFrame"] > div{\n    margin-top: 0 !important;\n    padding-top: 0 !important;\n    padding-bottom: 0 !important;\n}\n\n/* Iframe keeps hero size but no extra vertical reserve */\n.uni-hero-wrap-v230 iframe,\ndiv[data-testid="stIFrame"] iframe,\ndiv[data-testid="stElementContainer"]:has(iframe) iframe{\n    height: 482px !important;\n    min-height: 482px !important;\n    max-height: 482px !important;\n    border: 0 !important;\n    padding: 0 !important;\n    display: block !important;\n}\n\n/* Hero to filter: make filter close to hero */\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){\n    margin-top: 10px !important;\n    padding-top: 18px !important;\n}\n\n/* Compress Streamlit default vertical block gaps only around hero/filter area */\ndiv[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230),\ndiv[data-testid="stVerticalBlock"] > div:has(iframe),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search university"]),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universities"]){\n    margin-top: 0 !important;\n    margin-bottom: 0 !important;\n    padding-top: 0 !important;\n    padding-bottom: 0 !important;\n}\n\n/* Info bar follows filter cleanly */\ndiv[data-testid="stAlert"]{\n    margin-top: 14px !important;\n}\n\n/* Mobile safe spacing */\n@media(max-width:768px){\n    :root{\n        --v242-page-width: calc(100% - 24px);\n        --v241-page-width: calc(100% - 24px);\n    }\n    .uni-hero-wrap-v230 iframe,\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height: 432px !important;\n        min-height: 432px !important;\n        max-height: 432px !important;\n    }\n}\n@media(max-width:480px){\n    :root{\n        --v242-page-width: calc(100% - 16px);\n        --v241-page-width: calc(100% - 16px);\n    }\n    .uni-hero-wrap-v230 iframe,\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height: 422px !important;\n        min-height: 422px !important;\n        max-height: 422px !important;\n    }\n}\n</style>\n', unsafe_allow_html=True)
