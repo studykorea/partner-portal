@@ -1582,3 +1582,10 @@ v231:
 - Reduced large empty white space between navbar and hero.
 - Moved hero upward and increased desktop hero height to feel more premium.
 - Kept hero image rendering, Super Admin ads, university fallback images, filters, cards, admission logic, and database structure unchanged.
+
+
+v232:
+- Fixed only the remaining navbar-to-hero whitespace.
+- Pulled hero much closer to the navbar.
+- Increased desktop hero iframe/component height to 600–640px so the banner fills the area better.
+- Kept hero image rendering, admin advertisements, university fallback images, filters, cards, admission logic, and database structure unchanged.
