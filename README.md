@@ -1596,3 +1596,10 @@ v233:
 - Added iframe-level spacing correction because Streamlit components.html creates a separate iframe outside the markdown wrapper.
 - Pulled hero upward while keeping the hero design, images, slider logic, cards, filters, admission logic, and database unchanged.
 - Filter card now sits closer below the hero.
+
+
+v234:
+- Fixed only the large blank white space below the hero slider.
+- The hero iframe reserved height now matches the actual visible hero height.
+- Filter/search card now appears directly below the hero with about a 22px gap.
+- Navbar, hero design, slider image logic, university cards, admission logic, admin upload logic, and database logic were not changed.

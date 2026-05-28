@@ -12647,6 +12647,98 @@ div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universi
     }
 }
 
+
+/* v234: remove large blank space below hero only */
+.uni-hero-wrap-v230{
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 20px auto 0 auto !important;
+    padding: 0 !important;
+    display: block !important;
+    line-height: 0 !important;
+}
+
+/* The hero HTML is 420px tall. Reserve only that height plus a small safety buffer. */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe{
+    height: 430px !important;
+    min-height: 430px !important;
+    max-height: 430px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+}
+
+/* Remove bottom padding/margin from the iframe wrappers that caused the white gap. */
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+div[data-testid="stElementContainer"]:has(iframe),
+div[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230){
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Filter/search card directly below hero with a clean 20-24px gap. */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 22px auto 0 auto !important;
+    padding: 18px 18px !important;
+}
+
+/* Keep navbar to hero spacing compact but not touching. */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    margin-bottom: 20px !important;
+}
+
+@media(max-width:1100px){
+    .uni-hero-wrap-v230{
+        width: calc(100% - 28px) !important;
+        margin-top: 18px !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 510px !important;
+        min-height: 510px !important;
+        max-height: 510px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 28px) !important;
+        margin-top: 22px !important;
+    }
+}
+
+@media(max-width:680px){
+    .uni-hero-wrap-v230{
+        width: calc(100% - 18px) !important;
+        margin-top: 16px !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 470px !important;
+        min-height: 470px !important;
+        max-height: 470px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 18px) !important;
+        margin-top: 20px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -18668,12 +18760,12 @@ def hero_slider_component_html_v230(df):
 
             frame.style.display = "block";
             frame.style.width = "100%";
-            frame.style.height = "604px";
-            frame.style.minHeight = "604px";
-            frame.style.maxHeight = "604px";
+            frame.style.height = "430px";
+            frame.style.minHeight = "430px";
+            frame.style.maxHeight = "430px";
             frame.style.border = "0";
-            frame.style.marginTop = "-72px";
-            frame.style.marginBottom = "-10px";
+            frame.style.marginTop = "0";
+            frame.style.marginBottom = "0";
             frame.style.padding = "0";
 
             var parent = frame.parentElement;
@@ -18703,7 +18795,7 @@ def hero_slider_component_html_v230(df):
 
 def render_universities_hero_v230(df):
     st.markdown('<div class="uni-hero-wrap-v230">', unsafe_allow_html=True)
-    components.html(hero_slider_component_html_v230(df), height=604, scrolling=False)
+    components.html(hero_slider_component_html_v230(df), height=430, scrolling=False)
     st.markdown('</div>', unsafe_allow_html=True)
 
 def universities_page(public=False):
