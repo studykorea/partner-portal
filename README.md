@@ -1695,3 +1695,23 @@ v258:
 - Login is an outlined button; Partner Sign Up is a navy primary button.
 - Added call to existing query-param navbar routing so links work.
 - Did not change hero, cards, filters, admission logic, admin logic, or database logic.
+
+
+v259:
+- Added Linked University dropdown to Super Admin Hero Advertisements.
+- Stores linkedUniversityId for each hero promotion slide.
+- Hero info box now shows selected university official logo, name, location, and View Details link.
+- Info box is clickable and opens selected university detail page.
+- Fallback slides use university cover images and official logos from admin data.
+- No changes to university cards, filters, admission logic, or unrelated pages.
+
+
+v260:
+- Properly completed Hero Advertisement Linked University system.
+- Added active override immediately before routing so the correct Super Admin form is used.
+- Add/Edit Hero Advertisement forms now include Linked University dropdown.
+- Saves linkedUniversityId, plus backward-compatible image/link/order/active keys.
+- Hero slider info box shows linked university official logo, name, location, and View Details.
+- Hero info box is clickable to selected university detail page.
+- If no linked university is selected, the slide uses title/subtitle and Optional Link URL.
+- Did not change university cards, filters, admission logic, navbar, footer, admin university data, or unrelated pages.

@@ -23998,6 +23998,810 @@ def admin_applications_page_v125():
     close_shell()
 
 
+
+# v259: Hero Advertisement linked-university system
+from urllib.parse import quote_plus as _quote_plus_v259
+
+def university_display_name_v259(row):
+    try:
+        return display_clean_v50(row.get("University", "")) or display_clean_v50(row.get("name", "")) or "University"
+    except Exception:
+        return "University"
+
+def university_id_v259(row):
+    try:
+        for col in ["id", "ID", "University_ID", "University Id", "university_id", "slug", "Slug"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return str(val)
+        name = university_display_name_v259(row)
+        return safe_slug_v49(name) if 'safe_slug_v49' in globals() else str(name).strip().lower().replace(' ', '-')
+    except Exception:
+        return ""
+
+def university_location_v259(row):
+    try:
+        city = display_clean_v50(row.get("city", "")) or display_clean_v50(row.get("City", "")) or display_clean_v50(row.get("Location", ""))
+        country = display_clean_v50(row.get("country", "")) or display_clean_v50(row.get("Country", "")) or "Republic of Korea"
+        if city and country and country.lower() not in city.lower():
+            return f"{city}, {country}"
+        return city or country or "Location not updated"
+    except Exception:
+        return "Location not updated"
+
+def university_logo_path_v259(row):
+    try:
+        for col in ["logoUrl", "Logo_URL", "University_Logo", "Logo", "logo", "Logo_Path", "University Logo"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+    except Exception:
+        pass
+    return ""
+
+def university_cover_path_v259(row):
+    try:
+        for col in ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+    except Exception:
+        pass
+    return ""
+
+def university_detail_url_v259(row):
+    try:
+        for col in ["detailPageUrl", "Detail_Page_URL", "Detail_URL", "URL"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+        name = university_display_name_v259(row)
+        return f"?unidetail={_quote_plus_v259(name)}"
+    except Exception:
+        return "?nav=universities"
+
+def universities_records_v259():
+    try:
+        df = universities().copy()
+        if df is None or len(df) == 0:
+            return []
+        records = []
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            uid = university_id_v259(d)
+            name = university_display_name_v259(d)
+            if uid and name:
+                records.append({"id": uid, "name": name, "row": d})
+        return records
+    except Exception:
+        return []
+
+def university_select_options_v259():
+    records = universities_records_v259()
+    options = [""]
+    labels = {"": "No linked university"}
+    for rec in records:
+        uid = rec["id"]
+        label = f"{rec['name']}"
+        loc = university_location_v259(rec["row"])
+        if loc:
+            label = f"{label} — {loc}"
+        options.append(uid)
+        labels[uid] = label
+    return options, labels
+
+def find_university_by_linked_id_v259(df, linked_id):
+    linked_id = str(linked_id or "").strip()
+    if not linked_id or df is None or len(df) == 0:
+        return None
+    try:
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            candidates = {university_id_v259(d), university_display_name_v259(d), safe_slug_v49(university_display_name_v259(d))}
+            if linked_id in candidates:
+                return d
+    except Exception:
+        return None
+    return None
+
+def hero_data_url_v259(path):
+    encoded = b64(path)
+    if not encoded:
+        return ""
+    mime = hero_image_mime_v229(path) if 'hero_image_mime_v229' in globals() else 'image/jpeg'
+    return f"data:{mime};base64,{encoded}"
+
+def collect_hero_slides_v229(df):
+    """v259 override: collect slides and attach linked university metadata."""
+    slides = []
+    try:
+        ads = active_hero_ads_v226()
+    except Exception:
+        ads = []
+    for ad in ads:
+        if not isinstance(ad, dict):
+            continue
+        image_path = display_clean_v50(ad.get("image_path", ""))
+        image_url = hero_slide_image_url_v229(image_path)
+        if not image_url:
+            continue
+        linked_id = display_clean_v50(ad.get("linkedUniversityId", "")) or display_clean_v50(ad.get("linked_university_id", ""))
+        linked_uni = find_university_by_linked_id_v259(df, linked_id) if linked_id else None
+        slide = {
+            "image_url": image_url,
+            "title": display_clean_v50(ad.get("title", "")) or "Universities Information",
+            "subtitle": display_clean_v50(ad.get("subtitle", "")) or "Filter universities by location/city, program type, admission status, intake, and more.",
+            "link_url": display_clean_v50(ad.get("link_url", "")),
+            "focal_x": display_clean_v50(ad.get("focal_x", "Center")) or "Center",
+            "focal_y": display_clean_v50(ad.get("focal_y", "Center")) or "Center",
+            "linked_university_id": linked_id,
+            "linked_university": None,
+        }
+        if linked_uni:
+            logo_path = university_logo_path_v259(linked_uni)
+            slide["linked_university"] = {
+                "name": university_display_name_v259(linked_uni),
+                "location": university_location_v259(linked_uni),
+                "logo_url": hero_data_url_v259(logo_path),
+                "detail_url": university_detail_url_v259(linked_uni),
+            }
+            slide["title"] = slide["linked_university"]["name"]
+            slide["subtitle"] = slide["linked_university"]["location"]
+            slide["link_url"] = slide["linked_university"]["detail_url"]
+        slides.append(slide)
+
+    if not slides and df is not None and len(df) > 0:
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            image_path = university_cover_path_v259(d)
+            image_url = hero_slide_image_url_v229(image_path)
+            if not image_url:
+                continue
+            logo_path = university_logo_path_v259(d)
+            name = university_display_name_v259(d)
+            location = university_location_v259(d)
+            detail_url = university_detail_url_v259(d)
+            slides.append({
+                "image_url": image_url,
+                "title": name,
+                "subtitle": location,
+                "link_url": detail_url,
+                "focal_x": "Center",
+                "focal_y": "Center",
+                "linked_university_id": university_id_v259(d),
+                "linked_university": {"name": name, "location": location, "logo_url": hero_data_url_v259(logo_path), "detail_url": detail_url},
+            })
+            if len(slides) >= 8:
+                break
+    return slides
+
+def hero_linked_caption_html_v259(slide):
+    linked = slide.get("linked_university") or None
+    if linked:
+        name = _safe_html_v62(linked.get("name", "University"))
+        location = _safe_html_v62(linked.get("location", "Location not updated"))
+        detail = _safe_html_v62(linked.get("detail_url", "?nav=universities"))
+        logo_url = linked.get("logo_url", "")
+        if logo_url:
+            logo_html = f'<img src="{logo_url}" alt="{name} logo">'
+        else:
+            logo_html = '<span>Logo</span>'
+        return f'''<a class="caption linked-caption" href="{detail}" target="_parent" aria-label="View {name} details"><div class="caption-logo">{logo_html}</div><div class="caption-copy"><strong>{name}</strong><span>{location}</span><em>View Details →</em></div></a>'''
+    title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+    subtitle = _safe_html_v62(slide.get("subtitle", "") or "Filter universities by location/city, program type, admission status, intake, and more.")
+    url = _safe_html_v62(slide.get("link_url", "") or "")
+    inner = f'<strong>{title}</strong><span>{subtitle}</span>'
+    if url:
+        return f'<a class="caption" href="{url}" target="_parent">{inner}</a>'
+    return f'<div class="caption">{inner}</div>'
+
+def hero_slider_component_html_v230(df):
+    """v259 override: hero slider with clickable linked-university info box."""
+    slides = collect_hero_slides_v229(df)
+    if not slides:
+        return """<!doctype html><html><head><style>html,body{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.placeholder{height:480px;border-radius:28px;background:#F8FBFF;border:1px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.card{text-align:center;background:#fff;border:1px solid #E2E8F0;border-radius:22px;padding:34px;box-shadow:0 14px 34px rgba(15,23,42,.08)}h1{margin:0 0 10px;color:#0F172A;font-size:36px;font-weight:950;letter-spacing:-.03em}p{margin:0;color:#334155;font-size:18px;font-weight:800}span{display:block;margin-top:8px;color:#64748B;font-size:14px}</style></head><body><section class="placeholder"><div class="card"><h1>Universities Information</h1><p>No promotion images uploaded yet</p><span>Upload hero advertisements or university cover images to display the slider.</span></div></section></body></html>"""
+    count = len(slides)
+    duration = max(count * 2, 2)
+    slide_markup = []
+    dot_markup = []
+    for i, slide in enumerate(slides):
+        title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+        image_url = slide.get("image_url", "")
+        position = hero_object_position_v229(slide.get("focal_x", "Center"), slide.get("focal_y", "Center"))
+        delay = i * 2
+        caption = hero_linked_caption_html_v259(slide)
+        slide_markup.append(f'<div class="slide" style="animation-delay:{delay}s; animation-duration:{duration}s;"><img src="{image_url}" alt="{title}" style="object-position:{position};">{caption}</div>')
+        dot_markup.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+    return f"""
+    <!doctype html><html><head><meta charset="utf-8"><style>
+    html,body{{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}}
+    .hero{{width:100%;height:480px;border-radius:28px;overflow:hidden;position:relative;background:#EAF2FF;box-shadow:0 22px 55px rgba(15,23,42,.14);border:1px solid rgba(226,232,240,.70);box-sizing:border-box}}
+    .slide{{position:absolute;inset:0;opacity:0;animation-name:fade;animation-timing-function:ease-in-out;animation-iteration-count:infinite;background:#EAF2FF}}.slide:first-child{{opacity:1}}
+    .slide img{{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:1;filter:none}}
+    .overlay{{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(6,26,64,.72) 0%,rgba(6,26,64,.46) 45%,rgba(6,26,64,.12) 100%)}}
+    .content{{position:relative;z-index:3;max-width:560px;padding:70px 56px;color:#fff;box-sizing:border-box}}.eyebrow{{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.20);backdrop-filter:blur(10px);font-size:13px;line-height:1;font-weight:900;letter-spacing:.02em;text-transform:uppercase;margin-bottom:22px;color:#fff}}
+    h1{{margin:0 0 20px;font-size:56px;line-height:1.05;font-weight:950;letter-spacing:-.045em;color:#fff;text-shadow:0 8px 28px rgba(0,0,0,.30)}}p{{margin:0;max-width:540px;font-size:19px;line-height:1.65;font-weight:650;color:rgba(255,255,255,.95);text-shadow:0 6px 20px rgba(0,0,0,.25)}}
+    .actions{{display:flex;align-items:center;gap:14px;margin-top:28px}}.btn{{min-height:52px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:900;line-height:1;box-shadow:0 12px 24px rgba(0,0,0,.16);box-sizing:border-box}}.secondary{{background:#fff;color:#061A40}}.primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff}}.primary b{{font-size:22px}}
+    .caption{{position:absolute;right:56px;bottom:36px;z-index:4;min-width:360px;max-width:500px;padding:18px 22px;border-radius:18px;background:rgba(6,26,64,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16);color:#fff;box-sizing:border-box;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}a.caption:hover{{transform:translateY(-2px);background:rgba(6,26,64,.84);box-shadow:0 18px 42px rgba(0,0,0,.26)}}.caption strong{{display:block;font-size:18px;font-weight:950;line-height:1.25;margin-bottom:5px;color:#fff}}.caption span{{display:block;font-size:13px;font-weight:650;line-height:1.35;color:rgba(255,255,255,.92)}}
+    .linked-caption{{display:flex;align-items:center;gap:16px;min-width:390px;padding:16px 18px}}.caption-logo{{width:62px;height:62px;min-width:62px;border-radius:16px;background:#fff;border:1px solid rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 10px 22px rgba(0,0,0,.18)}}.caption-logo img{{position:static;width:88%;height:88%;object-fit:contain;display:block;filter:none}}.caption-logo span{{font-size:12px;font-weight:900;color:#64748B}}.caption-copy{{display:flex;flex-direction:column;min-width:0}}.caption-copy strong{{font-size:20px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}.caption-copy span{{font-size:14px;margin-bottom:7px}}.caption-copy em{{font-style:normal;font-size:13px;font-weight:900;color:#DCEBFF}}
+    .arrow{{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:46px;height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.92);color:#061A40;box-shadow:0 12px 28px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:650;line-height:1;box-sizing:border-box}}.left{{left:18px}}.right{{right:18px}}.dots{{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px}}.dots i{{width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.45);animation-name:dot;animation-timing-function:ease-in-out;animation-iteration-count:infinite}}.hero:hover .slide,.hero:hover .dots i{{animation-play-state:paused}}
+    @keyframes fade{{0%{{opacity:0}}6%{{opacity:1}}42%{{opacity:1}}50%{{opacity:0}}100%{{opacity:0}}}}@keyframes dot{{0%,45%{{background:#fff;transform:scale(1.25)}}50%,100%{{background:rgba(255,255,255,.58);transform:scale(1)}}}}
+    @media(max-width:900px){{.hero{{height:430px;border-radius:24px}}.content{{padding:56px 38px;max-width:540px}}h1{{font-size:44px}}p{{font-size:17px}}.caption{{display:none}}}}@media(max-width:600px){{.hero{{height:420px;border-radius:20px}}.overlay{{background:linear-gradient(180deg,rgba(6,26,64,.78) 0%,rgba(6,26,64,.62) 50%,rgba(6,26,64,.24) 100%)}}.content{{position:absolute;left:22px;right:22px;bottom:58px;padding:0;max-width:none}}h1{{font-size:36px}}p{{font-size:15px}}.actions{{flex-direction:column;align-items:stretch;gap:10px}}.btn{{width:100%}}.arrow{{display:none}}}}
+    </style></head><body><section class="hero">{''.join(slide_markup)}<div class="overlay"></div><div class="content"><div class="eyebrow">Explore Korean Universities</div><h1>Universities<br>Information</h1><p>Filter universities by location/city, program type, admission status, intake, and more.</p><div class="actions"><span class="btn secondary">ⓘ How It Works</span><span class="btn primary">Explore Universities <b>→</b></span></div></div><div class="arrow left">‹</div><div class="arrow right">›</div><div class="dots">{''.join(dot_markup)}</div></section></body></html>
+    """
+
+def admin_hero_advertisements_v227():
+    """v259 override: Super Admin hero ads include Linked University dropdown."""
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
+    st.subheader("Hero Advertisements / Promotion Slider")
+    st.caption("Manage the full Universities Information hero banner. Link a promotion slide to an existing university so the public info box shows the official logo, name, and location automatically.")
+    st.info("Linked University uses the university already created in the University List/admin database. Do not upload the university logo again here.")
+    ads = hero_ads_list_v226()
+    options, labels = university_select_options_v259()
+    tabs = st.tabs(["Add Promotion Slide", "Manage Slides"])
+    with tabs[0]:
+        with st.form("add_hero_ad_v259", clear_on_submit=True):
+            c1, c2 = st.columns([1.2, 1])
+            with c1:
+                title = st.text_input("Slide Title")
+                subtitle = st.text_area("Subtitle", height=90)
+                button_text = st.text_input("Optional Button Text", value="Explore Universities")
+                link_url = st.text_input("Optional Link URL")
+                linked_university_id = st.selectbox("Linked University", options, format_func=lambda x: labels.get(x, "No linked university"), index=0)
+            with c2:
+                display_order = st.number_input("Display Order", min_value=1, value=(len(ads)+1), step=1)
+                active = st.checkbox("Active", value=True)
+                focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=1)
+                focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=1)
+                desktop_upload = st.file_uploader("Desktop Image / Poster", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_desktop_upload_v259")
+                mobile_upload = st.file_uploader("Optional Mobile Image", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_mobile_upload_v259")
+            submitted = st.form_submit_button("Save Promotion Slide", use_container_width=True)
+            if submitted:
+                if desktop_upload is None:
+                    st.error("Please upload a desktop image/poster.")
+                else:
+                    image_path = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                    mobile_image_path = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile") if mobile_upload is not None else ""
+                    ads.append({"id": datetime.now().strftime("%Y%m%d%H%M%S%f"), "title": title, "subtitle": subtitle, "button_text": button_text, "link_url": link_url, "display_order": str(display_order), "active": bool(active), "image_path": image_path, "mobile_image_path": mobile_image_path, "focal_x": focal_x, "focal_y": focal_y, "linkedUniversityId": linked_university_id, "created_at": datetime.now().isoformat(timespec="seconds")})
+                    save_hero_ads_v226(ads)
+                    st.success("Promotion slide saved.")
+                    st.rerun()
+    with tabs[1]:
+        if not ads:
+            st.info("No promotion slides have been added yet. The hero will temporarily use university cover images.")
+        else:
+            try:
+                ads_sorted = sorted(enumerate(ads), key=lambda x: int(float(str(x[1].get("display_order", 999)).strip() or 999)))
+            except Exception:
+                ads_sorted = list(enumerate(ads))
+            for idx, ad in ads_sorted:
+                ad_id = str(ad.get("id", idx))
+                st.markdown("---")
+                linked_id_current = display_clean_v50(ad.get("linkedUniversityId", "")) or display_clean_v50(ad.get("linked_university_id", ""))
+                if linked_id_current:
+                    st.caption(f"Linked University: {labels.get(linked_id_current, linked_id_current)}")
+                st.markdown(hero_ad_preview_html_v227(ad.get("image_path", ""), ad.get("mobile_image_path", ""), ad.get("title", ""), ad.get("subtitle", ""), ad.get("button_text", ""), ad.get("focal_x", "Center"), ad.get("focal_y", "Center")), unsafe_allow_html=True)
+                with st.form(f"edit_hero_ad_v259_{ad_id}"):
+                    c1, c2 = st.columns([1.2, 1])
+                    with c1:
+                        title = st.text_input("Slide Title", value=display_clean_v50(ad.get("title", "")), key=f"title_v259_{ad_id}")
+                        subtitle = st.text_area("Subtitle", value=display_clean_v50(ad.get("subtitle", "")), height=90, key=f"subtitle_v259_{ad_id}")
+                        button_text = st.text_input("Optional Button Text", value=display_clean_v50(ad.get("button_text", "")) or "Explore Universities", key=f"btn_v259_{ad_id}")
+                        link_url = st.text_input("Optional Link URL", value=display_clean_v50(ad.get("link_url", "")), key=f"link_v259_{ad_id}")
+                        current_index = options.index(linked_id_current) if linked_id_current in options else 0
+                        linked_university_id = st.selectbox("Linked University", options, format_func=lambda x: labels.get(x, "No linked university"), index=current_index, key=f"linked_uni_v259_{ad_id}")
+                    with c2:
+                        try:
+                            order_value = int(float(str(ad.get("display_order", 999)) or 999))
+                        except Exception:
+                            order_value = 999
+                        display_order = st.number_input("Display Order", min_value=1, value=order_value, step=1, key=f"order_v259_{ad_id}")
+                        active = st.checkbox("Active", value=str(ad.get("active", "True")).lower() in ["true","1","yes","active","on"], key=f"active_v259_{ad_id}")
+                        fx_val = display_clean_v50(ad.get("focal_x", "Center")) if display_clean_v50(ad.get("focal_x", "Center")) in ["Left", "Center", "Right"] else "Center"
+                        fy_val = display_clean_v50(ad.get("focal_y", "Center")) if display_clean_v50(ad.get("focal_y", "Center")) in ["Top", "Center", "Bottom"] else "Center"
+                        focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=["Left", "Center", "Right"].index(fx_val), key=f"fx_v259_{ad_id}")
+                        focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=["Top", "Center", "Bottom"].index(fy_val), key=f"fy_v259_{ad_id}")
+                        desktop_upload = st.file_uploader("Replace Desktop Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_desktop_v259_{ad_id}")
+                        mobile_upload = st.file_uploader("Replace / Add Mobile Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_mobile_v259_{ad_id}")
+                    s1, s2 = st.columns(2)
+                    with s1:
+                        update_clicked = st.form_submit_button("Update Slide", use_container_width=True)
+                    with s2:
+                        delete_clicked = st.form_submit_button("Delete Slide", use_container_width=True)
+                    if update_clicked:
+                        ads[idx]["title"] = title
+                        ads[idx]["subtitle"] = subtitle
+                        ads[idx]["button_text"] = button_text
+                        ads[idx]["link_url"] = link_url
+                        ads[idx]["display_order"] = str(display_order)
+                        ads[idx]["active"] = bool(active)
+                        ads[idx]["focal_x"] = focal_x
+                        ads[idx]["focal_y"] = focal_y
+                        ads[idx]["linkedUniversityId"] = linked_university_id
+                        if desktop_upload is not None:
+                            ads[idx]["image_path"] = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                        if mobile_upload is not None:
+                            ads[idx]["mobile_image_path"] = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile")
+                        save_hero_ads_v226(ads)
+                        st.success("Promotion slide updated.")
+                        st.rerun()
+                    if delete_clicked:
+                        ads.pop(idx)
+                        save_hero_ads_v226(ads)
+                        st.warning("Promotion slide deleted.")
+                        st.rerun()
+    close_shell()
+
+
+# v260 COMPLETE FIX: Hero Advertisement linked university system
+# This override is intentionally placed immediately before routing so it becomes the actual active implementation.
+from urllib.parse import quote_plus as _quote_plus_v260
+
+def _hero_ad_get_v260(ad, *keys, default=""):
+    if not isinstance(ad, dict):
+        return default
+    for k in keys:
+        val = ad.get(k, "")
+        try:
+            val = display_clean_v50(val)
+        except Exception:
+            val = str(val or "").strip()
+        if val:
+            return val
+    return default
+
+def university_display_name_v260(row):
+    try:
+        for col in ["University", "name", "Name", "universityName", "University Name"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+    except Exception:
+        pass
+    return "University"
+
+def university_id_v260(row):
+    try:
+        for col in ["id", "ID", "University_ID", "University Id", "university_id", "slug", "Slug"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return str(val)
+        name = university_display_name_v260(row)
+        return safe_slug_v49(name) if 'safe_slug_v49' in globals() else str(name).strip().lower().replace(" ", "-")
+    except Exception:
+        return ""
+
+def university_location_v260(row):
+    try:
+        city = ""
+        country = ""
+        for col in ["city", "City", "Location", "location"]:
+            city = display_clean_v50(row.get(col, ""))
+            if city:
+                break
+        for col in ["country", "Country"]:
+            country = display_clean_v50(row.get(col, ""))
+            if country:
+                break
+        country = country or "Republic of Korea"
+        if city and country and country.lower() not in city.lower():
+            return f"{city}, {country}"
+        return city or country or "Location not updated"
+    except Exception:
+        return "Location not updated"
+
+def university_logo_path_v260(row):
+    try:
+        for col in ["logoUrl", "Logo_URL", "University_Logo", "Logo", "logo", "Logo_Path", "University Logo"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+    except Exception:
+        pass
+    return ""
+
+def university_cover_path_v260(row):
+    try:
+        for col in ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl", "image_path"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+    except Exception:
+        pass
+    return ""
+
+def university_detail_url_v260(row):
+    try:
+        for col in ["detailPageUrl", "Detail_Page_URL", "Detail_URL", "URL", "detail_url"]:
+            val = display_clean_v50(row.get(col, ""))
+            if val:
+                return val
+        name = university_display_name_v260(row)
+        return f"?unidetail={_quote_plus_v260(name)}"
+    except Exception:
+        return "?nav=universities"
+
+def universities_records_v260():
+    try:
+        df = universities().copy()
+        if df is None or len(df) == 0:
+            return []
+        records = []
+        used = set()
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            uid = university_id_v260(d)
+            name = university_display_name_v260(d)
+            if uid and name and uid not in used:
+                used.add(uid)
+                records.append({"id": uid, "name": name, "row": d})
+        return records
+    except Exception:
+        return []
+
+def university_select_options_v260():
+    records = universities_records_v260()
+    options = [""]
+    labels = {"": "No linked university"}
+    for rec in records:
+        loc = university_location_v260(rec["row"])
+        label = rec["name"] + (f" — {loc}" if loc else "")
+        options.append(rec["id"])
+        labels[rec["id"]] = label
+    return options, labels
+
+def find_university_by_linked_id_v260(df, linked_id):
+    linked_id = str(linked_id or "").strip()
+    if not linked_id or df is None or len(df) == 0:
+        return None
+    try:
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            uid = university_id_v260(d)
+            name = university_display_name_v260(d)
+            slug = safe_slug_v49(name) if 'safe_slug_v49' in globals() else str(name).strip().lower().replace(" ", "-")
+            if linked_id in {uid, name, slug}:
+                return d
+    except Exception:
+        return None
+    return None
+
+def hero_data_url_v260(path):
+    encoded = b64(path)
+    if not encoded:
+        return ""
+    try:
+        mime = hero_image_mime_v229(path)
+    except Exception:
+        mime = "image/jpeg"
+    return f"data:{mime};base64,{encoded}"
+
+def collect_hero_slides_v229(df):
+    """v260 active implementation: active ads + linked university metadata + fallback university cover images."""
+    slides = []
+    try:
+        ads = active_hero_ads_v226()
+    except Exception:
+        ads = []
+
+    for ad in ads:
+        if not isinstance(ad, dict):
+            continue
+
+        image_path = _hero_ad_get_v260(ad, "imageUrl", "image_url", "image_path", "desktopImageUrl", "desktop_image_url")
+        image_url = hero_slide_image_url_v229(image_path) if image_path else ""
+        if not image_url:
+            continue
+
+        linked_id = _hero_ad_get_v260(ad, "linkedUniversityId", "linked_university_id", "linkedUniversityID")
+        linked_uni = find_university_by_linked_id_v260(df, linked_id) if linked_id else None
+
+        title = _hero_ad_get_v260(ad, "title", "slideTitle", default="Universities Information")
+        subtitle = _hero_ad_get_v260(ad, "subtitle", default="Filter universities by location/city, program type, admission status, intake, and more.")
+        link_url = _hero_ad_get_v260(ad, "linkUrl", "link_url", "url")
+        focal_x = _hero_ad_get_v260(ad, "focalPointX", "focal_x", default="Center")
+        focal_y = _hero_ad_get_v260(ad, "focalPointY", "focal_y", default="Center")
+
+        slide = {
+            "image_url": image_url,
+            "title": title,
+            "subtitle": subtitle,
+            "link_url": link_url,
+            "focal_x": focal_x,
+            "focal_y": focal_y,
+            "linked_university_id": linked_id,
+            "linked_university": None,
+        }
+
+        if linked_uni:
+            name = university_display_name_v260(linked_uni)
+            location = university_location_v260(linked_uni)
+            logo_url = hero_data_url_v260(university_logo_path_v260(linked_uni))
+            detail_url = university_detail_url_v260(linked_uni)
+            slide["linked_university"] = {
+                "id": university_id_v260(linked_uni),
+                "name": name,
+                "location": location,
+                "logo_url": logo_url,
+                "detail_url": detail_url,
+            }
+            slide["title"] = name
+            slide["subtitle"] = location
+            slide["link_url"] = detail_url
+
+        slides.append(slide)
+
+    if not slides and df is not None and len(df) > 0:
+        for _, row in df.iterrows():
+            d = row.to_dict()
+            image_path = university_cover_path_v260(d)
+            image_url = hero_slide_image_url_v229(image_path) if image_path else ""
+            if not image_url:
+                continue
+            name = university_display_name_v260(d)
+            location = university_location_v260(d)
+            detail_url = university_detail_url_v260(d)
+            slides.append({
+                "image_url": image_url,
+                "title": name,
+                "subtitle": location,
+                "link_url": detail_url,
+                "focal_x": "Center",
+                "focal_y": "Center",
+                "linked_university_id": university_id_v260(d),
+                "linked_university": {
+                    "id": university_id_v260(d),
+                    "name": name,
+                    "location": location,
+                    "logo_url": hero_data_url_v260(university_logo_path_v260(d)),
+                    "detail_url": detail_url,
+                },
+            })
+            if len(slides) >= 8:
+                break
+    return slides
+
+def hero_linked_caption_html_v260(slide):
+    linked = slide.get("linked_university") or None
+    if linked:
+        name = _safe_html_v62(linked.get("name", "University"))
+        location = _safe_html_v62(linked.get("location", "Location not updated"))
+        detail = _safe_html_v62(linked.get("detail_url", "?nav=universities"))
+        logo_url = linked.get("logo_url", "")
+        logo_html = f'<img src="{logo_url}" alt="{name} logo">' if logo_url else '<span>Logo</span>'
+        return f"""
+        <a class="hero-info-box clickable" href="{detail}" target="_parent" aria-label="View {name} details">
+          <div class="hero-info-logo">{logo_html}</div>
+          <div class="hero-info-content">
+            <h3>{name}</h3>
+            <p>{location}</p>
+            <span>View Details →</span>
+          </div>
+        </a>
+        """
+
+    title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+    subtitle = _safe_html_v62(slide.get("subtitle", "") or "Filter universities by location/city, program type, admission status, intake, and more.")
+    url = _safe_html_v62(slide.get("link_url", "") or "")
+    inner = f"""
+      <div class="hero-info-content">
+        <h3>{title}</h3>
+        <p>{subtitle}</p>
+        {"<span>Learn More →</span>" if url else ""}
+      </div>
+    """
+    if url:
+        return f'<a class="hero-info-box clickable" href="{url}" target="_parent">{inner}</a>'
+    return f'<div class="hero-info-box">{inner}</div>'
+
+def hero_slider_component_html_v230(df):
+    """v260 active implementation: hero slider with linked-university clickable info box."""
+    slides = collect_hero_slides_v229(df)
+    if not slides:
+        return """<!doctype html><html><head><style>html,body{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.placeholder{height:480px;border-radius:28px;background:#F8FBFF;border:1px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.card{text-align:center;background:#fff;border:1px solid #E2E8F0;border-radius:22px;padding:34px;box-shadow:0 14px 34px rgba(15,23,42,.08)}h1{margin:0 0 10px;color:#0F172A;font-size:36px;font-weight:950;letter-spacing:-.03em}p{margin:0;color:#334155;font-size:18px;font-weight:800}span{display:block;margin-top:8px;color:#64748B;font-size:14px}</style></head><body><section class="placeholder"><div class="card"><h1>Universities Information</h1><p>No promotion images uploaded yet</p><span>Upload hero advertisements or university cover images to display the slider.</span></div></section></body></html>"""
+
+    count = len(slides)
+    duration = max(count * 2, 2)
+    slide_markup = []
+    dot_markup = []
+    for i, slide in enumerate(slides):
+        title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+        image_url = slide.get("image_url", "")
+        try:
+            position = hero_object_position_v229(slide.get("focal_x", "Center"), slide.get("focal_y", "Center"))
+        except Exception:
+            position = "center center"
+        delay = i * 2
+        caption = hero_linked_caption_html_v260(slide)
+        slide_markup.append(f'<div class="slide" style="animation-delay:{delay}s; animation-duration:{duration}s;"><img src="{image_url}" alt="{title}" style="object-position:{position};">{caption}</div>')
+        dot_markup.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+
+    return f"""
+    <!doctype html><html><head><meta charset="utf-8"><style>
+    html,body{{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}}
+    .hero{{width:100%;height:480px;border-radius:28px;overflow:hidden;position:relative;background:#EAF2FF;box-shadow:0 22px 55px rgba(15,23,42,.14);border:1px solid rgba(226,232,240,.70);box-sizing:border-box}}
+    .slide{{position:absolute;inset:0;opacity:0;animation-name:fade;animation-timing-function:ease-in-out;animation-iteration-count:infinite;background:#EAF2FF}}.slide:first-child{{opacity:1}}
+    .slide img{{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:1;filter:none}}
+    .overlay{{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(6,26,64,.72) 0%,rgba(6,26,64,.46) 45%,rgba(6,26,64,.12) 100%)}}
+    .content{{position:relative;z-index:3;max-width:560px;padding:70px 56px;color:#fff;box-sizing:border-box}}
+    .eyebrow{{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.20);backdrop-filter:blur(10px);font-size:13px;line-height:1;font-weight:900;letter-spacing:.02em;text-transform:uppercase;margin-bottom:22px;color:#fff}}
+    h1{{margin:0 0 20px;font-size:56px;line-height:1.05;font-weight:950;letter-spacing:-.045em;color:#fff;text-shadow:0 8px 28px rgba(0,0,0,.30)}}
+    p{{margin:0;max-width:540px;font-size:19px;line-height:1.65;font-weight:650;color:rgba(255,255,255,.95);text-shadow:0 6px 20px rgba(0,0,0,.25)}}
+    .actions{{display:flex;align-items:center;gap:14px;margin-top:28px}}.btn{{min-height:52px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:900;line-height:1;box-shadow:0 12px 24px rgba(0,0,0,.16);box-sizing:border-box}}
+    .secondary{{background:#fff;color:#061A40}}.primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff}}.primary b{{font-size:22px}}
+
+    .hero-info-box{{position:absolute;right:56px;bottom:44px;z-index:4;width:420px;padding:22px;border-radius:18px;background:rgba(6,26,64,.88);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}
+    .hero-info-box.clickable{{cursor:pointer}}
+    .hero-info-box.clickable:hover{{transform:translateY(-2px);background:rgba(6,26,64,.94);box-shadow:0 22px 46px rgba(0,0,0,.28)}}
+    .hero-info-logo{{width:64px;height:64px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.8)}}
+    .hero-info-logo img{{position:static;width:88%;height:88%;object-fit:contain;display:block;filter:none}}
+    .hero-info-logo span{{font-size:12px;font-weight:900;color:#64748B}}
+    .hero-info-content{{min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left}}
+    .hero-info-content h3{{margin:0;font-size:20px;line-height:1.2;font-weight:900;color:#fff;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis}}
+    .hero-info-content p{{margin:6px 0 8px;font-size:14px;line-height:1.35;font-weight:650;color:rgba(255,255,255,.78);text-shadow:none;max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+    .hero-info-content span{{font-size:14px;font-weight:900;color:#fff}}
+
+    .arrow{{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:46px;height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.92);color:#061A40;box-shadow:0 12px 28px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:650;line-height:1;box-sizing:border-box}}
+    .left{{left:18px}}.right{{right:18px}}
+    .dots{{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px}}
+    .dots i{{width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.45);animation-name:dot;animation-timing-function:ease-in-out;animation-iteration-count:infinite}}
+    .hero:hover .slide,.hero:hover .dots i{{animation-play-state:paused}}
+    @keyframes fade{{0%{{opacity:0}}6%{{opacity:1}}42%{{opacity:1}}50%,100%{{opacity:0}}}}
+    @keyframes dot{{0%,45%{{background:#fff;transform:scale(1.25)}}50%,100%{{background:rgba(255,255,255,.58);transform:scale(1)}}}}
+    @media(max-width:900px){{.hero{{height:430px;border-radius:24px}}.content{{padding:56px 38px;max-width:540px}}h1{{font-size:44px}}p{{font-size:17px}}.hero-info-box{{display:none}}}}
+    @media(max-width:600px){{.hero{{height:420px;border-radius:20px}}.overlay{{background:linear-gradient(180deg,rgba(6,26,64,.78) 0%,rgba(6,26,64,.62) 50%,rgba(6,26,64,.24) 100%)}}.content{{position:absolute;left:22px;right:22px;bottom:58px;padding:0;max-width:none}}h1{{font-size:36px}}p{{font-size:15px}}.actions{{flex-direction:column;align-items:stretch;gap:10px}}.btn{{width:100%}}.arrow{{display:none}}}}
+    </style></head><body><section class="hero">{''.join(slide_markup)}<div class="overlay"></div><div class="content"><div class="eyebrow">Explore Korean Universities</div><h1>Universities<br>Information</h1><p>Filter universities by location/city, program type, admission status, intake, and more.</p><div class="actions"><span class="btn secondary">ⓘ How It Works</span><span class="btn primary">Explore Universities <b>→</b></span></div></div><div class="arrow left">‹</div><div class="arrow right">›</div><div class="dots">{''.join(dot_markup)}</div></section></body></html>
+    """
+
+def _hero_ad_existing_linked_id_v260(ad):
+    return _hero_ad_get_v260(ad, "linkedUniversityId", "linked_university_id", "linkedUniversityID")
+
+def _hero_ad_payload_v260(title, subtitle, button_text, link_url, display_order, active, image_path, mobile_image_path, focal_x, focal_y, linked_university_id, existing_id=None, created_at=None):
+    now = datetime.now().isoformat(timespec="seconds")
+    return {
+        "id": existing_id or datetime.now().strftime("%Y%m%d%H%M%S%f"),
+        "imageUrl": image_path,
+        "mobileImageUrl": mobile_image_path,
+        "title": title,
+        "subtitle": subtitle,
+        "buttonText": button_text,
+        "linkUrl": link_url,
+        "displayOrder": str(display_order),
+        "isActive": bool(active),
+        "focalPointX": focal_x,
+        "focalPointY": focal_y,
+        "linkedUniversityId": linked_university_id,
+        "image_path": image_path,
+        "mobile_image_path": mobile_image_path,
+        "button_text": button_text,
+        "link_url": link_url,
+        "display_order": str(display_order),
+        "active": bool(active),
+        "focal_x": focal_x,
+        "focal_y": focal_y,
+        "created_at": created_at or now,
+        "updated_at": now,
+    }
+
+def admin_hero_advertisements_v227():
+    """v260 active implementation: Super Admin hero ads add/edit form includes Linked University dropdown."""
+    dash_shell(["Admin Dashboard","Partner Management","Universities","Eligibility Rules","Tuition Rules","Scholarship Rules","Applications","Application Samples","Hero Advertisements"])
+    st.subheader("Hero Advertisements / Promotion Slider")
+    st.caption("Manage the Universities Information hero slider. Link a slide to an existing university so the public info box shows that university's official logo, name, and location automatically.")
+    st.info("Linked University uses universities already created in the University List/admin database. Do not upload the university logo again here.")
+
+    ads = hero_ads_list_v226()
+    options, labels = university_select_options_v260()
+
+    tabs = st.tabs(["Add Promotion Slide", "Manage Slides"])
+
+    with tabs[0]:
+        with st.form("add_hero_ad_v260", clear_on_submit=True):
+            c1, c2 = st.columns([1.2, 1])
+            with c1:
+                title = st.text_input("Slide Title")
+                subtitle = st.text_area("Subtitle", height=90)
+                linked_university_id = st.selectbox("Linked University", options, format_func=lambda x: labels.get(x, "No linked university"), index=0, help="Optional. Select an existing university to show its official logo, name, and location in the hero info box.")
+                button_text = st.text_input("Optional Button Text", value="Explore Universities")
+                link_url = st.text_input("Optional Link URL", help="Used only when no Linked University is selected.")
+            with c2:
+                display_order = st.number_input("Display Order", min_value=1, value=(len(ads)+1), step=1)
+                active = st.checkbox("Active", value=True)
+                focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=1)
+                focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=1)
+                desktop_upload = st.file_uploader("Desktop Image / Poster", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_desktop_upload_v260")
+                mobile_upload = st.file_uploader("Optional Mobile Image", type=["png", "jpg", "jpeg", "webp"], key="hero_ad_mobile_upload_v260")
+            submitted = st.form_submit_button("Save Promotion Slide", use_container_width=True)
+            if submitted:
+                if desktop_upload is None:
+                    st.error("Please upload a desktop image/poster.")
+                else:
+                    image_path = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                    mobile_image_path = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile") if mobile_upload is not None else ""
+                    ads.append(_hero_ad_payload_v260(title, subtitle, button_text, link_url, display_order, active, image_path, mobile_image_path, focal_x, focal_y, linked_university_id))
+                    save_hero_ads_v226(ads)
+                    st.success("Promotion slide saved.")
+                    st.rerun()
+
+    with tabs[1]:
+        if not ads:
+            st.info("No promotion slides have been added yet. The hero will temporarily use university cover images.")
+        else:
+            try:
+                ads_sorted = sorted(enumerate(ads), key=lambda x: int(float(str(x[1].get("displayOrder", x[1].get("display_order", 999))).strip() or 999)))
+            except Exception:
+                ads_sorted = list(enumerate(ads))
+
+            for idx, ad in ads_sorted:
+                ad_id = str(ad.get("id", idx))
+                st.markdown("---")
+                linked_id_current = _hero_ad_existing_linked_id_v260(ad)
+                if linked_id_current:
+                    st.success(f"Linked University: {labels.get(linked_id_current, linked_id_current)}")
+                else:
+                    st.caption("Linked University: No linked university")
+
+                preview_img = _hero_ad_get_v260(ad, "imageUrl", "image_path")
+                preview_mobile = _hero_ad_get_v260(ad, "mobileImageUrl", "mobile_image_path")
+                preview_title = _hero_ad_get_v260(ad, "title")
+                preview_subtitle = _hero_ad_get_v260(ad, "subtitle")
+                preview_button = _hero_ad_get_v260(ad, "buttonText", "button_text")
+                preview_fx = _hero_ad_get_v260(ad, "focalPointX", "focal_x", default="Center")
+                preview_fy = _hero_ad_get_v260(ad, "focalPointY", "focal_y", default="Center")
+                st.markdown(hero_ad_preview_html_v227(preview_img, preview_mobile, preview_title, preview_subtitle, preview_button, preview_fx, preview_fy), unsafe_allow_html=True)
+
+                with st.form(f"edit_hero_ad_v260_{ad_id}"):
+                    c1, c2 = st.columns([1.2, 1])
+                    with c1:
+                        title = st.text_input("Slide Title", value=_hero_ad_get_v260(ad, "title"), key=f"title_v260_{ad_id}")
+                        subtitle = st.text_area("Subtitle", value=_hero_ad_get_v260(ad, "subtitle"), height=90, key=f"subtitle_v260_{ad_id}")
+                        current_index = options.index(linked_id_current) if linked_id_current in options else 0
+                        linked_university_id = st.selectbox("Linked University", options, format_func=lambda x: labels.get(x, "No linked university"), index=current_index, key=f"linked_uni_v260_{ad_id}", help="Optional. If selected, the hero info box uses this university's official logo/name/location and links to its detail page.")
+                        button_text = st.text_input("Optional Button Text", value=_hero_ad_get_v260(ad, "buttonText", "button_text", default="Explore Universities"), key=f"btn_v260_{ad_id}")
+                        link_url = st.text_input("Optional Link URL", value=_hero_ad_get_v260(ad, "linkUrl", "link_url"), key=f"link_v260_{ad_id}", help="Used only when no Linked University is selected.")
+                    with c2:
+                        try:
+                            order_value = int(float(str(ad.get("displayOrder", ad.get("display_order", 999))) or 999))
+                        except Exception:
+                            order_value = 999
+                        display_order = st.number_input("Display Order", min_value=1, value=order_value, step=1, key=f"order_v260_{ad_id}")
+                        active_raw = ad.get("isActive", ad.get("active", True))
+                        active = st.checkbox("Active", value=str(active_raw).lower() in ["true", "1", "yes", "active", "on"], key=f"active_v260_{ad_id}")
+                        fx_val = _hero_ad_get_v260(ad, "focalPointX", "focal_x", default="Center")
+                        fy_val = _hero_ad_get_v260(ad, "focalPointY", "focal_y", default="Center")
+                        fx_val = fx_val if fx_val in ["Left", "Center", "Right"] else "Center"
+                        fy_val = fy_val if fy_val in ["Top", "Center", "Bottom"] else "Center"
+                        focal_x = st.selectbox("Focal Point X", ["Left", "Center", "Right"], index=["Left", "Center", "Right"].index(fx_val), key=f"fx_v260_{ad_id}")
+                        focal_y = st.selectbox("Focal Point Y", ["Top", "Center", "Bottom"], index=["Top", "Center", "Bottom"].index(fy_val), key=f"fy_v260_{ad_id}")
+                        desktop_upload = st.file_uploader("Replace Desktop Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_desktop_v260_{ad_id}")
+                        mobile_upload = st.file_uploader("Replace / Add Mobile Image", type=["png", "jpg", "jpeg", "webp"], key=f"replace_mobile_v260_{ad_id}")
+
+                    s1, s2 = st.columns(2)
+                    with s1:
+                        update_clicked = st.form_submit_button("Update Slide", use_container_width=True)
+                    with s2:
+                        delete_clicked = st.form_submit_button("Delete Slide", use_container_width=True)
+
+                    if update_clicked:
+                        image_path = _hero_ad_get_v260(ad, "imageUrl", "image_path")
+                        mobile_image_path = _hero_ad_get_v260(ad, "mobileImageUrl", "mobile_image_path")
+                        if desktop_upload is not None:
+                            image_path = save_uploaded_hero_ad_image_v226(desktop_upload, title or "promotion_slide")
+                        if mobile_upload is not None:
+                            mobile_image_path = save_uploaded_hero_ad_image_v226(mobile_upload, (title or "promotion_slide") + "_mobile")
+                        ads[idx] = _hero_ad_payload_v260(title, subtitle, button_text, link_url, display_order, active, image_path, mobile_image_path, focal_x, focal_y, linked_university_id, existing_id=ad.get("id", ad_id), created_at=ad.get("created_at", ""))
+                        save_hero_ads_v226(ads)
+                        st.success("Promotion slide updated.")
+                        st.rerun()
+
+                    if delete_clicked:
+                        ads.pop(idx)
+                        save_hero_ads_v226(ads)
+                        st.warning("Promotion slide deleted.")
+                        st.rerun()
+    close_shell()
+
+
 # v206: process Home hero button query parameters before routing
 # This makes Apply for Partner Access and Explore Universities actually navigate.
 handle_home_query_navigation_v69()
