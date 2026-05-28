@@ -12248,6 +12248,41 @@ div[data-testid="column"]:has(.nav-login-marker-v225) div[data-testid="stButton"
     }
 }
 
+
+/* v230: prevent raw hero HTML from appearing and use iframe hero container */
+.uni-hero-wrap-v230{
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:28px auto 0 auto !important;
+}
+.uni-hero-wrap-v230 iframe{
+    border:0 !important;
+    width:100% !important;
+    display:block !important;
+}
+.uni-list-heading-v226,
+.uni-list-heading-v227,
+.uni-list-heading-v228,
+.uni-hero-wrap-v229,
+.hero-promo-slider-v227,
+.hero-promo-slider-v228,
+.hero-slider-v229,
+.ad-slider-v226{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    opacity:0 !important;
+    overflow:hidden !important;
+}
+@media(max-width:1100px){
+    .uni-hero-wrap-v230{
+        width:calc(100% - 24px) !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -17977,6 +18012,298 @@ def render_universities_hero_v229(df):
     </div>
     """, unsafe_allow_html=True)
 
+
+# v230: render hero through Streamlit components.html so HTML is not printed as text.
+def hero_slider_component_html_v230(df):
+    slides = collect_hero_slides_v229(df)
+
+    if not slides:
+        return """
+        <!doctype html>
+        <html>
+        <head>
+        <style>
+        html,body{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+        .placeholder{height:420px;border-radius:28px;background:#F8FBFF;border:1px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
+        .card{text-align:center;background:#fff;border:1px solid #E2E8F0;border-radius:22px;padding:34px;box-shadow:0 14px 34px rgba(15,23,42,.08);}
+        h1{margin:0 0 10px;color:#0F172A;font-size:36px;font-weight:950;letter-spacing:-.03em;}
+        p{margin:0;color:#334155;font-size:18px;font-weight:800;}
+        span{display:block;margin-top:8px;color:#64748B;font-size:14px;}
+        </style>
+        </head>
+        <body>
+        <section class="placeholder"><div class="card"><h1>Universities Information</h1><p>No promotion images uploaded yet</p><span>Upload hero advertisements or university cover images to display the slider.</span></div></section>
+        </body>
+        </html>
+        """
+
+    count = len(slides)
+    duration = max(count * 2, 2)
+    slide_markup = []
+    dot_markup = []
+
+    for i, slide in enumerate(slides):
+        title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+        subtitle = _safe_html_v62(slide.get("subtitle", "") or "Filter universities by location/city, program type, admission status, intake, and more.")
+        image_url = slide.get("image_url", "")
+        position = hero_object_position_v229(slide.get("focal_x", "Center"), slide.get("focal_y", "Center"))
+        delay = i * 2
+
+        slide_markup.append(f"""
+        <div class="slide" style="animation-delay:{delay}s; animation-duration:{duration}s;">
+            <img src="{image_url}" alt="{title}" style="object-position:{position};">
+            <div class="caption"><strong>{title}</strong><span>{subtitle}</span></div>
+        </div>
+        """)
+        dot_markup.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+
+    return f"""
+    <!doctype html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <style>
+    html,body{{
+        margin:0;
+        padding:0;
+        background:transparent;
+        font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        overflow:hidden;
+    }}
+    .hero{{
+        width:100%;
+        height:420px;
+        border-radius:28px;
+        overflow:hidden;
+        position:relative;
+        background:#EAF2FF;
+        box-shadow:0 22px 55px rgba(15,23,42,0.14);
+        border:1px solid rgba(226,232,240,.70);
+        box-sizing:border-box;
+    }}
+    .slide{{
+        position:absolute;
+        inset:0;
+        opacity:0;
+        animation-name:fade;
+        animation-timing-function:ease-in-out;
+        animation-iteration-count:infinite;
+        background:#EAF2FF;
+    }}
+    .slide:first-child{{opacity:1;}}
+    .slide img{{
+        position:absolute;
+        inset:0;
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        object-position:center;
+        display:block;
+        opacity:1;
+        filter:none;
+    }}
+    .overlay{{
+        position:absolute;
+        inset:0;
+        z-index:2;
+        pointer-events:none;
+        background:linear-gradient(90deg,rgba(6,26,64,.72) 0%,rgba(6,26,64,.46) 45%,rgba(6,26,64,.12) 100%);
+    }}
+    .content{{
+        position:relative;
+        z-index:3;
+        max-width:560px;
+        padding:70px 56px;
+        color:#fff;
+        box-sizing:border-box;
+    }}
+    .eyebrow{{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 14px;
+        border-radius:999px;
+        background:rgba(255,255,255,.16);
+        border:1px solid rgba(255,255,255,.20);
+        backdrop-filter:blur(10px);
+        font-size:13px;
+        line-height:1;
+        font-weight:900;
+        letter-spacing:.02em;
+        text-transform:uppercase;
+        margin-bottom:22px;
+        color:#fff;
+    }}
+    h1{{
+        margin:0 0 20px;
+        font-size:56px;
+        line-height:1.05;
+        font-weight:950;
+        letter-spacing:-.045em;
+        color:#fff;
+        text-shadow:0 8px 28px rgba(0,0,0,.30);
+    }}
+    p{{
+        margin:0;
+        max-width:540px;
+        font-size:19px;
+        line-height:1.65;
+        font-weight:650;
+        color:rgba(255,255,255,.95);
+        text-shadow:0 6px 20px rgba(0,0,0,.25);
+    }}
+    .actions{{
+        display:flex;
+        align-items:center;
+        gap:14px;
+        margin-top:28px;
+    }}
+    .btn{{
+        min-height:52px;
+        padding:0 24px;
+        border-radius:12px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:12px;
+        font-size:15px;
+        font-weight:900;
+        line-height:1;
+        box-shadow:0 12px 24px rgba(0,0,0,.16);
+        box-sizing:border-box;
+    }}
+    .secondary{{background:#fff;color:#061A40;}}
+    .primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff;}}
+    .primary b{{font-size:22px;}}
+    .caption{{
+        position:absolute;
+        right:56px;
+        bottom:36px;
+        z-index:3;
+        min-width:330px;
+        max-width:430px;
+        padding:18px 22px;
+        border-radius:18px;
+        background:rgba(6,26,64,.70);
+        backdrop-filter:blur(14px);
+        border:1px solid rgba(255,255,255,.16);
+        color:#fff;
+        box-sizing:border-box;
+    }}
+    .caption strong{{
+        display:block;
+        font-size:18px;
+        font-weight:950;
+        line-height:1.25;
+        margin-bottom:5px;
+        color:#fff;
+    }}
+    .caption span{{
+        display:block;
+        font-size:13px;
+        font-weight:650;
+        line-height:1.35;
+        color:rgba(255,255,255,.92);
+    }}
+    .arrow{{
+        position:absolute;
+        top:50%;
+        transform:translateY(-50%);
+        z-index:5;
+        width:46px;
+        height:46px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,.35);
+        background:rgba(255,255,255,.92);
+        color:#061A40;
+        box-shadow:0 12px 28px rgba(0,0,0,.14);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:32px;
+        font-weight:650;
+        line-height:1;
+        box-sizing:border-box;
+    }}
+    .left{{left:18px;}}
+    .right{{right:18px;}}
+    .dots{{
+        position:absolute;
+        left:50%;
+        bottom:22px;
+        transform:translateX(-50%);
+        z-index:5;
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }}
+    .dots i{{
+        width:9px;
+        height:9px;
+        border-radius:999px;
+        background:rgba(255,255,255,.58);
+        border:1px solid rgba(255,255,255,.45);
+        animation-name:dot;
+        animation-timing-function:ease-in-out;
+        animation-iteration-count:infinite;
+    }}
+    .hero:hover .slide,.hero:hover .dots i{{animation-play-state:paused;}}
+    @keyframes fade{{
+        0%{{opacity:0;}}
+        6%{{opacity:1;}}
+        42%{{opacity:1;}}
+        50%{{opacity:0;}}
+        100%{{opacity:0;}}
+    }}
+    @keyframes dot{{
+        0%,45%{{background:#fff;transform:scale(1.25);}}
+        50%,100%{{background:rgba(255,255,255,.58);transform:scale(1);}}
+    }}
+    @media(max-width:900px){{
+        .hero{{height:390px;border-radius:24px;}}
+        .content{{padding:56px 38px;max-width:540px;}}
+        h1{{font-size:44px;}}
+        p{{font-size:17px;}}
+        .caption{{display:none;}}
+    }}
+    @media(max-width:600px){{
+        .hero{{height:520px;border-radius:20px;}}
+        .overlay{{background:linear-gradient(180deg,rgba(6,26,64,.78) 0%,rgba(6,26,64,.62) 50%,rgba(6,26,64,.24) 100%);}}
+        .content{{position:absolute;left:22px;right:22px;bottom:58px;padding:0;max-width:none;}}
+        h1{{font-size:36px;}}
+        p{{font-size:15px;}}
+        .actions{{flex-direction:column;align-items:stretch;gap:10px;}}
+        .btn{{width:100%;}}
+        .arrow{{display:none;}}
+    }}
+    </style>
+    </head>
+    <body>
+        <section class="hero">
+            {"".join(slide_markup)}
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="eyebrow">Explore Korean Universities</div>
+                <h1>Universities<br>Information</h1>
+                <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
+                <div class="actions">
+                    <span class="btn secondary">ⓘ How It Works</span>
+                    <span class="btn primary">Explore Universities <b>→</b></span>
+                </div>
+            </div>
+            <div class="arrow left">‹</div>
+            <div class="arrow right">›</div>
+            <div class="dots">{"".join(dot_markup)}</div>
+        </section>
+    </body>
+    </html>
+    """
+
+def render_universities_hero_v230(df):
+    st.markdown('<div class="uni-hero-wrap-v230">', unsafe_allow_html=True)
+    components.html(hero_slider_component_html_v230(df), height=438, scrolling=False)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 def universities_page(public=False):
     if public:
         header()
@@ -18003,7 +18330,7 @@ def universities_page(public=False):
             pass
 
     df = universities().copy()
-    render_universities_hero_v229(df)
+    render_universities_hero_v230(df)
     if df is None or len(df) == 0:
         st.info("No university data found.")
         st.markdown('</div>', unsafe_allow_html=True)

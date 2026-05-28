@@ -1567,3 +1567,11 @@ v229:
 - Overlay opacity reduced to a readable gradient so the image remains visible.
 - Navbar Login and Partner Sign Up alignment/style kept in one line with Partner Sign Up as navy primary.
 - University cards, filters, admission logic, and database structure were not changed.
+
+
+v230:
+- Fixed raw HTML appearing inside the hero banner.
+- Hero slider now renders with components.html, so the browser displays the image slider instead of printing HTML tags.
+- Keeps active Super Admin hero ads first and university cover images as fallback.
+- Keeps a light placeholder if no images exist.
+- Cards, filters, database structure, and admission logic are unchanged.
