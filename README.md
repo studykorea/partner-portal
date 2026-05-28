@@ -1687,3 +1687,11 @@ v245:
 - Partner Sign Up is now a navy primary button with icon.
 - All navbar items are vertically centered on the same line.
 - Hero, filters, university cards, admin logic, database logic, and admission logic unchanged.
+
+
+v246:
+- Fixed the actual navbar component for Login and Partner Sign Up.
+- Replaced plain Streamlit action buttons with same-tab styled navbar action links using ?nav=login and ?nav=signup.
+- Login is a real outlined button with icon.
+- Partner Sign Up is a real navy primary button with icon.
+- Hero, filters, university cards, admin logic, database logic, and admission logic unchanged.
