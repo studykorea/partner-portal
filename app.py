@@ -11874,6 +11874,380 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]
     }
 }
 
+
+/* v229: isolated visible image hero slider fix */
+.uni-list-heading-v226,
+.uni-list-heading-v227,
+.uni-list-heading-v228,
+.ad-slider-v226,
+.hero-promo-slider-v227,
+.hero-promo-slider-v228{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    opacity:0 !important;
+    overflow:hidden !important;
+}
+
+.uni-hero-wrap-v229{
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:28px auto 0 auto !important;
+}
+
+.hero-slider-v229{
+    width:100% !important;
+    height:420px !important;
+    border-radius:28px !important;
+    overflow:hidden !important;
+    position:relative !important;
+    background:#EAF2FF !important;
+    box-shadow:0 22px 55px rgba(15,23,42,0.14) !important;
+    border:1px solid rgba(226,232,240,.70) !important;
+}
+
+/* Real image layer */
+.hero-slide-v229{
+    position:absolute !important;
+    inset:0 !important;
+    opacity:0 !important;
+    z-index:1 !important;
+    animation-name:heroFadeV229 !important;
+    animation-timing-function:ease-in-out !important;
+    animation-iteration-count:infinite !important;
+}
+.hero-slide-v229:first-child{
+    opacity:1 !important;
+}
+.hero-image-link-v229{
+    position:absolute !important;
+    inset:0 !important;
+    display:block !important;
+    z-index:1 !important;
+}
+.hero-image-v229{
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    z-index:1 !important;
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+    opacity:1 !important;
+    filter:none !important;
+}
+
+/* Readable but not too dark */
+.hero-overlay-v229{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:2 !important;
+    pointer-events:none !important;
+    background:linear-gradient(
+        90deg,
+        rgba(6,26,64,0.72) 0%,
+        rgba(6,26,64,0.46) 45%,
+        rgba(6,26,64,0.12) 100%
+    ) !important;
+}
+
+/* Fixed hero title overlay */
+.hero-content-v229{
+    position:relative !important;
+    z-index:3 !important;
+    max-width:560px !important;
+    padding:70px 56px !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-eyebrow-v229{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:10px 14px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.16) !important;
+    border:1px solid rgba(255,255,255,.20) !important;
+    backdrop-filter:blur(10px) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    font-weight:900 !important;
+    letter-spacing:.02em !important;
+    text-transform:uppercase !important;
+    margin-bottom:22px !important;
+}
+.hero-content-v229 h1{
+    display:block !important;
+    margin:0 0 20px 0 !important;
+    font-size:56px !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:-.045em !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+    text-shadow:0 8px 28px rgba(0,0,0,.30) !important;
+}
+.hero-content-v229 p{
+    display:block !important;
+    margin:0 !important;
+    max-width:540px !important;
+    font-size:19px !important;
+    line-height:1.65 !important;
+    font-weight:650 !important;
+    color:rgba(255,255,255,.95) !important;
+    -webkit-text-fill-color:rgba(255,255,255,.95) !important;
+    text-shadow:0 6px 20px rgba(0,0,0,.25) !important;
+}
+.hero-actions-v229{
+    display:flex !important;
+    align-items:center !important;
+    gap:14px !important;
+    margin-top:28px !important;
+}
+.hero-secondary-v229,
+.hero-primary-v229{
+    min-height:52px !important;
+    padding:0 24px !important;
+    border-radius:12px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:12px !important;
+    font-size:15px !important;
+    font-weight:900 !important;
+    line-height:1 !important;
+    box-shadow:0 12px 24px rgba(0,0,0,.16) !important;
+}
+.hero-secondary-v229{
+    background:#FFFFFF !important;
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+}
+.hero-primary-v229{
+    background:linear-gradient(135deg,#102E73 0%,#3153D4 100%) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-primary-v229 b{
+    font-size:22px !important;
+}
+
+/* Optional slide caption card on right */
+.hero-slide-caption-v229{
+    position:absolute !important;
+    right:56px !important;
+    bottom:36px !important;
+    z-index:3 !important;
+    min-width:330px !important;
+    max-width:430px !important;
+    padding:18px 22px !important;
+    border-radius:18px !important;
+    background:rgba(6,26,64,.70) !important;
+    backdrop-filter:blur(14px) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-slide-caption-v229 span{
+    display:block !important;
+    font-size:18px !important;
+    font-weight:950 !important;
+    line-height:1.25 !important;
+    margin-bottom:5px !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+.hero-slide-caption-v229 b{
+    display:block !important;
+    font-size:13px !important;
+    font-weight:650 !important;
+    line-height:1.35 !important;
+    color:rgba(255,255,255,.92) !important;
+    -webkit-text-fill-color:rgba(255,255,255,.92) !important;
+}
+
+/* arrows/dots */
+.hero-arrow-v229{
+    position:absolute !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    z-index:5 !important;
+    width:46px !important;
+    height:46px !important;
+    border-radius:999px !important;
+    border:1px solid rgba(255,255,255,.35) !important;
+    background:rgba(255,255,255,.92) !important;
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    box-shadow:0 12px 28px rgba(0,0,0,.14) !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:32px !important;
+    font-weight:650 !important;
+    line-height:1 !important;
+}
+.hero-arrow-left-v229{left:18px !important;}
+.hero-arrow-right-v229{right:18px !important;}
+.hero-dots-v229{
+    position:absolute !important;
+    left:50% !important;
+    bottom:22px !important;
+    transform:translateX(-50%) !important;
+    z-index:5 !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+}
+.hero-dots-v229 i{
+    width:9px !important;
+    height:9px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.58) !important;
+    border:1px solid rgba(255,255,255,.45) !important;
+    animation-name:heroDotV229 !important;
+    animation-timing-function:ease-in-out !important;
+    animation-iteration-count:infinite !important;
+}
+
+/* Placeholder if no images exist */
+.hero-slider-placeholder-v229{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#F8FBFF !important;
+    border:1px dashed #CBD5E1 !important;
+}
+.hero-placeholder-card-v229{
+    text-align:center !important;
+    max-width:560px !important;
+    padding:34px !important;
+    border-radius:22px !important;
+    background:#FFFFFF !important;
+    border:1px solid #E2E8F0 !important;
+    box-shadow:0 14px 34px rgba(15,23,42,.08) !important;
+}
+.hero-placeholder-card-v229 h1{
+    margin:0 0 10px 0 !important;
+    color:#0F172A !important;
+    -webkit-text-fill-color:#0F172A !important;
+    font-size:36px !important;
+    font-weight:950 !important;
+}
+.hero-placeholder-card-v229 p{
+    margin:0 0 6px 0 !important;
+    color:#334155 !important;
+    -webkit-text-fill-color:#334155 !important;
+    font-size:18px !important;
+    font-weight:800 !important;
+}
+.hero-placeholder-card-v229 span{
+    color:#64748B !important;
+    -webkit-text-fill-color:#64748B !important;
+    font-size:14px !important;
+}
+
+@keyframes heroFadeV229{
+    0%{opacity:0;}
+    6%{opacity:1;}
+    42%{opacity:1;}
+    50%{opacity:0;}
+    100%{opacity:0;}
+}
+@keyframes heroDotV229{
+    0%,45%{background:#FFFFFF;transform:scale(1.25);}
+    50%,100%{background:rgba(255,255,255,.58);transform:scale(1);}
+}
+
+/* Pause animation on hover */
+.hero-slider-v229:hover .hero-slide-v229,
+.hero-slider-v229:hover .hero-dots-v229 i{
+    animation-play-state:paused !important;
+}
+
+/* navbar alignment final */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223){
+    width:calc(100% - 56px) !important;
+    max-width:1480px !important;
+    margin:12px auto 24px auto !important;
+    align-items:center !important;
+}
+div[data-testid="column"]:has(.nav-signup-marker-v225) div[data-testid="stButton"] > button{
+    background:#061A40 !important;
+    border-color:#061A40 !important;
+    color:#FFFFFF !important;
+    -webkit-text-fill-color:#FFFFFF !important;
+}
+div[data-testid="column"]:has(.nav-login-marker-v225) div[data-testid="stButton"] > button{
+    background:#FFFFFF !important;
+    color:#061A40 !important;
+    -webkit-text-fill-color:#061A40 !important;
+    border:1px solid #CBD5E1 !important;
+}
+
+@media(max-width:1100px){
+    .uni-hero-wrap-v229{
+        width:calc(100% - 24px) !important;
+    }
+    .hero-slider-v229{
+        height:390px !important;
+    }
+    .hero-content-v229{
+        padding:56px 38px !important;
+        max-width:540px !important;
+    }
+    .hero-content-v229 h1{
+        font-size:44px !important;
+    }
+    .hero-content-v229 p{
+        font-size:17px !important;
+    }
+    .hero-slide-caption-v229{
+        display:none !important;
+    }
+}
+@media(max-width:680px){
+    .hero-slider-v229{
+        height:520px !important;
+        border-radius:20px !important;
+    }
+    .hero-overlay-v229{
+        background:linear-gradient(180deg, rgba(6,26,64,0.78) 0%, rgba(6,26,64,0.62) 50%, rgba(6,26,64,0.24) 100%) !important;
+    }
+    .hero-content-v229{
+        padding:0 !important;
+        position:absolute !important;
+        left:22px !important;
+        right:22px !important;
+        bottom:58px !important;
+        max-width:none !important;
+    }
+    .hero-content-v229 h1{
+        font-size:36px !important;
+    }
+    .hero-content-v229 p{
+        font-size:15px !important;
+    }
+    .hero-actions-v229{
+        flex-direction:column !important;
+        align-items:stretch !important;
+        gap:10px !important;
+    }
+    .hero-secondary-v229,
+    .hero-primary-v229{
+        width:100% !important;
+    }
+    .hero-arrow-v229{
+        display:none !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -17451,6 +17825,158 @@ def admin_hero_advertisements_v227():
                         st.rerun()
     close_shell()
 
+
+# v229: isolated hero slider that always renders visible real images.
+def hero_image_mime_v229(path):
+    p = str(path or "").lower()
+    if p.endswith(".png"):
+        return "image/png"
+    if p.endswith(".webp"):
+        return "image/webp"
+    if p.endswith(".svg"):
+        return "image/svg+xml"
+    return "image/jpeg"
+
+def hero_slide_image_url_v229(path):
+    encoded = b64(path)
+    if not encoded:
+        return ""
+    return f"data:{hero_image_mime_v229(path)};base64,{encoded}"
+
+def collect_hero_slides_v229(df):
+    slides = []
+
+    # 1) Super Admin uploaded active promotion images.
+    try:
+        ads = active_hero_ads_v226()
+    except Exception:
+        ads = []
+
+    for ad in ads:
+        if not isinstance(ad, dict):
+            continue
+        image_path = display_clean_v50(ad.get("image_path", ""))
+        image_url = hero_slide_image_url_v229(image_path)
+        if not image_url:
+            continue
+        slides.append({
+            "image_url": image_url,
+            "title": display_clean_v50(ad.get("title", "")) or "Universities Information",
+            "subtitle": display_clean_v50(ad.get("subtitle", "")) or "Filter universities by location/city, program type, admission status, intake, and more.",
+            "link_url": display_clean_v50(ad.get("link_url", "")),
+            "focal_x": display_clean_v50(ad.get("focal_x", "Center")) or "Center",
+            "focal_y": display_clean_v50(ad.get("focal_y", "Center")) or "Center",
+        })
+
+    # 2) Fallback: existing university cover images.
+    if not slides and df is not None and len(df) > 0:
+        for _, row in df.iterrows():
+            image_path = (
+                display_clean_v50(row.get("coverImageUrl", "")) or
+                display_clean_v50(row.get("Cover_Image", "")) or
+                display_clean_v50(row.get("University_Image", "")) or
+                display_clean_v50(row.get("Image", ""))
+            )
+            image_url = hero_slide_image_url_v229(image_path)
+            if not image_url:
+                continue
+            uni_name = display_clean_v50(row.get("name", "")) or display_clean_v50(row.get("University", "")) or "Universities Information"
+            city = display_clean_v50(row.get("city", "")) or display_clean_v50(row.get("Location", ""))
+            country = display_clean_v50(row.get("country", "Republic of Korea"))
+            if city and country and country.lower() not in city.lower():
+                subtitle = f"{city}, {country}"
+            else:
+                subtitle = city or "Official university information"
+            slides.append({
+                "image_url": image_url,
+                "title": uni_name,
+                "subtitle": subtitle,
+                "link_url": display_clean_v50(row.get("detailPageUrl", "")) or "",
+                "focal_x": "Center",
+                "focal_y": "Center",
+            })
+            if len(slides) >= 8:
+                break
+
+    return slides
+
+def hero_object_position_v229(focal_x="Center", focal_y="Center"):
+    x = str(focal_x or "Center").strip().lower()
+    y = str(focal_y or "Center").strip().lower()
+    x = x if x in ["left", "center", "right"] else "center"
+    y = y if y in ["top", "center", "bottom"] else "center"
+    return f"{x} {y}"
+
+def hero_slider_html_v229(df):
+    slides = collect_hero_slides_v229(df)
+
+    if not slides:
+        return """
+        <section class="hero-slider-v229 hero-slider-placeholder-v229">
+            <div class="hero-placeholder-card-v229">
+                <h1>Universities Information</h1>
+                <p>No promotion images uploaded yet</p>
+                <span>Super Admin can upload promotion images, or university cover images will appear automatically when available.</span>
+            </div>
+        </section>
+        """
+
+    count = len(slides)
+    duration = max(count * 2, 2)
+    slide_html = []
+    dots_html = []
+
+    for i, slide in enumerate(slides):
+        title = _safe_html_v62(slide.get("title", "") or "Universities Information")
+        subtitle = _safe_html_v62(slide.get("subtitle", "") or "Filter universities by location/city, program type, admission status, intake, and more.")
+        url = _safe_html_v62(slide.get("link_url", "") or "")
+        position = hero_object_position_v229(slide.get("focal_x", "Center"), slide.get("focal_y", "Center"))
+        delay = i * 2
+        image_url = slide.get("image_url", "")
+
+        image_layer = f'<div class="hero-image-v229" style="background-image:url(\'{image_url}\');background-position:{position};"></div>'
+        if url:
+            image_layer = f'<a class="hero-image-link-v229" href="{url}" target="_blank" rel="noopener noreferrer">{image_layer}</a>'
+
+        slide_html.append(f"""
+        <div class="hero-slide-v229" style="animation-delay:{delay}s; animation-duration:{duration}s;">
+            {image_layer}
+            <div class="hero-slide-caption-v229">
+                <span>{title}</span>
+                <b>{subtitle}</b>
+            </div>
+        </div>
+        """)
+        dots_html.append(f'<i style="animation-delay:{delay}s; animation-duration:{duration}s;"></i>')
+
+    return f"""
+    <section class="hero-slider-v229" aria-label="Universities Information hero slider">
+        {"".join(slide_html)}
+        <div class="hero-overlay-v229"></div>
+
+        <div class="hero-content-v229">
+            <div class="hero-eyebrow-v229">Explore Korean Universities</div>
+            <h1>Universities<br>Information</h1>
+            <p>Filter universities by location/city, program type, admission status, intake, and more.</p>
+            <div class="hero-actions-v229">
+                <span class="hero-secondary-v229">ⓘ How It Works</span>
+                <span class="hero-primary-v229">Explore Universities <b>→</b></span>
+            </div>
+        </div>
+
+        <button class="hero-arrow-v229 hero-arrow-left-v229" aria-label="Previous slide">‹</button>
+        <button class="hero-arrow-v229 hero-arrow-right-v229" aria-label="Next slide">›</button>
+        <div class="hero-dots-v229">{"".join(dots_html)}</div>
+    </section>
+    """
+
+def render_universities_hero_v229(df):
+    st.markdown(f"""
+    <div class="uni-hero-wrap-v229">
+        {hero_slider_html_v229(df)}
+    </div>
+    """, unsafe_allow_html=True)
+
 def universities_page(public=False):
     if public:
         header()
@@ -17477,7 +18003,7 @@ def universities_page(public=False):
             pass
 
     df = universities().copy()
-    render_universities_hero_v228(df)
+    render_universities_hero_v229(df)
     if df is None or len(df) == 0:
         st.info("No university data found.")
         st.markdown('</div>', unsafe_allow_html=True)

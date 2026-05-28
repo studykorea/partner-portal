@@ -1556,3 +1556,14 @@ v228:
 - Slides/images remain as the full hero background.
 - Added stronger z-index, opacity, and fallback gradient so the hero never appears as a blank navy box.
 - Kept Super Admin Hero Advertisements, image fitting, focal point, mobile image, cards, filters, and admission logic unchanged.
+
+
+v229:
+- Fixed hero slider showing as a blank dark/navy box.
+- Hero now uses a completely isolated v229 slider with visible real images.
+- Active Super Admin hero advertisements are shown first.
+- If no active advertisements exist, existing university cover images are used as fallback.
+- If no images exist at all, a light placeholder message appears instead of a dark empty box.
+- Overlay opacity reduced to a readable gradient so the image remains visible.
+- Navbar Login and Partner Sign Up alignment/style kept in one line with Partner Sign Up as navy primary.
+- University cards, filters, admission logic, and database structure were not changed.
