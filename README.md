@@ -1603,3 +1603,11 @@ v234:
 - The hero iframe reserved height now matches the actual visible hero height.
 - Filter/search card now appears directly below the hero with about a 22px gap.
 - Navbar, hero design, slider image logic, university cards, admission logic, admin upload logic, and database logic were not changed.
+
+
+v235:
+- Fixed only hero-area vertical spacing and hero height.
+- Reduced the large whitespace above the hero by pulling the Streamlit hero iframe upward.
+- Reduced the large whitespace below the hero by removing the iframe's reserved bottom space.
+- Made the actual hero banner slightly taller at about 480px on desktop.
+- Kept navbar design, hero design, slider logic, filters, university cards, admission logic, admin upload logic, and database logic unchanged.

@@ -12739,6 +12739,137 @@ div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
     }
 }
 
+
+/* v235: compact navbar -> hero -> filter spacing; no functionality changes */
+.block-container{
+    padding-top: 0 !important;
+}
+
+/* Navbar should stay close to hero */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 4px auto 14px auto !important;
+    padding: 0 !important;
+    align-items: center !important;
+}
+
+/* Hero wrapper: no extra padding, no extra bottom space */
+.uni-hero-wrap-v230{
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 0 auto 0 auto !important;
+    padding: 0 !important;
+    display: block !important;
+    line-height: 0 !important;
+}
+
+/* Streamlit component iframe creates the gap. Pull it up and remove its reserved bottom space. */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe{
+    height: 500px !important;
+    min-height: 500px !important;
+    max-height: 500px !important;
+    margin-top: -70px !important;
+    margin-bottom: -54px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+}
+
+/* Remove whitespace from wrappers around the hero iframe */
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+div[data-testid="stElementContainer"]:has(iframe),
+div[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230){
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Filter card should sit close below the visible hero */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 22px auto 0 auto !important;
+    padding: 18px 18px !important;
+    border-radius: 22px !important;
+}
+
+/* Remove obsolete hidden hero/spacer elements */
+.uni-list-heading-v226,
+.uni-list-heading-v227,
+.uni-list-heading-v228,
+.uni-hero-wrap-v229,
+.hero-promo-slider-v227,
+.hero-promo-slider-v228,
+.hero-slider-v229,
+.ad-slider-v226{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    opacity:0 !important;
+    overflow:hidden !important;
+}
+
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225),
+    .uni-hero-wrap-v230,
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 28px) !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 450px !important;
+        min-height: 450px !important;
+        max-height: 450px !important;
+        margin-top: -48px !important;
+        margin-bottom: -34px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        margin-top: 22px !important;
+    }
+}
+
+@media(max-width:680px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+        margin-bottom: 12px !important;
+    }
+    .uni-hero-wrap-v230{
+        width: calc(100% - 18px) !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 430px !important;
+        min-height: 430px !important;
+        max-height: 430px !important;
+        margin-top: -28px !important;
+        margin-bottom: -18px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 18px) !important;
+        margin-top: 20px !important;
+        padding: 14px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -18480,7 +18611,7 @@ def hero_slider_component_html_v230(df):
         <head>
         <style>
         html,body{margin:0;padding:0;background:transparent;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
-        .placeholder{height:600px;border-radius:28px;background:#F8FBFF;border:1px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
+        .placeholder{height:480px;border-radius:28px;background:#F8FBFF;border:1px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
         .card{text-align:center;background:#fff;border:1px solid #E2E8F0;border-radius:22px;padding:34px;box-shadow:0 14px 34px rgba(15,23,42,.08);}
         h1{margin:0 0 10px;color:#0F172A;font-size:36px;font-weight:950;letter-spacing:-.03em;}
         p{margin:0;color:#334155;font-size:18px;font-weight:800;}
@@ -18528,7 +18659,7 @@ def hero_slider_component_html_v230(df):
     }}
     .hero{{
         width:100%;
-        height:420px;
+        height:480px;
         border-radius:28px;
         overflow:hidden;
         position:relative;
@@ -18716,14 +18847,14 @@ def hero_slider_component_html_v230(df):
         50%,100%{{background:rgba(255,255,255,.58);transform:scale(1);}}
     }}
     @media(max-width:900px){{
-        .hero{{height:500px;border-radius:24px;}}
+        .hero{{height:430px;border-radius:24px;}}
         .content{{padding:56px 38px;max-width:540px;}}
         h1{{font-size:44px;}}
         p{{font-size:17px;}}
         .caption{{display:none;}}
     }}
     @media(max-width:600px){{
-        .hero{{height:460px;border-radius:20px;}}
+        .hero{{height:420px;border-radius:20px;}}
         .overlay{{background:linear-gradient(180deg,rgba(6,26,64,.78) 0%,rgba(6,26,64,.62) 50%,rgba(6,26,64,.24) 100%);}}
         .content{{position:absolute;left:22px;right:22px;bottom:58px;padding:0;max-width:none;}}
         h1{{font-size:36px;}}
@@ -18760,12 +18891,12 @@ def hero_slider_component_html_v230(df):
 
             frame.style.display = "block";
             frame.style.width = "100%";
-            frame.style.height = "430px";
-            frame.style.minHeight = "430px";
-            frame.style.maxHeight = "430px";
+            frame.style.height = "500px";
+            frame.style.minHeight = "500px";
+            frame.style.maxHeight = "500px";
             frame.style.border = "0";
-            frame.style.marginTop = "0";
-            frame.style.marginBottom = "0";
+            frame.style.marginTop = "-70px";
+            frame.style.marginBottom = "-54px";
             frame.style.padding = "0";
 
             var parent = frame.parentElement;
@@ -18795,7 +18926,7 @@ def hero_slider_component_html_v230(df):
 
 def render_universities_hero_v230(df):
     st.markdown('<div class="uni-hero-wrap-v230">', unsafe_allow_html=True)
-    components.html(hero_slider_component_html_v230(df), height=430, scrolling=False)
+    components.html(hero_slider_component_html_v230(df), height=500, scrolling=False)
     st.markdown('</div>', unsafe_allow_html=True)
 
 def universities_page(public=False):
