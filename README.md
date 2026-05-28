@@ -1649,3 +1649,11 @@ v240:
 - Enlarged navbar, filter/search card, info bar, and grid wrappers to match the hero width.
 - Shared container is now width: calc(100% - 48px), max-width: 1720px.
 - Kept hero slider logic, filter logic, cards, admission logic, admin upload logic, and database logic unchanged.
+
+
+v241:
+- Fixed only width, side spacing, and compact top-section spacing.
+- Uses the requested shared container: width calc(100% - 32px), max-width 1760px.
+- Navbar, hero slider, filter card, info bar, and university grid now use the same wide container.
+- Hero was not shrunk; navbar/filter/info/grid were widened to match the wide layout.
+- Kept hero slider logic, admin advertisement logic, filter logic, admission logic, and university cards unchanged.
