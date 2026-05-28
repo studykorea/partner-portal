@@ -12961,6 +12961,136 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities
     }
 }
 
+
+/* v237: final compact spacing for navbar, hero, filter, and info bar only */
+.block-container{
+    padding-top: 0 !important;
+}
+
+/* Navbar to hero: 12-18px */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 4px auto 16px auto !important;
+    padding: 0 !important;
+    align-items: center !important;
+}
+
+/* Hero wrapper: no hidden padding or extra vertical reservation */
+.uni-hero-wrap-v230{
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 0 auto 0 auto !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    display: block !important;
+}
+
+/* Component/iframe should reserve only the hero height; no added top/bottom gap */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe{
+    height: 482px !important;
+    min-height: 482px !important;
+    max-height: 482px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+}
+
+/* Remove Streamlit wrapper padding/margins around the iframe */
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+div[data-testid="stElementContainer"]:has(iframe),
+div[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230){
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Hero to filter: 12-18px */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: calc(100% - 56px) !important;
+    max-width: 1480px !important;
+    margin: 16px auto 0 auto !important;
+    padding: 18px 18px !important;
+    border-radius: 22px !important;
+}
+
+/* Filter to info bar: compact */
+div[data-testid="stAlert"],
+div[data-testid="stAlert"] > div{
+    margin-top: 16px !important;
+}
+
+/* Remove any leftover old hero blocks/spacers */
+.uni-list-heading-v226,
+.uni-list-heading-v227,
+.uni-list-heading-v228,
+.uni-hero-wrap-v229,
+.hero-promo-slider-v227,
+.hero-promo-slider-v228,
+.hero-slider-v229,
+.ad-slider-v226{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    opacity:0 !important;
+    overflow:hidden !important;
+}
+
+/* Tablet */
+@media(max-width:1100px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225),
+    .uni-hero-wrap-v230,
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 28px) !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 432px !important;
+        min-height: 432px !important;
+        max-height: 432px !important;
+    }
+}
+
+/* Mobile */
+@media(max-width:680px){
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+        margin-bottom: 14px !important;
+    }
+    .uni-hero-wrap-v230{
+        width: calc(100% - 18px) !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe{
+        height: 422px !important;
+        min-height: 422px !important;
+        max-height: 422px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        width: calc(100% - 18px) !important;
+        margin-top: 16px !important;
+        padding: 14px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -18982,12 +19112,12 @@ def hero_slider_component_html_v230(df):
 
             frame.style.display = "block";
             frame.style.width = "100%";
-            frame.style.height = "480px";
-            frame.style.minHeight = "480px";
-            frame.style.maxHeight = "480px";
+            frame.style.height = "482px";
+            frame.style.minHeight = "482px";
+            frame.style.maxHeight = "482px";
             frame.style.border = "0";
             frame.style.marginTop = "0";
-            frame.style.marginBottom = "-120px";
+            frame.style.marginBottom = "0";
             frame.style.padding = "0";
 
             var parent = frame.parentElement;
@@ -19017,7 +19147,7 @@ def hero_slider_component_html_v230(df):
 
 def render_universities_hero_v230(df):
     st.markdown('<div class="uni-hero-wrap-v230">', unsafe_allow_html=True)
-    components.html(hero_slider_component_html_v230(df), height=480, scrolling=False)
+    components.html(hero_slider_component_html_v230(df), height=482, scrolling=False)
     st.markdown('</div>', unsafe_allow_html=True)
 
 def universities_page(public=False):

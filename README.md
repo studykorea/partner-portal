@@ -1618,3 +1618,11 @@ v236:
 - Kept the upper navbar-to-hero spacing unchanged because it was already acceptable.
 - Reduced the Streamlit iframe's reserved bottom space so the filter card sits close to the hero.
 - Kept navbar, hero design, slider logic, filter logic, university cards, admission logic, admin upload logic, and database logic unchanged.
+
+
+v237:
+- Final spacing-only fix for the Universities Information page.
+- Set navbar-to-hero gap to about 16px.
+- Set hero-to-filter gap to about 16px.
+- Removed previous aggressive negative iframe margins that could create inconsistent spacing.
+- Kept hero slider design/logic, filters, university cards, admin data, admission logic, and database unchanged.
