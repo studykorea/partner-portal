@@ -1575,3 +1575,10 @@ v230:
 - Keeps active Super Admin hero ads first and university cover images as fallback.
 - Keeps a light placeholder if no images exist.
 - Cards, filters, database structure, and admission logic are unchanged.
+
+
+v231:
+- Fixed only vertical spacing around the navbar, hero slider, and filter area.
+- Reduced large empty white space between navbar and hero.
+- Moved hero upward and increased desktop hero height to feel more premium.
+- Kept hero image rendering, Super Admin ads, university fallback images, filters, cards, admission logic, and database structure unchanged.
