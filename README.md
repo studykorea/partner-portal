@@ -1611,3 +1611,10 @@ v235:
 - Reduced the large whitespace below the hero by removing the iframe's reserved bottom space.
 - Made the actual hero banner slightly taller at about 480px on desktop.
 - Kept navbar design, hero design, slider logic, filters, university cards, admission logic, admin upload logic, and database logic unchanged.
+
+
+v236:
+- Fixed only the large white gap below the hero slider.
+- Kept the upper navbar-to-hero spacing unchanged because it was already acceptable.
+- Reduced the Streamlit iframe's reserved bottom space so the filter card sits close to the hero.
+- Kept navbar, hero design, slider logic, filter logic, university cards, admission logic, admin upload logic, and database logic unchanged.
