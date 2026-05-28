@@ -1548,3 +1548,11 @@ v227:
 - Added admin preview for each saved slide.
 - Hero falls back to existing university cover images if no active advertisements are uploaded.
 - University cards, admission logic, and university data logic are unchanged.
+
+
+v228:
+- Fixed the hero text not appearing.
+- Universities Information title, subtitle, and buttons now render as a static left overlay above all slides.
+- Slides/images remain as the full hero background.
+- Added stronger z-index, opacity, and fallback gradient so the hero never appears as a blank navy box.
+- Kept Super Admin Hero Advertisements, image fitting, focal point, mobile image, cards, filters, and admission logic unchanged.
