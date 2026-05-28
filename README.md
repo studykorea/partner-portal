@@ -1715,3 +1715,12 @@ v260:
 - Hero info box is clickable to selected university detail page.
 - If no linked university is selected, the slide uses title/subtitle and Optional Link URL.
 - Did not change university cards, filters, admission logic, navbar, footer, admin university data, or unrelated pages.
+
+
+v261:
+- Fixed Hero Slider linked university info box logo visibility.
+- Increased hero info logo container to 82px and image fill to 92%.
+- Added linked university logoScale support with default 1.15.
+- Increased info box z-index and pointer safety so overlay does not block clicks.
+- Click target remains selected university detail page; fallback uses Streamlit-safe ?unidetail=... route.
+- Did not change hero design, cards, filters, admission logic, admin upload logic, navbar, footer, or unrelated pages.
