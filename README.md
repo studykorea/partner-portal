@@ -1720,3 +1720,11 @@ v249:
 - Login is an outlined button; Partner Sign Up is a navy primary button.
 - Adds stronger CSS overrides to remove old conflicting navbar/spacing rules.
 - University cards, filters, admission logic, admin upload logic, and database logic unchanged.
+
+
+v250:
+- Tightened navbar-to-hero and hero-to-filter spacing further.
+- Added stronger targeted CSS for Login and Partner Sign Up columns, including nth-last-child fallback selectors.
+- Kept working Streamlit button navigation.
+- Kept brand logo/text grouped inside navbar.
+- No changes to university cards, filters, admin upload logic, admission logic, or database logic.
