@@ -1688,9 +1688,10 @@ v256 rollback:
 - No changes to hero slider, university cards, filters, admission logic, admin logic, or database logic.
 
 
-v257:
+v258:
 - Based on stable v256/v244.
-- Fixed only navbar action button appearance.
-- Login is styled as an outlined white box button.
-- Partner Sign Up is styled as a navy primary box button.
-- No changes to hero slider, university cards, filters, admission logic, admin logic, or database logic.
+- Changed the ACTUAL public navbar component where Login and Partner Sign Up are rendered.
+- Replaced Streamlit plain action buttons with real HTML links inside .nav-actions.
+- Login is an outlined button; Partner Sign Up is a navy primary button.
+- Added call to existing query-param navbar routing so links work.
+- Did not change hero, cards, filters, admission logic, admin logic, or database logic.

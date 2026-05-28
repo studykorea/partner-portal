@@ -13685,7 +13685,7 @@ def header():
                 _logout_v187()
     else:
         # Public view
-        nav_cols = st.columns([1.75, .82, 1.08, 1.36, 1.18, 1.06, 1.14, .95, 1.35], gap="small")
+        nav_cols = st.columns([1.75, .82, 1.08, 1.36, 1.18, 1.06, 1.14, 2.45], gap="small")
         with nav_cols[0]:
             st.markdown(
                 '<div class="premium-public-brand-v223">'
@@ -13708,13 +13708,12 @@ def header():
                 if st.button(label + active, key=f"top_nav_public_btn_v187_{label}_{page_name}", use_container_width=True):
                     _go_page_v187(page_name)
         with nav_cols[7]:
-            st.markdown('<span class="nav-login-marker-v225"></span>', unsafe_allow_html=True)
-            if st.button("Login", key="top_nav_login_btn_v187", use_container_width=True):
-                _go_page_v187("Login")
-        with nav_cols[8]:
-            st.markdown('<span class="nav-signup-marker-v225"></span>', unsafe_allow_html=True)
-            if st.button("Partner Sign Up", key="top_nav_signup_btn_v187", use_container_width=True):
-                _go_page_v187("Partner Sign Up")
+            # v258: ACTUAL navbar action links, not plain Streamlit text buttons.
+            # These use existing ?nav routing and are styled as real buttons.
+            st.markdown(
+                '<div class="nav-actions">\n  <a href="?nav=login" target="_self" class="nav-login-btn">\n    <span class="nav-icon">👤</span>\n    <span>Login</span>\n  </a>\n  <a href="?nav=signup" target="_self" class="nav-signup-btn">\n    <span class="nav-icon">👥</span>\n    <span>Partner Sign Up</span>\n  </a>\n</div>',
+                unsafe_allow_html=True
+            )
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -24002,6 +24001,8 @@ def admin_applications_page_v125():
 # v206: process Home hero button query parameters before routing
 # This makes Apply for Partner Access and Explore Universities actually navigate.
 handle_home_query_navigation_v69()
+# v258: process real HTML navbar action links (?nav=login / ?nav=signup / etc.)
+handle_top_nav_query_v70()
 
 # Routing
 if not st.session_state.logged_in:
@@ -24071,67 +24072,92 @@ st.markdown('\n<style>\n/* v244: remove hidden wrapper spacing only. No design/d
 
 
 
-# v257: navbar action button visual fix only
+# v258: exact navbar action button styling in the real navbar component
 st.markdown("""
 <style>
-/* v257 NAVBAR ACTION BUTTONS ONLY */
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) {
-  align-items: center !important;
-}
-
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"] {
+/* v258 ACTUAL NAV ACTION LINKS - Login / Partner Sign Up */
+.nav-actions {
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  height: 54px !important;
 }
 
-/* Fallback: style last two navbar columns as Login and Partner Sign Up */
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button {
+.nav-login-btn,
+.nav-signup-btn {
   height: 48px !important;
   min-height: 48px !important;
   padding: 0 22px !important;
   border-radius: 12px !important;
-  border: 1px solid #CBD5E1 !important;
-  background: #FFFFFF !important;
-  color: #0F172A !important;
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
   white-space: nowrap !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+
+.nav-login-btn {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
   box-shadow: none !important;
 }
 
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(1) div[data-testid="stButton"] > button {
-  height: 48px !important;
-  min-height: 48px !important;
+.nav-signup-btn {
+  background: linear-gradient(135deg, #061a40, #123b8a) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 10px 24px rgba(6, 26, 64, 0.22) !important;
   padding: 0 24px !important;
-  border-radius: 12px !important;
-  border: 1px solid transparent !important;
-  background: linear-gradient(135deg, #061A40, #123B8A) !important;
-  color: #FFFFFF !important;
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
+}
+
+.nav-login-btn:hover {
+  border-color: #123b8a !important;
+  color: #123b8a !important;
+  -webkit-text-fill-color: #123b8a !important;
+  background: #f8fbff !important;
+}
+
+.nav-signup-btn:hover {
+  background: linear-gradient(135deg, #07172c, #0b2e73) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.nav-icon {
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
-  white-space: nowrap !important;
-  box-shadow: 0 10px 24px rgba(6, 26, 64, 0.22) !important;
+  line-height: 1 !important;
+  font-size: 16px !important;
 }
 
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button:hover {
-  border-color: #123B8A !important;
-  color: #123B8A !important;
-  background: #F8FBFF !important;
+/* Ensure the action column aligns with the nav row */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:last-child,
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) div[data-testid="column"]:has(.nav-actions) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
 }
 
-div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(1) div[data-testid="stButton"] > button:hover {
-  background: linear-gradient(135deg, #07172C, #0B2E73) !important;
-  color: #FFFFFF !important;
+/* Do not let old generic navbar button CSS affect the new action links */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) .nav-actions a,
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) .nav-actions a:visited,
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) .nav-actions a:active {
+  text-decoration: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
