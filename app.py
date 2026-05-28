@@ -24068,3 +24068,71 @@ st.markdown('\n<style>\n/* v243: navbar style + remaining vertical gap/alignment
 
 # v244 hidden wrapper vertical gap fix
 st.markdown('\n<style>\n/* v244: remove hidden wrapper spacing only. No design/database/logic changes. */\n:root{\n    --v244-page-width: calc(100% - 32px);\n    --v244-page-max: 1760px;\n    --v243-page-width: calc(100% - 32px);\n    --v243-page-max: 1760px;\n    --v242-page-width: calc(100% - 32px);\n    --v242-page-max: 1760px;\n}\nhtml, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] > .main,\n.block-container, section.main > div, main .block-container, [data-testid="stMainBlockContainer"]{\n    max-width:100% !important;\n    width:100% !important;\n    padding-left:0 !important;\n    padding-right:0 !important;\n    padding-top:0 !important;\n    margin-left:0 !important;\n    margin-right:0 !important;\n    box-sizing:border-box !important;\n}\n.top-nav-button-shell-v187{\n    padding:0 !important;\n    margin:0 !important;\n    border:0 !important;\n    background:transparent !important;\n    box-shadow:none !important;\n    min-height:0 !important;\n    height:0 !important;\n    line-height:0 !important;\n    overflow:visible !important;\n}\n.universities-wrap-v214{\n    padding:0 !important;\n    margin:0 !important;\n    background:transparent !important;\n    min-height:0 !important;\n    line-height:0 !important;\n}\n.uni-filter-panel-v214{\n    padding:0 !important;\n    margin:0 !important;\n    border:0 !important;\n    background:transparent !important;\n    box-shadow:none !important;\n    min-height:0 !important;\n}\ndiv[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),\ndiv[data-testid="stHorizontalBlock"]:has(.public-brand-v220),\ndiv[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225),\ndiv[data-testid="stElementContainer"]:has(iframe),\ndiv[data-testid="stIFrame"],\ndiv[data-testid="stIFrame"] > div,\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]),\ndiv[data-testid="stAlert"],\n.university-grid-wrapper,\n.university-grid,\n.universities-grid,\n.universities-grid-wrapper,\n.uni-card-grid,\n.uni-grid,\n.cards-grid,\n.university-list-wrapper,\n.universities-list-wrapper{\n    width:var(--v244-page-width) !important;\n    max-width:var(--v244-page-max) !important;\n    margin-left:auto !important;\n    margin-right:auto !important;\n    box-sizing:border-box !important;\n}\ndiv[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),\ndiv[data-testid="stHorizontalBlock"]:has(.public-brand-v220),\ndiv[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){\n    margin-top:6px !important;\n    margin-bottom:10px !important;\n    padding-top:10px !important;\n    padding-bottom:10px !important;\n}\ndiv[data-testid="stElementContainer"]:has(iframe),\ndiv[data-testid="stIFrame"],\ndiv[data-testid="stIFrame"] > div{\n    margin-top:0 !important;\n    margin-bottom:0 !important;\n    padding-top:0 !important;\n    padding-bottom:0 !important;\n    line-height:0 !important;\n}\ndiv[data-testid="stIFrame"] iframe,\ndiv[data-testid="stElementContainer"]:has(iframe) iframe{\n    width:var(--v244-page-width) !important;\n    max-width:var(--v244-page-max) !important;\n    height:482px !important;\n    min-height:482px !important;\n    max-height:482px !important;\n    display:block !important;\n    margin:0 auto !important;\n    padding:0 !important;\n    border:0 !important;\n}\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),\ndiv[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){\n    margin-top:10px !important;\n    margin-bottom:14px !important;\n    padding:18px !important;\n}\ndiv[data-testid="stVerticalBlock"] > div:has(.top-nav-button-shell-v187),\ndiv[data-testid="stVerticalBlock"] > div:has(.universities-wrap-v214),\ndiv[data-testid="stVerticalBlock"] > div:has(.uni-filter-panel-v214),\ndiv[data-testid="stVerticalBlock"] > div:has(iframe),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search university"]),\ndiv[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universities"]){\n    padding-top:0 !important;\n    padding-bottom:0 !important;\n    margin-top:0 !important;\n    margin-bottom:0 !important;\n}\ndiv[data-testid="stVerticalBlock"]:has(.premium-public-brand-v223):has(iframe),\ndiv[data-testid="stVerticalBlock"]:has(.public-brand-v220):has(iframe){\n    gap:0 !important;\n}\ndiv[data-testid="stAlert"],\n.uni-info-bar-v214{\n    margin-top:14px !important;\n    margin-bottom:20px !important;\n}\n@media(max-width:768px){\n    :root{\n        --v244-page-width:calc(100% - 24px);\n        --v243-page-width:calc(100% - 24px);\n        --v242-page-width:calc(100% - 24px);\n    }\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height:432px !important;\n        min-height:432px !important;\n        max-height:432px !important;\n    }\n}\n@media(max-width:480px){\n    :root{\n        --v244-page-width:calc(100% - 16px);\n        --v243-page-width:calc(100% - 16px);\n        --v242-page-width:calc(100% - 16px);\n    }\n    div[data-testid="stIFrame"] iframe,\n    div[data-testid="stElementContainer"]:has(iframe) iframe{\n        height:422px !important;\n        min-height:422px !important;\n        max-height:422px !important;\n    }\n}\n</style>\n', unsafe_allow_html=True)
+
+
+
+# v257: navbar action button visual fix only
+st.markdown("""
+<style>
+/* v257 NAVBAR ACTION BUTTONS ONLY */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) {
+  align-items: center !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"] {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Fallback: style last two navbar columns as Login and Partner Sign Up */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button {
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 22px !important;
+  border-radius: 12px !important;
+  border: 1px solid #CBD5E1 !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(1) div[data-testid="stButton"] > button {
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 24px !important;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background: linear-gradient(135deg, #061A40, #123B8A) !important;
+  color: #FFFFFF !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 10px 24px rgba(6, 26, 64, 0.22) !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(2) div[data-testid="stButton"] > button:hover {
+  border-color: #123B8A !important;
+  color: #123B8A !important;
+  background: #F8FBFF !important;
+}
+
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v248) div[data-testid="column"]:nth-last-child(1) div[data-testid="stButton"] > button:hover {
+  background: linear-gradient(135deg, #07172C, #0B2E73) !important;
+  color: #FFFFFF !important;
+}
+</style>
+""", unsafe_allow_html=True)
+

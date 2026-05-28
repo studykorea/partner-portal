@@ -1686,3 +1686,11 @@ v256 rollback:
 - Added only a small startup safety guard for BASE, DATA, and ASSETS.
 - Did not apply the later v252-v255 navbar rewrites.
 - No changes to hero slider, university cards, filters, admission logic, admin logic, or database logic.
+
+
+v257:
+- Based on stable v256/v244.
+- Fixed only navbar action button appearance.
+- Login is styled as an outlined white box button.
+- Partner Sign Up is styled as a navy primary box button.
+- No changes to hero slider, university cards, filters, admission logic, admin logic, or database logic.
