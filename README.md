@@ -1633,3 +1633,11 @@ v238:
 - Navbar, hero slider, filter/search card, info bar, and university grid now use one shared container width: min(100% - 48px, 1440px).
 - Removed conflicting left/right side spacing from individual wrappers.
 - Kept hero slider logic, filter logic, university cards, admission logic, admin upload logic, and database logic unchanged.
+
+
+v239:
+- Fixed only spacing and alignment for the Universities Information page.
+- Forced navbar, hero iframe, filter card, info bar, and grid wrappers to one exact shared container width: min(100vw - 48px, 1440px).
+- Added iframe-level container alignment because Streamlit components can escape normal markdown wrapper CSS.
+- Set navbar-to-hero and hero-to-filter spacing to about 16px.
+- Did not change hero slider logic, filter logic, cards, admission logic, admin upload logic, or database logic.

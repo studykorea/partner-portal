@@ -13219,6 +13219,177 @@ div[data-testid="stHorizontalBlock"]:has(button[kind="secondary"]){
     }
 }
 
+
+/* v239: exact shared container alignment + compact top-section spacing only */
+:root{
+    --v239-page-width: min(calc(100vw - 48px), 1440px);
+    --v239-page-max: 1440px;
+}
+
+/* Remove outer Streamlit page padding so the same container controls every section */
+.block-container,
+section.main > div,
+main .block-container{
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ONE shared width for navbar */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin: 4px auto 16px auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ONE shared width for hero markdown wrapper */
+.uni-hero-wrap-v230{
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin: 0 auto 0 auto !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+/* ONE shared width for the actual Streamlit component iframe and its containers */
+div[data-testid="stElementContainer"]:has(iframe),
+div[data-testid="stIFrame"],
+div[data-testid="stIFrame"] > div,
+iframe{
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep iframe height only as much as the visible hero; no large top/bottom reserve */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe,
+iframe{
+    height: 482px !important;
+    min-height: 482px !important;
+    max-height: 482px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border: 0 !important;
+    display: block !important;
+}
+
+/* ONE shared width for filter card */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin: 16px auto 0 auto !important;
+    padding: 18px 18px !important;
+    box-sizing: border-box !important;
+}
+
+/* ONE shared width for info bar */
+div[data-testid="stAlert"]{
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin: 16px auto 0 auto !important;
+    box-sizing: border-box !important;
+}
+
+/* ONE shared width for university grid/list wrappers if present */
+.university-grid-wrapper,
+.university-grid,
+.universities-grid,
+.universities-grid-wrapper,
+.uni-card-grid,
+.uni-grid,
+.cards-grid,
+.university-list-wrapper,
+.universities-list-wrapper{
+    width: var(--v239-page-width) !important;
+    max-width: var(--v239-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Remove any vertical spacer around hero/filter wrappers */
+div[data-testid="stVerticalBlock"] > div:has(.uni-hero-wrap-v230),
+div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search university"]),
+div[data-testid="stVerticalBlock"] > div:has(input[placeholder*="Search universities"]){
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Prevent hero from escaping to full viewport width */
+.hero-section,
+.hero-slider,
+.hero-promo-slider-v230,
+.hero-promo-slider-v231,
+.hero-promo-slider-v232,
+.hero-promo-slider-v233,
+.hero-promo-slider-v234,
+.hero-promo-slider-v235,
+.hero-promo-slider-v236,
+.hero-promo-slider-v237,
+.hero-promo-slider-v238{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Tablet */
+@media(max-width:1100px){
+    :root{ --v239-page-width: min(calc(100vw - 40px), 1440px); }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe,
+    iframe{
+        height: 432px !important;
+        min-height: 432px !important;
+        max-height: 432px !important;
+    }
+}
+
+/* Mobile */
+@media(max-width:680px){
+    :root{ --v239-page-width: min(calc(100vw - 24px), 1440px); }
+    div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+    div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+    div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+        margin-bottom: 14px !important;
+    }
+    .uni-hero-wrap-v230 iframe,
+    div[data-testid="stIFrame"] iframe,
+    div[data-testid="stElementContainer"]:has(iframe) iframe,
+    iframe{
+        height: 422px !important;
+        min-height: 422px !important;
+        max-height: 422px !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+    div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+        margin-top: 16px !important;
+        padding: 14px !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -19267,6 +19438,49 @@ def hero_slider_component_html_v230(df):
     setTimeout(v233TightenHeroFrame, 100);
     setTimeout(v233TightenHeroFrame, 500);
     setTimeout(v233TightenHeroFrame, 1200);
+    </script>
+
+
+    <script>
+    function v239ExactContainerFix(){{
+        try{{
+            var frame = window.frameElement;
+            if(!frame){{ return; }}
+            var w = "min(calc(100vw - 48px), 1440px)";
+            frame.style.width = w;
+            frame.style.maxWidth = "1440px";
+            frame.style.height = "482px";
+            frame.style.minHeight = "482px";
+            frame.style.maxHeight = "482px";
+            frame.style.display = "block";
+            frame.style.margin = "0 auto";
+            frame.style.border = "0";
+            frame.style.padding = "0";
+
+            var parent = frame.parentElement;
+            var steps = 0;
+            while(parent && steps < 9){{
+                parent.style.width = w;
+                parent.style.maxWidth = "1440px";
+                parent.style.marginLeft = "auto";
+                parent.style.marginRight = "auto";
+                parent.style.marginTop = "0";
+                parent.style.marginBottom = "0";
+                parent.style.paddingLeft = "0";
+                parent.style.paddingRight = "0";
+                parent.style.paddingTop = "0";
+                parent.style.paddingBottom = "0";
+                parent.style.boxSizing = "border-box";
+                parent = parent.parentElement;
+                steps++;
+            }}
+        }}catch(e){{}}
+    }}
+    window.addEventListener("load", v239ExactContainerFix);
+    window.addEventListener("resize", v239ExactContainerFix);
+    setTimeout(v239ExactContainerFix, 50);
+    setTimeout(v239ExactContainerFix, 300);
+    setTimeout(v239ExactContainerFix, 1000);
     </script>
 
 </body>
