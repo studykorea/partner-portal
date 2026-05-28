@@ -1626,3 +1626,10 @@ v237:
 - Set hero-to-filter gap to about 16px.
 - Removed previous aggressive negative iframe margins that could create inconsistent spacing.
 - Kept hero slider design/logic, filters, university cards, admin data, admission logic, and database unchanged.
+
+
+v238:
+- Fixed only horizontal alignment and side spacing on the Universities Information page.
+- Navbar, hero slider, filter/search card, info bar, and university grid now use one shared container width: min(100% - 48px, 1440px).
+- Removed conflicting left/right side spacing from individual wrappers.
+- Kept hero slider logic, filter logic, university cards, admission logic, admin upload logic, and database logic unchanged.

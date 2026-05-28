@@ -13091,6 +13091,134 @@ div[data-testid="stAlert"] > div{
     }
 }
 
+
+/* v238: shared page container width for navbar, hero, filter, info bar, and university grid */
+:root{
+    --v238-page-width: min(calc(100% - 48px), 1440px);
+    --v238-page-max: 1440px;
+}
+
+/* Remove random outer side padding from Streamlit page wrapper */
+.block-container{
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Shared container alignment: navbar */
+div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223),
+div[data-testid="stHorizontalBlock"]:has(.public-brand-v220),
+div[data-testid="stHorizontalBlock"]:has(.nav-signup-marker-v225){
+    width: var(--v238-page-width) !important;
+    max-width: var(--v238-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Shared container alignment: hero wrapper */
+.uni-hero-wrap-v230{
+    width: var(--v238-page-width) !important;
+    max-width: var(--v238-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Hero iframe must fill the exact shared container, not 100vw */
+.uni-hero-wrap-v230 iframe,
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Shared container alignment: filter/search card */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]){
+    width: var(--v238-page-width) !important;
+    max-width: var(--v238-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Shared container alignment: info/alert bar */
+div[data-testid="stAlert"]{
+    width: var(--v238-page-width) !important;
+    max-width: var(--v238-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Shared container alignment: university card grid rows.
+   Target rows containing card markers/buttons without changing card internals. */
+div[data-testid="stHorizontalBlock"]:has(.university-card-v230),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v231),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v232),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v233),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v234),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v235),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v236),
+div[data-testid="stHorizontalBlock"]:has(.university-card-v237),
+div[data-testid="stHorizontalBlock"]:has(a[href*="View Details"]),
+div[data-testid="stHorizontalBlock"]:has(button[kind="secondary"]){
+    max-width: var(--v238-page-max) !important;
+}
+
+/* If the university listing uses markdown/html grid containers, align those too */
+.university-grid-wrapper,
+.university-grid,
+.universities-grid,
+.universities-grid-wrapper,
+.uni-card-grid,
+.uni-grid,
+.cards-grid,
+.university-list-wrapper,
+.universities-list-wrapper{
+    width: var(--v238-page-width) !important;
+    max-width: var(--v238-page-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Prevent hero from using viewport width through older classes */
+.hero-section,
+.hero-slider,
+.hero-promo-slider-v230,
+.hero-promo-slider-v231,
+.hero-promo-slider-v232,
+.hero-promo-slider-v233,
+.hero-promo-slider-v234,
+.hero-promo-slider-v235,
+.hero-promo-slider-v236,
+.hero-promo-slider-v237{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep existing vertical spacing from v237, only normalize horizontal margins */
+@media(max-width:1100px){
+    :root{
+        --v238-page-width: min(calc(100% - 40px), 1440px);
+    }
+}
+
+@media(max-width:680px){
+    :root{
+        --v238-page-width: min(calc(100% - 24px), 1440px);
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
