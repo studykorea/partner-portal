@@ -1672,3 +1672,10 @@ v243:
 - Navbar, hero, filter card, info bar, and grid use the same shared wide container: width calc(100% - 32px), max-width 1760px.
 - Target spacing: 12–18px around navbar -> hero -> filter.
 - Hero slider design/logic, admin advertisement logic, filters, cards, admission logic, and database logic were not changed.
+
+
+v244:
+- Fixed only the remaining hidden vertical gaps.
+- Zeroed hidden Streamlit markdown wrapper blocks reserving blank space: top-nav-button-shell-v187, universities-wrap-v214, and uni-filter-panel-v214.
+- Targeted navbar -> hero and hero -> filter spacing to about 10px.
+- Kept navbar design, hero design, hero slider logic, filter design, cards, admin logic, database logic, and admission logic unchanged.
