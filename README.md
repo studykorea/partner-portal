@@ -1743,3 +1743,9 @@ v252:
 - Added missing Streamlit query-param router for the real HTML navbar links.
 - Navbar links now work through ?nav=home, ?nav=universities, ?nav=login, ?nav=signup, etc.
 - Keeps v251 real navbar structure and styling.
+
+
+v253:
+- Emergency fix for startup crash: defines DATA = Path("data") before DATA / "student_applications.csv" is used.
+- Keeps v252 real navbar structure and working ?nav= routing.
+- No changes to hero slider, filters, university cards, admission logic, admin upload logic, or database logic.

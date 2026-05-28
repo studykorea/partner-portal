@@ -15,6 +15,13 @@ from sqlalchemy import create_engine, text
 st.set_page_config(page_title="Partner Portal Partner Portal", page_icon="🎓", layout="wide")
 
 
+# v253: safety data directory definition
+# Required before files such as student_applications.csv are declared.
+DATA = Path("data")
+DATA.mkdir(parents=True, exist_ok=True)
+
+
+
 # v252: make real HTML navbar links work in Streamlit through ?nav=...
 def _route_from_nav_query_v252():
     try:
