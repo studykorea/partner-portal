@@ -18732,8 +18732,66 @@ def _detail_map_html_v264(u):
     except Exception:
         return ""
 
+def _detail_stat_clean_value_v277(value, label=""):
+    """Clean stat values for the University Detail navy stats bar only."""
+    raw = display_clean_v50(value).strip()
+    if not raw or raw.lower() in {"nan", "none", "null", "not updated", "not updated yet", "-", "n/a", "na"}:
+        return "—"
+
+    # Remove repeated labels that caused overlap in the stats bar.
+    lower_label = str(label or "").lower()
+    cleaned = raw
+    cleaned = re.sub(r"(?i)\btotal\s+students?\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\binternational\s+students?\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\bstudents?\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\bcolleges?\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\bcountries\s+represented\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\bindustry\s+partners?\b", "", cleaned).strip()
+    cleaned = re.sub(r"(?i)\bemployment\s+rate\b", "", cleaned).strip()
+    cleaned = cleaned.replace("–", "–").replace(" - ", "–").replace("-", "–") if re.search(r"\d\s*-\s*\d", cleaned) else cleaned
+    cleaned = re.sub(r"\s+", " ", cleaned).strip(" ,")
+
+    if not cleaned or cleaned.lower() in {"not updated", "not updated yet"}:
+        return "—"
+
+    # Format purely numeric values with commas and a plus sign where appropriate.
+    digits_only = re.sub(r"[^\d.]", "", cleaned)
+    if digits_only and re.fullmatch(r"\d+(\.\d+)?", digits_only) and re.search(r"\d", cleaned):
+        try:
+            if "." in digits_only:
+                num = float(digits_only)
+                formatted = f"{num:g}"
+            else:
+                num = int(digits_only)
+                formatted = f"{num:,}"
+            if "employment" in lower_label:
+                return formatted if "%" in cleaned else f"{formatted}%+"
+            if "college" in lower_label:
+                return formatted
+            if "countries" in lower_label or "partners" in lower_label or "students" in lower_label:
+                return formatted if cleaned.endswith("+") else f"{formatted}+"
+            return formatted
+        except Exception:
+            pass
+
+    # Keep admin-entered ranges/percentages readable.
+    if "employment" in lower_label and "%" not in cleaned and re.search(r"\d", cleaned):
+        cleaned = f"{cleaned}%+"
+    elif ("countries" in lower_label or "partners" in lower_label) and re.fullmatch(r"[\d,]+", cleaned):
+        cleaned = f"{cleaned}+"
+
+    return cleaned
+
+
 def _detail_stat_v264(icon, value, label):
-    return f'<div class="detail-stat-v264"><span>{icon}</span><b>{_safe_html_v62(value)}</b><small>{_safe_html_v62(label)}</small></div>'
+    clean_value = _detail_stat_clean_value_v277(value, label)
+    return (
+        f'<div class="detail-stat-v264 university-stat-item">'
+        f'<span class="university-stat-icon">{icon}</span>'
+        f'<b class="university-stat-value">{_safe_html_v62(clean_value)}</b>'
+        f'<small class="university-stat-label">{_safe_html_v62(label)}</small>'
+        f'</div>'
+    )
 
 def _detail_hero_img_v264(u):
     path = ""
@@ -18773,10 +18831,10 @@ def _render_university_detail_v62(u):
     campus_size = _detail_value_v264(row, ["Campus_Size", "School_Size", "Campus size"], "Not updated")
     language = _detail_value_v264(row, ["Language", "Instruction_Language"], "Korean, English")
     tuition = _detail_value_v264(row, ["Tuition_Range", "Tuition", "Tuition range"], "Not updated")
-    colleges = _detail_value_v264(row, ["Colleges", "Number_of_Colleges", "Departments"], "Not updated")
-    countries = _detail_value_v264(row, ["Countries_Represented", "Countries", "International_Countries"], "Not updated")
-    partners = _detail_value_v264(row, ["Industry_Partners", "Partners"], "Not updated")
-    employment = _detail_value_v264(row, ["Employment_Rate", "Employment rate"], "Not updated")
+    colleges = _detail_value_v264(row, ["collegesCount", "numberOfColleges", "Colleges", "Number_of_Colleges", "Departments"], "—")
+    countries = _detail_value_v264(row, ["countriesRepresented", "Countries_Represented", "Countries", "International_Countries"], "—")
+    partners = _detail_value_v264(row, ["industryPartners", "Industry_Partners", "Partners"], "—")
+    employment = _detail_value_v264(row, ["employmentRate", "Employment_Rate", "Employment rate"], "—")
 
     hero_src = _detail_hero_img_v264(row)
     logo_src = _detail_logo_img_v264(row)
@@ -19925,6 +19983,127 @@ def _render_university_detail_v62(u):
   }}
   .detail-hero-v264 .university-hero-location{{
     font-size:15px !important;
+  }}
+}}
+
+/* v277: University Detail Page statistics bar redesign only */
+.stats-bar-v264,
+.university-stats-bar{{
+  width:100% !important;
+  background:linear-gradient(135deg,#071A44 0%,#2436A3 100%) !important;
+  border-radius:18px !important;
+  padding:26px 32px !important;
+  display:grid !important;
+  grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  gap:18px !important;
+  align-items:center !important;
+  box-shadow:0 18px 45px rgba(6,26,64,0.18) !important;
+  overflow:hidden !important;
+  margin:26px 0 !important;
+  color:#ffffff !important;
+}}
+
+.detail-stat-v264,
+.university-stat-item{{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  min-width:0 !important;
+  color:#ffffff !important;
+  position:relative !important;
+  padding:0 4px !important;
+}}
+
+.detail-stat-v264:not(:last-child)::after,
+.university-stat-item:not(:last-child)::after{{
+  content:"" !important;
+  position:absolute !important;
+  right:-9px !important;
+  top:12px !important;
+  bottom:12px !important;
+  width:1px !important;
+  background:rgba(255,255,255,0.14) !important;
+}}
+
+.detail-stat-v264 > span,
+.university-stat-icon{{
+  width:30px !important;
+  height:30px !important;
+  margin:0 0 10px !important;
+  color:rgba(255,255,255,0.92) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:24px !important;
+  line-height:1 !important;
+  opacity:1 !important;
+}}
+
+.detail-stat-v264 > b,
+.university-stat-value{{
+  display:block !important;
+  width:100% !important;
+  font-size:25px !important;
+  font-weight:950 !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+  margin:0 0 5px !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  max-width:100% !important;
+}}
+
+.detail-stat-v264 > small,
+.university-stat-label{{
+  display:block !important;
+  width:100% !important;
+  font-size:13px !important;
+  font-weight:650 !important;
+  color:rgba(255,255,255,0.78) !important;
+  -webkit-text-fill-color:rgba(255,255,255,0.78) !important;
+  line-height:1.2 !important;
+  white-space:normal !important;
+  margin:0 !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}}
+
+@media(max-width:1024px){{
+  .stats-bar-v264,
+  .university-stats-bar{{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }}
+  .detail-stat-v264:nth-child(3)::after,
+  .university-stat-item:nth-child(3)::after{{
+    display:none !important;
+  }}
+}}
+
+@media(max-width:640px){{
+  .stats-bar-v264,
+  .university-stats-bar{{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    padding:22px 18px !important;
+    gap:18px 12px !important;
+  }}
+
+  .detail-stat-v264 > b,
+  .university-stat-value{{
+    font-size:21px !important;
+  }}
+
+  .detail-stat-v264 > small,
+  .university-stat-label{{
+    font-size:12px !important;
+  }}
+
+  .detail-stat-v264:nth-child(even)::after,
+  .university-stat-item:nth-child(even)::after{{
+    display:none !important;
   }}
 }}
 </style>

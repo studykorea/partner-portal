@@ -1846,3 +1846,12 @@ v276:
 - Added a stronger final CSS override for the real detail hero classes.
 - Logo, badge, title, location, stats, share and favorite buttons are positioned closer to the sample reference.
 - Kept hero size, width, height, shape, page layout, tabs, database, admission logic, and admin logic unchanged.
+
+
+v277:
+- Fixed only the University Detail Page statistics bar section.
+- Redesigned the navy statistics bar to use clean equal columns with icon, value, and label stacked vertically.
+- Prevented icon/text overlap.
+- Missing data now shows “—” instead of large messy “Not updated” text inside the navy stats bar.
+- Added dynamic admin/database field support for total students, international students, colleges, countries represented, industry partners, and employment rate.
+- Did not change hero, overview/about, video, application deadlines, top programs, quick facts, navbar, admission logic, or unrelated admin logic.
