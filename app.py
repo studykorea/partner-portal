@@ -18732,68 +18732,78 @@ def _detail_map_html_v264(u):
     except Exception:
         return ""
 
-def _detail_stat_clean_value_v277(value, label=""):
+def _detail_stat_clean_value_v278(value, label=""):
     """Clean stat values for the University Detail navy stats bar only."""
     raw = display_clean_v50(value).strip()
-    if not raw or raw.lower() in {"nan", "none", "null", "not updated", "not updated yet", "-", "n/a", "na"}:
+    missing_values = {"", "nan", "none", "null", "not updated", "not updated yet", "-", "—", "n/a", "na"}
+    if raw.lower() in missing_values:
         return "—"
 
-    # Remove repeated labels that caused overlap in the stats bar.
-    lower_label = str(label or "").lower()
     cleaned = raw
-    cleaned = re.sub(r"(?i)\btotal\s+students?\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\binternational\s+students?\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\bstudents?\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\bcolleges?\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\bcountries\s+represented\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\bindustry\s+partners?\b", "", cleaned).strip()
-    cleaned = re.sub(r"(?i)\bemployment\s+rate\b", "", cleaned).strip()
-    cleaned = cleaned.replace("–", "–").replace(" - ", "–").replace("-", "–") if re.search(r"\d\s*-\s*\d", cleaned) else cleaned
+    # Remove labels from values so the bar does not repeat/overlap label text.
+    cleaned = re.sub(r"(?i)\btotal\s+students?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\binternational\s+students?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bforeign\s+students?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bstudents?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bcolleges?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bcountries\s+represented\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bindustry\s+partners?\b", "", cleaned)
+    cleaned = re.sub(r"(?i)\bemployment\s+rate\b", "", cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned).strip(" ,")
-
-    if not cleaned or cleaned.lower() in {"not updated", "not updated yet"}:
+    if not cleaned or cleaned.lower() in missing_values:
         return "—"
 
-    # Format purely numeric values with commas and a plus sign where appropriate.
-    digits_only = re.sub(r"[^\d.]", "", cleaned)
-    if digits_only and re.fullmatch(r"\d+(\.\d+)?", digits_only) and re.search(r"\d", cleaned):
+    label_l = str(label or "").lower()
+
+    # Format pure numeric fields.
+    numeric = re.fullmatch(r"\d+(\.\d+)?", cleaned.replace(",", ""))
+    if numeric:
         try:
-            if "." in digits_only:
-                num = float(digits_only)
-                formatted = f"{num:g}"
+            if "." in cleaned:
+                formatted = f"{float(cleaned.replace(',', '')):g}"
             else:
-                num = int(digits_only)
-                formatted = f"{num:,}"
-            if "employment" in lower_label:
-                return formatted if "%" in cleaned else f"{formatted}%+"
-            if "college" in lower_label:
+                formatted = f"{int(cleaned.replace(',', '')):,}"
+            if "employment" in label_l:
+                return formatted if "%" in raw else f"{formatted}%+"
+            if "college" in label_l:
                 return formatted
-            if "countries" in lower_label or "partners" in lower_label or "students" in lower_label:
-                return formatted if cleaned.endswith("+") else f"{formatted}+"
+            if "student" in label_l or "countries" in label_l or "partners" in label_l:
+                return formatted if raw.strip().endswith("+") else f"{formatted}+"
             return formatted
         except Exception:
             pass
 
-    # Keep admin-entered ranges/percentages readable.
-    if "employment" in lower_label and "%" not in cleaned and re.search(r"\d", cleaned):
-        cleaned = f"{cleaned}%+"
-    elif ("countries" in lower_label or "partners" in lower_label) and re.fullmatch(r"[\d,]+", cleaned):
-        cleaned = f"{cleaned}+"
+    # Clean common range hyphen spacing.
+    cleaned = re.sub(r"\s*-\s*", "–", cleaned)
+    cleaned = re.sub(r"\s*–\s*", "–", cleaned)
 
+    # Add suffix only for simple values where it makes sense.
+    if "employment" in label_l and re.search(r"\d", cleaned) and "%" not in cleaned:
+        cleaned = f"{cleaned}%+"
+    elif ("countries" in label_l or "partners" in label_l) and re.fullmatch(r"[\d,]+", cleaned):
+        cleaned = f"{cleaned}+"
     return cleaned
 
 
 def _detail_stat_v264(icon, value, label):
-    clean_value = _detail_stat_clean_value_v277(value, label)
+    clean_value = _detail_stat_clean_value_v278(value, label)
     return (
-        f'<div class="detail-stat-v264 university-stat-item">'
-        f'<span class="university-stat-icon">{icon}</span>'
-        f'<b class="university-stat-value">{_safe_html_v62(clean_value)}</b>'
-        f'<small class="university-stat-label">{_safe_html_v62(label)}</small>'
-        f'</div>'
+        '<div class="detail-stat-v264 university-stat-item" '
+        'style="display:flex!important;flex-direction:column!important;align-items:center!important;'
+        'justify-content:center!important;text-align:center!important;min-width:0!important;color:#fff!important;'
+        'position:relative!important;padding:0 8px!important;overflow:hidden!important;">'
+        f'<div class="university-stat-icon" style="height:30px!important;width:30px!important;margin:0 auto 10px!important;'
+        f'display:flex!important;align-items:center!important;justify-content:center!important;font-size:22px!important;line-height:1!important;color:rgba(255,255,255,.92)!important;">{icon}</div>'
+        f'<div class="university-stat-value" style="display:block!important;color:#fff!important;-webkit-text-fill-color:#fff!important;'
+        f'font-size:24px!important;font-weight:950!important;line-height:1.05!important;white-space:nowrap!important;'
+        f'margin:0 0 6px!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;">{_safe_html_v62(clean_value)}</div>'
+        f'<div class="university-stat-label" style="display:block!important;color:rgba(255,255,255,.80)!important;-webkit-text-fill-color:rgba(255,255,255,.80)!important;'
+        f'font-size:13px!important;font-weight:650!important;line-height:1.2!important;white-space:normal!important;margin:0!important;">{_safe_html_v62(label)}</div>'
+        '</div>'
     )
 
 def _detail_hero_img_v264(u):
+
     path = ""
     try:
         path = university_cover_path_v260(u) if "university_cover_path_v260" in globals() else _detail_value_v264(u, ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl"], "")
@@ -20106,6 +20116,50 @@ def _render_university_detail_v62(u):
     display:none !important;
   }}
 }}
+
+/* v278: final statistics bar inline + responsive fix */
+.stats-bar-v264 .detail-stat-v264:not(:last-child)::after{{
+  content:"" !important;
+  position:absolute !important;
+  right:-9px !important;
+  top:10px !important;
+  bottom:10px !important;
+  width:1px !important;
+  background:rgba(255,255,255,0.14) !important;
+}}
+
+.stats-bar-v264 .detail-stat-v264 span,
+.stats-bar-v264 .detail-stat-v264 b,
+.stats-bar-v264 .detail-stat-v264 small{{
+  display:unset !important;
+}}
+
+@media(max-width:1024px){{
+  .stats-bar-v264.university-stats-bar{{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    min-height:auto !important;
+  }}
+  .stats-bar-v264 .detail-stat-v264:nth-child(3)::after{{
+    display:none !important;
+  }}
+}}
+
+@media(max-width:640px){{
+  .stats-bar-v264.university-stats-bar{{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    padding:22px 18px !important;
+    gap:18px 12px !important;
+  }}
+  .stats-bar-v264 .detail-stat-v264:nth-child(even)::after{{
+    display:none !important;
+  }}
+  .stats-bar-v264 .university-stat-value{{
+    font-size:21px !important;
+  }}
+  .stats-bar-v264 .university-stat-label{{
+    font-size:12px !important;
+  }}
+}}
 </style>
 
 <div class="detail-premium-v264">
@@ -20171,7 +20225,7 @@ def _render_university_detail_v62(u):
     </aside>
   </section>
 
-  <section class="stats-bar-v264">{stats_bar}</section>
+  <section class="stats-bar-v264 university-stats-bar" style="width:100%!important;background:linear-gradient(135deg,#071A44 0%,#2436A3 100%)!important;border-radius:18px!important;padding:24px 32px!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:18px!important;align-items:center!important;box-shadow:0 18px 45px rgba(6,26,64,.18)!important;overflow:hidden!important;margin:26px 0!important;min-height:118px!important;color:#fff!important;">{stats_bar}</section>
 
   <section class="cards-3-v264">
     <div class="info-card-v264"><h3>Top Programs</h3><ul>{top_programs_html}</ul><a class="section-link-v264" href="#programs-v264">View All Programs →</a></div>

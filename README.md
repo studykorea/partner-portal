@@ -1855,3 +1855,12 @@ v277:
 - Missing data now shows “—” instead of large messy “Not updated” text inside the navy stats bar.
 - Added dynamic admin/database field support for total students, international students, colleges, countries represented, industry partners, and employment rate.
 - Did not change hero, overview/about, video, application deadlines, top programs, quick facts, navbar, admission logic, or unrelated admin logic.
+
+
+v278:
+- Fixed the actual University Detail Page navy statistics bar markup using inline layout styles so old CSS cannot override it.
+- Icons, values, and labels are now forced into a vertical centered stack.
+- Missing stats are cleaned to “—” inside the bar.
+- Removed repeated words such as “students” from stat values to prevent overlap.
+- Kept all data dynamic from admin/database fields.
+- Did not change hero, overview/about, video, application deadlines, top programs, quick facts, navbar, admission logic, or unrelated admin logic.
