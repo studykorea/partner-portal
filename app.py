@@ -20160,6 +20160,31 @@ def _render_university_detail_v62(u):
     font-size:12px !important;
   }}
 }}
+
+/* v279: position stats bar under About/Video only, not full page width */
+.overview-grid-v264 > .panel-v264 .stats-bar-v264.university-stats-bar{{
+  margin-top:26px !important;
+  margin-bottom:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}}
+
+.overview-grid-v264 > .panel-v264 .stats-bar-v264 .detail-stat-v264{{
+  min-width:0 !important;
+}}
+
+@media(max-width:1100px){{
+  .overview-grid-v264 > .panel-v264 .stats-bar-v264.university-stats-bar{{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }}
+}}
+
+@media(max-width:640px){{
+  .overview-grid-v264 > .panel-v264 .stats-bar-v264.university-stats-bar{{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    padding:20px 16px !important;
+  }}
+}}
 </style>
 
 <div class="detail-premium-v264">
@@ -20216,6 +20241,13 @@ def _render_university_detail_v62(u):
         </div>
         {video_card_html_v271}
       </div>
+
+      <section class="stats-bar-v264 university-stats-bar" 
+        style="width:100%!important;background:linear-gradient(135deg,#071A44 0%,#2436A3 100%)!important;
+        border-radius:18px!important;padding:24px 32px!important;display:grid!important;
+        grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:18px!important;align-items:center!important;
+        box-shadow:0 18px 45px rgba(6,26,64,.18)!important;overflow:hidden!important;margin:26px 0 0!important;
+        min-height:118px!important;color:#fff!important;">{stats_bar}</section>
     </div>
 
     <aside id="admissions-v264" class="panel-v264 deadline-panel-v264">
@@ -20225,7 +20257,7 @@ def _render_university_detail_v62(u):
     </aside>
   </section>
 
-  <section class="stats-bar-v264 university-stats-bar" style="width:100%!important;background:linear-gradient(135deg,#071A44 0%,#2436A3 100%)!important;border-radius:18px!important;padding:24px 32px!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:18px!important;align-items:center!important;box-shadow:0 18px 45px rgba(6,26,64,.18)!important;overflow:hidden!important;margin:26px 0!important;min-height:118px!important;color:#fff!important;">{stats_bar}</section>
+  
 
   <section class="cards-3-v264">
     <div class="info-card-v264"><h3>Top Programs</h3><ul>{top_programs_html}</ul><a class="section-link-v264" href="#programs-v264">View All Programs →</a></div>

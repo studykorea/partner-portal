@@ -1864,3 +1864,11 @@ v278:
 - Removed repeated words such as “students” from stat values to prevent overlap.
 - Kept all data dynamic from admin/database fields.
 - Did not change hero, overview/about, video, application deadlines, top programs, quick facts, navbar, admission logic, or unrelated admin logic.
+
+
+v279:
+- Fixed only the University Detail Page statistics bar position.
+- Moved the navy statistics bar inside the left overview panel, directly below the About + Video row, like the reference image.
+- Removed the old full-width stats bar that stretched across the page under the application deadlines.
+- Kept the stats values dynamic from admin/database fields.
+- Did not change hero, video, application deadlines, top programs, quick facts, navbar, admission logic, or unrelated admin logic.
