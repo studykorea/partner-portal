@@ -18425,6 +18425,118 @@ def _detail_admission_status_v264(open_value, close_value):
         pass
     return ("Not Fixed Yet", "neutral")
 
+
+def _detail_normalize_url_v271(url):
+    s = display_clean_v50(url)
+    if not s:
+        return ""
+    if s.startswith(("http://", "https://", "mailto:", "tel:")):
+        return s
+    return "https://" + s.lstrip("/")
+
+def _detail_short_description_v271(row):
+    text = _detail_value_v264(row, ["Short_Description", "University_Summary", "Short Description", "Summary", "Overview", "Description", "About", "Introduction"], "")
+    text = display_clean_v50(text)
+    if not text:
+        return "University description will be updated soon."
+    words = text.split()
+    if len(words) > 80:
+        text = " ".join(words[:80]).rstrip(".,;:") + "..."
+    if len(text) > 450:
+        text = text[:447].rstrip() + "..."
+    return text
+
+def _detail_youtube_id_v271(url):
+    try:
+        from urllib.parse import urlparse, parse_qs
+        s = display_clean_v50(url)
+        p = urlparse(s)
+        host = (p.netloc or "").lower()
+        if "youtu.be" in host:
+            return p.path.strip("/").split("/")[0]
+        if "youtube.com" in host:
+            if p.path.startswith("/embed/"):
+                return p.path.split("/embed/")[1].split("/")[0]
+            q = parse_qs(p.query)
+            if q.get("v"):
+                return q["v"][0]
+            if "/shorts/" in p.path:
+                return p.path.split("/shorts/")[1].split("/")[0]
+    except Exception:
+        return ""
+    return ""
+
+def _detail_video_embed_url_v271(url):
+    s = _detail_normalize_url_v271(url)
+    if not s:
+        return ""
+    vid = _detail_youtube_id_v271(s)
+    if vid:
+        return f"https://www.youtube.com/embed/{vid}"
+    if "vimeo.com" in s.lower():
+        try:
+            from urllib.parse import urlparse
+            p = urlparse(s)
+            vid = p.path.strip("/").split("/")[-1]
+            if vid:
+                return f"https://player.vimeo.com/video/{vid}"
+        except Exception:
+            pass
+    return s
+
+def _detail_video_html_v271(row, name, hero_src):
+    video_url = _detail_value_v264(row, ["University_Video_URL", "Campus_Tour_Video_URL", "Promotion_Video_URL", "Video_URL", "YouTube_Link", "Youtube", "YouTube"], "")
+    embed_url = _detail_video_embed_url_v271(video_url)
+    thumb = _detail_value_v264(row, ["Video_Thumbnail_URL", "Video_Thumbnail", "Thumbnail_URL"], "")
+    thumb_src = _detail_img_src_v264(thumb) if thumb else hero_src
+    safe_name = _safe_html_v62(name)
+    if embed_url:
+        if embed_url.lower().endswith((".mp4", ".webm", ".ogg")):
+            player = f'<video class="video-player-v271" src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
+        else:
+            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}" title="{safe_name} campus video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
+        return f"""
+<div class="video-card-v264 video-card-v271">
+<input class="video-toggle-v271" id="video-toggle-v271" type="checkbox">
+<label class="video-preview-v271" for="video-toggle-v271" style="background-image:url('{_safe_html_v62(thumb_src)}');">
+<span class="play-v264 play-v271">▶</span>
+<span class="video-label-v264 video-label-v271">Discover {safe_name}<br><small>Campus Tour</small></span>
+</label>
+<div class="video-embed-wrap-v271">{player}</div>
+</div>"""
+    if thumb_src:
+        return f"""
+<div class="video-card-v264 video-card-v271 no-video-v271" style="background-image:url('{_safe_html_v62(thumb_src)}');">
+<div class="play-v264 play-v271">▶</div>
+<div class="video-label-v264 video-label-v271">Campus video will be updated soon.<br><small>{safe_name}</small></div>
+</div>"""
+    return f'<div class="video-card-v264 video-card-v271 no-video-v271"><div class="video-label-v264 video-label-v271">Campus video will be updated soon.<br><small>{safe_name}</small></div></div>'
+
+def _detail_apply_option_v271(label, url):
+    href = _detail_normalize_url_v271(url)
+    if href:
+        return f'<a class="apply-option-v271" href="{_safe_html_v62(href)}" target="_blank" rel="noopener"><b>{_safe_html_v62(label)}</b><span>Apply →</span></a>'
+    return f'<span class="apply-option-v271 disabled"><b>{_safe_html_v62(label)}</b><span>Application link not updated yet</span></span>'
+
+def _detail_apply_modal_html_v271(row, name):
+    ug = _detail_value_v264(row, ["Undergraduate_Apply_URL", "UG_Apply_URL", "Bachelor_Apply_URL"], "")
+    grad = _detail_value_v264(row, ["Graduate_Apply_URL", "Masters_Apply_URL", "PhD_Apply_URL"], "")
+    klp = _detail_value_v264(row, ["KLP_EAP_Apply_URL", "KLP_Apply_URL", "EAP_Apply_URL", "Language_Apply_URL"], "")
+    return f"""
+<div id="apply-options-v271" class="apply-modal-v271">
+<a href="#overview-v264" class="apply-modal-bg-v271" aria-label="Close"></a>
+<div class="apply-modal-card-v271">
+<a href="#overview-v264" class="apply-modal-close-v271">×</a>
+<h3>Apply to {_safe_html_v62(name)}</h3>
+<p>Choose Application Type</p>
+<div class="apply-options-grid-v271">
+{_detail_apply_option_v271("Undergraduate Apply", ug)}
+{_detail_apply_option_v271("Graduate Apply", grad)}
+{_detail_apply_option_v271("EAP/KLP Apply", klp)}
+</div>
+</div>
+</div>"""
+
 def _detail_deadline_rows_v264(u):
     general_open = u.get("Application_Open_Date", "")
     general_close = u.get("Application_Close_Date", "")
@@ -18448,15 +18560,24 @@ def _detail_deadline_rows_v264(u):
 def _detail_deadlines_html_v264(u):
     cards = []
     for r in _detail_deadline_rows_v264(u):
-        cards.append(f'''
-        <div class="deadline-card-v264">
-          <div class="deadline-icon-v264">📅</div>
-          <div class="deadline-copy-v264">
-            <div class="deadline-top-v264"><b>{_safe_html_v62(r["label"])}</b><span class="status-pill-v264 {r["class"]}">{_safe_html_v62(r["status"])}</span></div>
-            <p><strong>Open:</strong> {_safe_html_v62(r["open"])}</p>
-            <p><strong>Close:</strong> {_safe_html_v62(r["close"])}</p>
-          </div>
-        </div>''')
+        raw_cls = str(r.get("class", "") or "").lower()
+        if "open" in raw_cls:
+            cls = "open"
+        elif "soon" in raw_cls or "left" in raw_cls:
+            cls = "soon"
+        elif "close" in raw_cls or "closed" in raw_cls:
+            cls = "closed"
+        else:
+            cls = "missing"
+        cards.append(f"""
+<div class="deadline-card-v264">
+<div class="deadline-icon-v264">🗓️</div>
+<div class="deadline-copy-v264">
+<div class="deadline-top-v264"><b>{_safe_html_v62(r["label"])}</b><span class="status-pill-v264 {cls}">{_safe_html_v62(r["status"])}</span></div>
+<p><strong>Open:</strong> {_safe_html_v62(r["open"])}</p>
+<p><strong>Close:</strong> {_safe_html_v62(r["close"])}</p>
+</div>
+</div>""")
     return "".join(cards)
 
 def _detail_program_groups_v264(university_name):
@@ -18600,13 +18721,14 @@ def _render_university_detail_v62(u):
 
     name = _detail_value_v264(row, ["University", "Name", "university.name"], "University")
     location = _detail_location_v264(row)
-    overview = _detail_value_v264(row, ["Overview", "Description", "About", "Introduction"], "Information will be updated soon.")
+    overview = _detail_short_description_v271(row)
     uni_type = _detail_university_type_v264(row)
     uni_type_stat = uni_type.replace(" University", "").strip() if isinstance(uni_type, str) else uni_type
     established = _detail_value_v264(row, ["Established", "Established_Year", "Foundation_Year", "Founded"], "Not updated")
     total_students = _detail_total_students_v264(row)
     intl_students = _detail_intl_students_v264(row)
-    website = _detail_value_v264(row, ["Homepage", "Website", "Official_Website"], "")
+    website = _detail_value_v264(row, ["Homepage", "Website", "Official_Website", "homepageUrl", "websiteUrl"], "")
+    website_url_v271 = _detail_normalize_url_v271(website)
     address = _detail_value_v264(row, ["Address"], "")
     campus_size = _detail_value_v264(row, ["Campus_Size", "School_Size", "Campus size"], "Not updated")
     language = _detail_value_v264(row, ["Language", "Instruction_Language"], "Korean, English")
@@ -18627,7 +18749,7 @@ def _render_university_detail_v62(u):
     why_html = "".join([f"<li>✓ {_safe_html_v62(item)}</li>" for item in _detail_why_items_v264(row)])
     useful_links = _detail_quick_links_v264(row)
 
-    homepage_button = f'<a class="official-website-button-v266" href="{_safe_html_v62(website)}" target="_blank" rel="noopener">Visit Official Website ↗</a>' if website else '<span class="official-website-button-v266 disabled">Official website not updated</span>'
+    homepage_button = f'<a class="official-website-button-v266" href="{_safe_html_v62(website_url_v271)}" target="_blank" rel="noopener noreferrer">Visit Official Website ↗</a>' if website_url_v271 else '<span class="official-website-button-v266 disabled" title="Official website not updated yet">Official website not updated yet</span>'
 
     stats_bar = "".join([
         _detail_stat_v264("👥", total_students, "Total Students"),
@@ -18667,6 +18789,8 @@ def _render_university_detail_v62(u):
     </section>"""
 
     video_bg_style = f"background-image:url({hero_src});" if hero_src else ""
+    video_card_html_v271 = _detail_video_html_v271(row, name, hero_src)
+    apply_modal_html_v271 = _detail_apply_modal_html_v271(row, name)
 
     html = f"""
 <style>
@@ -19060,6 +19184,54 @@ def _render_university_detail_v62(u):
   .university-hero-location{{font-size:14px !important;}}
   .hero-stat-card{{min-width:calc(50% - 8px) !important;}}
 }}
+
+/* v271 University Detail Overview / Video / Deadline fix */
+.overview-grid-v264{{display:grid !important;grid-template-columns:minmax(0,1fr) 360px !important;gap:24px !important;align-items:start !important;}}
+.about-row-v264{{display:grid !important;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr) !important;gap:28px !important;align-items:center !important;}}
+.panel-v264{{overflow:hidden !important;}}
+.panel-v264 h2,.deadline-panel-v264 h3{{color:#0F172A !important;font-weight:900 !important;letter-spacing:-.02em !important;}}
+.panel-v264 p{{color:#334155 !important;font-size:15px !important;line-height:1.7 !important;margin:14px 0 20px !important;}}
+.btn-row-v264{{display:flex !important;gap:12px !important;align-items:center !important;flex-wrap:wrap !important;}}
+.primary-btn-v264,.official-website-button-v266{{min-height:46px !important;padding:0 24px !important;border-radius:8px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;font-size:14px !important;font-weight:900 !important;text-decoration:none !important;white-space:nowrap !important;}}
+.primary-btn-v264{{background:#061A40 !important;color:#ffffff !important;border:1px solid #061A40 !important;}}
+.official-website-button-v266{{background:#ffffff !important;color:#123B8A !important;border:1px solid #CBD5E1 !important;}}
+.official-website-button-v266.disabled{{color:#94A3B8 !important;background:#F8FAFC !important;cursor:not-allowed !important;}}
+.video-card-v271{{position:relative !important;width:100% !important;height:210px !important;border-radius:14px !important;overflow:hidden !important;background-size:cover !important;background-position:center !important;box-shadow:0 14px 30px rgba(15,23,42,.12) !important;background-color:#EAF2FF !important;}}
+.video-card-v271::before{{content:"" !important;position:absolute !important;inset:0 !important;background:linear-gradient(180deg,rgba(6,26,64,.12),rgba(6,26,64,.68)) !important;z-index:1 !important;pointer-events:none !important;}}
+.video-toggle-v271{{display:none !important;}}
+.video-preview-v271{{position:absolute !important;inset:0 !important;z-index:2 !important;display:block !important;background-size:cover !important;background-position:center !important;cursor:pointer !important;}}
+.play-v271{{position:absolute !important;left:50% !important;top:50% !important;transform:translate(-50%,-50%) !important;z-index:4 !important;width:62px !important;height:62px !important;border-radius:50% !important;background:#ffffff !important;color:#061A40 !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:24px !important;box-shadow:0 10px 24px rgba(15,23,42,.22) !important;}}
+.video-label-v271{{position:absolute !important;left:22px !important;bottom:18px !important;z-index:4 !important;color:#ffffff !important;font-size:15px !important;font-weight:900 !important;text-shadow:0 3px 12px rgba(0,0,0,.38) !important;}}
+.video-label-v271 small{{color:rgba(255,255,255,.84) !important;font-weight:700 !important;}}
+.video-embed-wrap-v271{{display:none !important;position:absolute !important;inset:0 !important;z-index:6 !important;background:#000 !important;}}
+.video-player-v271{{width:100% !important;height:100% !important;border:0 !important;display:block !important;}}
+.video-toggle-v271:checked ~ .video-preview-v271{{display:none !important;}}
+.video-toggle-v271:checked ~ .video-embed-wrap-v271{{display:block !important;}}
+.deadline-panel-v264{{background:#ffffff !important;border:1px solid #E2E8F0 !important;border-radius:16px !important;box-shadow:0 18px 38px rgba(15,23,42,.10) !important;padding:22px !important;}}
+.deadline-card-v264{{display:flex !important;gap:12px !important;padding:14px !important;border:1px solid #E2E8F0 !important;border-radius:12px !important;margin:12px 0 !important;background:#ffffff !important;}}
+.deadline-icon-v264{{width:34px !important;height:34px !important;min-width:34px !important;border-radius:9px !important;display:flex !important;align-items:center !important;justify-content:center !important;background:#EAFBF0 !important;}}
+.deadline-copy-v264{{min-width:0 !important;flex:1 !important;}}
+.deadline-top-v264{{display:flex !important;align-items:flex-start !important;justify-content:space-between !important;gap:10px !important;margin-bottom:8px !important;}}
+.deadline-top-v264 b{{font-size:13px !important;color:#0F172A !important;font-weight:900 !important;}}
+.deadline-copy-v264 p{{margin:3px 0 !important;font-size:12px !important;line-height:1.35 !important;color:#334155 !important;}}
+.status-pill-v264{{display:inline-flex !important;align-items:center !important;padding:4px 8px !important;border-radius:999px !important;font-size:11px !important;font-weight:900 !important;white-space:nowrap !important;}}
+.status-pill-v264.open{{background:#DCFCE7 !important;color:#166534 !important;}}
+.status-pill-v264.soon{{background:#FEF3C7 !important;color:#92400E !important;}}
+.status-pill-v264.closed{{background:#FEE2E2 !important;color:#991B1B !important;}}
+.status-pill-v264.missing{{background:#F1F5F9 !important;color:#64748B !important;}}
+.apply-modal-v271{{display:none;position:fixed;inset:0;z-index:9999;}}
+.apply-modal-v271:target{{display:block;}}
+.apply-modal-bg-v271{{position:absolute;inset:0;background:rgba(15,23,42,.54);backdrop-filter:blur(4px);}}
+.apply-modal-card-v271{{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100vw - 40px));background:#ffffff;border-radius:18px;box-shadow:0 24px 60px rgba(15,23,42,.22);padding:28px;}}
+.apply-modal-card-v271 h3{{margin:0 !important;font-size:24px !important;font-weight:900 !important;color:#0F172A !important;}}
+.apply-modal-card-v271 p{{margin:8px 0 18px !important;color:#64748B !important;font-weight:700 !important;}}
+.apply-modal-close-v271{{position:absolute;right:18px;top:14px;text-decoration:none;font-size:28px;color:#64748B;}}
+.apply-options-grid-v271{{display:grid;gap:12px;}}
+.apply-option-v271{{min-height:58px;padding:14px 16px;border:1px solid #E2E8F0;border-radius:12px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;background:#F8FBFF;color:#061A40;}}
+.apply-option-v271 b{{font-size:15px;}}
+.apply-option-v271 span{{font-size:13px;font-weight:900;}}
+.apply-option-v271.disabled{{background:#F8FAFC;color:#94A3B8;}}
+@media(max-width:1100px){{.overview-grid-v264{{grid-template-columns:1fr !important;}}.about-row-v264{{grid-template-columns:1fr !important;}}}}
 </style>
 
 <div class="detail-premium-v264">
@@ -19109,21 +19281,19 @@ def _render_university_detail_v62(u):
           <h2>About {_safe_html_v62(name)}</h2>
           <p>{_safe_html_v62(overview)}</p>
           <div class="btn-row-v264">
-            <a class="primary-btn-v264" href="#programs-v264">Apply Now</a>
+            <a class="primary-btn-v264" href="#apply-options-v271">Apply Now</a>
             {homepage_button}
           </div>
+          {apply_modal_html_v271}
         </div>
-        <div class="video-card-v264" style='{video_bg_style}'>
-          <div class="play-v264">▶</div>
-          <div class="video-label-v264">Discover {_safe_html_v62(name)}<br><small>Campus Tour</small></div>
-        </div>
+        {video_card_html_v271}
       </div>
     </div>
 
     <aside id="admissions-v264" class="panel-v264 deadline-panel-v264">
       <h3>Application Deadlines</h3>
       {deadlines_html}
-      <a class="section-link-v264" href="#admissions-v264">View All Deadlines →</a>
+      <a class="section-link-v264" href="#apply-options-v271">View Details & Apply →</a>
     </aside>
   </section>
 
@@ -19168,7 +19338,11 @@ def _render_university_detail_v62(u):
   </section>
 </div>
 """
-    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
+    # v271: Markdown renders any 4-space-indented HTML line as visible code.
+    # Remove leading spaces from HTML tag lines before rendering the detail page.
+    html = textwrap.dedent(html)
+    html = re.sub(r"(?m)^\s+(?=<)", "", html)
+    st.markdown(html, unsafe_allow_html=True)
 
 
 
@@ -22884,7 +23058,7 @@ def admin_university_management_v49():
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","UG_New_Open_Date","UG_New_Close_Date","UG_Transfer_Open_Date","UG_Transfer_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date","KLP_Open_Date","KLP_Close_Date","EAP_Open_Date","EAP_Close_Date",
-        "Tuition_Range","Scholarship_Info","Overview","Image","Image_Gallery","University_Logo",
+        "Tuition_Range","Scholarship_Info","Overview","Short_Description","University_Video_URL","Video_Thumbnail_URL","Undergraduate_Apply_URL","Graduate_Apply_URL","KLP_EAP_Apply_URL","Image","Image_Gallery","University_Logo",
         "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size","Accreditation_Status","Accreditation_Until","IEQAS_Badge_Image","IEQAS_Badge_Image_Data"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -22934,6 +23108,13 @@ def admin_university_management_v49():
             with c2:
                 address = st.text_area("Address", height=92)
                 overview = st.text_area("Overview", height=120)
+                short_description = st.text_area("Short Description / University Summary", height=90, max_chars=450, help="Maximum 450 characters / about 50–80 words. This appears in the detail page overview.")
+                university_video_url = st.text_input("University Promotion Video URL / Campus Tour Video URL")
+                video_thumbnail_url = st.text_input("Video Thumbnail URL (optional)")
+                st.markdown("##### Application Links")
+                undergraduate_apply_url = st.text_input("Undergraduate Apply URL")
+                graduate_apply_url = st.text_input("Graduate Apply URL")
+                klp_eap_apply_url = st.text_input("EAP/KLP Apply URL")
                 intake = st.text_input("Intake", value="March, September")
                 application_status = st.selectbox(
                     "Application Status Auto Calculated",
@@ -23039,6 +23220,12 @@ def admin_university_management_v49():
                         "Tuition_Range": tuition_range.strip(),
                         "Scholarship_Info": scholarship_info.strip(),
                         "Overview": overview.strip(),
+                        "Short_Description": short_description.strip(),
+                        "University_Video_URL": university_video_url.strip(),
+                        "Video_Thumbnail_URL": video_thumbnail_url.strip(),
+                        "Undergraduate_Apply_URL": undergraduate_apply_url.strip(),
+                        "Graduate_Apply_URL": graduate_apply_url.strip(),
+                        "KLP_EAP_Apply_URL": klp_eap_apply_url.strip(),
                         "Image": image_path,
                         "Image_Gallery": gallery_path,
                         "University_Logo": logo_path,
@@ -23136,6 +23323,13 @@ def admin_university_management_v49():
                 with c2:
                     address = st.text_area("Address", value=display_clean_v50(row.get("Address", "")), height=92, key=f"edit_uni_address_{selected_key_v90}")
                     overview = st.text_area("Overview", value=display_clean_v50(row.get("Overview", "")), height=120, key=f"edit_uni_overview_{selected_key_v90}")
+                    short_description = st.text_area("Short Description / University Summary", value=display_clean_v50(row.get("Short_Description", "")) or display_clean_v50(row.get("University_Summary", "")) or display_clean_v50(row.get("Overview", "")), height=90, max_chars=450, key=f"edit_uni_short_desc_{selected_key_v90}", help="Maximum 450 characters / about 50–80 words. This appears in the detail page overview.")
+                    university_video_url = st.text_input("University Promotion Video URL / Campus Tour Video URL", value=display_clean_v50(row.get("University_Video_URL", "")) or display_clean_v50(row.get("Campus_Tour_Video_URL", "")) or display_clean_v50(row.get("Video_URL", "")), key=f"edit_uni_video_url_{selected_key_v90}")
+                    video_thumbnail_url = st.text_input("Video Thumbnail URL (optional)", value=display_clean_v50(row.get("Video_Thumbnail_URL", "")), key=f"edit_uni_video_thumb_{selected_key_v90}")
+                    st.markdown("##### Application Links")
+                    undergraduate_apply_url = st.text_input("Undergraduate Apply URL", value=display_clean_v50(row.get("Undergraduate_Apply_URL", "")), key=f"edit_uni_ug_apply_{selected_key_v90}")
+                    graduate_apply_url = st.text_input("Graduate Apply URL", value=display_clean_v50(row.get("Graduate_Apply_URL", "")), key=f"edit_uni_grad_apply_{selected_key_v90}")
+                    klp_eap_apply_url = st.text_input("EAP/KLP Apply URL", value=display_clean_v50(row.get("KLP_EAP_Apply_URL", "")), key=f"edit_uni_klp_apply_{selected_key_v90}")
                     intake = st.text_input("Intake", value=display_clean_v50(row.get("Intake", "")), key=f"edit_uni_intake_{selected_key_v90}")
                     status_options_v64 = ["Application Open", "Application Closed", "Application Opens Soon"]
                     current_status_v64 = _application_status_v64_from_row(row) if _application_status_v64_from_row(row) in status_options_v64 else (display_clean_v50(row.get("Application_Status", "")) or "Application Open")
@@ -23259,6 +23453,12 @@ def admin_university_management_v49():
                             df.loc[idx, "IEQAS_Badge_Image_Data"] = saved_ieqas_data_v179
                             st.session_state.setdefault("ieqas_badge_preview_data_v180", {})[safe_slug_v49(university)] = saved_ieqas_data_v179
                     df.loc[idx, "Overview"] = overview.strip()
+                    df.loc[idx, "Short_Description"] = short_description.strip()
+                    df.loc[idx, "University_Video_URL"] = university_video_url.strip()
+                    df.loc[idx, "Video_Thumbnail_URL"] = video_thumbnail_url.strip()
+                    df.loc[idx, "Undergraduate_Apply_URL"] = undergraduate_apply_url.strip()
+                    df.loc[idx, "Graduate_Apply_URL"] = graduate_apply_url.strip()
+                    df.loc[idx, "KLP_EAP_Apply_URL"] = klp_eap_apply_url.strip()
                     df.loc[idx, "Intake"] = intake.strip()
                     df.loc[idx, "Application_Status"] = calculated_application_status
                     df.loc[idx, "Application_Open_Date"] = str(application_open_date) if application_open_date else ""

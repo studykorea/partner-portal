@@ -1787,3 +1787,15 @@ v270:
 - Added HTML line normalization before Streamlit renders the detail page, so indented tags are not interpreted as Markdown code blocks.
 - Kept the v269 large hero size and positioning changes.
 - No database, admission, admin upload, filter, card, or unrelated page logic changed.
+
+
+v271:
+- Fixed University Detail Page overview section only.
+- Added/kept dynamic Short Description / University Summary field with 450-character limit in admin add/edit.
+- Visit Official Website now uses the uploaded Homepage/Website URL and normalizes missing https://.
+- Apply Now opens a 3-option modal for Undergraduate, Graduate, and EAP/KLP URLs from admin data.
+- Added dynamic University Promotion Video URL support; video plays inside the same card.
+- Fixed raw HTML/code appearing in Application Deadlines by normalizing HTML before Streamlit markdown rendering.
+- Rebuilt Application Deadlines cards as clean UI with status badges.
+- Copied the uploaded v265 data files into the data folder.
+- Did not change navbar, hero section, university cards, filters, admission logic, or unrelated pages.
