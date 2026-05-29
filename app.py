@@ -18355,14 +18355,35 @@ def _detail_intl_students_v264(u):
     return _detail_value_v264(u, ["internationalStudents", "International_Students", "Foreign_Students", "International Students"], "Not updated")
 
 def _detail_university_type_v264(u):
-    raw = _detail_value_v264(u, ["Type", "University_Type", "universityType", "Campus_Type"], "")
-    if raw:
-        return raw
-    text = " ".join([str(u.get(k, "")) for k in u.keys()]).lower()
-    if "national" in text:
-        return "National University"
-    if "private" in text:
+    # v266: Never infer the type from all row text because program names/other fields can contain
+    # misleading words. Use explicit admin/database type fields first.
+    explicit_keys = [
+        "University_Type", "universityType", "University Type", "School_Type",
+        "Institution_Type", "Institution Type", "Ownership", "University_Category"
+    ]
+    for key in explicit_keys:
+        raw = display_clean_v50(u.get(key, "")) if hasattr(u, "get") else ""
+        if raw:
+            low = raw.lower()
+            if "private" in low:
+                return "Private University"
+            if "national" in low or "public" in low:
+                return "National University"
+            if "university" in low:
+                return raw
+            return f"{raw} University" if raw.lower() in ["private", "national", "public"] else raw
+
+    overview_text = " ".join([
+        str(u.get("Overview", "")),
+        str(u.get("Description", "")),
+        str(u.get("About", "")),
+        str(u.get("Introduction", ""))
+    ]).lower() if hasattr(u, "get") else ""
+    if "private university" in overview_text or "a private university" in overview_text:
         return "Private University"
+    if "national university" in overview_text or "a national university" in overview_text:
+        return "National University"
+
     return "University"
 
 def _detail_date_text_v264(value):
@@ -18596,7 +18617,7 @@ def _render_university_detail_v62(u):
 
     hero_src = _detail_hero_img_v264(row)
     logo_src = _detail_logo_img_v264(row)
-    hero_bg = f'background-image: linear-gradient(90deg, rgba(6, 18, 45, .88) 0%, rgba(6, 18, 45, .56) 46%, rgba(6, 18, 45, .22) 100%), url("{hero_src}");' if hero_src else 'background:linear-gradient(135deg,#0B1B4D,#153C8B);'
+    hero_bg = f'background-image: linear-gradient(90deg, rgba(6, 26, 64, .84) 0%, rgba(6, 26, 64, .62) 42%, rgba(6, 26, 64, .22) 100%), url("{hero_src}");' if hero_src else 'background:linear-gradient(135deg,#0B1B4D,#153C8B);'
     logo_html = f'<img src="{logo_src}" alt="{_safe_html_v62(name)} logo">' if logo_src else '<span>Logo</span>'
 
     deadlines_html = _detail_deadlines_html_v264(row)
@@ -18605,7 +18626,7 @@ def _render_university_detail_v62(u):
     why_html = "".join([f"<li>✓ {_safe_html_v62(item)}</li>" for item in _detail_why_items_v264(row)])
     useful_links = _detail_quick_links_v264(row)
 
-    homepage_button = f'<a class="outline-btn-v264" href="{_safe_html_v62(website)}" target="_blank" rel="noopener">Visit Official Website ↗</a>' if website else '<span class="outline-btn-v264 disabled">Official website not updated</span>'
+    homepage_button = f'<a class="official-website-button-v266" href="{_safe_html_v62(website)}" target="_blank" rel="noopener">Visit Official Website ↗</a>' if website else '<span class="official-website-button-v266 disabled">Official website not updated</span>'
 
     stats_bar = "".join([
         _detail_stat_v264("👥", total_students, "Total Students"),
@@ -18649,44 +18670,48 @@ def _render_university_detail_v62(u):
     html = f"""
 <style>
 .detail-premium-v264{{max-width:1680px;margin:10px auto 34px;padding:0 20px 20px;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#0F172A}}
-.detail-hero-v264{{min-height:380px;border-radius:26px;background-size:cover;background-position:center;position:relative;overflow:hidden;box-shadow:0 24px 58px rgba(15,23,42,.16);padding:34px 36px;display:flex;flex-direction:column;justify-content:space-between}}
-.back-link-v264{{display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:800;font-size:14px;opacity:.94}}
-.hero-actions-v264{{position:absolute;right:28px;top:28px;display:flex;gap:12px}}
-.hero-action-v264{{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#0F172A;text-decoration:none;font-size:20px;box-shadow:0 10px 24px rgba(15,23,42,.16)}}
-.hero-main-v264{{display:flex;align-items:center;gap:22px;margin-top:auto}}
-.detail-logo-v264{{width:108px;height:108px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.96);box-shadow:0 18px 42px rgba(15,23,42,.24);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:#64748B;font-weight:900}}
+.detail-hero-v264{{min-height:390px;border-radius:26px;background-size:cover;background-position:center;position:relative;overflow:hidden;box-shadow:0 24px 58px rgba(15,23,42,.16);padding:30px 36px;display:flex;flex-direction:column;justify-content:space-between}}
+.detail-hero-v264:after{{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,26,64,.18),rgba(6,26,64,.04));pointer-events:none}}
+.detail-hero-v264>*{{position:relative;z-index:2}}
+.back-link-v264{{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.92)!important;text-decoration:none;font-weight:850;font-size:14px;opacity:.96;text-shadow:0 4px 14px rgba(0,0,0,.32)}}
+.hero-actions-v264{{position:absolute;right:28px;top:28px;display:flex;gap:14px;z-index:5}}
+.hero-action-v264{{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#123B8A!important;text-decoration:none;font-size:20px;box-shadow:0 10px 24px rgba(15,23,42,.18);border:0;transition:.18s ease}}
+.hero-action-v264:hover{{transform:translateY(-2px);box-shadow:0 14px 30px rgba(15,23,42,.24)}}
+.hero-main-v264{{display:flex;align-items:center;gap:24px;margin-top:auto}}
+.detail-logo-v264{{width:112px;height:112px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.96);box-shadow:0 18px 42px rgba(15,23,42,.24);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:#64748B;font-weight:900}}
 .detail-logo-v264 img{{width:94%;height:94%;object-fit:contain;display:block}}
-.hero-copy-v264{{min-width:0}}
-.type-badge-v264{{display:inline-flex;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase}}
-.hero-copy-v264 h1{{font-size:44px;line-height:1.06;margin:0;color:#fff!important;font-weight:950;letter-spacing:-.035em;text-shadow:0 8px 22px rgba(0,0,0,.22)}}
-.hero-copy-v264 p{{margin:10px 0 0;color:rgba(255,255,255,.9)!important;font-size:18px;font-weight:750}}
-.hero-stats-v264{{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;margin-top:28px;max-width:860px}}
-.hero-stat-v264{{background:rgba(8,18,45,.48);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 16px;color:#fff;backdrop-filter:blur(10px)}}
-.hero-stat-v264 small{{display:block;color:rgba(255,255,255,.78);font-size:12px;font-weight:750;margin-bottom:4px}}
-.hero-stat-v264 b{{display:block;color:#fff;font-size:16px;font-weight:950}}
-.tabs-v264{{display:flex;gap:6px;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:8px;margin-top:0;transform:translateY(-14px);box-shadow:0 16px 40px rgba(15,23,42,.08);overflow-x:auto}}
-.tabs-v264 a{{padding:12px 18px;border-radius:12px;text-decoration:none;color:#475569;font-size:13px;font-weight:900;white-space:nowrap}}
-.tabs-v264 a.active{{background:#EEF4FF;color:#123B8A}}
-.overview-grid-v264{{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:26px;margin-top:4px}}
-.panel-v264{{background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:26px;box-shadow:0 14px 34px rgba(15,23,42,.07)}}
-.about-row-v264{{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:stretch}}
+.hero-copy-v264{{min-width:0;max-width:760px}}
+.type-badge-v264{{display:inline-flex;align-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.30);color:#fff!important;border-radius:999px;padding:8px 14px;font-weight:900;font-size:13px;margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase;backdrop-filter:blur(8px)}}
+.hero-copy-v264 h1{{font-size:46px;line-height:1.08;margin:0;color:#fff!important;font-weight:950;letter-spacing:-.035em;text-shadow:0 4px 18px rgba(0,0,0,.38)}}
+.hero-copy-v264 p{{margin:8px 0 0;color:rgba(255,255,255,.92)!important;font-size:18px;font-weight:800;text-shadow:0 3px 12px rgba(0,0,0,.28)}}
+.hero-stats-v264{{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:14px;margin-top:28px;max-width:900px}}
+.hero-stat-v264{{background:rgba(8,18,45,.58);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 16px;color:#fff;backdrop-filter:blur(12px)}}
+.hero-stat-v264 small{{display:block;color:rgba(255,255,255,.82);font-size:12px;font-weight:800;margin-bottom:4px}}
+.hero-stat-v264 b{{display:block;color:#fff;font-size:16px;font-weight:950;line-height:1.35}}
+.tabs-v264{{display:flex;gap:6px;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:8px;margin-top:0;transform:translateY(-12px);box-shadow:0 16px 40px rgba(15,23,42,.08);overflow-x:auto}}
+.tabs-v264 a{{padding:12px 18px;border-radius:12px;text-decoration:none;color:#475569!important;font-size:13px;font-weight:900;white-space:nowrap}}
+.tabs-v264 a.active{{background:#EEF4FF;color:#123B8A!important}}
+.overview-grid-v264{{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:26px;margin-top:4px;align-items:start}}
+.panel-v264{{background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:26px;box-shadow:0 18px 45px rgba(15,23,42,.08)}}
+.deadline-panel-v264{{position:sticky;top:16px}}
+.about-row-v264{{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:stretch}}
 .panel-v264 h2,.panel-v264 h3,.detail-section-v264 h3{{font-size:22px;margin:0 0 14px;color:#0F172A;font-weight:950;letter-spacing:-.02em}}
 .panel-v264 p,.muted-v264{{color:#475569!important;font-size:15px;line-height:1.75;margin:0}}
 .btn-row-v264{{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}}
-.primary-btn-v264,.outline-btn-v264{{height:46px;padding:0 22px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:14px}}
-.primary-btn-v264{{background:#101B4D;color:#fff!important;box-shadow:0 10px 24px rgba(16,27,77,.18)}}
-.outline-btn-v264{{background:#fff;color:#123B8A!important;border:1px solid #CBD5E1}}
-.outline-btn-v264.disabled{{color:#94A3B8!important;pointer-events:none}}
+.primary-btn-v264,.official-website-button-v266{{height:48px;padding:0 24px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:14px}}
+.primary-btn-v264{{background:#061A40;color:#fff!important;border:0;box-shadow:0 10px 24px rgba(6,26,64,.18)}}
+.official-website-button-v266{{background:#fff;color:#123B8A!important;border:1px solid #CBD5E1;gap:8px}}
+.official-website-button-v266.disabled{{color:#94A3B8!important;pointer-events:none}}
 .video-card-v264{{border-radius:16px;min-height:210px;background-size:cover;background-position:center;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;background-color:#EAF2FF}}
 .video-card-v264:before{{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,18,45,.1),rgba(6,18,45,.72))}}
 .play-v264{{width:58px;height:58px;border-radius:50%;background:#fff;color:#101B4D;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;font-size:22px;font-weight:900}}
 .video-label-v264{{position:absolute;left:22px;bottom:18px;z-index:2;color:#fff;font-weight:900}}
-.deadline-card-v264{{display:flex;gap:12px;border:1px solid #E2E8F0;background:#fff;border-radius:14px;padding:14px;margin-bottom:12px}}
-.deadline-icon-v264{{width:36px;height:36px;border-radius:10px;background:#ECFDF3;display:flex;align-items:center;justify-content:center}}
+.deadline-card-v264{{display:flex;gap:12px;border:1px solid #E2E8F0;background:#F8FAFC;border-radius:14px;padding:16px;margin-bottom:12px}}
+.deadline-icon-v264{{width:38px;height:38px;border-radius:10px;background:#ECFDF3;display:flex;align-items:center;justify-content:center;flex-shrink:0}}
 .deadline-copy-v264{{flex:1;min-width:0}}
-.deadline-top-v264{{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}}
-.deadline-top-v264 b{{font-size:13px;color:#0F172A}}
-.deadline-copy-v264 p{{font-size:12px;color:#475569!important;margin:2px 0}}
+.deadline-top-v264{{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}}
+.deadline-top-v264 b{{font-size:13px;color:#0F172A;font-weight:950}}
+.deadline-copy-v264 p{{font-size:12px;color:#475569!important;margin:2px 0;font-weight:750}}
 .status-pill-v264{{border-radius:999px;padding:5px 9px;font-size:11px;font-weight:950;white-space:nowrap}}
 .status-pill-v264.open,.status-pill-v264.left{{background:#DCFCE7;color:#166534}}
 .status-pill-v264.soon{{background:#FEF3C7;color:#92400E}}
@@ -18709,7 +18734,7 @@ def _render_university_detail_v62(u):
 .info-tile-v264 b{{color:#0F172A;font-size:13px;text-align:right}}
 .detail-section-v264{{margin-top:26px;background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:24px;box-shadow:0 14px 34px rgba(15,23,42,.06)}}
 .section-head-v264{{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}}
-.section-head-v264 a{{color:#123B8A;text-decoration:none;font-weight:900}}
+.section-head-v264 a{{color:#123B8A!important;text-decoration:none;font-weight:900}}
 .section-link-v264{{display:inline-flex;margin-top:12px;color:#3157D5!important;text-decoration:none;font-weight:900}}
 .useful-links-v264{{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}}
 .useful-link-v264{{border:1px solid #CBD5E1;border-radius:14px;padding:14px 16px;text-decoration:none;color:#0F172A!important;font-weight:900;background:#F8FAFC;display:flex;justify-content:space-between}}
@@ -18728,8 +18753,8 @@ def _render_university_detail_v62(u):
 .program-card-v264{{border:1px solid #E2E8F0;border-radius:18px;background:#fff;padding:22px}}
 .program-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950;font-size:18px}}
 .program-card-v264 ul{{margin:0;padding-left:18px;color:#334155;line-height:1.8;font-size:14px}}
-@media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-v264{{grid-template-columns:repeat(2,1fr)}}.program-grid-v264{{grid-template-columns:1fr}}}}
-@media(max-width:640px){{.detail-premium-v264{{padding:0 6px}}.detail-hero-v264{{min-height:520px;padding:24px 20px}}.hero-main-v264{{align-items:flex-start}}.detail-logo-v264{{width:86px;height:86px}}.hero-copy-v264 h1{{font-size:34px}}.hero-stats-v264{{grid-template-columns:1fr 1fr}}.overview-grid-v264{{gap:16px}}.stats-bar-v264{{grid-template-columns:repeat(2,1fr);padding:20px}}.info-grid-v264{{grid-template-columns:1fr}}}}
+@media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.deadline-panel-v264{{position:relative;top:auto}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-v264{{grid-template-columns:repeat(2,1fr)}}.program-grid-v264{{grid-template-columns:1fr}}}}
+@media(max-width:640px){{.detail-premium-v264{{padding:0 8px}}.detail-hero-v264{{min-height:520px;padding:24px 20px}}.hero-actions-v264{{right:18px;top:18px}}.hero-action-v264{{width:44px;height:44px}}.hero-main-v264{{align-items:flex-start}}.detail-logo-v264{{width:86px;height:86px}}.hero-copy-v264 h1{{font-size:34px}}.hero-stats-v264{{grid-template-columns:1fr 1fr}}.overview-grid-v264{{gap:16px}}.stats-bar-v264{{grid-template-columns:repeat(2,1fr);padding:20px}}.info-grid-v264{{grid-template-columns:1fr}}}}
 </style>
 
 <div class="detail-premium-v264">

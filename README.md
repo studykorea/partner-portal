@@ -1757,3 +1757,11 @@ v265:
 - Removed the Universities listing hero, filter card, and info bar from appearing above the detail page.
 - Kept dynamic data from the existing university/admin database.
 - Kept database logic, admin upload logic, admission logic, university listing cards, filters, and hero slider logic unchanged.
+
+
+v266:
+- Improved only the University Detail Page UI to better match the provided reference.
+- Fixed hero title/location readability with stronger white text and gradient overlay.
+- Fixed university type logic so it does not default/infer incorrectly from unrelated row text.
+- Updated share/favorite circular buttons, Apply Now, official website button, and deadline card styling.
+- Kept all university data dynamic from admin/database; no hardcoded university data.
