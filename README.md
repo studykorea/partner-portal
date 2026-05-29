@@ -1780,3 +1780,10 @@ v269:
 - Fixed only positioning/style of the logo, badge, title, location, stats, and share/favorite buttons.
 - Kept university name/location white and readable.
 - No hero/card/filter/admin/database/admission logic changed.
+
+
+v270:
+- Fixed the raw HTML/code showing inside the University Detail hero.
+- Added HTML line normalization before Streamlit renders the detail page, so indented tags are not interpreted as Markdown code blocks.
+- Kept the v269 large hero size and positioning changes.
+- No database, admission, admin upload, filter, card, or unrelated page logic changed.

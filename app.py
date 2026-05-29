@@ -19472,6 +19472,9 @@ def _render_university_listing_card_v214(row, key_suffix):
 </form>
 </div>
 </div>"""
+    # v270: Streamlit/Markdown can treat indented HTML lines as code blocks.
+    # Left-align HTML tag lines before rendering so the hero section renders as real HTML, not visible raw code.
+    html = "\n".join((line.lstrip() if line.lstrip().startswith("<") else line) for line in html.splitlines())
     st.markdown(html, unsafe_allow_html=True)
 
 
