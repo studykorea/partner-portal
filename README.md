@@ -1733,3 +1733,27 @@ v262:
 - Raised hero info box z-index to 20 and kept overlay pointer-events disabled.
 - Detail route now uses /?unidetail=... fallback for more reliable parent navigation.
 - Did not change hero design, navbar, filters, university cards, admission logic, admin upload design, or unrelated pages.
+
+
+v263:
+- Fixed the actual hero linked-university navigation route.
+- Hero info box now links to /?nav=universities&unidetail=UniversityName, so the app opens the Universities page before opening the selected university detail.
+- Added a safe rerun when nav=universities and unidetail are present.
+- Raised hero info box z-index to 50.
+- Did not change hero design, navbar, filters, university cards, admission logic, admin upload design, or unrelated pages.
+
+
+v264:
+- Redesigned the dynamic University Detail Page into a premium profile page layout.
+- Added dynamic hero section with cover image, logo, type badge, location, and quick stats.
+- Added tab navigation, overview/deadlines two-column layout, navy statistics bar, top programs, why choose, quick facts, useful links, enrollment placeholder cards, info grid, map, and program cards.
+- Uses existing admin/database fields only and falls back safely when fields are missing.
+- Did not change database logic, admin upload logic, admission logic, university card listing logic, filters, or hero slider logic.
+
+
+v265:
+- Fixed the actual University Detail Page structure.
+- The selected university detail page now renders immediately after the navbar as a standalone premium profile page.
+- Removed the Universities listing hero, filter card, and info bar from appearing above the detail page.
+- Kept dynamic data from the existing university/admin database.
+- Kept database logic, admin upload logic, admission logic, university listing cards, filters, and hero slider logic unchanged.

@@ -816,10 +816,17 @@ def handle_top_nav_query_v70():
         if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
             requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
         st.session_state.page = requested_page
+        has_unidetail_v263 = False
+        try:
+            has_unidetail_v263 = bool(st.query_params.get("unidetail", ""))
+        except Exception:
+            has_unidetail_v263 = False
         try:
             del st.query_params["nav"]
         except Exception:
             pass
+        if requested_page == "Universities" and has_unidetail_v263:
+            st.rerun()
 
 
 
@@ -18305,66 +18312,533 @@ def university_excellent_accreditation_name_badge_v169(u):
     return direct_ieqas_img_html_v182(university_name, status, until)
 
 
+
+# v264: Premium dynamic university detail page helpers
+def _detail_value_v264(row, keys, fallback=""):
+    try:
+        for k in keys:
+            v = display_clean_v50(row.get(k, ""))
+            if v:
+                return v
+    except Exception:
+        pass
+    return fallback
+
+def _detail_img_src_v264(path):
+    try:
+        p = display_clean_v50(path)
+        if not p:
+            return ""
+        if p.lower().startswith(("http://", "https://", "data:image")):
+            return p
+        encoded = b64(p)
+        if not encoded:
+            return ""
+        ext = str(p).lower().split("?")[0].split(".")[-1]
+        mime = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+        return f"data:{mime};base64,{encoded}"
+    except Exception:
+        return ""
+
+def _detail_location_v264(u):
+    loc = _detail_value_v264(u, ["Location", "location"])
+    if loc:
+        return loc
+    city = _detail_value_v264(u, ["City", "city", "Region"])
+    country = _detail_value_v264(u, ["Country", "country"], "Republic of Korea")
+    return ", ".join([x for x in [city, country] if x]) or "Location not updated"
+
+def _detail_total_students_v264(u):
+    return _detail_value_v264(u, ["totalStudents", "Total_Students", "Students", "Total Students", "Student_Count"], "Not updated")
+
+def _detail_intl_students_v264(u):
+    return _detail_value_v264(u, ["internationalStudents", "International_Students", "Foreign_Students", "International Students"], "Not updated")
+
+def _detail_university_type_v264(u):
+    raw = _detail_value_v264(u, ["Type", "University_Type", "universityType", "Campus_Type"], "")
+    if raw:
+        return raw
+    text = " ".join([str(u.get(k, "")) for k in u.keys()]).lower()
+    if "national" in text:
+        return "National University"
+    if "private" in text:
+        return "Private University"
+    return "University"
+
+def _detail_date_text_v264(value):
+    s = display_clean_v50(value)
+    if not s:
+        return ""
+    try:
+        d = pd.to_datetime(s, errors="coerce")
+        if not pd.isna(d):
+            return d.strftime("%d %b %Y")
+    except Exception:
+        pass
+    return s
+
+def _detail_admission_status_v264(open_value, close_value):
+    open_s = display_clean_v50(open_value)
+    close_s = display_clean_v50(close_value)
+    if not open_s and not close_s:
+        return ("Not Fixed Yet", "neutral")
+    try:
+        today = pd.Timestamp.today().normalize()
+        od = pd.to_datetime(open_s, errors="coerce") if open_s else pd.NaT
+        cd = pd.to_datetime(close_s, errors="coerce") if close_s else pd.NaT
+        if pd.isna(od) or pd.isna(cd):
+            return ("Not Fixed Yet", "neutral")
+        days_to_open = (od.normalize() - today).days
+        days_left = (cd.normalize() - today).days
+        if today < od.normalize():
+            if 0 <= days_to_open <= 5:
+                return ("Opening Soon", "soon")
+            return ("Not Open Yet", "neutral")
+        if od.normalize() <= today <= cd.normalize():
+            if 0 <= days_left <= 4:
+                return (f"{days_left} Days Left" if days_left != 1 else "1 Day Left", "left")
+            return ("Application Open", "open")
+        if today > cd.normalize():
+            return ("Closed", "closed")
+    except Exception:
+        pass
+    return ("Not Fixed Yet", "neutral")
+
+def _detail_deadline_rows_v264(u):
+    general_open = u.get("Application_Open_Date", "")
+    general_close = u.get("Application_Close_Date", "")
+    specs = [
+        ("Undergraduate", u.get("UG_Open_Date", "") or general_open, u.get("UG_Close_Date", "") or general_close),
+        ("Graduate (Masters/Ph.D.)", u.get("Graduate_Open_Date", "") or general_open, u.get("Graduate_Close_Date", "") or general_close),
+        ("KLP/EAP", u.get("KLP_EAP_Open_Date", "") or u.get("KLP_Open_Date", "") or general_open, u.get("KLP_EAP_Close_Date", "") or u.get("KLP_Close_Date", "") or general_close),
+    ]
+    rows = []
+    for label, op, cl in specs:
+        status, cls = _detail_admission_status_v264(op, cl)
+        rows.append({
+            "label": label,
+            "open": _detail_date_text_v264(op) or "Not fixed",
+            "close": _detail_date_text_v264(cl) or "Not fixed",
+            "status": status,
+            "class": cls,
+        })
+    return rows
+
+def _detail_deadlines_html_v264(u):
+    cards = []
+    for r in _detail_deadline_rows_v264(u):
+        cards.append(f'''
+        <div class="deadline-card-v264">
+          <div class="deadline-icon-v264">📅</div>
+          <div class="deadline-copy-v264">
+            <div class="deadline-top-v264"><b>{_safe_html_v62(r["label"])}</b><span class="status-pill-v264 {r["class"]}">{_safe_html_v62(r["status"])}</span></div>
+            <p><strong>Open:</strong> {_safe_html_v62(r["open"])}</p>
+            <p><strong>Close:</strong> {_safe_html_v62(r["close"])}</p>
+          </div>
+        </div>''')
+    return "".join(cards)
+
+def _detail_program_groups_v264(university_name):
+    groups = {"Undergraduate": [], "Graduate": [], "KLP / EAP": []}
+    try:
+        df = criteria()
+        if df is not None and len(df) and "University" in df.columns:
+            sub = df[df["University"].astype(str).str.strip() == str(university_name).strip()]
+            for _, row in sub.iterrows():
+                prog = display_clean_v50(row.get("Program", ""))
+                major = display_clean_v50(row.get("Major", "")) or display_clean_v50(row.get("Major_Name", ""))
+                if not major:
+                    continue
+                pl = prog.lower()
+                if "language" in pl or "klp" in pl or "eap" in pl:
+                    groups["KLP / EAP"].append(major)
+                elif "graduate" in pl or "master" in pl or "ph.d" in pl or "phd" in pl:
+                    groups["Graduate"].append(major)
+                else:
+                    groups["Undergraduate"].append(major)
+    except Exception:
+        pass
+    for k in groups:
+        clean = []
+        for item in groups[k]:
+            if item not in clean:
+                clean.append(item)
+        groups[k] = clean
+    return groups
+
+def _detail_program_cards_html_v264(university_name):
+    groups = _detail_program_groups_v264(university_name)
+    cards = []
+    for title, majors in groups.items():
+        if majors:
+            items = "".join([f"<li>{_safe_html_v62(m)}</li>" for m in majors[:10]])
+        else:
+            items = "<li>Information will be updated soon</li>"
+        cards.append(f'''
+        <div class="program-card-v264">
+          <h4>{_safe_html_v62(title)}</h4>
+          <ul>{items}</ul>
+        </div>''')
+    return "".join(cards)
+
+def _detail_top_programs_html_v264(university_name):
+    groups = _detail_program_groups_v264(university_name)
+    majors = []
+    for arr in groups.values():
+        majors.extend(arr)
+    if not majors:
+        majors = ["Information will be updated soon"]
+    return "".join([f"<li>{_safe_html_v62(m)}</li>" for m in majors[:6]])
+
+def _detail_split_items_v264(text):
+    s = display_clean_v50(text)
+    if not s:
+        return []
+    parts = re.split(r"[;\n|]+", s)
+    return [p.strip(" -•\t") for p in parts if p.strip(" -•\t")]
+
+def _detail_why_items_v264(u):
+    raw = _detail_value_v264(u, ["Why_Choose", "Why_Choose_This_University", "Selling_Points", "Strengths"], "")
+    items = _detail_split_items_v264(raw)
+    if items:
+        return items[:6]
+    return [
+        "Industry-oriented curriculum and practical learning",
+        "Global exchange programs and international support",
+        "Modern campus facilities",
+        "Career support and internship opportunities",
+        "Scholarships for international students",
+    ]
+
+def _detail_quick_links_v264(u):
+    links = [
+        ("Homepage", _detail_value_v264(u, ["Homepage", "Website", "Official_Website"], "")),
+        ("Facebook", _detail_value_v264(u, ["Facebook", "Facebook_URL"], "")),
+        ("Instagram", _detail_value_v264(u, ["Instagram", "Instagram_URL"], "")),
+        ("YouTube", _detail_value_v264(u, ["YouTube", "Youtube", "YouTube_URL"], "")),
+        ("Google Maps", _detail_value_v264(u, ["Google_Maps", "Google_Map", "Map_URL"], "")),
+        ("Admission Page", _detail_value_v264(u, ["Admission_Page", "Admission_URL", "Apply_URL"], "")),
+    ]
+    html = ""
+    for label, url in links:
+        if url:
+            html += f'<a class="useful-link-v264" href="{_safe_html_v62(url)}" target="_blank" rel="noopener">{_safe_html_v62(label)} <span>↗</span></a>'
+    return html
+
+def _detail_info_item_v264(label, value):
+    v = display_clean_v50(value)
+    if not v:
+        v = "Information will be updated soon"
+    return f'<div class="info-tile-v264"><span>{_safe_html_v62(label)}</span><b>{_safe_html_v62(v)}</b></div>'
+
+def _detail_map_html_v264(u):
+    try:
+        from urllib.parse import quote_plus
+        name = _detail_value_v264(u, ["University", "Name"], "")
+        address = _detail_value_v264(u, ["Address", "Location", "Region"], "")
+        query = " ".join([x for x in [name, address, "Korea"] if x]).strip()
+        if not query:
+            return '<div class="map-empty-v264">Location information will be updated soon.</div>'
+        q = quote_plus(query)
+        embed_url = f"https://www.google.com/maps?q={q}&output=embed"
+        open_url = f"https://www.google.com/maps/search/?api=1&query={q}"
+        return f'''
+        <div class="map-card-v264">
+          <div class="section-head-v264"><h3>University Location</h3><a href="{open_url}" target="_blank" rel="noopener">Open in Google Maps →</a></div>
+          <p>{_safe_html_v62(address or query)}</p>
+          <iframe src="{embed_url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>'''
+    except Exception:
+        return ""
+
+def _detail_stat_v264(icon, value, label):
+    return f'<div class="detail-stat-v264"><span>{icon}</span><b>{_safe_html_v62(value)}</b><small>{_safe_html_v62(label)}</small></div>'
+
+def _detail_hero_img_v264(u):
+    path = ""
+    try:
+        path = university_cover_path_v260(u) if "university_cover_path_v260" in globals() else _detail_value_v264(u, ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl"], "")
+    except Exception:
+        path = _detail_value_v264(u, ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl"], "")
+    return _detail_img_src_v264(path)
+
+def _detail_logo_img_v264(u):
+    path = ""
+    try:
+        path = university_logo_path_v260(u) if "university_logo_path_v260" in globals() else _detail_value_v264(u, ["logoUrl", "Logo_URL", "University_Logo", "Logo"], "")
+    except Exception:
+        path = _detail_value_v264(u, ["logoUrl", "Logo_URL", "University_Logo", "Logo"], "")
+    return _detail_img_src_v264(path)
+
 def _render_university_detail_v62(u):
-    detail_name_style_v99 = university_name_style_v93(u.get("University", ""), u.get("University_Logo", "")) if "university_name_style_v93" in globals() else ""
-    logo_html = university_logo_html_v88(u.get("University_Logo", ""), u.get("University", ""))
-    image_html = university_slideshow_html_v89(u, "detail_" + safe_slug_v49(u.get("University", ""))) if "university_slideshow_html_v89" in globals() else asset_img_html(u.get("Image", ""), "uni-wide-v32")
-    programs_html = program_list_html_for_university(u.get("University", ""))
-    program_badges = _program_specific_application_badges_v71(u)
-    map_html = google_map_embed_html_v99(u)
-    quick_links_html = university_quick_links_html_v103(u)
-    student_stats_html = university_student_stats_html_v106(u)
-    accreditation_badge_name_v169 = university_excellent_accreditation_name_badge_v169(u)
+    """v264: premium dynamic university profile/detail page."""
+    try:
+        row = u.to_dict() if hasattr(u, "to_dict") else dict(u)
+    except Exception:
+        row = u
 
-    detail_html = f"""
-<div class="detail-card-v99">
-    <div class="detail-photo-v99">
-        {image_html}
+    name = _detail_value_v264(row, ["University", "Name", "university.name"], "University")
+    location = _detail_location_v264(row)
+    overview = _detail_value_v264(row, ["Overview", "Description", "About", "Introduction"], "Information will be updated soon.")
+    uni_type = _detail_university_type_v264(row)
+    established = _detail_value_v264(row, ["Established", "Established_Year", "Foundation_Year", "Founded"], "Not updated")
+    total_students = _detail_total_students_v264(row)
+    intl_students = _detail_intl_students_v264(row)
+    website = _detail_value_v264(row, ["Homepage", "Website", "Official_Website"], "")
+    address = _detail_value_v264(row, ["Address"], "")
+    campus_size = _detail_value_v264(row, ["Campus_Size", "School_Size", "Campus size"], "Not updated")
+    language = _detail_value_v264(row, ["Language", "Instruction_Language"], "Korean, English")
+    tuition = _detail_value_v264(row, ["Tuition_Range", "Tuition", "Tuition range"], "Not updated")
+    colleges = _detail_value_v264(row, ["Colleges", "Number_of_Colleges", "Departments"], "Not updated")
+    countries = _detail_value_v264(row, ["Countries_Represented", "Countries", "International_Countries"], "Not updated")
+    partners = _detail_value_v264(row, ["Industry_Partners", "Partners"], "Not updated")
+    employment = _detail_value_v264(row, ["Employment_Rate", "Employment rate"], "Not updated")
+
+    hero_src = _detail_hero_img_v264(row)
+    logo_src = _detail_logo_img_v264(row)
+    hero_bg = f'background-image: linear-gradient(90deg, rgba(6, 18, 45, .88) 0%, rgba(6, 18, 45, .56) 46%, rgba(6, 18, 45, .22) 100%), url("{hero_src}");' if hero_src else 'background:linear-gradient(135deg,#0B1B4D,#153C8B);'
+    logo_html = f'<img src="{logo_src}" alt="{_safe_html_v62(name)} logo">' if logo_src else '<span>Logo</span>'
+
+    deadlines_html = _detail_deadlines_html_v264(row)
+    top_programs_html = _detail_top_programs_html_v264(name)
+    program_cards_html = _detail_program_cards_html_v264(name)
+    why_html = "".join([f"<li>✓ {_safe_html_v62(item)}</li>" for item in _detail_why_items_v264(row)])
+    useful_links = _detail_quick_links_v264(row)
+
+    homepage_button = f'<a class="outline-btn-v264" href="{_safe_html_v62(website)}" target="_blank" rel="noopener">Visit Official Website ↗</a>' if website else '<span class="outline-btn-v264 disabled">Official website not updated</span>'
+
+    stats_bar = "".join([
+        _detail_stat_v264("👥", total_students, "Total Students"),
+        _detail_stat_v264("🌐", intl_students, "International Students"),
+        _detail_stat_v264("🏫", colleges, "Colleges"),
+        _detail_stat_v264("🌎", countries, "Countries Represented"),
+        _detail_stat_v264("🤝", partners, "Industry Partners"),
+        _detail_stat_v264("✨", employment, "Employment Rate"),
+    ])
+
+    quick_facts = "".join([
+        _detail_info_item_v264("Location", location),
+        _detail_info_item_v264("Website", website),
+        _detail_info_item_v264("Total Students", total_students),
+        _detail_info_item_v264("International Students", intl_students),
+        _detail_info_item_v264("Campus Size", campus_size),
+        _detail_info_item_v264("Type", uni_type),
+        _detail_info_item_v264("Language", language),
+        _detail_info_item_v264("Tuition Range", tuition),
+    ])
+
+    info_grid = "".join([
+        _detail_info_item_v264("Homepage", website),
+        _detail_info_item_v264("Region", _detail_value_v264(row, ["Region"], "")),
+        _detail_info_item_v264("Address", address or location),
+        _detail_info_item_v264("School Size", campus_size),
+        _detail_info_item_v264("Representative Phone", _detail_value_v264(row, ["Representative_Phone", "Phone"], "")),
+        _detail_info_item_v264("Representative Fax", _detail_value_v264(row, ["Representative_Fax", "Fax"], "")),
+        _detail_info_item_v264("Foreign Students", intl_students),
+        _detail_info_item_v264("Tuition Range", tuition),
+    ])
+
+    useful_section = f"""
+    <section class="detail-section-v264">
+      <div class="section-head-v264"><h3>Useful Links</h3></div>
+      <div class="useful-links-v264">{useful_links or '<p class="muted-v264">Useful links will be updated soon.</p>'}</div>
+    </section>"""
+
+    video_bg_style = f"background-image:url({hero_src});" if hero_src else ""
+
+    html = f"""
+<style>
+.detail-premium-v264{{max-width:1680px;margin:10px auto 34px;padding:0 20px 20px;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#0F172A}}
+.detail-hero-v264{{min-height:380px;border-radius:26px;background-size:cover;background-position:center;position:relative;overflow:hidden;box-shadow:0 24px 58px rgba(15,23,42,.16);padding:34px 36px;display:flex;flex-direction:column;justify-content:space-between}}
+.back-link-v264{{display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:800;font-size:14px;opacity:.94}}
+.hero-actions-v264{{position:absolute;right:28px;top:28px;display:flex;gap:12px}}
+.hero-action-v264{{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#0F172A;text-decoration:none;font-size:20px;box-shadow:0 10px 24px rgba(15,23,42,.16)}}
+.hero-main-v264{{display:flex;align-items:center;gap:22px;margin-top:auto}}
+.detail-logo-v264{{width:108px;height:108px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.96);box-shadow:0 18px 42px rgba(15,23,42,.24);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:#64748B;font-weight:900}}
+.detail-logo-v264 img{{width:94%;height:94%;object-fit:contain;display:block}}
+.hero-copy-v264{{min-width:0}}
+.type-badge-v264{{display:inline-flex;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase}}
+.hero-copy-v264 h1{{font-size:44px;line-height:1.06;margin:0;color:#fff!important;font-weight:950;letter-spacing:-.035em;text-shadow:0 8px 22px rgba(0,0,0,.22)}}
+.hero-copy-v264 p{{margin:10px 0 0;color:rgba(255,255,255,.9)!important;font-size:18px;font-weight:750}}
+.hero-stats-v264{{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;margin-top:28px;max-width:860px}}
+.hero-stat-v264{{background:rgba(8,18,45,.48);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 16px;color:#fff;backdrop-filter:blur(10px)}}
+.hero-stat-v264 small{{display:block;color:rgba(255,255,255,.78);font-size:12px;font-weight:750;margin-bottom:4px}}
+.hero-stat-v264 b{{display:block;color:#fff;font-size:16px;font-weight:950}}
+.tabs-v264{{display:flex;gap:6px;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:8px;margin-top:0;transform:translateY(-14px);box-shadow:0 16px 40px rgba(15,23,42,.08);overflow-x:auto}}
+.tabs-v264 a{{padding:12px 18px;border-radius:12px;text-decoration:none;color:#475569;font-size:13px;font-weight:900;white-space:nowrap}}
+.tabs-v264 a.active{{background:#EEF4FF;color:#123B8A}}
+.overview-grid-v264{{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:26px;margin-top:4px}}
+.panel-v264{{background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:26px;box-shadow:0 14px 34px rgba(15,23,42,.07)}}
+.about-row-v264{{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:stretch}}
+.panel-v264 h2,.panel-v264 h3,.detail-section-v264 h3{{font-size:22px;margin:0 0 14px;color:#0F172A;font-weight:950;letter-spacing:-.02em}}
+.panel-v264 p,.muted-v264{{color:#475569!important;font-size:15px;line-height:1.75;margin:0}}
+.btn-row-v264{{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}}
+.primary-btn-v264,.outline-btn-v264{{height:46px;padding:0 22px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-weight:900;font-size:14px}}
+.primary-btn-v264{{background:#101B4D;color:#fff!important;box-shadow:0 10px 24px rgba(16,27,77,.18)}}
+.outline-btn-v264{{background:#fff;color:#123B8A!important;border:1px solid #CBD5E1}}
+.outline-btn-v264.disabled{{color:#94A3B8!important;pointer-events:none}}
+.video-card-v264{{border-radius:16px;min-height:210px;background-size:cover;background-position:center;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;background-color:#EAF2FF}}
+.video-card-v264:before{{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,18,45,.1),rgba(6,18,45,.72))}}
+.play-v264{{width:58px;height:58px;border-radius:50%;background:#fff;color:#101B4D;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;font-size:22px;font-weight:900}}
+.video-label-v264{{position:absolute;left:22px;bottom:18px;z-index:2;color:#fff;font-weight:900}}
+.deadline-card-v264{{display:flex;gap:12px;border:1px solid #E2E8F0;background:#fff;border-radius:14px;padding:14px;margin-bottom:12px}}
+.deadline-icon-v264{{width:36px;height:36px;border-radius:10px;background:#ECFDF3;display:flex;align-items:center;justify-content:center}}
+.deadline-copy-v264{{flex:1;min-width:0}}
+.deadline-top-v264{{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}}
+.deadline-top-v264 b{{font-size:13px;color:#0F172A}}
+.deadline-copy-v264 p{{font-size:12px;color:#475569!important;margin:2px 0}}
+.status-pill-v264{{border-radius:999px;padding:5px 9px;font-size:11px;font-weight:950;white-space:nowrap}}
+.status-pill-v264.open,.status-pill-v264.left{{background:#DCFCE7;color:#166534}}
+.status-pill-v264.soon{{background:#FEF3C7;color:#92400E}}
+.status-pill-v264.closed{{background:#FEE2E2;color:#991B1B}}
+.status-pill-v264.neutral{{background:#F1F5F9;color:#64748B}}
+.stats-bar-v264{{margin:26px 0;background:linear-gradient(135deg,#0B174A,#2737A2);border-radius:20px;padding:28px;display:grid;grid-template-columns:repeat(6,1fr);gap:18px;color:#fff;box-shadow:0 18px 44px rgba(15,23,42,.16)}}
+.detail-stat-v264{{text-align:center;color:#fff}}
+.detail-stat-v264 span{{display:block;font-size:24px;margin-bottom:8px}}
+.detail-stat-v264 b{{display:block;color:#fff;font-size:22px;font-weight:950}}
+.detail-stat-v264 small{{color:rgba(255,255,255,.82);font-weight:750;font-size:12px}}
+.cards-3-v264{{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}}
+.info-card-v264{{background:#fff;border:1px solid #E2E8F0;border-radius:18px;padding:22px;box-shadow:0 14px 34px rgba(15,23,42,.06)}}
+.info-card-v264 h3{{margin:0 0 14px;font-size:20px;color:#0F172A;font-weight:950}}
+.info-card-v264 ul{{padding-left:0;list-style:none;margin:0}}
+.info-card-v264 li{{padding:8px 0;color:#334155;font-size:14px;font-weight:650;border-bottom:1px solid #F1F5F9}}
+.info-card-v264 li:last-child{{border-bottom:none}}
+.quick-facts-grid-v264{{display:grid;grid-template-columns:1fr;gap:0}}
+.info-tile-v264{{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #E2E8F0}}
+.info-tile-v264 span{{color:#64748B;font-size:13px;font-weight:800}}
+.info-tile-v264 b{{color:#0F172A;font-size:13px;text-align:right}}
+.detail-section-v264{{margin-top:26px;background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:24px;box-shadow:0 14px 34px rgba(15,23,42,.06)}}
+.section-head-v264{{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}}
+.section-head-v264 a{{color:#123B8A;text-decoration:none;font-weight:900}}
+.section-link-v264{{display:inline-flex;margin-top:12px;color:#3157D5!important;text-decoration:none;font-weight:900}}
+.useful-links-v264{{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}}
+.useful-link-v264{{border:1px solid #CBD5E1;border-radius:14px;padding:14px 16px;text-decoration:none;color:#0F172A!important;font-weight:900;background:#F8FAFC;display:flex;justify-content:space-between}}
+.enrollment-v264{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
+.chart-card-v264{{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:18px}}
+.chart-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950}}
+.chart-row-v264{{margin:12px 0}}
+.chart-label-v264{{display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:#334155;margin-bottom:6px}}
+.chart-bar-v264{{height:10px;border-radius:999px;background:#E2E8F0;overflow:hidden}}
+.chart-fill-v264{{height:100%;border-radius:999px;background:linear-gradient(90deg,#123B8A,#4064E8)}}
+.info-grid-v264{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}}
+.map-card-v264 p{{margin:0 0 14px;color:#475569!important;font-weight:650}}
+.map-card-v264 iframe{{width:100%;height:380px;border:0;border-radius:18px}}
+.map-empty-v264{{padding:32px;border-radius:18px;background:#F8FAFC;color:#64748B}}
+.program-grid-v264{{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}}
+.program-card-v264{{border:1px solid #E2E8F0;border-radius:18px;background:#fff;padding:22px}}
+.program-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950;font-size:18px}}
+.program-card-v264 ul{{margin:0;padding-left:18px;color:#334155;line-height:1.8;font-size:14px}}
+@media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-v264{{grid-template-columns:repeat(2,1fr)}}.program-grid-v264{{grid-template-columns:1fr}}}}
+@media(max-width:640px){{.detail-premium-v264{{padding:0 6px}}.detail-hero-v264{{min-height:520px;padding:24px 20px}}.hero-main-v264{{align-items:flex-start}}.detail-logo-v264{{width:86px;height:86px}}.hero-copy-v264 h1{{font-size:34px}}.hero-stats-v264{{grid-template-columns:1fr 1fr}}.overview-grid-v264{{gap:16px}}.stats-bar-v264{{grid-template-columns:repeat(2,1fr);padding:20px}}.info-grid-v264{{grid-template-columns:1fr}}}}
+</style>
+
+<div class="detail-premium-v264">
+  <section class="detail-hero-v264" style='{hero_bg}'>
+    <div>
+      <a class="back-link-v264" href="/?nav=universities&clearuni=1" target="_parent">← Back to Universities</a>
+      <div class="hero-actions-v264">
+        <a class="hero-action-v264" href="#" title="Share">↗</a>
+        <a class="hero-action-v264" href="#" title="Favorite">♡</a>
+      </div>
     </div>
-
-    <div class="detail-main-v99">
-        <div class="detail-left-v99">
-            <div class="detail-logo-box-v99">{logo_html}</div>
-            <div class="detail-title-copy-v99">
-                <h2 class="uni-detail-name-v99" style="{detail_name_style_v99}">
-                    <span style="{detail_name_style_v99}">{_safe_html_v62(u.get("University", ""))}</span>{accreditation_badge_name_v169}
-                </h2>
-                <p>{_safe_html_v62(u.get("Overview", ""))}</p>
-            </div>
+    <div>
+      <div class="hero-main-v264">
+        <div class="detail-logo-v264">{logo_html}</div>
+        <div class="hero-copy-v264">
+          <span class="type-badge-v264">{_safe_html_v62(uni_type)}</span>
+          <h1>{_safe_html_v62(name)}</h1>
+          <p>{_safe_html_v62(location)}</p>
         </div>
+      </div>
+      <div class="hero-stats-v264">
+        <div class="hero-stat-v264"><small>Established</small><b>{_safe_html_v62(established)}</b></div>
+        <div class="hero-stat-v264"><small>Type</small><b>{_safe_html_v62(uni_type)}</b></div>
+        <div class="hero-stat-v264"><small>Students</small><b>{_safe_html_v62(total_students)}</b></div>
+        <div class="hero-stat-v264"><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></div>
+      </div>
+    </div>
+  </section>
 
-        <div class="detail-program-side-v99">
-            {program_badges}
+  <nav class="tabs-v264">
+    <a class="active" href="#overview-v264">Overview</a>
+    <a href="#programs-v264">Programs</a>
+    <a href="#admissions-v264">Admissions</a>
+    <a href="#scholarships-v264">Scholarships</a>
+    <a href="#campus-v264">Campus Life</a>
+    <a href="#facilities-v264">Facilities</a>
+    <a href="#rankings-v264">Rankings</a>
+    <a href="#gallery-v264">Gallery</a>
+    <a href="#contact-v264">Contact</a>
+  </nav>
+
+  <section id="overview-v264" class="overview-grid-v264">
+    <div class="panel-v264">
+      <div class="about-row-v264">
+        <div>
+          <h2>About {_safe_html_v62(name)}</h2>
+          <p>{_safe_html_v62(overview)}</p>
+          <div class="btn-row-v264">
+            <a class="primary-btn-v264" href="#programs-v264">Apply Now</a>
+            {homepage_button}
+          </div>
         </div>
+        <div class="video-card-v264" style='{video_bg_style}'>
+          <div class="play-v264">▶</div>
+          <div class="video-label-v264">Discover {_safe_html_v62(name)}<br><small>Campus Tour</small></div>
+        </div>
+      </div>
     </div>
 
-    {quick_links_html}
+    <aside id="admissions-v264" class="panel-v264 deadline-panel-v264">
+      <h3>Application Deadlines</h3>
+      {deadlines_html}
+      <a class="section-link-v264" href="#admissions-v264">View All Deadlines →</a>
+    </aside>
+  </section>
 
-    {student_stats_html}
+  <section class="stats-bar-v264">{stats_bar}</section>
 
-    <div class="detail-info-grid-v99">
-        <div class="info-box-v32"><b>Homepage</b><span>{_safe_html_v62(u.get("Homepage", ""))}</span></div>
-        <div class="info-box-v32"><b>Region</b><span>{_safe_html_v62(u.get("Region", ""))}</span></div>
-        <div class="info-box-v32"><b>Address</b><span>{_safe_html_v62(u.get("Address", ""))}</span></div>
-        <div class="info-box-v32"><b>School Size</b><span>{_safe_html_v62(u.get("School_Size", ""))}</span></div>
-        <div class="info-box-v32"><b>Representative Phone</b><span>{_safe_html_v62(u.get("Representative_Phone", ""))}</span></div>
-        <div class="info-box-v32"><b>Representative Fax</b><span>{_safe_html_v62(u.get("Representative_Fax", ""))}</span></div>
-        <div class="info-box-v32"><b>Foreign Students</b><span>{_safe_html_v62(display_clean_v50(u.get("International_Students", "")))}</span></div>
-        <div class="info-box-v32"><b>Tuition Range</b><span>{_safe_html_v62(u.get("Tuition_Range", ""))}</span></div>
+  <section class="cards-3-v264">
+    <div class="info-card-v264"><h3>Top Programs</h3><ul>{top_programs_html}</ul><a class="section-link-v264" href="#programs-v264">View All Programs →</a></div>
+    <div class="info-card-v264"><h3>Why Choose {_safe_html_v62(name)}?</h3><ul>{why_html}</ul></div>
+    <div class="info-card-v264"><h3>Quick Facts</h3><div class="quick-facts-grid-v264">{quick_facts}</div></div>
+  </section>
+
+  {useful_section}
+
+  <section class="detail-section-v264" id="campus-v264">
+    <div class="section-head-v264"><h3>Student Enrollment Information</h3></div>
+    <div class="enrollment-v264">
+      <div class="chart-card-v264">
+        <h4>Students by Program Level</h4>
+        <div class="chart-row-v264"><div class="chart-label-v264"><span>Undergraduate</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:68%"></div></div></div>
+        <div class="chart-row-v264"><div class="chart-label-v264"><span>Graduate</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:42%"></div></div></div>
+        <div class="chart-row-v264"><div class="chart-label-v264"><span>Language Study</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:34%"></div></div></div>
+      </div>
+      <div class="chart-card-v264">
+        <h4>Top Nationalities</h4>
+        <p class="muted-v264">Enrollment data will be updated soon.</p>
+      </div>
     </div>
+  </section>
 
-    {map_html}
+  <section id="contact-v264" class="detail-section-v264">
+    <div class="section-head-v264"><h3>University Contact / Info Grid</h3></div>
+    <div class="info-grid-v264">{info_grid}</div>
+  </section>
 
-    <div class="detail-programs-v99">
-        <h3 class="available-title-v41">Available Programs & Majors</h3>
-        {programs_html}
-    </div>
+  <section class="detail-section-v264">
+    {_detail_map_html_v264(row)}
+  </section>
+
+  <section id="programs-v264" class="detail-section-v264">
+    <div class="section-head-v264"><h3>Available Programs & Majors</h3></div>
+    <div class="program-grid-v264">{program_cards_html}</div>
+  </section>
 </div>
 """
-    clean_detail_html_v102 = "\n".join(
-        line.lstrip() for line in textwrap.dedent(detail_html).strip().splitlines()
-    )
-    st.markdown(clean_detail_html_v102, unsafe_allow_html=True)
+    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
+
 
 
 def _render_university_summary_v62(u, key_suffix):
@@ -19922,6 +20396,21 @@ def universities_page(public=False):
         st.markdown('<div class="universities-wrap-v214">', unsafe_allow_html=True)
 
     try:
+        clearuni_v264 = st.query_params.get("clearuni", "")
+    except Exception:
+        clearuni_v264 = ""
+    if isinstance(clearuni_v264, list):
+        clearuni_v264 = clearuni_v264[0] if clearuni_v264 else ""
+    if str(clearuni_v264 or "").strip() in ["1", "true", "yes"]:
+        st.session_state.selected_uni_v62 = ""
+        st.session_state.selected_program_v109 = ""
+        st.session_state.application_page_open_v113 = False
+        try:
+            del st.query_params["clearuni"]
+        except Exception:
+            pass
+
+    try:
         uni_detail_q_v214 = st.query_params.get("unidetail", "")
     except Exception:
         uni_detail_q_v214 = ""
@@ -19939,7 +20428,6 @@ def universities_page(public=False):
             pass
 
     df = universities().copy()
-    render_universities_hero_v230(df)
     if df is None or len(df) == 0:
         st.info("No university data found.")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -19969,6 +20457,64 @@ def universities_page(public=False):
     df["_Total_Students_Num_v214"] = df.apply(lambda r: _scholarship_percent_to_number_v62(str(student_count_v53(r)).replace(",", "")), axis=1)
     df["_Intl_Students_Num_v214"] = df.apply(lambda r: _scholarship_percent_to_number_v62(str(intl_count_v53(r)).replace(",", "")), axis=1)
     df["_Soonest_Close_v214"] = df.apply(lambda r: _soonest_close_v214(r, r.get("_Crit_Text_v214", "")), axis=1)
+
+    # v265: Render selected university detail as a standalone premium profile page.
+    # This prevents the listing hero/filter/info bar from showing above the detail page.
+    try:
+        uni_query_v265 = st.query_params.get("uni", "")
+        prog_query_v265 = st.query_params.get("programdetail", "")
+    except Exception:
+        uni_query_v265, prog_query_v265 = "", ""
+    if isinstance(uni_query_v265, list):
+        uni_query_v265 = uni_query_v265[0] if uni_query_v265 else ""
+    if isinstance(prog_query_v265, list):
+        prog_query_v265 = prog_query_v265[0] if prog_query_v265 else ""
+    if uni_query_v265 and prog_query_v265:
+        from urllib.parse import unquote_plus
+        new_uni_v265 = unquote_plus(str(uni_query_v265))
+        new_prog_v265 = unquote_plus(str(prog_query_v265))
+        if (st.session_state.get("selected_uni_v62", "") != new_uni_v265 or st.session_state.get("selected_program_v109", "") != new_prog_v265):
+            st.session_state.application_type_v109 = ""
+            st.session_state.application_page_open_v113 = False
+        st.session_state.selected_uni_v62 = new_uni_v265
+        st.session_state.selected_program_v109 = new_prog_v265
+
+    selected_detail_v265 = st.session_state.get("selected_uni_v62", "")
+    program_detail_v265 = st.session_state.get("selected_program_v109", "")
+    if selected_detail_v265:
+        selected_rows_v265 = df[df["University"].astype(str) == str(selected_detail_v265)]
+        if len(selected_rows_v265):
+            if program_detail_v265:
+                c_back_v265, c_title_v265 = st.columns([1, 7])
+                with c_back_v265:
+                    if st.button("← Back to University Details", key="back_to_uni_detail_v265", use_container_width=True):
+                        st.session_state.selected_program_v109 = ""
+                        st.session_state.application_type_v109 = ""
+                        st.session_state.application_page_open_v113 = False
+                        try:
+                            for q in ["uni", "programdetail", "unidetail"]:
+                                if q in st.query_params:
+                                    del st.query_params[q]
+                        except Exception:
+                            pass
+                        st.rerun()
+                with c_title_v265:
+                    st.markdown(f"### Program Details for {selected_detail_v265}")
+                render_program_detail_page_v109(selected_rows_v265.iloc[0], program_detail_v265)
+            else:
+                _render_university_detail_v62(selected_rows_v265.iloc[0])
+            st.markdown('</div>', unsafe_allow_html=True)
+            if public:
+                footer()
+            else:
+                close_shell()
+            return
+        else:
+            st.session_state.selected_uni_v62 = ""
+            st.rerun()
+
+    # Listing page only.
+    render_universities_hero_v230(df)
 
     st.markdown('<div class="uni-filter-panel-v214">', unsafe_allow_html=True)
     f1, f2, f3, f4, f5, f6, f7 = st.columns([2.15, .95, .95, .95, .95, 1.05, .72], gap="medium")
@@ -20057,26 +20603,22 @@ def universities_page(public=False):
     if selected:
         selected_rows = df[df["University"].astype(str) == str(selected)]
         if len(selected_rows):
-            c_back, c_title = st.columns([1, 7])
-            with c_back:
-                back_label_v109 = "← Back to University Details" if program_selected_v109 else "← Back to List"
-                if st.button(back_label_v109, key="back_to_uni_list_v62", use_container_width=True):
-                    if program_selected_v109:
+            if program_selected_v109:
+                c_back, c_title = st.columns([1, 7])
+                with c_back:
+                    if st.button("← Back to University Details", key="back_to_uni_list_v62", use_container_width=True):
                         st.session_state.selected_program_v109 = ""
                         st.session_state.application_type_v109 = ""
                         st.session_state.application_page_open_v113 = False
-                    else:
-                        st.session_state.selected_uni_v62 = ""
-                    try:
-                        for q in ["uni", "programdetail", "unidetail"]:
-                            if q in st.query_params:
-                                del st.query_params[q]
-                    except Exception:
-                        pass
-                    st.rerun()
-            with c_title:
-                st.markdown(f"### {'Program Details for' if program_selected_v109 else 'Details for'} {selected}")
-            if program_selected_v109:
+                        try:
+                            for q in ["uni", "programdetail", "unidetail"]:
+                                if q in st.query_params:
+                                    del st.query_params[q]
+                        except Exception:
+                            pass
+                        st.rerun()
+                with c_title:
+                    st.markdown(f"### Program Details for {selected}")
                 render_program_detail_page_v109(selected_rows.iloc[0], program_selected_v109)
             else:
                 _render_university_detail_v62(selected_rows.iloc[0])
@@ -24056,7 +24598,7 @@ def university_detail_url_v259(row):
             if val:
                 return val
         name = university_display_name_v259(row)
-        return f"?unidetail={_quote_plus_v259(name)}"
+        return f"/?nav=universities&unidetail={_quote_plus_v259(name)}"
     except Exception:
         return "?nav=universities"
 
@@ -24419,9 +24961,9 @@ def university_detail_url_v260(row):
         name = university_display_name_v260(row)
         uid = university_id_v260(row)
         if name:
-            return f"/?unidetail={_quote_plus_v260(name)}"
+            return f"/?nav=universities&unidetail={_quote_plus_v260(name)}"
         if uid:
-            return f"/?unidetail={_quote_plus_v260(uid)}"
+            return f"/?nav=universities&unidetail={_quote_plus_v260(uid)}"
         return "?nav=universities"
     except Exception:
         return "?nav=universities"
@@ -24648,7 +25190,7 @@ def hero_slider_component_html_v230(df):
     .actions{{display:flex;align-items:center;gap:14px;margin-top:28px}}.btn{{min-height:52px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:900;line-height:1;box-shadow:0 12px 24px rgba(0,0,0,.16);box-sizing:border-box}}
     .secondary{{background:#fff;color:#061A40}}.primary{{background:linear-gradient(135deg,#102E73 0%,#3153D4 100%);color:#fff}}.primary b{{font-size:22px}}
 
-    .hero-info-box{{position:absolute;right:56px;bottom:56px;z-index:20;width:460px;padding:24px;border-radius:20px;background:rgba(6,26,64,.90);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}
+    .hero-info-box{{position:absolute;right:56px;bottom:56px;z-index:50;width:460px;padding:24px;border-radius:20px;background:rgba(6,26,64,.90);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}}
     .hero-info-box.clickable{{cursor:pointer}}
     .hero-info-box.clickable:hover{{transform:translateY(-2px);background:rgba(6,26,64,.96);box-shadow:0 22px 46px rgba(0,0,0,.28)}}
     .hero-info-logo{{width:82px;height:82px;min-width:82px;min-height:82px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.8);box-shadow:0 8px 22px rgba(0,0,0,.18)}}
