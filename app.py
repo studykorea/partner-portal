@@ -18602,6 +18602,7 @@ def _render_university_detail_v62(u):
     location = _detail_location_v264(row)
     overview = _detail_value_v264(row, ["Overview", "Description", "About", "Introduction"], "Information will be updated soon.")
     uni_type = _detail_university_type_v264(row)
+    uni_type_stat = uni_type.replace(" University", "").strip() if isinstance(uni_type, str) else uni_type
     established = _detail_value_v264(row, ["Established", "Established_Year", "Foundation_Year", "Founded"], "Not updated")
     total_students = _detail_total_students_v264(row)
     intl_students = _detail_intl_students_v264(row)
@@ -18755,31 +18756,342 @@ def _render_university_detail_v62(u):
 .program-card-v264 ul{{margin:0;padding-left:18px;color:#334155;line-height:1.8;font-size:14px}}
 @media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.deadline-panel-v264{{position:relative;top:auto}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-v264{{grid-template-columns:repeat(2,1fr)}}.program-grid-v264{{grid-template-columns:1fr}}}}
 @media(max-width:640px){{.detail-premium-v264{{padding:0 8px}}.detail-hero-v264{{min-height:520px;padding:24px 20px}}.hero-actions-v264{{right:18px;top:18px}}.hero-action-v264{{width:44px;height:44px}}.hero-main-v264{{align-items:flex-start}}.detail-logo-v264{{width:86px;height:86px}}.hero-copy-v264 h1{{font-size:34px}}.hero-stats-v264{{grid-template-columns:1fr 1fr}}.overview-grid-v264{{gap:16px}}.stats-bar-v264{{grid-template-columns:repeat(2,1fr);padding:20px}}.info-grid-v264{{grid-template-columns:1fr}}}}
+
+/* v267 university detail hero exact reference fix */
+.detail-hero-v264.university-detail-hero{{
+  position:relative !important;
+  height:430px !important;
+  min-height:430px !important;
+  border-radius:28px !important;
+  overflow:hidden !important;
+  background-size:cover !important;
+  background-position:center !important;
+  padding:0 !important;
+  display:block !important;
+}}
+.detail-hero-v264.university-detail-hero::before{{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  background:linear-gradient(90deg,rgba(6,26,64,0.84) 0%,rgba(6,26,64,0.62) 38%,rgba(6,26,64,0.28) 72%,rgba(6,26,64,0.12) 100%) !important;
+  z-index:1 !important;
+  pointer-events:none !important;
+}}
+.detail-hero-v264.university-detail-hero::after{{display:none !important;}}
+.back-to-universities{{
+  position:absolute !important;
+  top:34px !important;
+  left:42px !important;
+  z-index:6 !important;
+  color:rgba(255,255,255,0.9) !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+  text-decoration:none !important;
+}}
+.hero-actions-right{{
+  position:absolute !important;
+  top:34px !important;
+  right:42px !important;
+  display:flex !important;
+  gap:14px !important;
+  z-index:6 !important;
+}}
+.share-button,.favorite-button{{
+  width:52px !important;
+  height:52px !important;
+  border-radius:50% !important;
+  background:#ffffff !important;
+  color:#123B8A !important;
+  border:none !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-shadow:0 10px 24px rgba(15,23,42,0.18) !important;
+  cursor:pointer !important;
+}}
+.hero-content-v267{{
+  position:absolute !important;
+  left:56px !important;
+  right:56px !important;
+  bottom:48px !important;
+  z-index:5 !important;
+}}
+.hero-main-info{{
+  display:flex !important;
+  align-items:center !important;
+  gap:24px !important;
+  position:relative !important;
+  z-index:5 !important;
+  margin:0 !important;
+}}
+.hero-university-logo{{
+  width:118px !important;
+  height:118px !important;
+  min-width:118px !important;
+  min-height:118px !important;
+  border-radius:50% !important;
+  background:#ffffff !important;
+  padding:10px !important;
+  object-fit:contain !important;
+  box-shadow:0 12px 30px rgba(0,0,0,0.22) !important;
+  flex-shrink:0 !important;
+  border:0 !important;
+}}
+.hero-university-logo img{{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  display:block !important;
+}}
+.hero-text-group{{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  min-width:0 !important;
+}}
+.university-type-badge{{
+  display:inline-flex !important;
+  align-items:center !important;
+  padding:8px 14px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.18) !important;
+  color:#ffffff !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+  letter-spacing:0.04em !important;
+  backdrop-filter:blur(8px) !important;
+  margin-bottom:10px !important;
+  border:1px solid rgba(255,255,255,.24) !important;
+}}
+.university-hero-title{{
+  color:#ffffff !important;
+  font-size:40px !important;
+  font-weight:900 !important;
+  line-height:1.1 !important;
+  letter-spacing:-0.03em !important;
+  text-shadow:0 4px 18px rgba(0,0,0,0.45) !important;
+  margin:0 !important;
+}}
+.university-hero-location{{
+  color:rgba(255,255,255,0.92) !important;
+  font-size:18px !important;
+  font-weight:700 !important;
+  margin-top:8px !important;
+  text-shadow:0 3px 12px rgba(0,0,0,0.35) !important;
+}}
+.hero-stats{{
+  display:flex !important;
+  gap:12px !important;
+  margin-top:26px !important;
+  flex-wrap:wrap !important;
+}}
+.hero-stat-card{{
+  min-width:150px !important;
+  padding:16px 18px !important;
+  border-radius:14px !important;
+  background:rgba(6,26,64,0.58) !important;
+  border:1px solid rgba(255,255,255,0.18) !important;
+  backdrop-filter:blur(8px) !important;
+  color:#ffffff !important;
+}}
+.hero-stat-label{{
+  font-size:12px !important;
+  font-weight:700 !important;
+  color:rgba(255,255,255,0.72) !important;
+  margin-bottom:8px !important;
+}}
+.hero-stat-value{{
+  font-size:17px !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+}}
+@media(max-width:900px){{
+  .detail-hero-v264.university-detail-hero{{height:520px !important;min-height:520px !important;}}
+  .hero-content-v267{{left:24px !important;right:24px !important;bottom:30px !important;}}
+  .hero-main-info{{align-items:flex-start !important;}}
+  .hero-university-logo{{width:92px !important;height:92px !important;min-width:92px !important;min-height:92px !important;}}
+  .university-hero-title{{font-size:32px !important;}}
+  .hero-stat-card{{min-width:calc(50% - 8px) !important;}}
+}}
+
+/* v268 compact reference hero override */
+.detail-premium-v264{{
+  max-width:1440px !important;
+  margin:10px auto 30px !important;
+  padding:0 12px 20px !important;
+}}
+.detail-hero-v264.university-detail-hero{{
+  height:300px !important;
+  min-height:300px !important;
+  border-radius:14px !important;
+  box-shadow:0 14px 34px rgba(15,23,42,.14) !important;
+  background-size:cover !important;
+  background-position:center center !important;
+}}
+.detail-hero-v264.university-detail-hero::before{{
+  background:linear-gradient(
+    90deg,
+    rgba(6,26,64,0.82) 0%,
+    rgba(6,26,64,0.64) 42%,
+    rgba(6,26,64,0.28) 72%,
+    rgba(6,26,64,0.10) 100%
+  ) !important;
+}}
+.back-to-universities{{
+  top:24px !important;
+  left:28px !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+}}
+.hero-actions-right{{
+  top:22px !important;
+  right:24px !important;
+  gap:10px !important;
+}}
+.share-button,.favorite-button{{
+  width:40px !important;
+  height:40px !important;
+  font-size:16px !important;
+  box-shadow:0 8px 18px rgba(15,23,42,0.18) !important;
+}}
+.hero-content-v267{{
+  left:42px !important;
+  right:42px !important;
+  bottom:24px !important;
+}}
+.hero-main-info{{
+  gap:18px !important;
+  align-items:center !important;
+}}
+.hero-university-logo{{
+  width:92px !important;
+  height:92px !important;
+  min-width:92px !important;
+  min-height:92px !important;
+  padding:7px !important;
+  border:3px solid rgba(255,255,255,.95) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,0.22) !important;
+}}
+.hero-university-logo img{{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+}}
+.university-type-badge{{
+  padding:6px 12px !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  margin-bottom:8px !important;
+}}
+.university-hero-title{{
+  color:#ffffff !important;
+  font-size:29px !important;
+  line-height:1.08 !important;
+  font-weight:950 !important;
+  letter-spacing:-0.025em !important;
+  text-shadow:0 4px 18px rgba(0,0,0,.50) !important;
+}}
+.university-hero-location{{
+  color:rgba(255,255,255,0.94) !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+  margin-top:6px !important;
+  text-shadow:0 3px 12px rgba(0,0,0,.42) !important;
+}}
+.hero-stats{{
+  display:flex !important;
+  gap:10px !important;
+  margin-top:18px !important;
+  flex-wrap:wrap !important;
+  max-width:780px !important;
+}}
+.hero-stat-card{{
+  min-width:118px !important;
+  height:58px !important;
+  padding:10px 12px !important;
+  border-radius:9px !important;
+  background:rgba(6,26,64,0.52) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  backdrop-filter:blur(8px) !important;
+}}
+.hero-stat-label{{
+  font-size:10px !important;
+  line-height:1.15 !important;
+  margin-bottom:4px !important;
+  font-weight:750 !important;
+  color:rgba(255,255,255,.74) !important;
+}}
+.hero-stat-value{{
+  font-size:13px !important;
+  line-height:1.2 !important;
+  font-weight:950 !important;
+  color:#ffffff !important;
+}}
+.tabs-v264{{
+  border-radius:12px !important;
+  transform:translateY(-8px) !important;
+  padding:6px !important;
+}}
+.tabs-v264 a{{
+  padding:10px 16px !important;
+  font-size:12px !important;
+}}
+@media(max-width:900px){{
+  .detail-hero-v264.university-detail-hero{{
+    height:430px !important;
+    min-height:430px !important;
+  }}
+  .hero-content-v267{{
+    left:22px !important;
+    right:22px !important;
+    bottom:24px !important;
+  }}
+  .hero-main-info{{
+    gap:14px !important;
+  }}
+  .hero-university-logo{{
+    width:76px !important;
+    height:76px !important;
+    min-width:76px !important;
+    min-height:76px !important;
+  }}
+  .university-hero-title{{
+    font-size:26px !important;
+  }}
+  .university-hero-location{{
+    font-size:14px !important;
+  }}
+  .hero-stat-card{{
+    min-width:calc(50% - 8px) !important;
+  }}
+}}
 </style>
 
 <div class="detail-premium-v264">
-  <section class="detail-hero-v264" style='{hero_bg}'>
-    <div>
-      <a class="back-link-v264" href="/?nav=universities&clearuni=1" target="_parent">← Back to Universities</a>
-      <div class="hero-actions-v264">
-        <a class="hero-action-v264" href="#" title="Share">↗</a>
-        <a class="hero-action-v264" href="#" title="Favorite">♡</a>
-      </div>
+  <section class="detail-hero-v264 university-detail-hero" style='{hero_bg}'>
+    <a class="back-link-v264 back-to-universities" href="/?nav=universities&clearuni=1" target="_parent">← Back to Universities</a>
+
+    <div class="hero-actions-v264 hero-actions-right">
+      <a class="hero-action-v264 share-button" href="#" title="Share">↗</a>
+      <a class="hero-action-v264 favorite-button" href="#" title="Favorite">♡</a>
     </div>
-    <div>
-      <div class="hero-main-v264">
-        <div class="detail-logo-v264">{logo_html}</div>
-        <div class="hero-copy-v264">
-          <span class="type-badge-v264">{_safe_html_v62(uni_type)}</span>
-          <h1>{_safe_html_v62(name)}</h1>
-          <p>{_safe_html_v62(location)}</p>
+
+    <div class="hero-content-v267 hero-content">
+      <div class="hero-main-v264 hero-main-info">
+        <div class="detail-logo-v264 hero-university-logo">{logo_html}</div>
+        <div class="hero-copy-v264 hero-text-group">
+          <span class="type-badge-v264 university-type-badge" style="color:#ffffff !important;">{_safe_html_v62(uni_type)}</span>
+          <h1 class="university-hero-title" style="color:#ffffff !important;font-size:40px;font-weight:900;line-height:1.1;letter-spacing:-0.03em;text-shadow:0 4px 18px rgba(0,0,0,0.45);margin:0;">{_safe_html_v62(name)}</h1>
+          <p class="university-hero-location" style="color:rgba(255,255,255,0.92) !important;font-size:18px;font-weight:700;margin-top:8px;text-shadow:0 3px 12px rgba(0,0,0,0.35);">{_safe_html_v62(location)}</p>
         </div>
       </div>
-      <div class="hero-stats-v264">
-        <div class="hero-stat-v264"><small>Established</small><b>{_safe_html_v62(established)}</b></div>
-        <div class="hero-stat-v264"><small>Type</small><b>{_safe_html_v62(uni_type)}</b></div>
-        <div class="hero-stat-v264"><small>Students</small><b>{_safe_html_v62(total_students)}</b></div>
-        <div class="hero-stat-v264"><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></div>
+
+      <div class="hero-stats-v264 hero-stats">
+        <div class="hero-stat-v264 hero-stat-card"><small class="hero-stat-label">Established</small><b class="hero-stat-value">{_safe_html_v62(established)}</b></div>
+        <div class="hero-stat-v264 hero-stat-card"><small class="hero-stat-label">Type</small><b class="hero-stat-value">{_safe_html_v62(uni_type_stat)}</b></div>
+        <div class="hero-stat-v264 hero-stat-card"><small class="hero-stat-label">Students</small><b class="hero-stat-value">{_safe_html_v62(total_students)}</b></div>
+        <div class="hero-stat-v264 hero-stat-card"><small class="hero-stat-label">International Students</small><b class="hero-stat-value">{_safe_html_v62(intl_students)}</b></div>
       </div>
     </div>
   </section>

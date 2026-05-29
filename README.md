@@ -1765,3 +1765,18 @@ v266:
 - Fixed university type logic so it does not default/infer incorrectly from unrelated row text.
 - Updated share/favorite circular buttons, Apply Now, official website button, and deadline card styling.
 - Kept all university data dynamic from admin/database; no hardcoded university data.
+
+
+v267:
+- Fixed only the University Detail Page hero section.
+- Added a stronger class/inline style override so hero title and location stay white/readable.
+- Repositioned logo, badge, title, location, stats, share and favorite buttons to match the reference hero layout more closely.
+- Kept data, admission logic, admin upload logic, cards, filters, and unrelated pages unchanged.
+
+
+v268:
+- Adjusted only the University Detail Page hero to match the compact reference screenshot.
+- Reduced hero height, title size, logo size, stat card size, and top-right action buttons.
+- Kept the title and location white/readable.
+- Kept badge dynamic and made the Type stat display short form such as Private.
+- No database, admission, admin upload, filter, card, or unrelated page logic was changed.
