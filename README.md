@@ -1808,3 +1808,12 @@ v272:
 - Removed the half-visible/cropped YouTube player issue.
 - Kept video playing inside the same box.
 - Did not change navbar, hero, filters, university cards, admin logic, admission logic, or deadlines logic.
+
+
+v273:
+- Fixed university detail overview video autoplay issue.
+- Removed autoplay from embedded YouTube iframe.
+- Video preview stays visible first.
+- The embedded player appears only after the user clicks the video preview/play area.
+- Kept the same 16:9 full-size rounded video card from v272.
+- Did not change navbar, hero, filters, cards, admission logic, admin logic, or deadlines.

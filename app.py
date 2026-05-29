@@ -18494,7 +18494,7 @@ def _detail_video_html_v271(row, name, hero_src):
         if embed_url.lower().endswith((".mp4", ".webm", ".ogg")):
             player = f'<video class="video-player-v271" src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
         else:
-            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}?autoplay=1&rel=0&modestbranding=1" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}?rel=0&modestbranding=1" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
         return f"""
 <div class="video-card-v264 video-card-v271">
 <input class="video-toggle-v271" id="video-toggle-v271" type="checkbox">
@@ -19353,6 +19353,33 @@ def _render_university_detail_v62(u):
   .about-row-v264{{
     grid-template-columns:1fr !important;
   }}
+}}
+
+/* v273: stop University Detail overview video from autoplaying on page load */
+.video-card-v271 .video-embed-wrap-v271{{
+  display:none !important;
+}}
+
+.video-toggle-v271:not(:checked) ~ .video-embed-wrap-v271{{
+  display:none !important;
+}}
+
+.video-toggle-v271:not(:checked) ~ .video-preview-v271{{
+  display:block !important;
+}}
+
+.video-toggle-v271:checked ~ .video-preview-v271{{
+  display:none !important;
+}}
+
+.video-toggle-v271:checked ~ .video-embed-wrap-v271{{
+  display:block !important;
+}}
+
+.video-card-v271 iframe.video-player-v271{{
+  width:100% !important;
+  height:100% !important;
+  border:0 !important;
 }}
 </style>
 
