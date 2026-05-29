@@ -18494,7 +18494,7 @@ def _detail_video_html_v271(row, name, hero_src):
         if embed_url.lower().endswith((".mp4", ".webm", ".ogg")):
             player = f'<video class="video-player-v271" src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
         else:
-            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}" title="{safe_name} campus video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
+            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}?autoplay=1&rel=0&modestbranding=1" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
         return f"""
 <div class="video-card-v264 video-card-v271">
 <input class="video-toggle-v271" id="video-toggle-v271" type="checkbox">
@@ -19232,6 +19232,128 @@ def _render_university_detail_v62(u):
 .apply-option-v271 span{{font-size:13px;font-weight:900;}}
 .apply-option-v271.disabled{{background:#F8FAFC;color:#94A3B8;}}
 @media(max-width:1100px){{.overview-grid-v264{{grid-template-columns:1fr !important;}}.about-row-v264{{grid-template-columns:1fr !important;}}}}
+
+/* v272: University Detail Page video card fill fix only */
+.video-card-v264.video-card-v271,
+.video-card-v271{{
+  position:relative !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  aspect-ratio:16 / 9 !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+  background:#0f172a !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:block !important;
+}}
+
+.video-card-v271::before{{
+  display:none !important;
+}}
+
+.video-card-v271 .video-preview-v271,
+.video-preview-v271{{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  cursor:pointer !important;
+  overflow:hidden !important;
+  border-radius:18px !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  background-color:#0f172a !important;
+  display:block !important;
+  z-index:2 !important;
+}}
+
+.video-card-v271 .video-embed-wrap-v271,
+.video-embed-wrap-v271{{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  display:none !important;
+  overflow:hidden !important;
+  border-radius:18px !important;
+  background:#0f172a !important;
+  z-index:8 !important;
+}}
+
+.video-card-v271 .video-player-v271,
+.video-card-v271 iframe.video-player-v271,
+.video-card-v271 video.video-player-v271,
+.video-player-v271{{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:100% !important;
+  max-height:none !important;
+  border:0 !important;
+  display:block !important;
+  object-fit:cover !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:#0f172a !important;
+}}
+
+.video-toggle-v271:checked ~ .video-preview-v271{{
+  display:none !important;
+}}
+
+.video-toggle-v271:checked ~ .video-embed-wrap-v271{{
+  display:block !important;
+}}
+
+.video-card-v271 .play-v271{{
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+  z-index:5 !important;
+}}
+
+.video-card-v271 .video-label-v271{{
+  position:absolute !important;
+  left:22px !important;
+  bottom:18px !important;
+  z-index:5 !important;
+}}
+
+.overview-grid-v264{{
+  display:grid !important;
+  grid-template-columns:minmax(0,2fr) 360px !important;
+  gap:28px !important;
+  align-items:start !important;
+}}
+
+.about-row-v264{{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(360px,1fr) !important;
+  gap:28px !important;
+  align-items:start !important;
+}}
+
+@media(max-width:1200px){{
+  .overview-grid-v264{{
+    grid-template-columns:1fr !important;
+  }}
+  .about-row-v264{{
+    grid-template-columns:1fr !important;
+  }}
+}}
 </style>
 
 <div class="detail-premium-v264">

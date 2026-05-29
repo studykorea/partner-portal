@@ -1799,3 +1799,12 @@ v271:
 - Rebuilt Application Deadlines cards as clean UI with status badges.
 - Copied the uploaded v265 data files into the data folder.
 - Did not change navbar, hero section, university cards, filters, admission logic, or unrelated pages.
+
+
+v272:
+- Fixed only the University Detail Page overview video card display.
+- Video card now uses a full 16:9 aspect ratio.
+- iframe/video fills the entire rounded card with width and height 100%.
+- Removed the half-visible/cropped YouTube player issue.
+- Kept video playing inside the same box.
+- Did not change navbar, hero, filters, university cards, admin logic, admission logic, or deadlines logic.
