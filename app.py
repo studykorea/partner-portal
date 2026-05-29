@@ -18915,156 +18915,150 @@ def _render_university_detail_v62(u):
   .hero-stat-card{{min-width:calc(50% - 8px) !important;}}
 }}
 
-/* v268 compact reference hero override */
-.detail-premium-v264{{
-  max-width:1440px !important;
-  margin:10px auto 30px !important;
-  padding:0 12px 20px !important;
-}}
+/* v269 detail hero positioning only, no hero shrink, no HTML replacement */
 .detail-hero-v264.university-detail-hero{{
-  height:300px !important;
-  min-height:300px !important;
-  border-radius:14px !important;
-  box-shadow:0 14px 34px rgba(15,23,42,.14) !important;
+  height:430px !important;
+  min-height:430px !important;
+  border-radius:28px !important;
   background-size:cover !important;
   background-position:center center !important;
+  overflow:hidden !important;
 }}
 .detail-hero-v264.university-detail-hero::before{{
-  background:linear-gradient(
-    90deg,
-    rgba(6,26,64,0.82) 0%,
-    rgba(6,26,64,0.64) 42%,
-    rgba(6,26,64,0.28) 72%,
-    rgba(6,26,64,0.10) 100%
-  ) !important;
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  background:linear-gradient(90deg,rgba(6,26,64,0.78) 0%,rgba(6,26,64,0.60) 40%,rgba(6,26,64,0.26) 75%,rgba(6,26,64,0.10) 100%) !important;
+  z-index:1 !important;
+  pointer-events:none !important;
+}}
+.detail-hero-v264.university-detail-hero::after{{
+  display:none !important;
 }}
 .back-to-universities{{
-  top:24px !important;
-  left:28px !important;
-  font-size:13px !important;
+  top:30px !important;
+  left:42px !important;
+  color:rgba(255,255,255,.92) !important;
+  font-size:14px !important;
   font-weight:800 !important;
+  z-index:10 !important;
 }}
 .hero-actions-right{{
-  top:22px !important;
-  right:24px !important;
-  gap:10px !important;
+  top:28px !important;
+  right:42px !important;
+  gap:12px !important;
+  z-index:10 !important;
 }}
 .share-button,.favorite-button{{
-  width:40px !important;
-  height:40px !important;
-  font-size:16px !important;
-  box-shadow:0 8px 18px rgba(15,23,42,0.18) !important;
+  width:46px !important;
+  height:46px !important;
+  font-size:17px !important;
+  border-radius:50% !important;
+  background:#ffffff !important;
+  color:#123B8A !important;
+  box-shadow:0 8px 22px rgba(15,23,42,.18) !important;
 }}
 .hero-content-v267{{
   left:42px !important;
   right:42px !important;
-  bottom:24px !important;
+  bottom:30px !important;
+  z-index:7 !important;
 }}
 .hero-main-info{{
-  gap:18px !important;
+  display:flex !important;
   align-items:center !important;
+  gap:20px !important;
+  margin:0 !important;
 }}
 .hero-university-logo{{
-  width:92px !important;
-  height:92px !important;
-  min-width:92px !important;
-  min-height:92px !important;
+  width:96px !important;
+  height:96px !important;
+  min-width:96px !important;
+  min-height:96px !important;
   padding:7px !important;
-  border:3px solid rgba(255,255,255,.95) !important;
-  box-shadow:0 12px 28px rgba(0,0,0,0.22) !important;
+  background:#ffffff !important;
+  border:3px solid rgba(255,255,255,.96) !important;
+  border-radius:50% !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.24) !important;
 }}
 .hero-university-logo img{{
   width:100% !important;
   height:100% !important;
   object-fit:contain !important;
+  display:block !important;
 }}
 .university-type-badge{{
-  padding:6px 12px !important;
-  font-size:11px !important;
-  font-weight:900 !important;
+  display:inline-flex !important;
+  width:auto !important;
+  padding:7px 13px !important;
   margin-bottom:8px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.18) !important;
+  border:1px solid rgba(255,255,255,.25) !important;
+  color:#ffffff !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
 }}
 .university-hero-title{{
   color:#ffffff !important;
-  font-size:29px !important;
+  font-size:34px !important;
   line-height:1.08 !important;
   font-weight:950 !important;
-  letter-spacing:-0.025em !important;
-  text-shadow:0 4px 18px rgba(0,0,0,.50) !important;
+  letter-spacing:-.03em !important;
+  text-shadow:0 4px 18px rgba(0,0,0,.48) !important;
+  margin:0 !important;
 }}
 .university-hero-location{{
-  color:rgba(255,255,255,0.94) !important;
-  font-size:15px !important;
+  color:rgba(255,255,255,.94) !important;
+  font-size:16px !important;
+  line-height:1.35 !important;
   font-weight:800 !important;
-  margin-top:6px !important;
-  text-shadow:0 3px 12px rgba(0,0,0,.42) !important;
+  margin:7px 0 0 !important;
+  text-shadow:0 3px 12px rgba(0,0,0,.38) !important;
 }}
 .hero-stats{{
   display:flex !important;
-  gap:10px !important;
-  margin-top:18px !important;
+  gap:12px !important;
+  margin-top:20px !important;
   flex-wrap:wrap !important;
-  max-width:780px !important;
+  max-width:760px !important;
 }}
 .hero-stat-card{{
-  min-width:118px !important;
-  height:58px !important;
-  padding:10px 12px !important;
-  border-radius:9px !important;
-  background:rgba(6,26,64,0.52) !important;
+  min-width:128px !important;
+  height:66px !important;
+  padding:12px 14px !important;
+  border-radius:10px !important;
+  background:rgba(6,26,64,.54) !important;
   border:1px solid rgba(255,255,255,.18) !important;
   backdrop-filter:blur(8px) !important;
-}}
-.hero-stat-label{{
-  font-size:10px !important;
-  line-height:1.15 !important;
-  margin-bottom:4px !important;
-  font-weight:750 !important;
-  color:rgba(255,255,255,.74) !important;
-}}
-.hero-stat-value{{
-  font-size:13px !important;
-  line-height:1.2 !important;
-  font-weight:950 !important;
   color:#ffffff !important;
 }}
-.tabs-v264{{
-  border-radius:12px !important;
-  transform:translateY(-8px) !important;
-  padding:6px !important;
+.hero-stat-label{{
+  color:rgba(255,255,255,.75) !important;
+  font-size:11px !important;
+  font-weight:750 !important;
+  line-height:1.1 !important;
+  margin-bottom:5px !important;
 }}
-.tabs-v264 a{{
-  padding:10px 16px !important;
-  font-size:12px !important;
+.hero-stat-value{{
+  color:#ffffff !important;
+  font-size:14px !important;
+  line-height:1.25 !important;
+  font-weight:950 !important;
 }}
 @media(max-width:900px){{
   .detail-hero-v264.university-detail-hero{{
-    height:430px !important;
-    min-height:430px !important;
+    height:520px !important;
+    min-height:520px !important;
   }}
-  .hero-content-v267{{
-    left:22px !important;
-    right:22px !important;
-    bottom:24px !important;
-  }}
-  .hero-main-info{{
-    gap:14px !important;
-  }}
-  .hero-university-logo{{
-    width:76px !important;
-    height:76px !important;
-    min-width:76px !important;
-    min-height:76px !important;
-  }}
-  .university-hero-title{{
-    font-size:26px !important;
-  }}
-  .university-hero-location{{
-    font-size:14px !important;
-  }}
-  .hero-stat-card{{
-    min-width:calc(50% - 8px) !important;
-  }}
+  .hero-content-v267{{left:22px !important;right:22px !important;bottom:24px !important;}}
+  .hero-university-logo{{width:78px !important;height:78px !important;min-width:78px !important;min-height:78px !important;}}
+  .university-hero-title{{font-size:28px !important;}}
+  .university-hero-location{{font-size:14px !important;}}
+  .hero-stat-card{{min-width:calc(50% - 8px) !important;}}
 }}
 </style>
 

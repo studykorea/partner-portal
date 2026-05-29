@@ -1774,9 +1774,9 @@ v267:
 - Kept data, admission logic, admin upload logic, cards, filters, and unrelated pages unchanged.
 
 
-v268:
-- Adjusted only the University Detail Page hero to match the compact reference screenshot.
-- Reduced hero height, title size, logo size, stat card size, and top-right action buttons.
-- Kept the title and location white/readable.
-- Kept badge dynamic and made the Type stat display short form such as Private.
-- No database, admission, admin upload, filter, card, or unrelated page logic was changed.
+v269:
+- Reverted from the broken v268 HTML-rendering issue by starting from v267.
+- Did not reduce the University Detail hero height.
+- Fixed only positioning/style of the logo, badge, title, location, stats, and share/favorite buttons.
+- Kept university name/location white and readable.
+- No hero/card/filter/admin/database/admission logic changed.
