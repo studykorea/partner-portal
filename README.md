@@ -1828,3 +1828,13 @@ v274:
 - External admin apply URLs remain optional fallback only.
 - University name is passed through the query route so the application flow is connected to the selected university.
 - Did not change hero, navbar, filters, university cards, admission logic, admin logic, deadlines, or database structure.
+
+
+v275:
+- Fixed only the University Detail Page hero section internal styling.
+- Kept hero section size, width, height, shape, and page layout unchanged.
+- Changed the hero background to use the uploaded image with a cleaner gradient overlay.
+- Made university name and location white and readable.
+- Positioned logo, badge, title, location, stat cards, share, and favorite buttons closer to the sample reference.
+- University type badge still uses dynamic admin/database type data.
+- Did not change tabs, overview section, video, application deadlines, navbar, filters, cards, admin logic, or admission logic.
