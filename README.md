@@ -1817,3 +1817,14 @@ v273:
 - The embedded player appears only after the user clicks the video preview/play area.
 - Kept the same 16:9 full-size rounded video card from v272.
 - Did not change navbar, hero, filters, cards, admission logic, admin logic, or deadlines.
+
+
+v274:
+- Fixed Apply Now / View Details & Apply modal behavior.
+- Undergraduate Apply now routes to the existing internal undergraduate program flow with New Student / Transfer Student options.
+- Graduate Apply now routes to the existing internal graduate application flow.
+- EAP/KLP Apply now routes to the existing internal language/EAP/KLP application flow.
+- Internal routes are used by default, so the modal no longer shows “Application link not updated yet” when the internal flow exists.
+- External admin apply URLs remain optional fallback only.
+- University name is passed through the query route so the application flow is connected to the selected university.
+- Did not change hero, navbar, filters, university cards, admission logic, admin logic, deadlines, or database structure.

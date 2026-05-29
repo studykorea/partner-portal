@@ -18512,16 +18512,53 @@ def _detail_video_html_v271(row, name, hero_src):
 </div>"""
     return f'<div class="video-card-v264 video-card-v271 no-video-v271"><div class="video-label-v264 video-label-v271">Campus video will be updated soon.<br><small>{safe_name}</small></div></div>'
 
-def _detail_apply_option_v271(label, url):
-    href = _detail_normalize_url_v271(url)
-    if href:
-        return f'<a class="apply-option-v271" href="{_safe_html_v62(href)}" target="_blank" rel="noopener"><b>{_safe_html_v62(label)}</b><span>Apply →</span></a>'
+def _detail_apply_internal_url_v274(name, program_slug, application_type=""):
+    """Build Streamlit internal route for the existing application/program flow."""
+    try:
+        from urllib.parse import quote_plus
+        uni_q = quote_plus(display_clean_v50(name))
+        prog_q = quote_plus(display_clean_v50(program_slug))
+        url = f"?uni={uni_q}&programdetail={prog_q}"
+        if application_type:
+            url += f"&apptype={quote_plus(display_clean_v50(application_type))}"
+        return url
+    except Exception:
+        return ""
+
+
+def _detail_apply_option_v271(label, url="", internal_url=""):
+    """
+    v274: Internal application flow is the default.
+    External admin URL is optional fallback only; never disable the option when an internal flow exists.
+    """
+    internal_href = display_clean_v50(internal_url)
+    external_href = _detail_normalize_url_v271(url)
+    if internal_href:
+        return (
+            f'<a class="apply-option-v271" href="{_safe_html_v62(internal_href)}" target="_self">'
+            f'<b>{_safe_html_v62(label)}</b><span>Apply →</span></a>'
+        )
+    if external_href:
+        return (
+            f'<a class="apply-option-v271" href="{_safe_html_v62(external_href)}" target="_blank" rel="noopener noreferrer">'
+            f'<b>{_safe_html_v62(label)}</b><span>Apply →</span></a>'
+        )
     return f'<span class="apply-option-v271 disabled"><b>{_safe_html_v62(label)}</b><span>Application link not updated yet</span></span>'
 
+
 def _detail_apply_modal_html_v271(row, name):
-    ug = _detail_value_v264(row, ["Undergraduate_Apply_URL", "UG_Apply_URL", "Bachelor_Apply_URL"], "")
-    grad = _detail_value_v264(row, ["Graduate_Apply_URL", "Masters_Apply_URL", "PhD_Apply_URL"], "")
-    klp = _detail_value_v264(row, ["KLP_EAP_Apply_URL", "KLP_Apply_URL", "EAP_Apply_URL", "Language_Apply_URL"], "")
+    ug_external = _detail_value_v264(row, ["Undergraduate_Apply_URL", "UG_Apply_URL", "Bachelor_Apply_URL"], "")
+    grad_external = _detail_value_v264(row, ["Graduate_Apply_URL", "Masters_Apply_URL", "PhD_Apply_URL"], "")
+    klp_external = _detail_value_v264(row, ["KLP_EAP_Apply_URL", "KLP_Apply_URL", "EAP_Apply_URL", "Language_Apply_URL"], "")
+
+    # Existing internal flow:
+    # Undergraduate opens the program page where the user chooses New Student / Transfer Student.
+    # Graduate opens the graduate application program page.
+    # EAP/KLP opens the language program page where the user chooses KLP / EAP.
+    ug_internal = _detail_apply_internal_url_v274(name, "undergraduate")
+    grad_internal = _detail_apply_internal_url_v274(name, "graduate")
+    klp_internal = _detail_apply_internal_url_v274(name, "language")
+
     return f"""
 <div id="apply-options-v271" class="apply-modal-v271">
 <a href="#overview-v264" class="apply-modal-bg-v271" aria-label="Close"></a>
@@ -18530,14 +18567,16 @@ def _detail_apply_modal_html_v271(row, name):
 <h3>Apply to {_safe_html_v62(name)}</h3>
 <p>Choose Application Type</p>
 <div class="apply-options-grid-v271">
-{_detail_apply_option_v271("Undergraduate Apply", ug)}
-{_detail_apply_option_v271("Graduate Apply", grad)}
-{_detail_apply_option_v271("EAP/KLP Apply", klp)}
+{_detail_apply_option_v271("Undergraduate Apply", ug_external, ug_internal)}
+{_detail_apply_option_v271("Graduate Apply", grad_external, grad_internal)}
+{_detail_apply_option_v271("EAP/KLP Apply", klp_external, klp_internal)}
 </div>
 </div>
 </div>"""
 
+
 def _detail_deadline_rows_v264(u):
+
     general_open = u.get("Application_Open_Date", "")
     general_close = u.get("Application_Close_Date", "")
     specs = [
@@ -19380,6 +19419,17 @@ def _render_university_detail_v62(u):
   width:100% !important;
   height:100% !important;
   border:0 !important;
+}}
+
+/* v274: Apply modal internal application flow fix */
+.apply-option-v271:not(.disabled){{
+  cursor:pointer !important;
+  color:#061A40 !important;
+}}
+.apply-option-v271:not(.disabled):hover{{
+  border-color:#123B8A !important;
+  background:#EEF4FF !important;
+  transform:translateY(-1px) !important;
 }}
 </style>
 
