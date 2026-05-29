@@ -1838,3 +1838,11 @@ v275:
 - Positioned logo, badge, title, location, stat cards, share, and favorite buttons closer to the sample reference.
 - University type badge still uses dynamic admin/database type data.
 - Did not change tabs, overview section, video, application deadlines, navbar, filters, cards, admin logic, or admission logic.
+
+
+v276:
+- Fixed only the University Detail Page hero content that was still unreadable.
+- Added render-level inline color fixes for the university title/location so they cannot remain dark.
+- Added a stronger final CSS override for the real detail hero classes.
+- Logo, badge, title, location, stats, share and favorite buttons are positioned closer to the sample reference.
+- Kept hero size, width, height, shape, page layout, tabs, database, admission logic, and admin logic unchanged.
