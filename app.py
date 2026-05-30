@@ -19141,6 +19141,24 @@ def _detail_hero_img_v264(u):
         path = _detail_value_v264(u, ["coverImageUrl", "Cover_Image", "University_Image", "Image", "imageUrl"], "")
     return _detail_img_src_v264(path)
 
+def _detail_hero_focal_position_v291(u):
+    """Return CSS background/object position for University Detail hero image.
+    Admin can control focal point with Hero_Focal_X / Hero_Focal_Y.
+    Default is slightly below center so campus buildings stay visible.
+    """
+    try:
+        row = u.to_dict() if hasattr(u, "to_dict") else dict(u)
+    except Exception:
+        row = u or {}
+    fx_raw = _detail_value_v264(row, ["Hero_Focal_X", "Focal_Point_X", "Focal_X", "heroFocalX", "focal_x"], "Center")
+    fy_raw = _detail_value_v264(row, ["Hero_Focal_Y", "Focal_Point_Y", "Focal_Y", "heroFocalY", "focal_y"], "Center")
+    fx = str(fx_raw or "Center").strip().lower()
+    fy = str(fy_raw or "Center").strip().lower()
+    x_map = {"left": "left", "center": "center", "centre": "center", "right": "right"}
+    # Use 55% for the visual center by default; it keeps lower campus/building areas clearer than exact center.
+    y_map = {"top": "top", "center": "55%", "centre": "55%", "middle": "55%", "bottom": "bottom"}
+    return f"{x_map.get(fx, 'center')} {y_map.get(fy, '55%')}"
+
 def _detail_logo_img_v264(u):
     path = ""
     try:
@@ -19178,7 +19196,8 @@ def _render_university_detail_v62(u):
 
     hero_src = _detail_hero_img_v264(row)
     logo_src = _detail_logo_img_v264(row)
-    hero_bg = f'background-image: url("{hero_src}");' if hero_src else 'background:linear-gradient(135deg,#0B1B4D,#153C8B);' 
+    hero_focal_v291 = _detail_hero_focal_position_v291(row)
+    hero_bg = f'background-image: url("{hero_src}"); background-position: {hero_focal_v291} !important; background-size: cover !important;' if hero_src else 'background:linear-gradient(135deg,#0B1B4D,#153C8B); background-position:center 55% !important;' 
     logo_html = f'<img src="{logo_src}" alt="{_safe_html_v62(name)} logo">' if logo_src else '<span>Logo</span>'
 
     deadlines_html = _detail_deadlines_html_v264(row)
@@ -20422,6 +20441,44 @@ def _render_university_detail_v62(u):
     padding:5px !important;
   }}
 }}
+
+/* v291: University Detail hero image cropping, focal point, and lighter professional overlay */
+.detail-hero-v264.university-detail-hero{
+  background-size:cover !important;
+  background-repeat:no-repeat !important;
+  background-position:center 55% !important;
+}
+.detail-hero-v264.university-detail-hero:before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:1 !important;
+  pointer-events:none !important;
+  background:linear-gradient(
+    90deg,
+    rgba(6,18,48,0.72) 0%,
+    rgba(6,18,48,0.48) 42%,
+    rgba(6,18,48,0.22) 72%,
+    rgba(6,18,48,0.10) 100%
+  ) !important;
+}
+.university-detail-hero-image{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  object-position:center 55% !important;
+}
+.university-detail-hero-overlay{
+  position:absolute !important;
+  inset:0 !important;
+  background:linear-gradient(
+    90deg,
+    rgba(6,18,48,0.72) 0%,
+    rgba(6,18,48,0.48) 42%,
+    rgba(6,18,48,0.22) 72%,
+    rgba(6,18,48,0.10) 100%
+  ) !important;
+}
 
 /* v277: University Detail Page statistics bar redesign only */
 .stats-bar-v264,
@@ -24470,7 +24527,7 @@ def admin_university_management_v49():
         "University","Location","Total_Students","International_Students","Top_Majors",
         "Intake","Application_Status","Application_Open_Date","Application_Close_Date",
         "UG_Open_Date","UG_Close_Date","UG_New_Open_Date","UG_New_Close_Date","UG_Transfer_Open_Date","UG_Transfer_Close_Date","Graduate_Open_Date","Graduate_Close_Date","KLP_EAP_Open_Date","KLP_EAP_Close_Date","KLP_Open_Date","KLP_Close_Date","EAP_Open_Date","EAP_Close_Date",
-        "Tuition_Range","Scholarship_Info","Overview","Short_Description","University_Video_URL","Video_Thumbnail_URL","Undergraduate_Apply_URL","Graduate_Apply_URL","KLP_EAP_Apply_URL","Image","Image_Gallery","University_Logo",
+        "Tuition_Range","Scholarship_Info","Overview","Short_Description","University_Video_URL","Video_Thumbnail_URL","Undergraduate_Apply_URL","Graduate_Apply_URL","KLP_EAP_Apply_URL","Image","Image_Gallery","University_Logo","Hero_Focal_X","Hero_Focal_Y",
         "Homepage","Language_School_Homepage","Promotional_Materials","Facebook_Link","Instagram_Link","YouTube_Link","SNS_Information","Student_Data_Year","Undergraduate_Students","Graduate_Students","Language_Study_Students","Nationality_Students_JSON","Address","Representative_Phone","Representative_Fax","Region","School_Size","Accreditation_Status","Accreditation_Until","IEQAS_Badge_Image","IEQAS_Badge_Image_Data"
     ]
     df = ensure_columns_v49(df, required_cols)
@@ -24568,6 +24625,12 @@ def admin_university_management_v49():
                 scholarship_info = st.text_input("Scholarship Info")
                 top_majors = st.text_area("Top Majors / Summary", height=80)
                 photo = st.file_uploader("University Main Photo", type=["png","jpg","jpeg"], key="add_uni_photo_v49")
+                st.caption("Recommended hero image: clean campus photo, 2400×750 px. Avoid images with large logo/text inside the photo. The system already shows the university logo and name separately.")
+                fp_add_x_col_v291, fp_add_y_col_v291 = st.columns(2)
+                with fp_add_x_col_v291:
+                    hero_focal_x = st.selectbox("Hero Focal Point X", ["Left", "Center", "Right"], index=1, key="add_hero_focal_x_v291")
+                with fp_add_y_col_v291:
+                    hero_focal_y = st.selectbox("Hero Focal Point Y", ["Top", "Center", "Bottom"], index=1, key="add_hero_focal_y_v291")
                 gallery_photos = st.file_uploader("Upload Slideshow Images", type=["png","jpg","jpeg"], accept_multiple_files=True, key="add_uni_gallery_v89")
                 logo = st.file_uploader("Upload Logo of University", type=["png","jpg","jpeg","webp"], key="add_uni_logo_v88")
                 st.markdown(student_stats_upload_info_html_v107(), unsafe_allow_html=True)
@@ -24641,6 +24704,8 @@ def admin_university_management_v49():
                         "Image": image_path,
                         "Image_Gallery": gallery_path,
                         "University_Logo": logo_path,
+                        "Hero_Focal_X": hero_focal_x,
+                        "Hero_Focal_Y": hero_focal_y,
                         "Homepage": homepage.strip(),
                         "Language_School_Homepage": language_school_homepage.strip(),
                         "Promotional_Materials": promotional_materials.strip(),
@@ -24791,6 +24856,21 @@ def admin_university_management_v49():
                     current_img = st.text_input("Current Main Photo Path", value=display_clean_v50(row.get("Image", "")), key=f"edit_current_img_{selected_key_v90}")
                     current_gallery = st.text_area("Current Slideshow Image Paths", value=display_clean_v50(row.get("Image_Gallery", "")), height=70, key=f"edit_current_gallery_{selected_key_v90}")
                     current_logo = st.text_input("Current University Logo Path", value=display_clean_v50(row.get("University_Logo", "")), key=f"edit_current_logo_{selected_key_v90}")
+                    st.markdown("##### Hero Image Focal Point")
+                    st.caption("Recommended hero image: clean campus photo, 2400×750 px. Avoid images with large logo/text inside the photo. The system already shows the university logo and name separately. If the building is low in the photo, choose Center + Bottom.")
+                    focal_x_options_v291 = ["Left", "Center", "Right"]
+                    focal_y_options_v291 = ["Top", "Center", "Bottom"]
+                    current_focal_x_v291 = display_clean_v50(row.get("Hero_Focal_X", "")) or display_clean_v50(row.get("Focal_Point_X", "")) or "Center"
+                    current_focal_y_v291 = display_clean_v50(row.get("Hero_Focal_Y", "")) or display_clean_v50(row.get("Focal_Point_Y", "")) or "Center"
+                    if current_focal_x_v291 not in focal_x_options_v291:
+                        current_focal_x_v291 = "Center"
+                    if current_focal_y_v291 not in focal_y_options_v291:
+                        current_focal_y_v291 = "Center"
+                    fp_edit_x_col_v291, fp_edit_y_col_v291 = st.columns(2)
+                    with fp_edit_x_col_v291:
+                        hero_focal_x = st.selectbox("Focal Point X", focal_x_options_v291, index=focal_x_options_v291.index(current_focal_x_v291), key=f"edit_hero_focal_x_v291_{selected_key_v90}")
+                    with fp_edit_y_col_v291:
+                        hero_focal_y = st.selectbox("Focal Point Y", focal_y_options_v291, index=focal_y_options_v291.index(current_focal_y_v291), key=f"edit_hero_focal_y_v291_{selected_key_v90}")
 
                     st.markdown("##### Optional Student Statistics")
                     current_student_year = st.text_input("Current Student Data Year", value=display_clean_v50(row.get("Student_Data_Year", "")), key=f"edit_student_year_v106_{selected_key_v90}")
@@ -24895,6 +24975,8 @@ def admin_university_management_v49():
                     df.loc[idx, "Image"] = image_path
                     df.loc[idx, "Image_Gallery"] = gallery_path
                     df.loc[idx, "University_Logo"] = logo_path
+                    df.loc[idx, "Hero_Focal_X"] = hero_focal_x
+                    df.loc[idx, "Hero_Focal_Y"] = hero_focal_y
 
                     write_csv(uni_file, df)
                     reload_data_v49()
