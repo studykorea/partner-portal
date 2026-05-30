@@ -20869,7 +20869,8 @@ def _scholarship_has_details_v214(university_name):
         pass
     return False
 
-def _render_university_listing_card_v214(row, key_suffix):
+def _university_listing_card_html_v289(row, key_suffix=""):
+    """Return the public university card as HTML so the listing can use one shared grid container."""
     uni = display_clean_v50(row.get("University", "")) or "University"
     crit_text = _program_presence_text_v214(uni)
     cover_html = _uni_list_cover_html_v214(row)
@@ -20879,16 +20880,16 @@ def _render_university_listing_card_v214(row, key_suffix):
     intl_students = _uni_list_clean_number_v214(intl_count_v53(row), "1,000")
     admission_html = _admission_snapshot_html_v214(row, crit_text)
     scholarship_link = '<div class="scholarship-link-v214">Scholarship details →</div>' if _scholarship_has_details_v214(uni) else ""
-    html = f"""<div class="uni-list-card-v214 university-card-v216">
+    html = f"""<div class="uni-list-card-v214 university-card-v216 university-card-v289">
 <div class="uni-list-cover-v214">{cover_html}{favorite_heart_html_v287(uni)}</div>
 <div class="uni-list-body-v214 card-body-v216">
-    <div class="uni-list-head-v215 uni-list-head-v216">
-        <div class="uni-list-logo-wrap-v214">{logo_html}</div>
-        <div class="uni-list-title-block-v215">
-            <h3>{_safe_html_v62(uni)}</h3>
-            <div class="uni-list-location-v214 location-row-v216"><svg class="location-pin-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="currentColor"/></svg><em>{_safe_html_v62(location)}</em></div>
-        </div>
-    </div>
+<div class="uni-list-head-v215 uni-list-head-v216">
+<div class="uni-list-logo-wrap-v214">{logo_html}</div>
+<div class="uni-list-title-block-v215">
+<h3>{_safe_html_v62(uni)}</h3>
+<div class="uni-list-location-v214 location-row-v216"><svg class="location-pin-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="currentColor"/></svg><em>{_safe_html_v62(location)}</em></div>
+</div>
+</div>
 <div class="uni-list-stats-v214 stat-grid-v216">
 <div class="stat-box-v216"><span class="stat-icon-v214 stat-icon-v216"><svg class="stat-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0-8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 8.5a3 3 0 0 1 2.8 4.1M5 8.5a3 3 0 0 0-2.8 4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><section><small>Total Students</small><b>{_safe_html_v62(total_students)}</b></section></div>
 <div class="stat-box-v216"><span class="stat-icon-v214 stat-icon-v216"><svg class="stat-svg-v216" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 12h17M12 3c2.4 2.6 3.5 5.6 3.5 9s-1.1 6.4-3.5 9M12 3c-2.4 2.6-3.5 5.6-3.5 9s1.1 6.4 3.5 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><section><small>International Students</small><b>{_safe_html_v62(intl_students)}</b></section></div>
@@ -20902,10 +20903,11 @@ def _render_university_listing_card_v214(row, key_suffix):
 </form>
 </div>
 </div>"""
-    # v270: Streamlit/Markdown can treat indented HTML lines as code blocks.
-    # Left-align HTML tag lines before rendering so the hero section renders as real HTML, not visible raw code.
-    html = "\n".join((line.lstrip() if line.lstrip().startswith("<") else line) for line in html.splitlines())
-    st.markdown(html, unsafe_allow_html=True)
+    return "\n".join((line.lstrip() if line.lstrip().startswith("<") else line) for line in html.splitlines())
+
+
+def _render_university_listing_card_v214(row, key_suffix):
+    st.markdown(_university_listing_card_html_v289(row, key_suffix), unsafe_allow_html=True)
 
 
 
@@ -22432,13 +22434,14 @@ def universities_page(public=False):
             st.rerun()
     else:
         records = list(filtered.iterrows())
-        for row_start in range(0, len(records), 3):
-            cols = st.columns(3, gap="large")
-            for col_idx, item in enumerate(records[row_start:row_start+3]):
-                _, u = item
-                with cols[col_idx]:
-                    _render_university_listing_card_v214(u, f"{row_start}_{col_idx}")
-            st.markdown('<div class="uni-row-gap-v214"></div>', unsafe_allow_html=True)
+        cards_html_v289 = []
+        for idx_v289, item in enumerate(records):
+            _, u = item
+            cards_html_v289.append(_university_listing_card_html_v289(u, f"grid_{idx_v289}"))
+        st.markdown(
+            '<div class="universities-wide-container-v289 university-grid-v289">' + "".join(cards_html_v289) + '</div>',
+            unsafe_allow_html=True,
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)
     if public:
@@ -27361,3 +27364,77 @@ div[data-testid="stHorizontalBlock"]:has(.premium-public-brand-v223) .nav-action
 </style>
 """, unsafe_allow_html=True)
 
+
+
+# v289: exact Universities Information shared container alignment fix
+st.markdown("""
+<style>
+:root {
+  --v289-universities-width: min(calc(100% - 48px), 1760px);
+}
+
+/* One final shared width for hero, filter, info bar, and university grid. */
+div[data-testid="stIFrame"] iframe,
+div[data-testid="stElementContainer"]:has(iframe) iframe,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search university"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]),
+div[data-testid="stAlert"],
+.uni-info-bar-v214,
+.universities-wide-container-v289 {
+  width: var(--v289-universities-width) !important;
+  max-width: 1760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* The custom grid has no independent max-width or side padding; it inherits the same page edge. */
+.universities-wide-container-v289.university-grid-v289 {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 28px !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 34px !important;
+  line-height: normal !important;
+}
+
+.university-grid-v289 .uni-list-card-v214,
+.university-grid-v289 .university-card-v216,
+.university-grid-v289 .university-card-v289 {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Neutralize old Streamlit column/list containers for the public listing grid. */
+div[data-testid="stHorizontalBlock"]:has(.university-card-v289) {
+  width: var(--v289-universities-width) !important;
+  max-width: 1760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+@media (max-width: 1200px) {
+  .universities-wide-container-v289.university-grid-v289 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --v289-universities-width: calc(100% - 24px);
+  }
+  .universities-wide-container-v289.university-grid-v289 {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+</style>
+""", unsafe_allow_html=True)
