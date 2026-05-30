@@ -5,6 +5,7 @@ import streamlit.components.v1 as components
 import textwrap
 import pandas as pd
 import json, hashlib, base64, re, os, hmac, re, smtplib, ssl
+from urllib.parse import quote_plus
 from pathlib import Path
 from datetime import datetime, date
 from io import BytesIO
@@ -14789,7 +14790,7 @@ def home():
                 intl_students_v207 = _home_international_students_v207(u)
                 image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""))
                 logo_html_v207 = _home_featured_logo_html_v207(u.get("University_Logo", ""), uni_name_v207)
-                uni_q_v295 = quote(str(uni_name_v207), safe="")
+                uni_q_v295 = quote_plus(str(uni_name_v207))
                 card_html_v295.append(f"""
                 <article class="home-carousel-slide-v295">
                     <div class="home-uni-card-v207 home-carousel-card-v295">
