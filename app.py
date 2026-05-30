@@ -1118,7 +1118,7 @@ section[data-testid="stSidebar"]{display:none;}
 .public-left-box {
     background: linear-gradient(90deg,#002B5B,#053B7A);
     padding: 48px 46px;
-    min-height: 560px;
+    min-height: 620px;
     border-radius: 0;
 }
 .public-left-box, .public-left-box * {
@@ -1392,7 +1392,7 @@ div[data-testid="stVerticalBlock"] > div:empty {
 .partner-hero h1 {
     font-size: 42px;
     line-height: 1.14;
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     font-weight: 900;
 }
 .partner-hero p {
@@ -14837,7 +14837,7 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 560px;
+                  min-height: 620px;
                   overflow: hidden;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -14846,15 +14846,15 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 540px;
-                  height: 540px;
+                  min-height: 610px;
+                  height: 610px;
                   background: #ffffff !important;
                   overflow: visible;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  min-height: 530px;
-                  height: 530px;
+                  min-height: 590px;
+                  height: 590px;
                   overflow-x: auto;
                   overflow-y: hidden;
                   scrollbar-width: none;
@@ -14868,8 +14868,8 @@ def home():
                   align-items: stretch;
                   gap: 28px;
                   width: max-content;
-                  height: 520px;
-                  padding: 6px 0 12px 0;
+                  height: 570px;
+                  padding: 6px 0 18px 0;
                   background: #ffffff !important;
                   will-change: transform;
                 }}
@@ -14888,7 +14888,7 @@ def home():
                   width: calc((100vw - 112px) / 5);
                   min-width: 260px;
                   max-width: 340px;
-                  height: 500px;
+                  height: 548px;
                   scroll-snap-align: start;
                 }}
                 .home-uni-card-v207 {{
@@ -14899,8 +14899,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 490px;
-                  min-height: 490px;
+                  height: 540px;
+                  min-height: 540px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -14911,19 +14911,19 @@ def home():
                 }}
                 .home-uni-image-wrap-v207 {{
                   position: relative;
-                  height: 146px;
+                  height: 168px;
                   overflow: hidden;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 146px;
+                  flex: 0 0 168px;
                 }}
                 .home-featured-photo-v207 {{
                   width: 100%;
-                  height: 146px;
+                  height: 168px;
                   object-fit: cover;
                   display: block;
                 }}
                 .home-featured-photo-placeholder-v207 {{
-                  height: 146px;
+                  height: 168px;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
                   color: #667085;
                   display: flex;
@@ -14946,9 +14946,9 @@ def home():
                 .home-uni-logo-overlap-v207 {{
                   position: absolute;
                   left: 24px;
-                  top: 112px;
-                  width: 72px;
-                  height: 72px;
+                  top: 132px;
+                  width: 76px;
+                  height: 76px;
                   border-radius: 50%;
                   background: #ffffff;
                   border: 1px solid #E4EAF3;
@@ -14960,14 +14960,14 @@ def home():
                   z-index: 3;
                 }}
                 .home-featured-logo-v207 {{
-                  width: 58px;
-                  height: 58px;
+                  width: 62px;
+                  height: 62px;
                   object-fit: contain;
                   display: block;
                 }}
                 .home-featured-logo-placeholder-v207 {{
-                  width: 58px;
-                  height: 58px;
+                  width: 62px;
+                  height: 62px;
                   border-radius: 50%;
                   background: #F4F7FB;
                   color: #98A2B3;
@@ -14981,24 +14981,24 @@ def home():
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 46px 18px 16px 18px;
+                  padding: 52px 18px 18px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
-                  font-size: 19px;
-                  line-height: 1.24;
+                  font-size: 21px;
+                  line-height: 1.28;
                   font-weight: 950;
                   letter-spacing: -0.02em;
-                  min-height: 48px;
-                  margin: 0 0 10px 0;
+                  min-height: 60px;
+                  margin: 0 0 12px 0;
                 }}
                 .home-uni-location-v207 {{
                   display: flex;
                   align-items: center;
                   gap: 8px;
                   color: #344054;
-                  margin-bottom: 10px;
-                  min-height: 38px;
+                  margin-bottom: 18px;
+                  min-height: 44px;
                 }}
                 .home-uni-location-v207 span {{
                   color: #667085;
@@ -15023,14 +15023,14 @@ def home():
                   display: grid;
                   grid-template-columns: 1fr 1fr;
                   gap: 8px;
-                  margin-top: 4px;
+                  margin-top: 10px;
                 }}
                 .home-uni-stats-v207 div {{
                   border: 1px solid #E4EAF3;
                   border-radius: 10px;
                   background: #FBFCFF;
                   padding: 10px 7px;
-                  min-height: 62px;
+                  min-height: 70px;
                 }}
                 .home-uni-stats-v207 small {{
                   display: block;
@@ -15049,7 +15049,7 @@ def home():
                 }}
                 .home-view-programs-link-v295 {{
                   margin-top: auto;
-                  min-height: 52px;
+                  min-height: 58px;
                   border-radius: 12px;
                   background: #061A40;
                   color: #ffffff !important;
@@ -15112,7 +15112,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=560, scrolling=False)
+            """, height=620, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
@@ -19124,6 +19124,19 @@ def _detail_video_embed_url_v271(url):
             pass
     return s
 
+def _detail_video_autoplay_url_v300(embed_url):
+    """Return a one-click autoplay URL for the detail-page promo video."""
+    s = display_clean_v50(embed_url)
+    if not s:
+        return ""
+    joiner = "&" if "?" in s else "?"
+    lower = s.lower()
+    if "youtube.com/embed/" in lower:
+        return f"{s}{joiner}autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    if "player.vimeo.com/video/" in lower:
+        return f"{s}{joiner}autoplay=1&title=0&byline=0&portrait=0"
+    return s
+
 def _detail_video_html_v271(row, name, hero_src):
     video_url = _detail_value_v264(row, ["University_Video_URL", "Campus_Tour_Video_URL", "Promotion_Video_URL", "Video_URL", "YouTube_Link", "Youtube", "YouTube"], "")
     embed_url = _detail_video_embed_url_v271(video_url)
@@ -19131,17 +19144,17 @@ def _detail_video_html_v271(row, name, hero_src):
     thumb_src = _detail_img_src_v264(thumb) if thumb else hero_src
     safe_name = _safe_html_v62(name)
     if embed_url:
+        safe_embed = _safe_html_v62(_detail_video_autoplay_url_v300(embed_url))
         if embed_url.lower().endswith((".mp4", ".webm", ".ogg")):
-            player = f'<video class="video-player-v271" src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
+            player = f'<video class="video-player-v271" data-src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
         else:
-            player = f'<iframe class="video-player-v271" src="{_safe_html_v62(embed_url)}?rel=0&modestbranding=1" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+            player = f'<iframe class="video-player-v271" data-src="{safe_embed}" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
         return f"""
-<div class="video-card-v264 video-card-v271">
-<input class="video-toggle-v271" id="video-toggle-v271" type="checkbox">
-<label class="video-preview-v271" for="video-toggle-v271" style="background-image:url('{_safe_html_v62(thumb_src)}');">
+<div class="video-card-v264 video-card-v271 video-card-v300">
+<button type="button" class="video-preview-v271 video-preview-v300" aria-label="Play {safe_name} video" style="background-image:url('{_safe_html_v62(thumb_src)}');" onclick="var c=this.closest('.video-card-v300'); if(c){{c.classList.add('playing-v300'); var f=c.querySelector('iframe.video-player-v271'); if(f && !f.getAttribute('src')){{f.setAttribute('src', f.getAttribute('data-src'));}} var v=c.querySelector('video.video-player-v271'); if(v){{if(!v.getAttribute('src')){{v.setAttribute('src', v.getAttribute('data-src'));}} try{{v.play();}}catch(e){{}}}}">
 <span class="play-v264 play-v271">▶</span>
 <span class="video-label-v264 video-label-v271">Discover {safe_name}<br><small>Campus Tour</small></span>
-</label>
+</button>
 <div class="video-embed-wrap-v271">{player}</div>
 </div>"""
     if thumb_src:
@@ -20208,6 +20221,27 @@ def _render_university_detail_v62(u):
   height:100% !important;
   border:0 !important;
 }}
+
+
+/* v300: one-click university promotion video play fix */
+.video-card-v300 .video-preview-v300{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  border:0 !important;
+  text-align:left !important;
+}
+.video-card-v300 .video-embed-wrap-v271{
+  display:none !important;
+}
+.video-card-v300.playing-v300 .video-preview-v300{
+  display:none !important;
+}
+.video-card-v300.playing-v300 .video-embed-wrap-v271{
+  display:block !important;
+}
+.video-card-v300.playing-v300 .video-player-v271{
+  display:block !important;
+}
 
 /* v274: Apply modal internal application flow fix */
 .apply-option-v271:not(.disabled){{
