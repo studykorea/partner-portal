@@ -19000,20 +19000,20 @@ def _render_university_detail_v62(u):
 .section-head-v264{{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}}
 .section-head-v264 a{{color:#123B8A!important;text-decoration:none;font-weight:900}}
 .section-link-v264{{display:inline-flex;margin-top:12px;color:#3157D5!important;text-decoration:none;font-weight:900}}
-.useful-links-section{{background:#ffffff!important;border:1px solid #e2e8f0!important;border-radius:24px!important;padding:58px 48px 88px!important;box-shadow:0 18px 45px rgba(15,23,42,.055)!important;overflow:hidden}}
-.useful-links-header{{display:block;margin:0 0 52px!important}}
+.useful-links-section{{background:#ffffff!important;border:1px solid #e2e8f0!important;border-radius:24px!important;padding:60px 42px 82px!important;box-shadow:0 18px 45px rgba(15,23,42,.055)!important;overflow:hidden}}
+.useful-links-header{{display:block;margin:0 0 56px!important}}
 .useful-links-header h2{{font-size:36px!important;line-height:1.08!important;font-weight:950!important;color:#0f172a!important;margin:0!important;letter-spacing:-.035em!important}}
-.useful-links-accent{{display:block;width:104px;height:6px;border-radius:999px;background:#2563eb;margin-top:28px}}
+.useful-links-accent{{display:block;width:118px;height:6px;border-radius:999px;background:#2563eb;margin-top:30px}}
 .useful-links-header p{{display:none!important}}
-.useful-links-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;align-items:stretch;margin:0!important}}
-.useful-link-card{{min-height:108px;padding:22px 28px;border-radius:14px;border:1px solid #e2e8f0;background:#ffffff;display:flex;align-items:center;gap:22px;text-decoration:none!important;color:#0f172a!important;transition:all .22s ease;box-shadow:0 10px 25px rgba(15,23,42,.045)}}
-.useful-link-card:hover{{transform:translateY(-3px);box-shadow:0 18px 38px rgba(15,23,42,.10);border-color:#cbd5e1;background:#ffffff;color:#0f172a!important}}
-.useful-link-icon{{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:34px;font-weight:950;line-height:1}}
-.useful-link-icon svg{{width:34px;height:34px;display:block}}
-.useful-link-title{{display:block;flex:1;min-width:0;font-size:18px;font-weight:950;color:#0f172a!important;margin:0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.useful-links-grid{{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:22px!important;align-items:stretch!important;margin:0!important;width:100%!important}}
+.useful-link-card{{min-height:118px!important;padding:22px 26px!important;border-radius:14px!important;border:1px solid #e2e8f0!important;background:#ffffff!important;display:grid!important;grid-template-columns:74px minmax(max-content,1fr) 24px!important;align-items:center!important;column-gap:24px!important;text-decoration:none!important;color:#0f172a!important;transition:all .22s ease!important;box-shadow:0 10px 25px rgba(15,23,42,.045)!important;box-sizing:border-box!important;overflow:visible!important}}
+.useful-link-card:hover{{transform:translateY(-3px);box-shadow:0 18px 38px rgba(15,23,42,.10)!important;border-color:#cbd5e1!important;background:#ffffff!important;color:#0f172a!important}}
+.useful-link-icon{{width:74px!important;height:74px!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;font-size:34px!important;font-weight:950!important;line-height:1!important}}
+.useful-link-icon svg{{width:34px!important;height:34px!important;display:block!important}}
+.useful-link-title{{display:block!important;min-width:max-content!important;width:auto!important;max-width:none!important;font-size:16px!important;font-weight:900!important;color:#0f172a!important;margin:0!important;line-height:1.15!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;letter-spacing:-.01em!important}}
 .useful-link-content,.useful-link-description,.useful-link-open{{display:none!important}}
-.useful-link-external{{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#64748b!important;flex-shrink:0;transition:all .2s ease}}
-.useful-link-external svg{{width:22px;height:22px;display:block}}
+.useful-link-external{{width:24px!important;height:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#64748b!important;flex-shrink:0!important;transition:all .2s ease!important;justify-self:end!important}}
+.useful-link-external svg{{width:20px!important;height:20px!important;display:block!important}}
 .useful-link-card:hover .useful-link-external{{color:#2563eb!important;transform:translate(2px,-2px)}}
 .useful-links-empty{{grid-column:1/-1;margin:0;padding:22px;border-radius:16px;background:#f8fafc;border:1px dashed #cbd5e1;color:#64748b!important;font-size:15px;font-weight:800;text-align:center}}
 .useful-link-icon-homepage{{background:#dbeafe;color:#2563eb!important}}
