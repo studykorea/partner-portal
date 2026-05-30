@@ -14823,18 +14823,296 @@ def home():
 
             duplicate_html_v295 = "".join(card_html_v295) if len(card_html_v295) > 1 else ""
             carousel_state_v295 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            st.markdown(f"""
-            <div class="home-featured-carousel-shell-v295 {carousel_state_v295}">
-                <button class="home-carousel-arrow-v295 home-carousel-arrow-left-v295" type="button" aria-label="Previous universities">‹</button>
-                <div class="home-featured-carousel-v295" aria-label="Featured universities carousel">
-                    <div class="home-featured-carousel-track-v295">
-                        {''.join(card_html_v295)}
-                        {duplicate_html_v295}
-                    </div>
+            carousel_cards_html_v298 = ''.join(card_html_v295)
+            carousel_duplicate_html_v298 = duplicate_html_v295
+            carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            components.html(f"""
+            <!doctype html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                html, body {{
+                  margin: 0;
+                  padding: 0;
+                  width: 100%;
+                  min-height: 620px;
+                  overflow: hidden;
+                  background: #ffffff !important;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }}
+                * {{ box-sizing: border-box; }}
+                .carousel-shell {{
+                  position: relative;
+                  width: 100%;
+                  min-height: 610px;
+                  height: 610px;
+                  background: #ffffff !important;
+                  overflow: visible;
+                }}
+                .carousel-window {{
+                  width: 100%;
+                  min-height: 590px;
+                  height: 590px;
+                  overflow-x: auto;
+                  overflow-y: hidden;
+                  scrollbar-width: none;
+                  -webkit-overflow-scrolling: touch;
+                  background: #ffffff !important;
+                }}
+                .carousel-window::-webkit-scrollbar {{ display: none; }}
+                .carousel-track {{
+                  display: flex;
+                  flex-wrap: nowrap;
+                  align-items: stretch;
+                  gap: 28px;
+                  width: max-content;
+                  height: 570px;
+                  padding: 6px 0 18px 0;
+                  background: #ffffff !important;
+                  will-change: transform;
+                }}
+                .carousel-shell.is-animated .carousel-track {{
+                  animation: featuredSlideV298 34s linear infinite;
+                }}
+                .carousel-shell:hover .carousel-track {{
+                  animation-play-state: paused;
+                }}
+                @keyframes featuredSlideV298 {{
+                  from {{ transform: translateX(0); }}
+                  to {{ transform: translateX(calc(-50% - 14px)); }}
+                }}
+                .home-carousel-slide-v295 {{
+                  flex: 0 0 calc((100vw - 112px) / 5);
+                  width: calc((100vw - 112px) / 5);
+                  min-width: 260px;
+                  max-width: 340px;
+                  height: 548px;
+                  scroll-snap-align: start;
+                }}
+                .home-uni-card-v207 {{
+                  position: relative;
+                  background: #ffffff !important;
+                  border: 1px solid #DCE6F4;
+                  border-radius: 18px;
+                  overflow: hidden;
+                  box-shadow: 0 14px 34px rgba(16,24,40,.08);
+                  width: 100%;
+                  height: 540px;
+                  min-height: 540px;
+                  display: flex;
+                  flex-direction: column;
+                  transition: transform .2s ease, box-shadow .2s ease;
+                }}
+                .home-uni-card-v207:hover {{
+                  transform: translateY(-3px);
+                  box-shadow: 0 18px 42px rgba(16,24,40,.12);
+                }}
+                .home-uni-image-wrap-v207 {{
+                  position: relative;
+                  height: 168px;
+                  overflow: hidden;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                  flex: 0 0 168px;
+                }}
+                .home-featured-photo-v207 {{
+                  width: 100%;
+                  height: 168px;
+                  object-fit: cover;
+                  display: block;
+                }}
+                .home-featured-photo-placeholder-v207 {{
+                  height: 168px;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                  color: #667085;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 850;
+                }}
+                .home-uni-featured-pill-v207 {{
+                  position: absolute;
+                  top: 16px;
+                  left: 16px;
+                  background: #001F48;
+                  color: #ffffff;
+                  padding: 8px 14px;
+                  border-radius: 999px;
+                  font-size: 12px;
+                  font-weight: 900;
+                  box-shadow: 0 8px 16px rgba(0,31,72,.22);
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  position: absolute;
+                  left: 24px;
+                  top: 132px;
+                  width: 76px;
+                  height: 76px;
+                  border-radius: 50%;
+                  background: #ffffff;
+                  border: 1px solid #E4EAF3;
+                  box-shadow: 0 10px 24px rgba(16,24,40,.12);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  overflow: hidden;
+                  z-index: 3;
+                }}
+                .home-featured-logo-v207 {{
+                  width: 62px;
+                  height: 62px;
+                  object-fit: contain;
+                  display: block;
+                }}
+                .home-featured-logo-placeholder-v207 {{
+                  width: 62px;
+                  height: 62px;
+                  border-radius: 50%;
+                  background: #F4F7FB;
+                  color: #98A2B3;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 12px;
+                  font-weight: 900;
+                }}
+                .home-uni-body-v207 {{
+                  flex: 1 1 auto;
+                  display: flex;
+                  flex-direction: column;
+                  padding: 52px 18px 18px 18px;
+                }}
+                .home-uni-body-v207 h3 {{
+                  color: #061A40;
+                  font-size: 21px;
+                  line-height: 1.28;
+                  font-weight: 950;
+                  letter-spacing: -0.02em;
+                  min-height: 60px;
+                  margin: 0 0 12px 0;
+                }}
+                .home-uni-location-v207 {{
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  color: #344054;
+                  margin-bottom: 18px;
+                  min-height: 44px;
+                }}
+                .home-uni-location-v207 span {{
+                  color: #667085;
+                  font-size: 19px;
+                  width: 20px;
+                  min-width: 20px;
+                  display: inline-flex;
+                }}
+                .home-location-pin-v208 svg {{
+                  width: 18px;
+                  height: 18px;
+                  fill: #667085;
+                }}
+                .home-uni-location-v207 em {{
+                  color: #344054;
+                  font-size: 14px;
+                  line-height: 1.35;
+                  font-style: normal;
+                  font-weight: 650;
+                }}
+                .home-uni-stats-v207 {{
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 8px;
+                  margin-top: 10px;
+                }}
+                .home-uni-stats-v207 div {{
+                  border: 1px solid #E4EAF3;
+                  border-radius: 10px;
+                  background: #FBFCFF;
+                  padding: 10px 7px;
+                  min-height: 70px;
+                }}
+                .home-uni-stats-v207 small {{
+                  display: block;
+                  color: #475467;
+                  font-size: 11px;
+                  line-height: 1.25;
+                  font-weight: 700;
+                  margin-bottom: 8px;
+                }}
+                .home-uni-stats-v207 b {{
+                  display: block;
+                  color: #061A40;
+                  font-size: 15px;
+                  line-height: 1.15;
+                  font-weight: 950;
+                }}
+                .home-view-programs-link-v295 {{
+                  margin-top: auto;
+                  min-height: 58px;
+                  border-radius: 12px;
+                  background: #061A40;
+                  color: #ffffff !important;
+                  text-decoration: none;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 0 22px;
+                  font-weight: 950;
+                  font-size: 16px;
+                }}
+                .home-view-programs-link-v295 span,
+                .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
+                .carousel-arrow {{
+                  position: absolute;
+                  top: 46%;
+                  transform: translateY(-50%);
+                  z-index: 20;
+                  width: 46px;
+                  height: 46px;
+                  border-radius: 999px;
+                  border: 1px solid rgba(215,222,233,.95);
+                  background: rgba(255,255,255,.96);
+                  color: #061a40;
+                  font-size: 28px;
+                  font-weight: 900;
+                  box-shadow: 0 12px 28px rgba(16,24,40,.14);
+                  pointer-events: none;
+                }}
+                .left {{ left: 0; }}
+                .right {{ right: 0; }}
+                @media (max-width: 1535px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 72px) / 4); width: calc((100vw - 72px) / 4); }}
+                }}
+                @media (max-width: 1024px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 44px) / 3); width: calc((100vw - 44px) / 3); min-width: 250px; }}
+                  .carousel-track {{ gap: 22px; }}
+                }}
+                @media (max-width: 768px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 18px) / 2); width: calc((100vw - 18px) / 2); min-width: 250px; }}
+                  .carousel-track {{ gap: 18px; }}
+                  .carousel-arrow {{ display: none; }}
+                }}
+                @media (max-width: 520px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px); width: calc(100vw - 24px); min-width: calc(100vw - 24px); }}
+                  .carousel-track {{ gap: 16px; }}
+                }}
+              </style>
+            </head>
+            <body>
+              <div class="carousel-shell {carousel_animation_class_v298}">
+                <button class="carousel-arrow left" aria-label="Previous">‹</button>
+                <div class="carousel-window">
+                  <div class="carousel-track">
+                    {carousel_cards_html_v298}
+                    {carousel_duplicate_html_v298}
+                  </div>
                 </div>
-                <button class="home-carousel-arrow-v295 home-carousel-arrow-right-v295" type="button" aria-label="Next universities">›</button>
-            </div>
-            """, unsafe_allow_html=True)
+                <button class="carousel-arrow right" aria-label="Next">›</button>
+              </div>
+            </body>
+            </html>
+            """, height=620, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
@@ -27798,70 +28076,54 @@ div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) > div[data-testid=
 </style>
 """, unsafe_allow_html=True)
 
-# v297: Featured Universities carousel visibility and height fix
+# v295: Dynamic Featured Universities carousel on Partner Portal / Home page
 st.markdown("""
 <style>
-/* The v295 carousel was rendering with the cards visually pushed below the carousel area on some Streamlit builds.
-   This version gives the carousel an explicit visible height and uses simple, browser-safe slide widths. */
 .home-featured-carousel-shell-v295 {
   position: relative !important;
   width: var(--v294-partner-container, min(calc(100% - 64px), 1680px)) !important;
   max-width: var(--v294-partner-max, 1680px) !important;
-  margin: 0 auto 34px auto !important;
-  min-height: 570px !important;
-  height: 570px !important;
+  margin: 0 auto !important;
   box-sizing: border-box !important;
-  overflow: visible !important;
 }
 .home-featured-carousel-v295 {
   width: 100% !important;
-  height: 570px !important;
-  min-height: 570px !important;
   overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow-y: visible !important;
   scroll-snap-type: x mandatory !important;
   -webkit-overflow-scrolling: touch !important;
   scrollbar-width: none !important;
-  padding: 0 0 20px 0 !important;
-  box-sizing: border-box !important;
+  padding: 2px 0 10px 0 !important;
 }
 .home-featured-carousel-v295::-webkit-scrollbar { display: none !important; }
 .home-featured-carousel-track-v295 {
   display: flex !important;
-  flex-wrap: nowrap !important;
   align-items: stretch !important;
   gap: 28px !important;
-  height: 548px !important;
-  min-height: 548px !important;
   width: max-content !important;
   will-change: transform !important;
 }
 .home-featured-carousel-shell-v295.is-animated .home-featured-carousel-track-v295 {
-  animation: homeFeaturedCarouselV297 32s linear infinite !important;
+  animation: homeFeaturedCarouselV295 28s linear infinite !important;
 }
 .home-featured-carousel-shell-v295:hover .home-featured-carousel-track-v295 {
   animation-play-state: paused !important;
 }
-@keyframes homeFeaturedCarouselV297 {
+@keyframes homeFeaturedCarouselV295 {
   from { transform: translateX(0); }
   to { transform: translateX(calc(-50% - 14px)); }
 }
 .home-carousel-slide-v295 {
-  flex: 0 0 320px !important;
-  width: 320px !important;
-  max-width: 320px !important;
-  min-width: 320px !important;
-  height: 548px !important;
+  flex: 0 0 calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
+  width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
+  min-width: 0 !important;
   scroll-snap-align: start !important;
   box-sizing: border-box !important;
 }
 .home-carousel-card-v295 {
   margin: 0 !important;
   width: 100% !important;
-  min-height: 540px !important;
   height: 540px !important;
-  display: flex !important;
-  flex-direction: column !important;
 }
 .home-view-programs-link-v295 {
   text-decoration: none !important;
@@ -27878,11 +28140,11 @@ st.markdown("""
 }
 .home-carousel-arrow-v295 {
   position: absolute !important;
-  top: 47% !important;
+  top: 50% !important;
   transform: translateY(-50%) !important;
-  z-index: 10 !important;
-  width: 46px !important;
-  height: 46px !important;
+  z-index: 5 !important;
+  width: 44px !important;
+  height: 44px !important;
   border-radius: 999px !important;
   border: 1px solid rgba(215, 222, 233, .95) !important;
   background: rgba(255, 255, 255, .96) !important;
@@ -27893,62 +28155,34 @@ st.markdown("""
   box-shadow: 0 12px 28px rgba(16, 24, 40, .14) !important;
   pointer-events: none !important;
 }
-.home-carousel-arrow-left-v295 { left: -22px !important; }
-.home-carousel-arrow-right-v295 { right: -22px !important; }
-.home-featured-note-v207 {
-  margin-top: 10px !important;
-}
-@media (min-width: 1700px) {
-  .home-carousel-slide-v295 {
-    flex-basis: 324px !important;
-    width: 324px !important;
-    min-width: 324px !important;
-    max-width: 324px !important;
-  }
-}
+.home-carousel-arrow-left-v295 { left: -18px !important; }
+.home-carousel-arrow-right-v295 { right: -18px !important; }
 @media (max-width: 1535px) {
   .home-carousel-slide-v295 {
-    flex-basis: 300px !important;
-    width: 300px !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
+    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
+    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
   }
 }
 @media (max-width: 1279px) {
   .home-featured-carousel-track-v295 { gap: 22px !important; }
   .home-carousel-slide-v295 {
-    flex-basis: 31vw !important;
-    width: 31vw !important;
-    min-width: 280px !important;
-    max-width: 320px !important;
+    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
+    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
   }
 }
 @media (max-width: 768px) {
-  .home-featured-carousel-shell-v295,
-  .home-featured-carousel-v295 {
-    height: 560px !important;
-    min-height: 560px !important;
-  }
-  .home-featured-carousel-track-v295 {
-    gap: 18px !important;
-    height: 540px !important;
-    min-height: 540px !important;
-  }
+  .home-featured-carousel-track-v295 { gap: 18px !important; }
   .home-carousel-slide-v295 {
-    flex-basis: calc((100vw - 64px) / 2) !important;
-    width: calc((100vw - 64px) / 2) !important;
-    min-width: 250px !important;
-    max-width: 320px !important;
+    flex-basis: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
+    width: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
   }
   .home-carousel-arrow-v295 { display: none !important; }
 }
 @media (max-width: 520px) {
   .home-featured-carousel-track-v295 { gap: 16px !important; }
   .home-carousel-slide-v295 {
-    flex-basis: calc(100vw - 48px) !important;
-    width: calc(100vw - 48px) !important;
-    min-width: calc(100vw - 48px) !important;
-    max-width: calc(100vw - 48px) !important;
+    flex-basis: var(--v294-partner-container, calc(100% - 24px)) !important;
+    width: var(--v294-partner-container, calc(100% - 24px)) !important;
   }
 }
 </style>
