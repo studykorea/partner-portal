@@ -14778,21 +14778,21 @@ def home():
                 ]
 
         if len(featured_df_v207) == 0:
-            st.warning("No featured universities match your search/filter.")
+            st.info("Featured universities will be updated soon.")
         else:
-            show_df_v207 = featured_df_v207.head(5).reset_index(drop=True)
-            cols_v207 = st.columns(len(show_df_v207), gap="medium")
-            for idx_v207, (_, u) in enumerate(show_df_v207.iterrows()):
+            show_df_v207 = featured_df_v207.reset_index(drop=True)
+            card_html_v295 = []
+            for _, u in show_df_v207.iterrows():
                 uni_name_v207 = display_value_v53(u.get("University", "")) or "University"
                 location_v207 = _home_location_v207(u)
                 total_students_v207 = _home_total_students_v207(u)
                 intl_students_v207 = _home_international_students_v207(u)
                 image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""))
                 logo_html_v207 = _home_featured_logo_html_v207(u.get("University_Logo", ""), uni_name_v207)
-
-                with cols_v207[idx_v207]:
-                    st.markdown(f"""
-                    <div class="home-uni-card-v207">
+                uni_q_v295 = quote(str(uni_name_v207), safe="")
+                card_html_v295.append(f"""
+                <article class="home-carousel-slide-v295">
+                    <div class="home-uni-card-v207 home-carousel-card-v295">
                         <div class="home-uni-image-wrap-v207">
                             {image_html_v207}
                             <div class="home-uni-featured-pill-v207">★ Featured</div>
@@ -14812,16 +14812,28 @@ def home():
                                 <div><small>Total Students</small><b>{_safe_html_v62(total_students_v207)}</b></div>
                                 <div><small>International Students</small><b>{_safe_html_v62(intl_students_v207)}</b></div>
                             </div>
-                            <form method="get" target="_self" class="home-view-programs-form-v208">
-                                <input type="hidden" name="go" value="universities">
-                                <input type="hidden" name="homeuni" value="{_safe_html_v62(uni_name_v207)}">
-                                <button type="submit" class="home-view-programs-btn-v208">
-                                    <span>View Programs</span><b>→</b>
-                                </button>
-                            </form>
+                            <a class="home-view-programs-btn-v208 home-view-programs-link-v295" href="?go=universities&homeuni={uni_q_v295}" target="_self">
+                                <span>View Programs</span><b>→</b>
+                            </a>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
+                </article>
+                """)
+
+            duplicate_html_v295 = "".join(card_html_v295) if len(card_html_v295) > 1 else ""
+            carousel_state_v295 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            st.markdown(f"""
+            <div class="home-featured-carousel-shell-v295 {carousel_state_v295}">
+                <button class="home-carousel-arrow-v295 home-carousel-arrow-left-v295" type="button" aria-label="Previous universities">‹</button>
+                <div class="home-featured-carousel-v295" aria-label="Featured universities carousel">
+                    <div class="home-featured-carousel-track-v295">
+                        {''.join(card_html_v295)}
+                        {duplicate_html_v295}
+                    </div>
+                </div>
+                <button class="home-carousel-arrow-v295 home-carousel-arrow-right-v295" type="button" aria-label="Next universities">›</button>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("""
         <div class="home-featured-note-v207">
@@ -27780,6 +27792,118 @@ div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) > div[data-testid=
 
   div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) {
     gap: 20px !important;
+  }
+}
+</style>
+""", unsafe_allow_html=True)
+
+# v295: Dynamic Featured Universities carousel on Partner Portal / Home page
+st.markdown("""
+<style>
+.home-featured-carousel-shell-v295 {
+  position: relative !important;
+  width: var(--v294-partner-container, min(calc(100% - 64px), 1680px)) !important;
+  max-width: var(--v294-partner-max, 1680px) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+.home-featured-carousel-v295 {
+  width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 2px 0 10px 0 !important;
+}
+.home-featured-carousel-v295::-webkit-scrollbar { display: none !important; }
+.home-featured-carousel-track-v295 {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 28px !important;
+  width: max-content !important;
+  will-change: transform !important;
+}
+.home-featured-carousel-shell-v295.is-animated .home-featured-carousel-track-v295 {
+  animation: homeFeaturedCarouselV295 28s linear infinite !important;
+}
+.home-featured-carousel-shell-v295:hover .home-featured-carousel-track-v295 {
+  animation-play-state: paused !important;
+}
+@keyframes homeFeaturedCarouselV295 {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 14px)); }
+}
+.home-carousel-slide-v295 {
+  flex: 0 0 calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
+  width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
+  min-width: 0 !important;
+  scroll-snap-align: start !important;
+  box-sizing: border-box !important;
+}
+.home-carousel-card-v295 {
+  margin: 0 !important;
+  width: 100% !important;
+  height: 540px !important;
+}
+.home-view-programs-link-v295 {
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.home-view-programs-link-v295 span,
+.home-view-programs-link-v295 b {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.home-carousel-arrow-v295 {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 5 !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(215, 222, 233, .95) !important;
+  background: rgba(255, 255, 255, .96) !important;
+  color: #061a40 !important;
+  -webkit-text-fill-color: #061a40 !important;
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 12px 28px rgba(16, 24, 40, .14) !important;
+  pointer-events: none !important;
+}
+.home-carousel-arrow-left-v295 { left: -18px !important; }
+.home-carousel-arrow-right-v295 { right: -18px !important; }
+@media (max-width: 1535px) {
+  .home-carousel-slide-v295 {
+    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
+    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
+  }
+}
+@media (max-width: 1279px) {
+  .home-featured-carousel-track-v295 { gap: 22px !important; }
+  .home-carousel-slide-v295 {
+    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
+    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
+  }
+}
+@media (max-width: 768px) {
+  .home-featured-carousel-track-v295 { gap: 18px !important; }
+  .home-carousel-slide-v295 {
+    flex-basis: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
+    width: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
+  }
+  .home-carousel-arrow-v295 { display: none !important; }
+}
+@media (max-width: 520px) {
+  .home-featured-carousel-track-v295 { gap: 16px !important; }
+  .home-carousel-slide-v295 {
+    flex-basis: var(--v294-partner-container, calc(100% - 24px)) !important;
+    width: var(--v294-partner-container, calc(100% - 24px)) !important;
   }
 }
 </style>
