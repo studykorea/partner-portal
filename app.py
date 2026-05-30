@@ -18017,6 +18017,87 @@ def university_student_stats_html_v106(u):
     </div>
     """.strip()
 
+
+
+def university_student_enrollment_section_v284(u):
+    """University Detail Page student enrollment section.
+    Uses only admin/database-uploaded student statistics. No fake/default chart values.
+    """
+    year = display_clean_v50(u.get("Student_Data_Year", "")).strip()
+    ug = _to_int_v106(u.get("Undergraduate_Students", ""))
+    grad = _to_int_v106(u.get("Graduate_Students", ""))
+    lang = _to_int_v106(u.get("Language_Study_Students", ""))
+    nationalities = nationality_list_v106(u.get("Nationality_Students_JSON", ""))[:5]
+
+    total_program = ug + grad + lang
+    year_html = f'<span class="student-year-pill-v284">{_safe_html_v62(year)}</span>' if year else ''
+
+    program_rows = ""
+    if total_program > 0:
+        program_items = [
+            ("Undergraduate", ug, "#3157D5"),
+            ("Graduate", grad, "#7C3AED"),
+            ("Language Study", lang, "#F59E0B"),
+        ]
+        for label, value, color in program_items:
+            if value <= 0:
+                continue
+            pct = max(5, min(100, round((value / max(total_program, 1)) * 100, 1)))
+            program_rows += f"""
+            <div class="student-row-v284">
+                <div class="student-row-top-v284">
+                    <span>{_safe_html_v62(label)}</span>
+                    <b>{value:,}</b>
+                </div>
+                <div class="student-track-v284"><div class="student-fill-v284" style="width:{pct}%;background:{color};"></div></div>
+            </div>
+            """
+    else:
+        program_rows = '<div class="student-empty-v284">Program-level enrollment data will be updated soon.</div>'
+
+    nationality_rows = ""
+    if nationalities:
+        max_country = max([x["count"] for x in nationalities] + [1])
+        for item in nationalities:
+            country = item["country"]
+            count = item["count"]
+            pct = max(6, min(100, round((count / max_country) * 100, 1)))
+            nationality_rows += f"""
+            <div class="nationality-row-v284">
+                <div class="nationality-row-top-v284">
+                    <div class="nationality-name-v284">{country_flag_html_v108(country)}<span>{_safe_html_v62(country)}</span></div>
+                    <b>{count:,}</b>
+                </div>
+                <div class="student-track-v284"><div class="student-fill-v284 nationality-fill-v284" style="width:{pct}%;"></div></div>
+            </div>
+            """
+    else:
+        nationality_rows = '<div class="student-empty-v284">Top nationality data will be updated soon.</div>'
+
+    total_pill = f'<span class="student-total-v284">Total shown: {total_program:,}</span>' if total_program > 0 else ''
+
+    return f"""
+    <section class="detail-section-v264 student-enrollment-section-v284" id="campus-v264">
+      <div class="student-enrollment-head-v284">
+        <div>
+          <h3>Student Enrollment Information</h3>
+          <p>Enrollment data uploaded by the university admin. {year_html}</p>
+        </div>
+        {total_pill}
+      </div>
+      <div class="student-enrollment-grid-v284">
+        <div class="student-chart-card-v284">
+          <div class="student-card-title-v284"><span class="student-title-icon-v284">🎓</span><h4>Students by Program Level</h4></div>
+          {program_rows}
+        </div>
+        <div class="student-chart-card-v284">
+          <div class="student-card-title-v284"><span class="student-title-icon-v284">🌍</span><h4>Top Nationalities</h4></div>
+          {nationality_rows}
+        </div>
+      </div>
+    </section>
+    """.strip()
+
 def normalize_url_v103(url):
     """Return a clickable URL. Adds https:// if admin typed only domain."""
     url = display_clean_v50(url).strip()
@@ -18931,6 +19012,8 @@ def _render_university_detail_v62(u):
     video_card_html_v271 = _detail_video_html_v271(row, name, hero_src)
     apply_modal_html_v271 = _detail_apply_modal_html_v271(row, name)
 
+    student_enrollment_section = university_student_enrollment_section_v284(row)
+
     html = f"""
 <style>
 .detail-premium-v264{{max-width:1680px;margin:10px auto 34px;padding:0 20px 20px;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#0F172A}}
@@ -19023,13 +19106,32 @@ def _render_university_detail_v62(u):
 .useful-link-icon-youtube{{background:#fee2e2;color:#ef1b1b!important}}
 .useful-link-icon-map{{background:linear-gradient(135deg,#dcfce7,#dbeafe);color:#0f9f6e!important}}
 .useful-link-icon-admission{{background:#e0e7ff;color:#0f172a!important}}
-.enrollment-v264{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
-.chart-card-v264{{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:18px}}
-.chart-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950}}
-.chart-row-v264{{margin:12px 0}}
-.chart-label-v264{{display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:#334155;margin-bottom:6px}}
-.chart-bar-v264{{height:10px;border-radius:999px;background:#E2E8F0;overflow:hidden}}
-.chart-fill-v264{{height:100%;border-radius:999px;background:linear-gradient(90deg,#123B8A,#4064E8)}}
+.student-enrollment-section-v284{{padding:34px!important;border-radius:24px!important;background:#ffffff!important;border:1px solid #e2e8f0!important;box-shadow:0 16px 42px rgba(15,23,42,.055)!important}}
+.student-enrollment-head-v284{{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:18px!important;margin-bottom:24px!important}}
+.student-enrollment-head-v284 h3{{margin:0!important;font-size:26px!important;line-height:1.15!important;font-weight:950!important;color:#0f172a!important;letter-spacing:-.025em!important}}
+.student-enrollment-head-v284 p{{margin:8px 0 0!important;color:#64748b!important;font-size:14px!important;font-weight:750!important;line-height:1.45!important}}
+.student-year-pill-v284,.student-total-v284{{display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:999px!important;padding:8px 13px!important;font-size:13px!important;font-weight:900!important;white-space:nowrap!important}}
+.student-year-pill-v284{{margin-left:8px!important;background:#eef2ff!important;color:#3157d5!important}}
+.student-total-v284{{background:#eff6ff!important;color:#1d4ed8!important;border:1px solid #bfdbfe!important}}
+.student-enrollment-grid-v284{{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:22px!important}}
+.student-chart-card-v284{{min-height:210px!important;background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%)!important;border:1px solid #e2e8f0!important;border-radius:20px!important;padding:24px!important;box-shadow:0 10px 26px rgba(15,23,42,.045)!important}}
+.student-card-title-v284{{display:flex!important;align-items:center!important;gap:12px!important;margin-bottom:20px!important}}
+.student-card-title-v284 h4{{margin:0!important;font-size:20px!important;font-weight:950!important;color:#0f172a!important;letter-spacing:-.015em!important}}
+.student-title-icon-v284{{width:42px!important;height:42px!important;border-radius:14px!important;background:#eef2ff!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:22px!important;flex-shrink:0!important}}
+.student-row-v284,.nationality-row-v284{{margin:0 0 17px!important}}
+.student-row-v284:last-child,.nationality-row-v284:last-child{{margin-bottom:0!important}}
+.student-row-top-v284,.nationality-row-top-v284{{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;margin-bottom:8px!important;color:#334155!important}}
+.student-row-top-v284 span,.nationality-name-v284 span{{font-size:15px!important;font-weight:900!important;color:#0f172a!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}}
+.student-row-top-v284 b,.nationality-row-top-v284 b{{font-size:15px!important;font-weight:950!important;color:#1e293b!important;white-space:nowrap!important}}
+.student-track-v284{{width:100%!important;height:12px!important;border-radius:999px!important;background:#e2e8f0!important;overflow:hidden!important}}
+.student-fill-v284{{height:100%!important;border-radius:999px!important;box-shadow:inset 0 -1px 0 rgba(255,255,255,.25)!important}}
+.nationality-fill-v284{{background:linear-gradient(90deg,#0ea5e9,#3157d5)!important}}
+.nationality-name-v284{{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important}}
+.flag-img-wrap-v108{{width:34px!important;height:34px!important;border-radius:999px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;background:#f1f5f9!important;box-shadow:0 1px 3px rgba(15,23,42,.10)!important;flex:0 0 auto!important}}
+.flag-img-v108{{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}}
+.flag-fallback-v108{{width:34px!important;height:34px!important;border-radius:999px!important;background:#eef2ff!important;color:#3157d5!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:950!important;flex:0 0 auto!important}}
+.student-empty-v284{{height:126px!important;border-radius:16px!important;border:1px dashed #cbd5e1!important;background:#f8fafc!important;color:#64748b!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:18px!important;font-size:15px!important;font-weight:850!important;line-height:1.45!important}}
+@media(max-width:900px){{.student-enrollment-grid-v284{{grid-template-columns:1fr!important}}.student-enrollment-head-v284{{flex-direction:column!important}}}}
 .info-grid-v264{{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}}
 .map-card-v264 p{{margin:0 0 14px;color:#475569!important;font-weight:650}}
 .map-card-v264 iframe{{width:100%;height:380px;border:0;border-radius:18px}}
@@ -20320,21 +20422,7 @@ def _render_university_detail_v62(u):
 
   {useful_section}
 
-  <section class="detail-section-v264" id="campus-v264">
-    <div class="section-head-v264"><h3>Student Enrollment Information</h3></div>
-    <div class="enrollment-v264">
-      <div class="chart-card-v264">
-        <h4>Students by Program Level</h4>
-        <div class="chart-row-v264"><div class="chart-label-v264"><span>Undergraduate</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:68%"></div></div></div>
-        <div class="chart-row-v264"><div class="chart-label-v264"><span>Graduate</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:42%"></div></div></div>
-        <div class="chart-row-v264"><div class="chart-label-v264"><span>Language Study</span><b>Information will be updated soon</b></div><div class="chart-bar-v264"><div class="chart-fill-v264" style="width:34%"></div></div></div>
-      </div>
-      <div class="chart-card-v264">
-        <h4>Top Nationalities</h4>
-        <p class="muted-v264">Enrollment data will be updated soon.</p>
-      </div>
-    </div>
-  </section>
+  {student_enrollment_section}
 
   <section id="contact-v264" class="detail-section-v264">
     <div class="section-head-v264"><h3>University Contact / Info Grid</h3></div>
