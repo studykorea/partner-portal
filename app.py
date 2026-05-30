@@ -9353,6 +9353,26 @@ section.main > div,
 .favorite-heart-v287:hover{transform:scale(1.08)!important;background:rgba(255,255,255,.24)!important;}
 .favorite-heart-v287.saved{color:#ef4444!important;-webkit-text-fill-color:#ef4444!important;background:#fff!important;text-shadow:none!important;border-color:#fff!important;}
 .favorite-heart-v287.unsaved{color:#fff!important;-webkit-text-fill-color:#fff!important;}
+/* v288: Make Streamlit toast readable for favorite/login messages */
+div[data-testid="stToast"]{
+    background:linear-gradient(135deg,#0B1F5B,#1D4ED8)!important;
+    border:1px solid rgba(255,255,255,.22)!important;
+    border-radius:16px!important;
+    box-shadow:0 18px 42px rgba(15,23,42,.22)!important;
+}
+div[data-testid="stToast"] *{
+    color:#FFFFFF!important;
+    -webkit-text-fill-color:#FFFFFF!important;
+    opacity:1!important;
+}
+div[data-testid="stToast"] svg{
+    color:#FFFFFF!important;
+    fill:#FFFFFF!important;
+    stroke:#FFFFFF!important;
+}
+div[data-testid="stToast"] button{
+    color:#FFFFFF!important;
+}
 .favorite-card-grid-v287{width:calc(100% - 32px)!important;max-width:1760px!important;margin:18px auto 0 auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important;}
 .favorite-page-shell-v287{width:calc(100% - 32px)!important;max-width:1760px!important;margin:16px auto 40px auto!important;background:#fff!important;border:1px solid #E5ECF6!important;border-radius:24px!important;padding:30px!important;box-shadow:0 16px 42px rgba(15,23,42,.06)!important;}
 .favorite-page-shell-v287 h1{font-size:32px!important;font-weight:950!important;color:#061A40!important;margin:0 0 8px 0!important;}
