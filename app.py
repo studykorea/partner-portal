@@ -20223,25 +20223,25 @@ def _render_university_detail_v62(u):
 }}
 
 
-/* v300: one-click university promotion video play fix */
-.video-card-v300 .video-preview-v300{
+/* v300/v301: one-click university promotion video play fix */
+.video-card-v300 .video-preview-v300{{
   appearance:none !important;
   -webkit-appearance:none !important;
   border:0 !important;
   text-align:left !important;
-}
-.video-card-v300 .video-embed-wrap-v271{
+}}
+.video-card-v300 .video-embed-wrap-v271{{
   display:none !important;
-}
-.video-card-v300.playing-v300 .video-preview-v300{
+}}
+.video-card-v300.playing-v300 .video-preview-v300{{
   display:none !important;
-}
-.video-card-v300.playing-v300 .video-embed-wrap-v271{
+}}
+.video-card-v300.playing-v300 .video-embed-wrap-v271{{
   display:block !important;
-}
-.video-card-v300.playing-v300 .video-player-v271{
+}}
+.video-card-v300.playing-v300 .video-player-v271{{
   display:block !important;
-}
+}}
 
 /* v274: Apply modal internal application flow fix */
 .apply-option-v271:not(.disabled){{
