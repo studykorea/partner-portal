@@ -1118,7 +1118,7 @@ section[data-testid="stSidebar"]{display:none;}
 .public-left-box {
     background: linear-gradient(90deg,#002B5B,#053B7A);
     padding: 48px 46px;
-    min-height: 620px;
+    min-height: 560px;
     border-radius: 0;
 }
 .public-left-box, .public-left-box * {
@@ -1392,7 +1392,7 @@ div[data-testid="stVerticalBlock"] > div:empty {
 .partner-hero h1 {
     font-size: 42px;
     line-height: 1.14;
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
     font-weight: 900;
 }
 .partner-hero p {
@@ -14837,7 +14837,7 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 620px;
+                  min-height: 560px;
                   overflow: hidden;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -14846,15 +14846,15 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 610px;
-                  height: 610px;
+                  min-height: 540px;
+                  height: 540px;
                   background: #ffffff !important;
                   overflow: visible;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  min-height: 590px;
-                  height: 590px;
+                  min-height: 530px;
+                  height: 530px;
                   overflow-x: auto;
                   overflow-y: hidden;
                   scrollbar-width: none;
@@ -14868,8 +14868,8 @@ def home():
                   align-items: stretch;
                   gap: 28px;
                   width: max-content;
-                  height: 570px;
-                  padding: 6px 0 18px 0;
+                  height: 520px;
+                  padding: 6px 0 12px 0;
                   background: #ffffff !important;
                   will-change: transform;
                 }}
@@ -14888,7 +14888,7 @@ def home():
                   width: calc((100vw - 112px) / 5);
                   min-width: 260px;
                   max-width: 340px;
-                  height: 548px;
+                  height: 500px;
                   scroll-snap-align: start;
                 }}
                 .home-uni-card-v207 {{
@@ -14899,8 +14899,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 540px;
-                  min-height: 540px;
+                  height: 490px;
+                  min-height: 490px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -14911,19 +14911,19 @@ def home():
                 }}
                 .home-uni-image-wrap-v207 {{
                   position: relative;
-                  height: 168px;
+                  height: 146px;
                   overflow: hidden;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 168px;
+                  flex: 0 0 146px;
                 }}
                 .home-featured-photo-v207 {{
                   width: 100%;
-                  height: 168px;
+                  height: 146px;
                   object-fit: cover;
                   display: block;
                 }}
                 .home-featured-photo-placeholder-v207 {{
-                  height: 168px;
+                  height: 146px;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
                   color: #667085;
                   display: flex;
@@ -14946,9 +14946,9 @@ def home():
                 .home-uni-logo-overlap-v207 {{
                   position: absolute;
                   left: 24px;
-                  top: 132px;
-                  width: 76px;
-                  height: 76px;
+                  top: 112px;
+                  width: 72px;
+                  height: 72px;
                   border-radius: 50%;
                   background: #ffffff;
                   border: 1px solid #E4EAF3;
@@ -14960,14 +14960,14 @@ def home():
                   z-index: 3;
                 }}
                 .home-featured-logo-v207 {{
-                  width: 62px;
-                  height: 62px;
+                  width: 58px;
+                  height: 58px;
                   object-fit: contain;
                   display: block;
                 }}
                 .home-featured-logo-placeholder-v207 {{
-                  width: 62px;
-                  height: 62px;
+                  width: 58px;
+                  height: 58px;
                   border-radius: 50%;
                   background: #F4F7FB;
                   color: #98A2B3;
@@ -14981,24 +14981,24 @@ def home():
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 52px 18px 18px 18px;
+                  padding: 46px 18px 16px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
-                  font-size: 21px;
-                  line-height: 1.28;
+                  font-size: 19px;
+                  line-height: 1.24;
                   font-weight: 950;
                   letter-spacing: -0.02em;
-                  min-height: 60px;
-                  margin: 0 0 12px 0;
+                  min-height: 48px;
+                  margin: 0 0 10px 0;
                 }}
                 .home-uni-location-v207 {{
                   display: flex;
                   align-items: center;
                   gap: 8px;
                   color: #344054;
-                  margin-bottom: 18px;
-                  min-height: 44px;
+                  margin-bottom: 10px;
+                  min-height: 38px;
                 }}
                 .home-uni-location-v207 span {{
                   color: #667085;
@@ -15023,14 +15023,14 @@ def home():
                   display: grid;
                   grid-template-columns: 1fr 1fr;
                   gap: 8px;
-                  margin-top: 10px;
+                  margin-top: 4px;
                 }}
                 .home-uni-stats-v207 div {{
                   border: 1px solid #E4EAF3;
                   border-radius: 10px;
                   background: #FBFCFF;
                   padding: 10px 7px;
-                  min-height: 70px;
+                  min-height: 62px;
                 }}
                 .home-uni-stats-v207 small {{
                   display: block;
@@ -15049,7 +15049,7 @@ def home():
                 }}
                 .home-view-programs-link-v295 {{
                   margin-top: auto;
-                  min-height: 58px;
+                  min-height: 52px;
                   border-radius: 12px;
                   background: #061A40;
                   color: #ffffff !important;
@@ -15112,7 +15112,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=620, scrolling=False)
+            """, height=560, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
