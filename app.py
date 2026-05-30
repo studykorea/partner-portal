@@ -18576,6 +18576,67 @@ def _detail_img_src_v264(path):
     except Exception:
         return ""
 
+def _detail_logo_img_src_v290(path):
+    """Return a cropped/normalized logo data URL for the detail hero.
+    This makes uploaded logos with transparent/white padding still appear large and clear inside the white circle.
+    """
+    try:
+        p = display_clean_v50(path)
+        if not p:
+            return ""
+        if p.lower().startswith(("http://", "https://", "data:image")):
+            return p
+
+        full_path = BASE / p
+        if not full_path.exists() or not full_path.is_file():
+            return _detail_img_src_v264(p)
+
+        try:
+            from PIL import Image, ImageChops
+            import io
+            img = Image.open(full_path).convert("RGBA")
+
+            # First try to crop transparent padding.
+            alpha = img.getchannel("A")
+            bbox = alpha.point(lambda a: 255 if a > 8 else 0).getbbox()
+
+            # If the logo file has a solid white canvas, crop based on non-white content.
+            rgb = img.convert("RGB")
+            white_bg = Image.new("RGB", img.size, (255, 255, 255))
+            diff = ImageChops.difference(rgb, white_bg).convert("L")
+            non_white_bbox = diff.point(lambda v: 255 if v > 16 else 0).getbbox()
+
+            # Prefer the non-white box when it is meaningful, because many logos are exported on a large white square.
+            if non_white_bbox:
+                nw_area = (non_white_bbox[2] - non_white_bbox[0]) * (non_white_bbox[3] - non_white_bbox[1])
+                full_area = img.size[0] * img.size[1]
+                if nw_area >= full_area * 0.01:
+                    bbox = non_white_bbox
+
+            if bbox:
+                x1, y1, x2, y2 = bbox
+                pad = max(4, int(max(x2 - x1, y2 - y1) * 0.06))
+                x1 = max(0, x1 - pad)
+                y1 = max(0, y1 - pad)
+                x2 = min(img.size[0], x2 + pad)
+                y2 = min(img.size[1], y2 + pad)
+                img = img.crop((x1, y1, x2, y2))
+
+            # Put the cropped logo into a square transparent canvas so CSS can fit it cleanly.
+            side = max(img.size)
+            canvas = Image.new("RGBA", (side, side), (255, 255, 255, 0))
+            canvas.paste(img, ((side - img.size[0]) // 2, (side - img.size[1]) // 2), img)
+            canvas.thumbnail((520, 520), Image.LANCZOS)
+
+            buf = io.BytesIO()
+            canvas.save(buf, format="PNG", optimize=True)
+            encoded = base64.b64encode(buf.getvalue()).decode()
+            return f"data:image/png;base64,{encoded}"
+        except Exception:
+            return _detail_img_src_v264(p)
+    except Exception:
+        return ""
+
 def _detail_location_v264(u):
     loc = _detail_value_v264(u, ["Location", "location"])
     if loc:
@@ -19086,7 +19147,7 @@ def _detail_logo_img_v264(u):
         path = university_logo_path_v260(u) if "university_logo_path_v260" in globals() else _detail_value_v264(u, ["logoUrl", "Logo_URL", "University_Logo", "Logo"], "")
     except Exception:
         path = _detail_value_v264(u, ["logoUrl", "Logo_URL", "University_Logo", "Logo"], "")
-    return _detail_img_src_v264(path)
+    return _detail_logo_img_src_v290(path)
 
 def _render_university_detail_v62(u):
     """v264: premium dynamic university profile/detail page."""
@@ -20308,6 +20369,57 @@ def _render_university_detail_v62(u):
   }}
   .detail-hero-v264 .university-hero-location{{
     font-size:15px !important;
+  }}
+}}
+
+/* v290: Make University Detail hero logo always large, centered, and visible */
+.detail-hero-v264 .detail-logo-v264,
+.detail-hero-v264 .hero-university-logo,
+.detail-logo-v264.hero-university-logo,
+.hero-university-logo{{
+  width:132px !important;
+  height:132px !important;
+  min-width:132px !important;
+  min-height:132px !important;
+  border-radius:999px !important;
+  background:#ffffff !important;
+  padding:6px !important;
+  border:4px solid rgba(255,255,255,.98) !important;
+  box-shadow:0 16px 36px rgba(0,0,0,0.30) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  flex-shrink:0 !important;
+}}
+.detail-hero-v264 .detail-logo-v264 img,
+.detail-hero-v264 .hero-university-logo img,
+.detail-logo-v264.hero-university-logo img,
+.hero-university-logo img{{
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  display:block !important;
+}}
+.detail-hero-v264 .detail-logo-v264 span,
+.detail-hero-v264 .hero-university-logo span{{
+  font-size:16px !important;
+  font-weight:900 !important;
+  color:#64748b !important;
+}}
+@media(max-width:900px){{
+  .detail-hero-v264 .detail-logo-v264,
+  .detail-hero-v264 .hero-university-logo,
+  .detail-logo-v264.hero-university-logo,
+  .hero-university-logo{{
+    width:100px !important;
+    height:100px !important;
+    min-width:100px !important;
+    min-height:100px !important;
+    padding:5px !important;
   }}
 }}
 
