@@ -355,6 +355,122 @@ def current_agency_id():
     return user.get("agency_id", normalize_agency_id(user.get("agency_name","")))
 
 
+# v287: User university favorites / shortlist support
+def _favorite_list_from_user_v287(user):
+    raw = user.get("favorite_universities", user.get("favorites", "")) if isinstance(user, dict) else ""
+    try:
+        if isinstance(raw, list):
+            items = raw
+        elif isinstance(raw, str) and raw.strip().startswith("["):
+            items = json.loads(raw)
+        elif isinstance(raw, str):
+            items = [x.strip() for x in raw.split("||") if x.strip()]
+        else:
+            items = []
+    except Exception:
+        items = []
+    out = []
+    for x in items:
+        x = str(x or "").strip()
+        if x and x not in out:
+            out.append(x)
+    return out
+
+def get_user_favorites_v287():
+    user = get_current_user()
+    return _favorite_list_from_user_v287(user) if user else []
+
+def is_favorite_university_v287(uni_name):
+    target = str(uni_name or "").strip().lower()
+    return any(str(x).strip().lower() == target for x in get_user_favorites_v287())
+
+def save_user_favorites_v287(favorites):
+    username = str(st.session_state.get("username", "") or "").strip()
+    if not username:
+        return False
+    users = read_json(USERS)
+    changed = False
+    clean = []
+    for x in favorites:
+        x = str(x or "").strip()
+        if x and x not in clean:
+            clean.append(x)
+    for u in users:
+        if str(u.get("username", "")).strip().lower() == username.lower():
+            u["favorite_universities"] = json.dumps(clean, ensure_ascii=False)
+            changed = True
+            break
+    if changed:
+        write_json(USERS, users)
+        st.cache_data.clear()
+    return changed
+
+def toggle_favorite_university_v287(uni_name):
+    uni_name = str(uni_name or "").strip()
+    if not uni_name:
+        return ""
+    if not st.session_state.get("logged_in") or not st.session_state.get("username"):
+        st.session_state.favorite_toast_v287 = "Please log in to save favorites."
+        return "login_required"
+    favorites = get_user_favorites_v287()
+    exists = any(str(x).strip().lower() == uni_name.lower() for x in favorites)
+    if exists:
+        favorites = [x for x in favorites if str(x).strip().lower() != uni_name.lower()]
+        save_user_favorites_v287(favorites)
+        st.session_state.favorite_toast_v287 = "Removed from favorites"
+        return "removed"
+    favorites.append(uni_name)
+    save_user_favorites_v287(favorites)
+    st.session_state.favorite_toast_v287 = "Added to favorites"
+    return "added"
+
+def handle_favorite_query_v287():
+    try:
+        fav_q = st.query_params.get("fav_toggle", "")
+    except Exception:
+        fav_q = ""
+    if isinstance(fav_q, list):
+        fav_q = fav_q[0] if fav_q else ""
+    fav_q = str(fav_q or "").strip()
+    if not fav_q:
+        return
+    try:
+        from urllib.parse import unquote_plus
+        fav_q = unquote_plus(fav_q)
+    except Exception:
+        pass
+    toggle_favorite_university_v287(fav_q)
+    try:
+        del st.query_params["fav_toggle"]
+    except Exception:
+        pass
+    st.session_state.page = "Universities"
+    st.rerun()
+
+def show_favorite_toast_v287():
+    msg = st.session_state.pop("favorite_toast_v287", "") if "favorite_toast_v287" in st.session_state else ""
+    if msg:
+        try:
+            if "Removed" in msg:
+                st.toast(msg, icon="♡")
+            elif "log in" in msg.lower():
+                st.toast(msg, icon="🔒")
+            else:
+                st.toast(msg, icon="♥")
+        except Exception:
+            if "log in" in msg.lower():
+                st.info(msg)
+            else:
+                st.success(msg)
+
+def favorite_heart_html_v287(uni_name):
+    from urllib.parse import quote_plus
+    saved = is_favorite_university_v287(uni_name)
+    cls = "saved" if saved else "unsaved"
+    icon = "♥" if saved else "♡"
+    label = "Remove from favorites" if saved else "Add to favorites"
+    return f'<a class="uni-list-heart-v214 favorite-heart-v287 {cls}" href="?fav_toggle={quote_plus(str(uni_name or ""))}" target="_self" title="{_safe_html_v62(label)}" aria-label="{_safe_html_v62(label)}">{icon}</a>'
+
 
 def approved_reps_for_agency_v75(agency_id):
     reps = []
@@ -792,6 +908,7 @@ def handle_top_nav_query_v70():
         "tuition": "Tuition & Scholarship",
         "contact": "Contact Us",
         "mou": "Contact Us",
+        "favorites": "Saved Universities",
         "login": "Login",
         "signup": "Partner Sign Up",
     }
@@ -871,6 +988,7 @@ def handle_dash_nav_query_v96():
         "Eligibility Check",
         "Tuition & Scholarship",
         "Contact Us",
+        "Saved Universities",
     ]
     if dashnav in allowed_pages:
         st.session_state.page = dashnav
@@ -9225,6 +9343,23 @@ section.main > div,
 .uni-list-cover-img-v214{width:100%!important;height:142px!important;object-fit:cover!important;display:block!important}
 .uni-list-cover-placeholder-v214{height:142px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#98A2B3!important;-webkit-text-fill-color:#98A2B3!important;font-weight:850!important}
 .uni-list-heart-v214{position:absolute!important;top:14px!important;right:14px!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:25px!important;font-weight:900!important;text-shadow:0 3px 10px rgba(0,0,0,.35)!important}
+.favorite-heart-v287{
+    width:38px!important;height:38px!important;border-radius:50%!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    text-decoration:none!important;cursor:pointer!important;line-height:1!important;
+    background:rgba(15,23,42,.18)!important;border:1px solid rgba(255,255,255,.55)!important;
+    backdrop-filter:blur(6px)!important;transition:all .18s ease!important;
+}
+.favorite-heart-v287:hover{transform:scale(1.08)!important;background:rgba(255,255,255,.24)!important;}
+.favorite-heart-v287.saved{color:#ef4444!important;-webkit-text-fill-color:#ef4444!important;background:#fff!important;text-shadow:none!important;border-color:#fff!important;}
+.favorite-heart-v287.unsaved{color:#fff!important;-webkit-text-fill-color:#fff!important;}
+.favorite-card-grid-v287{width:calc(100% - 32px)!important;max-width:1760px!important;margin:18px auto 0 auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important;}
+.favorite-page-shell-v287{width:calc(100% - 32px)!important;max-width:1760px!important;margin:16px auto 40px auto!important;background:#fff!important;border:1px solid #E5ECF6!important;border-radius:24px!important;padding:30px!important;box-shadow:0 16px 42px rgba(15,23,42,.06)!important;}
+.favorite-page-shell-v287 h1{font-size:32px!important;font-weight:950!important;color:#061A40!important;margin:0 0 8px 0!important;}
+.favorite-page-shell-v287 p{font-size:15px!important;color:#64748B!important;margin:0!important;}
+.favorite-link-v287{display:inline-flex!important;margin-top:10px!important;color:#1d4ed8!important;-webkit-text-fill-color:#1d4ed8!important;font-weight:850!important;text-decoration:none!important;}
+@media(max-width:1024px){.favorite-card-grid-v287{grid-template-columns:repeat(2,minmax(0,1fr))!important;}}
+@media(max-width:640px){.favorite-card-grid-v287{grid-template-columns:1fr!important;}}
 .uni-list-logo-wrap-v214{position:absolute!important;top:104px!important;left:28px!important;width:76px!important;height:76px!important;border-radius:50%!important;background:#fff!important;border:1px solid #E4EAF3!important;box-shadow:0 10px 24px rgba(16,24,40,.13)!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:3!important;overflow:hidden!important}
 .uni-list-logo-img-v214{width:62px!important;height:62px!important;object-fit:contain!important;display:block!important}
 .uni-list-logo-placeholder-v214{width:62px!important;height:62px!important;border-radius:50%!important;background:#F4F7FB!important;color:#98A2B3!important;-webkit-text-fill-color:#98A2B3!important;display:flex!important;align-items:center!important;justify-content:center!important;font-weight:850!important;font-size:12px!important}
@@ -18711,9 +18846,14 @@ def _detail_program_groups_v264(university_name):
                 major = display_clean_v50(row.get("Major", "")) or display_clean_v50(row.get("Major_Name", ""))
                 if not major:
                     continue
-                pl = prog.lower()
+                pl = prog.lower().strip()
+                # v286 fix: classify Undergraduate before Graduate.
+                # "undergraduate" contains the word "graduate", so checking
+                # graduate first moved undergraduate majors into the Graduate card.
                 if "language" in pl or "klp" in pl or "eap" in pl:
                     groups["KLP / EAP"].append(major)
+                elif "undergraduate" in pl or "bachelor" in pl or pl in {"ug", "u/g"}:
+                    groups["Undergraduate"].append(major)
                 elif "graduate" in pl or "master" in pl or "ph.d" in pl or "phd" in pl:
                     groups["Graduate"].append(major)
                 else:
@@ -20720,7 +20860,7 @@ def _render_university_listing_card_v214(row, key_suffix):
     admission_html = _admission_snapshot_html_v214(row, crit_text)
     scholarship_link = '<div class="scholarship-link-v214">Scholarship details →</div>' if _scholarship_has_details_v214(uni) else ""
     html = f"""<div class="uni-list-card-v214 university-card-v216">
-<div class="uni-list-cover-v214">{cover_html}<div class="uni-list-heart-v214">♡</div></div>
+<div class="uni-list-cover-v214">{cover_html}{favorite_heart_html_v287(uni)}</div>
 <div class="uni-list-body-v214 card-body-v216">
     <div class="uni-list-head-v215 uni-list-head-v216">
         <div class="uni-list-logo-wrap-v214">{logo_html}</div>
@@ -21991,6 +22131,44 @@ def render_universities_hero_v230(df):
     # The old empty markdown wrapper created extra vertical Streamlit blocks/gaps.
     components.html(hero_slider_component_html_v230(df), height=482, scrolling=False)
 
+def saved_universities_page_v287(public=False):
+    if public:
+        header()
+    else:
+        dash_shell(["Dashboard","Universities","Eligibility Check","Tuition & Scholarship","Contact Us"])
+    if not st.session_state.get("logged_in"):
+        st.markdown('<div class="favorite-page-shell-v287"><h1>Saved Universities</h1><p>Please log in to save and view your favorite universities.</p></div>', unsafe_allow_html=True)
+        if public:
+            footer()
+        else:
+            close_shell()
+        return
+    favs = get_user_favorites_v287()
+    df = universities().copy()
+    st.markdown('<div class="favorite-page-shell-v287"><h1>Saved Universities</h1><p>Your shortlisted universities are saved here. Click any card to open the university detail page.</p></div>', unsafe_allow_html=True)
+    if not favs:
+        st.info("No saved universities yet. Click the heart icon on a university card to add it here.")
+        if st.button("Browse Universities", key="browse_unis_from_favorites_v287", use_container_width=True):
+            st.session_state.page = "Universities"
+            st.rerun()
+    else:
+        rows = df[df["University"].astype(str).str.lower().isin([str(x).lower() for x in favs])].copy() if df is not None and len(df) else pd.DataFrame()
+        if len(rows) == 0:
+            st.warning("Saved universities could not be found in the current university database.")
+        else:
+            records = list(rows.iterrows())
+            for row_start in range(0, len(records), 3):
+                cols = st.columns(3, gap="large")
+                for col_idx, item in enumerate(records[row_start:row_start+3]):
+                    _, u = item
+                    with cols[col_idx]:
+                        _render_university_listing_card_v214(u, f"fav_{row_start}_{col_idx}")
+    if public:
+        footer()
+    else:
+        close_shell()
+
+
 def universities_page(public=False):
     if public:
         header()
@@ -22179,6 +22357,9 @@ def universities_page(public=False):
         filtered = filtered.sort_values(["_Soonest_Close_v214", "University"], ascending=[True, True])
 
     st.markdown(f'''<div class="uni-info-bar-v214"><span class="uni-info-icon-v214">i</span><b>Showing {len(filtered)} of {len(df)} universities</b><span>· Admission status updates automatically based on official program dates. Dates may differ by Undergraduate, Graduate, KLP/EAP, and admission round.</span></div>''', unsafe_allow_html=True)
+    if st.session_state.get("logged_in") and st.session_state.get("role") != "admin":
+        fav_count_v287 = len(get_user_favorites_v287())
+        st.markdown(f'<div class="uni-info-bar-v214"><span class="uni-info-icon-v214">♥</span><b>Saved Universities: {fav_count_v287}</b><span>· <a class="favorite-link-v287" href="?nav=favorites" target="_self">View saved universities →</a></span></div>', unsafe_allow_html=True)
 
     if len(filtered) == 0:
         st.warning("No universities match the selected filters. Please adjust the filter options.")
@@ -26997,6 +27178,8 @@ def admin_hero_advertisements_v227():
 handle_home_query_navigation_v69()
 # v258: process real HTML navbar action links (?nav=login / ?nav=signup / etc.)
 handle_top_nav_query_v70()
+handle_favorite_query_v287()
+show_favorite_toast_v287()
 
 # Routing
 if not st.session_state.logged_in:
@@ -27004,6 +27187,7 @@ if not st.session_state.logged_in:
     elif st.session_state.page == "Pending": pending()
     elif st.session_state.page == "Login": login()
     elif st.session_state.page == "Universities": universities_page(public=True)
+    elif st.session_state.page == "Saved Universities": saved_universities_page_v287(public=True)
     elif st.session_state.page == "Contact Us": contact()
     elif st.session_state.page in ["Eligibility Check","Tuition & Scholarship"]:
         restore_pending_from_query_v76()
@@ -27042,6 +27226,7 @@ else:
             admin()
     else:
         if st.session_state.page == "Universities": universities_page()
+        elif st.session_state.page == "Saved Universities": saved_universities_page_v287()
         elif st.session_state.page == "Eligibility Check": eligibility()
         elif st.session_state.page == "Tuition & Scholarship": tuition()
         elif st.session_state.page == "Contact Us": contact()
