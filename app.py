@@ -697,12 +697,30 @@ def handle_program_detail_query_v110():
     try:
         uni_q = st.query_params.get("uni", "")
         prog_q = st.query_params.get("programdetail", "")
+        detail_q = st.query_params.get("unidetail", "")
     except Exception:
-        uni_q, prog_q = "", ""
+        uni_q, prog_q, detail_q = "", "", ""
     if isinstance(uni_q, list):
         uni_q = uni_q[0] if uni_q else ""
     if isinstance(prog_q, list):
         prog_q = prog_q[0] if prog_q else ""
+    if isinstance(detail_q, list):
+        detail_q = detail_q[0] if detail_q else ""
+
+    # v292: Direct university detail links should stay on the Universities page.
+    # Previously, View Details submitted only `unidetail`, so Streamlit could briefly route
+    # through the Home page before the detail page opened. Setting the page immediately
+    # prevents that Home-screen flash/jump.
+    if detail_q:
+        try:
+            from urllib.parse import unquote_plus
+            st.session_state.selected_uni_v62 = unquote_plus(str(detail_q))
+        except Exception:
+            st.session_state.selected_uni_v62 = str(detail_q)
+        st.session_state.selected_program_v109 = ""
+        st.session_state.application_page_open_v113 = False
+        st.session_state.page = "Universities"
+
     if uni_q and prog_q:
         try:
             from urllib.parse import unquote_plus
@@ -21010,6 +21028,7 @@ def _university_listing_card_html_v289(row, key_suffix=""):
 <div class="admission-list-v214 admissions-snapshot-v216">{admission_html}</div>
 {scholarship_link}
 <form method="get" target="_self" class="uni-detail-form-v214 view-details-button-v216">
+<input type="hidden" name="nav" value="universities">
 <input type="hidden" name="unidetail" value="{_safe_html_v62(uni)}">
 <button type="submit" class="uni-detail-btn-v214"><span>View Details</span><b>→</b></button>
 </form>
