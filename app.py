@@ -18692,21 +18692,31 @@ def _detail_why_items_v264(u):
     ]
 
 def _detail_quick_links_v264(u):
-    """Build premium Useful Link cards only from URLs entered by admin/database.
-    v281: professional cards with visible title, description, icon, and Open action.
+    """Build compact Useful Link cards only from URLs entered by admin/database.
+    v282: match reference design with horizontal premium cards, large icons, title, and external icon.
     """
+    icons = {
+        "homepage": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/></svg>',
+        "brochure": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5"/><path d="M10 12h7M10 16h7M10 8h2"/></svg>',
+        "facebook": '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 8.3h2.2V4.7c-.4-.1-1.7-.2-3.2-.2-3.2 0-5.3 1.9-5.3 5.5v3.1H4.2v4h3.5V24h4.3v-6.9h3.4l.6-4h-4V10.4c0-1.2.3-2.1 2-2.1z"/></svg>',
+        "instagram": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor" stroke="none"/></svg>',
+        "youtube": '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 8.1s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C15.4 4.6 12 4.6 12 4.6h-.1s-3.4 0-6.7.2c-.5.1-1.5.1-2.4 1C2.2 6.5 2 8.1 2 8.1s-.2 1.9-.2 3.9v1.8c0 1.9.2 3.9.2 3.9s.2 1.6.9 2.3c.9.9 2.1.9 2.6 1 1.9.2 6.5.2 6.5.2s3.4 0 6.7-.3c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.9V12c0-1.9-.2-3.9-.2-3.9zM10 15.5v-7l6 3.5-6 3.5z"/></svg>',
+        "map": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+        "admission": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h12v17H6a2 2 0 0 1-2-1.5z"/><path d="M8 8h7M8 12h7"/><path d="M16 16l3-3-3-3"/></svg>',
+    }
     link_defs = [
-        ("Homepage", ["Homepage", "Website", "Official_Website", "homepageUrl", "websiteUrl"], "homepage", "⌂", "Visit the official university website"),
-        ("Brochure", ["Promotional_Materials", "Promotional Materials", "Brochure_URL", "Brochure", "Brochure_Link", "brochureUrl"], "brochure", "▤", "Download the university brochure"),
-        ("Facebook", ["Facebook_Link", "Facebook", "Facebook_URL", "Facebook Page"], "facebook", "f", "Follow us on Facebook"),
-        ("Instagram", ["Instagram_Link", "Instagram", "Instagram_URL", "Instagram Page"], "instagram", "◎", "Follow us on Instagram"),
-        ("YouTube", ["YouTube_Link", "Youtube_Link", "YouTube", "Youtube", "YouTube_URL", "Youtube_URL"], "youtube", "▶", "Watch videos on the official channel"),
-        ("Google Maps", ["Google_Maps", "Google_Map", "Map_URL", "Google_Maps_Link", "Location_URL"], "map", "⌖", "View campus location"),
-        ("Admission Page", ["Admission_Page", "Admission_Page_URL", "Admission_URL", "Admissions_URL", "Apply_URL", "Undergraduate_Apply_URL", "Graduate_Apply_URL", "KLP_EAP_Apply_URL"], "admission", "↗", "View official admission information"),
+        ("Homepage", ["Homepage", "Website", "Official_Website", "homepageUrl", "websiteUrl"], "homepage"),
+        ("Brochure", ["Promotional_Materials", "Promotional Materials", "Brochure_URL", "Brochure", "Brochure_Link", "brochureUrl"], "brochure"),
+        ("Facebook", ["Facebook_Link", "Facebook", "Facebook_URL", "Facebook Page"], "facebook"),
+        ("Instagram", ["Instagram_Link", "Instagram", "Instagram_URL", "Instagram Page"], "instagram"),
+        ("YouTube", ["YouTube_Link", "Youtube_Link", "YouTube", "Youtube", "YouTube_URL", "Youtube_URL"], "youtube"),
+        ("Google Maps", ["Google_Maps", "Google_Map", "Map_URL", "Google_Maps_Link", "Location_URL"], "map"),
+        ("Admission Page", ["Admission_Page", "Admission_Page_URL", "Admission_URL", "Admissions_URL", "Apply_URL", "Undergraduate_Apply_URL", "Graduate_Apply_URL", "KLP_EAP_Apply_URL"], "admission"),
     ]
     html_parts = []
     seen_urls = set()
-    for label, keys, cls, icon, description in link_defs:
+    external_icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>'
+    for label, keys, cls in link_defs:
         raw_url = _detail_value_v264(u, keys, "")
         url = _detail_normalize_url_v271(raw_url)
         if not url:
@@ -18716,13 +18726,10 @@ def _detail_quick_links_v264(u):
             continue
         seen_urls.add(key)
         html_parts.append(
-            f'<a class="useful-link-card useful-link-{cls}" href="{_safe_html_v62(url)}" target="_blank" rel="noopener noreferrer">'
-            f'  <span class="useful-link-icon useful-link-icon-{cls}" aria-hidden="true">{icon}</span>'
-            f'  <span class="useful-link-content">'
-            f'    <span class="useful-link-title">{_safe_html_v62(label)}</span>'
-            f'    <span class="useful-link-description">{_safe_html_v62(description)}</span>'
-            f'    <span class="useful-link-open">Open →</span>'
-            f'  </span>'
+            f'<a class="useful-link-card useful-link-{cls}" href="{_safe_html_v62(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open {_safe_html_v62(label)}">'
+            f'  <span class="useful-link-icon useful-link-icon-{cls}" aria-hidden="true">{icons.get(cls, external_icon)}</span>'
+            f'  <span class="useful-link-title">{_safe_html_v62(label)}</span>'
+            f'  <span class="useful-link-external" aria-hidden="true">{external_icon}</span>'
             f'</a>'
         )
     return "".join(html_parts)
@@ -18915,7 +18922,7 @@ def _render_university_detail_v62(u):
     <section class="useful-links-section detail-section-v264">
       <div class="useful-links-header">
         <h2>Useful Links</h2>
-        <p>Quick access to official university resources and social channels.</p>
+        <span class="useful-links-accent" aria-hidden="true"></span>
       </div>
       <div class="useful-links-grid">{useful_links or '<p class="useful-links-empty">Useful links will be updated soon.</p>'}</div>
     </section>"""
@@ -18993,24 +19000,28 @@ def _render_university_detail_v62(u):
 .section-head-v264{{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}}
 .section-head-v264 a{{color:#123B8A!important;text-decoration:none;font-weight:900}}
 .section-link-v264{{display:inline-flex;margin-top:12px;color:#3157D5!important;text-decoration:none;font-weight:900}}
-.useful-links-section{{background:#ffffff!important;border:1px solid #e2e8f0!important;border-radius:24px!important;padding:34px!important;box-shadow:0 16px 42px rgba(15,23,42,.06)!important}}
-.useful-links-header h2{{font-size:28px!important;font-weight:950!important;color:#0f172a!important;margin:0!important;letter-spacing:-.025em!important}}
-.useful-links-header p{{margin:8px 0 0!important;font-size:15px!important;color:#64748b!important;line-height:1.5!important;font-weight:650!important}}
-.useful-links-grid{{margin-top:26px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}}
-.useful-link-card{{min-height:128px;padding:22px;border-radius:18px;border:1px solid #e2e8f0;background:#ffffff;display:flex;align-items:center;gap:18px;text-decoration:none!important;color:#0f172a!important;transition:all .2s ease;box-shadow:0 8px 20px rgba(15,23,42,.04)}}
-.useful-link-card:hover{{transform:translateY(-3px);box-shadow:0 16px 34px rgba(15,23,42,.10);border-color:#c7d2fe;background:#ffffff;color:#0f172a!important}}
-.useful-link-icon{{width:58px;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px;font-weight:950;line-height:1}}
-.useful-link-content{{flex:1;min-width:0;display:block}}
-.useful-link-title{{display:block;font-size:18px;font-weight:950;color:#0f172a!important;margin:0;line-height:1.2;white-space:normal}}
-.useful-link-description{{display:block;margin-top:6px;font-size:14px;color:#64748b!important;line-height:1.4;font-weight:650}}
-.useful-link-open{{display:block;font-size:14px;font-weight:900;color:#1d4ed8!important;margin-top:10px}}
+.useful-links-section{{background:#ffffff!important;border:1px solid #e2e8f0!important;border-radius:24px!important;padding:58px 48px 88px!important;box-shadow:0 18px 45px rgba(15,23,42,.055)!important;overflow:hidden}}
+.useful-links-header{{display:block;margin:0 0 52px!important}}
+.useful-links-header h2{{font-size:36px!important;line-height:1.08!important;font-weight:950!important;color:#0f172a!important;margin:0!important;letter-spacing:-.035em!important}}
+.useful-links-accent{{display:block;width:104px;height:6px;border-radius:999px;background:#2563eb;margin-top:28px}}
+.useful-links-header p{{display:none!important}}
+.useful-links-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;align-items:stretch;margin:0!important}}
+.useful-link-card{{min-height:108px;padding:22px 28px;border-radius:14px;border:1px solid #e2e8f0;background:#ffffff;display:flex;align-items:center;gap:22px;text-decoration:none!important;color:#0f172a!important;transition:all .22s ease;box-shadow:0 10px 25px rgba(15,23,42,.045)}}
+.useful-link-card:hover{{transform:translateY(-3px);box-shadow:0 18px 38px rgba(15,23,42,.10);border-color:#cbd5e1;background:#ffffff;color:#0f172a!important}}
+.useful-link-icon{{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:34px;font-weight:950;line-height:1}}
+.useful-link-icon svg{{width:34px;height:34px;display:block}}
+.useful-link-title{{display:block;flex:1;min-width:0;font-size:18px;font-weight:950;color:#0f172a!important;margin:0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.useful-link-content,.useful-link-description,.useful-link-open{{display:none!important}}
+.useful-link-external{{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#64748b!important;flex-shrink:0;transition:all .2s ease}}
+.useful-link-external svg{{width:22px;height:22px;display:block}}
+.useful-link-card:hover .useful-link-external{{color:#2563eb!important;transform:translate(2px,-2px)}}
 .useful-links-empty{{grid-column:1/-1;margin:0;padding:22px;border-radius:16px;background:#f8fafc;border:1px dashed #cbd5e1;color:#64748b!important;font-size:15px;font-weight:800;text-align:center}}
-.useful-link-icon-homepage{{background:#dbeafe;color:#1d4ed8!important}}
-.useful-link-icon-brochure{{background:#dcfce7;color:#047857!important}}
-.useful-link-icon-facebook{{background:#e0efff;color:#1877f2!important}}
-.useful-link-icon-instagram{{background:#fce7f3;color:#c13584!important}}
-.useful-link-icon-youtube{{background:#fee2e2;color:#dc2626!important}}
-.useful-link-icon-map{{background:#e0f2fe;color:#059669!important}}
+.useful-link-icon-homepage{{background:#dbeafe;color:#2563eb!important}}
+.useful-link-icon-brochure{{background:#dcfce7;color:#16a34a!important}}
+.useful-link-icon-facebook{{background:#dbeafe;color:#2563eb!important}}
+.useful-link-icon-instagram{{background:#fce7f3;color:#db2777!important}}
+.useful-link-icon-youtube{{background:#fee2e2;color:#ef1b1b!important}}
+.useful-link-icon-map{{background:linear-gradient(135deg,#dcfce7,#dbeafe);color:#0f9f6e!important}}
 .useful-link-icon-admission{{background:#e0e7ff;color:#0f172a!important}}
 .enrollment-v264{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
 .chart-card-v264{{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:18px}}
