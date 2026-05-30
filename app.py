@@ -27603,3 +27603,184 @@ div[data-testid="stHorizontalBlock"]:has(.university-card-v289) {
 }
 </style>
 """, unsafe_allow_html=True)
+
+# v294: Partner Portal / Featured Universities shared container alignment and spacing fix
+st.markdown("""
+<style>
+:root {
+  --v294-partner-container: min(calc(100% - 64px), 1680px);
+  --v294-partner-max: 1680px;
+  --v294-partner-side: max(32px, calc((100vw - 1680px) / 2));
+}
+
+/* Align home hero content to the same left edge used by the Featured Universities layout. */
+.hero-inner-v69 {
+  margin-left: var(--v294-partner-side) !important;
+  margin-right: var(--v294-partner-side) !important;
+  width: min(720px, calc(var(--v294-partner-container) * 0.52)) !important;
+  box-sizing: border-box !important;
+}
+
+/* Featured section should not carry its own large side padding; the shared container controls width. */
+.home-featured-section-v207 {
+  padding: 56px 0 72px 0 !important;
+  background: #ffffff !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.home-featured-section-v207 .home-featured-head-v207 {
+  width: var(--v294-partner-container) !important;
+  max-width: var(--v294-partner-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-bottom: 34px !important;
+  box-sizing: border-box !important;
+}
+
+.home-featured-section-v207 .home-featured-head-v207 h2 {
+  font-size: 42px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.03em !important;
+  color: #061a40 !important;
+  -webkit-text-fill-color: #061a40 !important;
+  margin: 0 !important;
+}
+
+.home-featured-section-v207 .home-featured-head-v207 p {
+  margin-top: 12px !important;
+  font-size: 17px !important;
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+}
+
+/* Search + region chips row: same left/right edge as heading and cards. */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities or locations"]),
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]):has(div[data-testid="stRadio"]) {
+  width: var(--v294-partner-container) !important;
+  max-width: var(--v294-partner-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: -42px !important;
+  margin-bottom: 44px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  align-items: center !important;
+  gap: 18px !important;
+}
+
+/* Keep the search input professional and consistent. */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities or locations"]) input,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]):has(div[data-testid="stRadio"]) input {
+  height: 56px !important;
+  border-radius: 14px !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0 20px !important;
+  font-size: 15px !important;
+  box-sizing: border-box !important;
+}
+
+/* Region buttons spacing only on the Featured Universities row. */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities or locations"]) div[data-testid="stRadio"] [role="radiogroup"],
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]):has(div[data-testid="stRadio"]) div[data-testid="stRadio"] [role="radiogroup"] {
+  display: flex !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+}
+
+/* Featured cards grid: same shared container, no independent max width, safe side padding. */
+div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) {
+  width: var(--v294-partner-container) !important;
+  max-width: var(--v294-partner-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+  gap: 28px !important;
+  align-items: stretch !important;
+}
+
+/* Equal card columns and clean card edges. */
+div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) > div[data-testid="column"] {
+  min-width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.home-uni-card-v207,
+.home-uni-card-v207 * {
+  box-sizing: border-box !important;
+}
+
+.home-uni-card-v207 {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.home-featured-note-v207 {
+  width: var(--v294-partner-container) !important;
+  max-width: var(--v294-partner-max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (min-width: 1700px) {
+  :root {
+    --v294-partner-container: min(calc(100% - 96px), 1720px);
+    --v294-partner-max: 1720px;
+    --v294-partner-side: max(48px, calc((100vw - 1720px) / 2));
+  }
+}
+
+@media (max-width: 1100px) {
+  div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) {
+    gap: 22px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --v294-partner-container: calc(100% - 32px);
+    --v294-partner-side: 16px;
+  }
+
+  .home-featured-section-v207 {
+    padding: 42px 0 56px 0 !important;
+  }
+
+  .home-featured-section-v207 .home-featured-head-v207 {
+    flex-direction: column !important;
+    gap: 18px !important;
+  }
+
+  .home-featured-section-v207 .home-featured-head-v207 h2 {
+    font-size: 32px !important;
+  }
+
+  div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities or locations"]),
+  div[data-testid="stHorizontalBlock"]:has(input[placeholder*="Search universities"]):has(div[data-testid="stRadio"]) {
+    margin-top: -34px !important;
+    margin-bottom: 30px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  :root {
+    --v294-partner-container: calc(100% - 24px);
+    --v294-partner-side: 12px;
+  }
+
+  div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) {
+    gap: 20px !important;
+  }
+}
+</style>
+""", unsafe_allow_html=True)
