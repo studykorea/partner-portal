@@ -919,6 +919,25 @@ def handle_top_nav_query_v70():
     if isinstance(nav, list):
         nav = nav[0] if nav else ""
 
+    # v293: Process clearuni globally before page routing. This makes the
+    # hero back link and navbar links exit the detail page without requiring
+    # an extra click or a temporary Home-page flash.
+    try:
+        clearuni_global_v293 = st.query_params.get("clearuni", "")
+    except Exception:
+        clearuni_global_v293 = ""
+    if isinstance(clearuni_global_v293, list):
+        clearuni_global_v293 = clearuni_global_v293[0] if clearuni_global_v293 else ""
+    if str(clearuni_global_v293 or "").strip().lower() in ["1", "true", "yes"]:
+        st.session_state.selected_uni_v62 = ""
+        st.session_state.selected_program_v109 = ""
+        st.session_state.application_page_open_v113 = False
+        st.session_state.application_type_v109 = ""
+        try:
+            del st.query_params["clearuni"]
+        except Exception:
+            pass
+
     nav_map = {
         "home": "Home",
         "universities": "Universities",
@@ -951,16 +970,23 @@ def handle_top_nav_query_v70():
         if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
             requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
         st.session_state.page = requested_page
+        # v293: Normal page navigation should not keep an old university detail selected.
+        # Keep detail selection only when a direct detail query is present.
         has_unidetail_v263 = False
         try:
             has_unidetail_v263 = bool(st.query_params.get("unidetail", ""))
         except Exception:
             has_unidetail_v263 = False
+        if not has_unidetail_v263 and requested_page in ["Home", "Universities", "Eligibility Check", "Tuition & Scholarship", "Contact Us", "Saved Universities"]:
+            st.session_state.selected_uni_v62 = ""
+            st.session_state.selected_program_v109 = ""
+            st.session_state.application_page_open_v113 = False
+            st.session_state.application_type_v109 = ""
         try:
             del st.query_params["nav"]
         except Exception:
             pass
-        if requested_page == "Universities" and has_unidetail_v263:
+        if requested_page == "Universities":
             st.rerun()
 
 
@@ -13802,9 +13828,17 @@ def header():
 
     def _go_page_v187(page_name):
         st.session_state.page = page_name
+        # v293: Top-navbar navigation must leave the university detail view immediately.
+        # In earlier builds, selected_uni_v62 stayed in session, so clicking
+        # Universities/Home looked like it did nothing because the detail page reopened.
+        if page_name in ["Home", "Universities", "Eligibility Check", "Tuition & Scholarship", "Contact Us", "Saved Universities"]:
+            st.session_state.selected_uni_v62 = ""
+            st.session_state.selected_program_v109 = ""
+            st.session_state.application_page_open_v113 = False
+            st.session_state.application_type_v109 = ""
         try:
-            # Clear URL navigation params so repeated clicks do not create new browser entries/tabs.
-            for q in ["nav", "go", "uni", "program", "programdetail"]:
+            # Clear URL navigation params so repeated clicks do not create browser-history loops.
+            for q in ["nav", "go", "uni", "unidetail", "program", "programdetail", "clearuni"]:
                 if q in st.query_params:
                     del st.query_params[q]
         except Exception:
@@ -20634,7 +20668,7 @@ def _render_university_detail_v62(u):
 
 <div class="detail-premium-v264">
   <section class="detail-hero-v264 university-detail-hero" style='{hero_bg}'>
-    <a class="back-link-v264 back-to-universities" href="/?nav=universities&clearuni=1" target="_parent">← Back to Universities</a>
+    <a class="back-link-v264 back-to-universities" href="?nav=universities&clearuni=1" target="_self">← Back to Universities</a>
 
     <div class="hero-actions-v264 hero-actions-right">
       <a class="hero-action-v264 share-button" href="#" title="Share">↗</a>
