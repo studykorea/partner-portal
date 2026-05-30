@@ -18692,22 +18692,21 @@ def _detail_why_items_v264(u):
     ]
 
 def _detail_quick_links_v264(u):
-    """Build Useful Links from URLs entered by the admin in University Management.
-    v280: supports the admin social-link columns and shows compact icons.
+    """Build premium Useful Link cards only from URLs entered by admin/database.
+    v281: professional cards with visible title, description, icon, and Open action.
     """
     link_defs = [
-        ("Homepage", ["Homepage", "Website", "Official_Website"], "home", "⌂"),
-        ("Language School", ["Language_School_Homepage", "Language School Homepage", "Language_Homepage", "KLP_Homepage"], "language", "🌐"),
-        ("Promotional Materials", ["Promotional_Materials", "Promotional Materials", "Brochure_URL", "Brochure"], "promo", "📄"),
-        ("Facebook", ["Facebook_Link", "Facebook", "Facebook_URL", "Facebook Page"], "facebook", "f"),
-        ("Instagram", ["Instagram_Link", "Instagram", "Instagram_URL", "Instagram Page"], "instagram", "◎"),
-        ("YouTube", ["YouTube_Link", "Youtube_Link", "YouTube", "Youtube", "YouTube_URL", "Youtube_URL"], "youtube", "▶"),
-        ("Admission Page", ["Admission_Page", "Admission_URL", "Apply_URL", "Undergraduate_Apply_URL", "Graduate_Apply_URL", "KLP_EAP_Apply_URL"], "admission", "↗"),
-        ("Google Maps", ["Google_Maps", "Google_Map", "Map_URL"], "map", "📍"),
+        ("Homepage", ["Homepage", "Website", "Official_Website", "homepageUrl", "websiteUrl"], "homepage", "⌂", "Visit the official university website"),
+        ("Brochure", ["Promotional_Materials", "Promotional Materials", "Brochure_URL", "Brochure", "Brochure_Link", "brochureUrl"], "brochure", "▤", "Download the university brochure"),
+        ("Facebook", ["Facebook_Link", "Facebook", "Facebook_URL", "Facebook Page"], "facebook", "f", "Follow us on Facebook"),
+        ("Instagram", ["Instagram_Link", "Instagram", "Instagram_URL", "Instagram Page"], "instagram", "◎", "Follow us on Instagram"),
+        ("YouTube", ["YouTube_Link", "Youtube_Link", "YouTube", "Youtube", "YouTube_URL", "Youtube_URL"], "youtube", "▶", "Watch videos on the official channel"),
+        ("Google Maps", ["Google_Maps", "Google_Map", "Map_URL", "Google_Maps_Link", "Location_URL"], "map", "⌖", "View campus location"),
+        ("Admission Page", ["Admission_Page", "Admission_Page_URL", "Admission_URL", "Admissions_URL", "Apply_URL", "Undergraduate_Apply_URL", "Graduate_Apply_URL", "KLP_EAP_Apply_URL"], "admission", "↗", "View official admission information"),
     ]
     html_parts = []
     seen_urls = set()
-    for label, keys, cls, icon in link_defs:
+    for label, keys, cls, icon, description in link_defs:
         raw_url = _detail_value_v264(u, keys, "")
         url = _detail_normalize_url_v271(raw_url)
         if not url:
@@ -18717,10 +18716,13 @@ def _detail_quick_links_v264(u):
             continue
         seen_urls.add(key)
         html_parts.append(
-            f'<a class="useful-link-v264 useful-link-{cls}-v280" href="{_safe_html_v62(url)}" target="_blank" rel="noopener noreferrer">'
-            f'<span class="useful-icon-v280 useful-icon-{cls}-v280">{icon}</span>'
-            f'<span class="useful-label-v280">{_safe_html_v62(label)}</span>'
-            f'<span class="useful-arrow-v280">↗</span>'
+            f'<a class="useful-link-card useful-link-{cls}" href="{_safe_html_v62(url)}" target="_blank" rel="noopener noreferrer">'
+            f'  <span class="useful-link-icon useful-link-icon-{cls}" aria-hidden="true">{icon}</span>'
+            f'  <span class="useful-link-content">'
+            f'    <span class="useful-link-title">{_safe_html_v62(label)}</span>'
+            f'    <span class="useful-link-description">{_safe_html_v62(description)}</span>'
+            f'    <span class="useful-link-open">Open →</span>'
+            f'  </span>'
             f'</a>'
         )
     return "".join(html_parts)
@@ -18910,9 +18912,12 @@ def _render_university_detail_v62(u):
     ])
 
     useful_section = f"""
-    <section class="detail-section-v264">
-      <div class="section-head-v264"><h3>Useful Links</h3></div>
-      <div class="useful-links-v264">{useful_links or '<p class="muted-v264">Useful links will be updated soon.</p>'}</div>
+    <section class="useful-links-section detail-section-v264">
+      <div class="useful-links-header">
+        <h2>Useful Links</h2>
+        <p>Quick access to official university resources and social channels.</p>
+      </div>
+      <div class="useful-links-grid">{useful_links or '<p class="useful-links-empty">Useful links will be updated soon.</p>'}</div>
     </section>"""
 
     video_bg_style = f"background-image:url({hero_src});" if hero_src else ""
@@ -18988,17 +18993,25 @@ def _render_university_detail_v62(u):
 .section-head-v264{{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}}
 .section-head-v264 a{{color:#123B8A!important;text-decoration:none;font-weight:900}}
 .section-link-v264{{display:inline-flex;margin-top:12px;color:#3157D5!important;text-decoration:none;font-weight:900}}
-.useful-links-v264{{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;align-items:stretch}}
-.useful-link-v264{{border:1px solid #CBD5E1;border-radius:14px;padding:12px 14px;text-decoration:none;color:#0F172A!important;font-weight:900;background:#F8FAFC;display:flex;align-items:center;gap:10px;min-height:48px;transition:.16s ease;box-shadow:0 2px 8px rgba(15,23,42,.03)}}
-.useful-link-v264:hover{{border-color:#2563EB;background:#EFF6FF;color:#123B8A!important;transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.07)}}
-.useful-icon-v280{{width:30px;height:30px;border-radius:999px;background:#EAF2FF;color:#123B8A!important;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:950;flex:0 0 auto;line-height:1}}
-.useful-label-v280{{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
-.useful-arrow-v280{{margin-left:auto;color:#64748B!important;font-weight:950}}
-.useful-icon-facebook-v280{{background:#E7F0FF;color:#1877F2!important}}
-.useful-icon-instagram-v280{{background:#FCE7F3;color:#C13584!important}}
-.useful-icon-youtube-v280{{background:#FEE2E2;color:#FF0000!important}}
-.useful-icon-promo-v280{{background:#ECFDF5;color:#047857!important}}
-.useful-icon-language-v280{{background:#F0F9FF;color:#0369A1!important}}
+.useful-links-section{{background:#ffffff!important;border:1px solid #e2e8f0!important;border-radius:24px!important;padding:34px!important;box-shadow:0 16px 42px rgba(15,23,42,.06)!important}}
+.useful-links-header h2{{font-size:28px!important;font-weight:950!important;color:#0f172a!important;margin:0!important;letter-spacing:-.025em!important}}
+.useful-links-header p{{margin:8px 0 0!important;font-size:15px!important;color:#64748b!important;line-height:1.5!important;font-weight:650!important}}
+.useful-links-grid{{margin-top:26px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}}
+.useful-link-card{{min-height:128px;padding:22px;border-radius:18px;border:1px solid #e2e8f0;background:#ffffff;display:flex;align-items:center;gap:18px;text-decoration:none!important;color:#0f172a!important;transition:all .2s ease;box-shadow:0 8px 20px rgba(15,23,42,.04)}}
+.useful-link-card:hover{{transform:translateY(-3px);box-shadow:0 16px 34px rgba(15,23,42,.10);border-color:#c7d2fe;background:#ffffff;color:#0f172a!important}}
+.useful-link-icon{{width:58px;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px;font-weight:950;line-height:1}}
+.useful-link-content{{flex:1;min-width:0;display:block}}
+.useful-link-title{{display:block;font-size:18px;font-weight:950;color:#0f172a!important;margin:0;line-height:1.2;white-space:normal}}
+.useful-link-description{{display:block;margin-top:6px;font-size:14px;color:#64748b!important;line-height:1.4;font-weight:650}}
+.useful-link-open{{display:block;font-size:14px;font-weight:900;color:#1d4ed8!important;margin-top:10px}}
+.useful-links-empty{{grid-column:1/-1;margin:0;padding:22px;border-radius:16px;background:#f8fafc;border:1px dashed #cbd5e1;color:#64748b!important;font-size:15px;font-weight:800;text-align:center}}
+.useful-link-icon-homepage{{background:#dbeafe;color:#1d4ed8!important}}
+.useful-link-icon-brochure{{background:#dcfce7;color:#047857!important}}
+.useful-link-icon-facebook{{background:#e0efff;color:#1877f2!important}}
+.useful-link-icon-instagram{{background:#fce7f3;color:#c13584!important}}
+.useful-link-icon-youtube{{background:#fee2e2;color:#dc2626!important}}
+.useful-link-icon-map{{background:#e0f2fe;color:#059669!important}}
+.useful-link-icon-admission{{background:#e0e7ff;color:#0f172a!important}}
 .enrollment-v264{{display:grid;grid-template-columns:1fr 1fr;gap:20px}}
 .chart-card-v264{{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:18px}}
 .chart-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950}}
@@ -19014,7 +19027,8 @@ def _render_university_detail_v62(u):
 .program-card-v264{{border:1px solid #E2E8F0;border-radius:18px;background:#fff;padding:22px}}
 .program-card-v264 h4{{margin:0 0 12px;color:#0F172A;font-weight:950;font-size:18px}}
 .program-card-v264 ul{{margin:0;padding-left:18px;color:#334155;line-height:1.8;font-size:14px}}
-@media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.deadline-panel-v264{{position:relative;top:auto}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-v264{{grid-template-columns:repeat(2,1fr)}}.program-grid-v264{{grid-template-columns:1fr}}}}
+@media(max-width:1100px){{.overview-grid-v264,.about-row-v264,.cards-3-v264,.enrollment-v264{{grid-template-columns:1fr}}.deadline-panel-v264{{position:relative;top:auto}}.stats-bar-v264{{grid-template-columns:repeat(3,1fr)}}.info-grid-v264{{grid-template-columns:repeat(2,1fr)}}.useful-links-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}.program-grid-v264{{grid-template-columns:1fr}}}}
+@media(max-width:640px){{.useful-links-grid{{grid-template-columns:1fr}}.useful-links-section{{padding:24px!important}}}}
 @media(max-width:640px){{.detail-premium-v264{{padding:0 8px}}.detail-hero-v264{{min-height:520px;padding:24px 20px}}.hero-actions-v264{{right:18px;top:18px}}.hero-action-v264{{width:44px;height:44px}}.hero-main-v264{{align-items:flex-start}}.detail-logo-v264{{width:86px;height:86px}}.hero-copy-v264 h1{{font-size:34px}}.hero-stats-v264{{grid-template-columns:1fr 1fr}}.overview-grid-v264{{gap:16px}}.stats-bar-v264{{grid-template-columns:repeat(2,1fr);padding:20px}}.info-grid-v264{{grid-template-columns:1fr}}}}
 
 /* v267 university detail hero exact reference fix */
