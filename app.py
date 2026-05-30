@@ -27798,54 +27798,70 @@ div[data-testid="stHorizontalBlock"]:has(.home-uni-card-v207) > div[data-testid=
 </style>
 """, unsafe_allow_html=True)
 
-# v295: Dynamic Featured Universities carousel on Partner Portal / Home page
+# v297: Featured Universities carousel visibility and height fix
 st.markdown("""
 <style>
+/* The v295 carousel was rendering with the cards visually pushed below the carousel area on some Streamlit builds.
+   This version gives the carousel an explicit visible height and uses simple, browser-safe slide widths. */
 .home-featured-carousel-shell-v295 {
   position: relative !important;
   width: var(--v294-partner-container, min(calc(100% - 64px), 1680px)) !important;
   max-width: var(--v294-partner-max, 1680px) !important;
-  margin: 0 auto !important;
+  margin: 0 auto 34px auto !important;
+  min-height: 570px !important;
+  height: 570px !important;
   box-sizing: border-box !important;
+  overflow: visible !important;
 }
 .home-featured-carousel-v295 {
   width: 100% !important;
+  height: 570px !important;
+  min-height: 570px !important;
   overflow-x: auto !important;
-  overflow-y: visible !important;
+  overflow-y: hidden !important;
   scroll-snap-type: x mandatory !important;
   -webkit-overflow-scrolling: touch !important;
   scrollbar-width: none !important;
-  padding: 2px 0 10px 0 !important;
+  padding: 0 0 20px 0 !important;
+  box-sizing: border-box !important;
 }
 .home-featured-carousel-v295::-webkit-scrollbar { display: none !important; }
 .home-featured-carousel-track-v295 {
   display: flex !important;
+  flex-wrap: nowrap !important;
   align-items: stretch !important;
   gap: 28px !important;
+  height: 548px !important;
+  min-height: 548px !important;
   width: max-content !important;
   will-change: transform !important;
 }
 .home-featured-carousel-shell-v295.is-animated .home-featured-carousel-track-v295 {
-  animation: homeFeaturedCarouselV295 28s linear infinite !important;
+  animation: homeFeaturedCarouselV297 32s linear infinite !important;
 }
 .home-featured-carousel-shell-v295:hover .home-featured-carousel-track-v295 {
   animation-play-state: paused !important;
 }
-@keyframes homeFeaturedCarouselV295 {
+@keyframes homeFeaturedCarouselV297 {
   from { transform: translateX(0); }
   to { transform: translateX(calc(-50% - 14px)); }
 }
 .home-carousel-slide-v295 {
-  flex: 0 0 calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
-  width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 112px) / 5) !important;
-  min-width: 0 !important;
+  flex: 0 0 320px !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  min-width: 320px !important;
+  height: 548px !important;
   scroll-snap-align: start !important;
   box-sizing: border-box !important;
 }
 .home-carousel-card-v295 {
   margin: 0 !important;
   width: 100% !important;
+  min-height: 540px !important;
   height: 540px !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 .home-view-programs-link-v295 {
   text-decoration: none !important;
@@ -27862,11 +27878,11 @@ st.markdown("""
 }
 .home-carousel-arrow-v295 {
   position: absolute !important;
-  top: 50% !important;
+  top: 47% !important;
   transform: translateY(-50%) !important;
-  z-index: 5 !important;
-  width: 44px !important;
-  height: 44px !important;
+  z-index: 10 !important;
+  width: 46px !important;
+  height: 46px !important;
   border-radius: 999px !important;
   border: 1px solid rgba(215, 222, 233, .95) !important;
   background: rgba(255, 255, 255, .96) !important;
@@ -27877,34 +27893,62 @@ st.markdown("""
   box-shadow: 0 12px 28px rgba(16, 24, 40, .14) !important;
   pointer-events: none !important;
 }
-.home-carousel-arrow-left-v295 { left: -18px !important; }
-.home-carousel-arrow-right-v295 { right: -18px !important; }
+.home-carousel-arrow-left-v295 { left: -22px !important; }
+.home-carousel-arrow-right-v295 { right: -22px !important; }
+.home-featured-note-v207 {
+  margin-top: 10px !important;
+}
+@media (min-width: 1700px) {
+  .home-carousel-slide-v295 {
+    flex-basis: 324px !important;
+    width: 324px !important;
+    min-width: 324px !important;
+    max-width: 324px !important;
+  }
+}
 @media (max-width: 1535px) {
   .home-carousel-slide-v295 {
-    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
-    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 72px) / 4) !important;
+    flex-basis: 300px !important;
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
   }
 }
 @media (max-width: 1279px) {
   .home-featured-carousel-track-v295 { gap: 22px !important; }
   .home-carousel-slide-v295 {
-    flex-basis: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
-    width: calc((var(--v294-partner-container, min(calc(100% - 64px), 1680px)) - 44px) / 3) !important;
+    flex-basis: 31vw !important;
+    width: 31vw !important;
+    min-width: 280px !important;
+    max-width: 320px !important;
   }
 }
 @media (max-width: 768px) {
-  .home-featured-carousel-track-v295 { gap: 18px !important; }
+  .home-featured-carousel-shell-v295,
+  .home-featured-carousel-v295 {
+    height: 560px !important;
+    min-height: 560px !important;
+  }
+  .home-featured-carousel-track-v295 {
+    gap: 18px !important;
+    height: 540px !important;
+    min-height: 540px !important;
+  }
   .home-carousel-slide-v295 {
-    flex-basis: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
-    width: calc((var(--v294-partner-container, calc(100% - 32px)) - 18px) / 2) !important;
+    flex-basis: calc((100vw - 64px) / 2) !important;
+    width: calc((100vw - 64px) / 2) !important;
+    min-width: 250px !important;
+    max-width: 320px !important;
   }
   .home-carousel-arrow-v295 { display: none !important; }
 }
 @media (max-width: 520px) {
   .home-featured-carousel-track-v295 { gap: 16px !important; }
   .home-carousel-slide-v295 {
-    flex-basis: var(--v294-partner-container, calc(100% - 24px)) !important;
-    width: var(--v294-partner-container, calc(100% - 24px)) !important;
+    flex-basis: calc(100vw - 48px) !important;
+    width: calc(100vw - 48px) !important;
+    min-width: calc(100vw - 48px) !important;
+    max-width: calc(100vw - 48px) !important;
   }
 }
 </style>
