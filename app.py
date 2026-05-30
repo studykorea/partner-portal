@@ -20424,11 +20424,6 @@ def _render_university_detail_v62(u):
 
   {student_enrollment_section}
 
-  <section id="contact-v264" class="detail-section-v264">
-    <div class="section-head-v264"><h3>University Contact / Info Grid</h3></div>
-    <div class="info-grid-v264">{info_grid}</div>
-  </section>
-
   <section class="detail-section-v264">
     {_detail_map_html_v264(row)}
   </section>
