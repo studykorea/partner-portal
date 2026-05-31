@@ -13797,6 +13797,13 @@ div[data-testid="stAlert"]{
     }
 }
 
+
+/* v310: keep Streamlit component iframe for Featured Universities tall enough */
+iframe[title="st.iframe"],
+iframe[title="st.components.v1.html"] {
+    min-height: 1040px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -14837,8 +14844,8 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 800px;
-                  overflow: hidden;
+                  min-height: 1040px;
+                  overflow: visible;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                 }}
@@ -14846,17 +14853,17 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 780px;
-                  height: 780px;
+                  min-height: 1000px;
+                  height: 1000px;
                   background: #ffffff !important;
                   overflow: visible;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  min-height: 760px;
-                  height: 760px;
+                  min-height: 960px;
+                  height: 960px;
                   overflow-x: auto;
-                  overflow-y: hidden;
+                  overflow-y: visible;
                   scrollbar-width: none;
                   -webkit-overflow-scrolling: touch;
                   background: #ffffff !important;
@@ -14868,8 +14875,10 @@ def home():
                   align-items: stretch;
                   gap: 28px;
                   width: max-content;
-                  height: 730px;
-                  padding: 6px 0 42px 0;
+                  min-height: 860px;
+                  height: auto;
+                  padding: 10px 0 120px 0;
+                  overflow: visible;
                   background: #ffffff !important;
                   will-change: transform;
                 }}
@@ -14888,8 +14897,10 @@ def home():
                   width: calc((100vw - 112px) / 5);
                   min-width: 260px;
                   max-width: 340px;
-                  height: 690px;
+                  min-height: 790px;
+                  height: auto;
                   scroll-snap-align: start;
+                  overflow: visible;
                 }}
                 .home-uni-card-v207 {{
                   position: relative;
@@ -14899,8 +14910,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 675px;
-                  min-height: 675px;
+                  height: 760px;
+                  min-height: 760px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -14981,7 +14992,7 @@ def home():
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 48px 18px 24px 18px;
+                  padding: 44px 18px 26px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
@@ -14997,7 +15008,7 @@ def home():
                   align-items: center;
                   gap: 8px;
                   color: #344054;
-                  margin-bottom: 18px;
+                  margin-bottom: 16px;
                   min-height: 44px;
                 }}
                 .home-uni-location-v207 span {{
@@ -15068,12 +15079,12 @@ def home():
 
                 /* v303: keep full card and bottom button visible inside carousel iframe */
                 .home-carousel-card-v295 {{
-                  height: 675px !important;
-                  min-height: 675px !important;
+                  height: 760px !important;
+                  min-height: 760px !important;
                   overflow: hidden !important;
                 }}
                 .home-carousel-card-v295 .home-uni-body-v207 {{
-                  min-height: 485px !important;
+                  min-height: 570px !important;
                   overflow: visible !important;
                 }}
                 .home-carousel-card-v295 .home-view-programs-link-v295 {{
@@ -15208,6 +15219,61 @@ def home():
                 @media (max-width: 520px) {{
                   .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px); width: calc(100vw - 24px); min-width: calc(100vw - 24px); }}
                   .carousel-track {{ gap: 16px; }}
+                }}
+
+                /* v310 final no-crop carousel override */
+                html, body {{
+                  overflow: visible !important;
+                  min-height: 1040px !important;
+                }}
+                .carousel-shell,
+                .carousel-window,
+                .carousel-track,
+                .home-carousel-slide-v295 {{
+                  overflow: visible !important;
+                }}
+                .carousel-shell {{
+                  min-height: 1000px !important;
+                  height: 1000px !important;
+                  padding: 0 18px 120px 18px !important;
+                }}
+                .carousel-window {{
+                  min-height: 960px !important;
+                  height: 960px !important;
+                  padding-bottom: 120px !important;
+                }}
+                .carousel-track {{
+                  min-height: 860px !important;
+                  height: auto !important;
+                  padding-bottom: 140px !important;
+                  align-items: stretch !important;
+                }}
+                .home-carousel-slide-v295 {{
+                  min-height: 790px !important;
+                  height: auto !important;
+                  display: flex !important;
+                  align-items: stretch !important;
+                }}
+                .home-carousel-card-v295 {{
+                  height: 760px !important;
+                  min-height: 760px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                }}
+                .home-carousel-card-v295 .home-uni-body-v207 {{
+                  flex: 1 1 auto !important;
+                  min-height: 570px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                }}
+                .home-carousel-card-v295 .home-view-programs-link-v295 {{
+                  margin-top: auto !important;
+                  flex: 0 0 60px !important;
+                  min-height: 60px !important;
+                  height: 60px !important;
+                  display: flex !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
                 }}
               </style>
             </head>
