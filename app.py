@@ -15111,6 +15111,83 @@ def home():
                   .home-carousel-slide-v295 {{ flex-basis: 300px; width: 300px; min-width: 300px; max-width: 300px; }}
                   .carousel-arrow {{ display: none; }}
                 }}
+
+
+                /* v321: balanced 600px card layout - larger image, logo does not cover name, button lower but visible */
+                html, body {{ height: 690px !important; min-height: 690px !important; overflow: hidden !important; }}
+                .carousel-shell {{ height: 690px !important; min-height: 690px !important; padding: 8px 34px 56px 34px !important; overflow: visible !important; }}
+                .carousel-window {{ height: 640px !important; min-height: 640px !important; overflow-x: auto !important; overflow-y: visible !important; padding-bottom: 36px !important; }}
+                .carousel-track {{ height: 624px !important; min-height: 624px !important; padding: 0 0 34px 0 !important; overflow: visible !important; align-items: stretch !important; }}
+                .home-carousel-slide-v295 {{ height: 610px !important; min-height: 610px !important; overflow: visible !important; }}
+                .home-uni-card-v207, .home-carousel-card-v295 {{
+                  height: 600px !important;
+                  min-height: 600px !important;
+                  max-height: 600px !important;
+                  overflow: hidden !important;
+                  border-radius: 18px !important;
+                  background: #ffffff !important;
+                }}
+                .home-uni-image-wrap-v207, .home-featured-photo-v207, .home-featured-photo-placeholder-v207 {{
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  top: 166px !important;
+                  left: 24px !important;
+                  width: 88px !important;
+                  height: 88px !important;
+                  border-radius: 999px !important;
+                  z-index: 3 !important;
+                }}
+                .home-featured-logo-v207, .home-featured-logo-placeholder-v207 {{ width: 68px !important; height: 68px !important; }}
+                .home-uni-body-v207 {{
+                  position: absolute !important;
+                  top: 268px !important;
+                  left: 22px !important;
+                  right: 22px !important;
+                  bottom: 20px !important;
+                  height: auto !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: visible !important;
+                  padding: 0 !important;
+                }}
+                .home-uni-body-v207 h3 {{
+                  height: 58px !important;
+                  min-height: 58px !important;
+                  max-height: 58px !important;
+                  font-size: 20px !important;
+                  line-height: 1.18 !important;
+                  margin: 0 0 16px 0 !important;
+                  overflow: hidden !important;
+                  display: block !important;
+                }}
+                .home-uni-location-v207 {{
+                  height: 38px !important;
+                  min-height: 38px !important;
+                  margin: 0 0 16px 0 !important;
+                  align-items: flex-start !important;
+                }}
+                .home-uni-location-v207 em {{ font-size: 13px !important; line-height: 1.25 !important; }}
+                .home-uni-stats-v207 {{ gap: 10px !important; margin: 0 0 18px 0 !important; }}
+                .home-uni-stats-v207 div {{ height: 72px !important; min-height: 72px !important; padding: 10px 10px !important; border-radius: 12px !important; }}
+                .home-uni-stats-v207 small {{ font-size: 10.5px !important; margin-bottom: 7px !important; }}
+                .home-uni-stats-v207 b {{ font-size: 15px !important; line-height: 1.15 !important; }}
+                .home-view-programs-link-v295, .home-view-programs-btn-v208 {{
+                  position: static !important;
+                  width: 100% !important;
+                  height: 54px !important;
+                  min-height: 54px !important;
+                  margin: auto 0 0 0 !important;
+                  display: flex !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  z-index: 10 !important;
+                  border-radius: 13px !important;
+                  flex-shrink: 0 !important;
+                }}
+
               </style>
             </head>
             <body>
@@ -15126,7 +15203,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=640, scrolling=False)
+            """, height=690, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
