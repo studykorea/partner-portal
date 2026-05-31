@@ -15087,21 +15087,25 @@ def home():
                 .left {{ left: 8px; }}
                 .right {{ right: 8px; }}
 
-                /* v318 final compact no-crop override */
-                html, body { height: 760px !important; min-height: 760px !important; overflow: hidden !important; }
-                .carousel-shell { height: 760px !important; min-height: 760px !important; padding-bottom: 80px !important; overflow: visible !important; }
-                .carousel-window { height: 650px !important; min-height: 650px !important; overflow-x: auto !important; overflow-y: visible !important; padding-bottom: 70px !important; }
-                .carousel-track { height: 590px !important; min-height: 590px !important; padding-bottom: 70px !important; overflow: visible !important; }
-                .home-carousel-slide-v295 { height: 520px !important; min-height: 520px !important; overflow: visible !important; }
-                .home-uni-card-v207, .home-carousel-card-v295 { height: 500px !important; min-height: 500px !important; max-height: 500px !important; overflow: hidden !important; }
-                .home-uni-image-wrap-v207, .home-featured-photo-v207, .home-featured-photo-placeholder-v207 { height: 108px !important; min-height: 108px !important; }
-                .home-uni-logo-overlap-v207 { top: 82px !important; width: 58px !important; height: 58px !important; }
-                .home-featured-logo-v207, .home-featured-logo-placeholder-v207 { width: 46px !important; height: 46px !important; }
-                .home-uni-body-v207 { top: 130px !important; bottom: 14px !important; left: 18px !important; right: 18px !important; }
-                .home-uni-body-v207 h3 { height: 44px !important; min-height: 44px !important; font-size: 18px !important; margin-bottom: 8px !important; }
-                .home-uni-location-v207 { height: 36px !important; min-height: 36px !important; margin-bottom: 10px !important; }
-                .home-uni-stats-v207 div { height: 60px !important; min-height: 60px !important; padding: 7px 8px !important; }
-                .home-view-programs-link-v295, .home-view-programs-btn-v208 { bottom: 0 !important; height: 48px !important; min-height: 48px !important; display: flex !important; visibility: visible !important; opacity: 1 !important; }
+                /* v319 final compact no-crop override: all braces escaped for Python f-string */
+                html, body {{ height: 760px !important; min-height: 760px !important; overflow: hidden !important; }}
+                .carousel-shell {{ height: 760px !important; min-height: 760px !important; padding: 8px 34px 110px 34px !important; overflow: visible !important; }}
+                .carousel-window {{ height: 620px !important; min-height: 620px !important; overflow-x: auto !important; overflow-y: visible !important; padding-bottom: 90px !important; }}
+                .carousel-track {{ height: 540px !important; min-height: 540px !important; padding-bottom: 90px !important; overflow: visible !important; align-items: stretch !important; }}
+                .home-carousel-slide-v295 {{ height: 500px !important; min-height: 500px !important; overflow: visible !important; }}
+                .home-uni-card-v207, .home-carousel-card-v295 {{ height: 480px !important; min-height: 480px !important; max-height: 480px !important; overflow: hidden !important; }}
+                .home-uni-image-wrap-v207, .home-featured-photo-v207, .home-featured-photo-placeholder-v207 {{ height: 104px !important; min-height: 104px !important; }}
+                .home-uni-logo-overlap-v207 {{ top: 78px !important; width: 56px !important; height: 56px !important; }}
+                .home-featured-logo-v207, .home-featured-logo-placeholder-v207 {{ width: 44px !important; height: 44px !important; }}
+                .home-uni-body-v207 {{ top: 124px !important; bottom: 14px !important; left: 18px !important; right: 18px !important; }}
+                .home-uni-body-v207 h3 {{ height: 42px !important; min-height: 42px !important; font-size: 17px !important; line-height: 1.2 !important; margin-bottom: 6px !important; }}
+                .home-uni-location-v207 {{ height: 34px !important; min-height: 34px !important; margin-bottom: 8px !important; }}
+                .home-uni-location-v207 em {{ font-size: 12.5px !important; line-height: 1.2 !important; }}
+                .home-uni-stats-v207 {{ gap: 7px !important; }}
+                .home-uni-stats-v207 div {{ height: 58px !important; min-height: 58px !important; padding: 7px 8px !important; }}
+                .home-uni-stats-v207 small {{ font-size: 10px !important; margin-bottom: 5px !important; }}
+                .home-uni-stats-v207 b {{ font-size: 14px !important; }}
+                .home-view-programs-link-v295, .home-view-programs-btn-v208 {{ bottom: 0 !important; height: 46px !important; min-height: 46px !important; display: flex !important; visibility: visible !important; opacity: 1 !important; z-index: 10 !important; }}
                 @media (max-width: 768px) {{
                   .carousel-shell {{ padding-left: 20px; padding-right: 20px; }}
                   .home-carousel-slide-v295 {{ flex-basis: 300px; width: 300px; min-width: 300px; max-width: 300px; }}
