@@ -19138,23 +19138,53 @@ def _detail_video_autoplay_url_v300(embed_url):
     return s
 
 def _detail_video_html_v271(row, name, hero_src):
+    """Render the detail-page promotion video.
+
+    v302: Streamlit markdown does not reliably run inline JavaScript click handlers.
+    The thumbnail is therefore a same-page link that rerenders the detail page with
+    playvideo=1, then the iframe/video is rendered with autoplay enabled. This keeps
+    the video inside the same rounded box and avoids the YouTube two-click problem.
+    """
     video_url = _detail_value_v264(row, ["University_Video_URL", "Campus_Tour_Video_URL", "Promotion_Video_URL", "Video_URL", "YouTube_Link", "Youtube", "YouTube"], "")
     embed_url = _detail_video_embed_url_v271(video_url)
     thumb = _detail_value_v264(row, ["Video_Thumbnail_URL", "Video_Thumbnail", "Thumbnail_URL"], "")
     thumb_src = _detail_img_src_v264(thumb) if thumb else hero_src
     safe_name = _safe_html_v62(name)
+
+    try:
+        from urllib.parse import quote_plus
+        uni_q = quote_plus(display_clean_v50(name))
+    except Exception:
+        uni_q = str(name).replace(" ", "+")
+
+    try:
+        play_q = st.query_params.get("playvideo", "")
+        if isinstance(play_q, list):
+            play_q = play_q[0] if play_q else ""
+    except Exception:
+        play_q = ""
+    is_playing = str(play_q or "").strip().lower() in ["1", "true", "yes", "play"]
+
     if embed_url:
         safe_embed = _safe_html_v62(_detail_video_autoplay_url_v300(embed_url))
+        card_class = "video-card-v264 video-card-v271 video-card-v300" + (" playing-v300" if is_playing else "")
         if embed_url.lower().endswith((".mp4", ".webm", ".ogg")):
-            player = f'<video class="video-player-v271" data-src="{_safe_html_v62(embed_url)}" controls playsinline></video>'
+            player = f'<video class="video-player-v271" src="{_safe_html_v62(embed_url)}" controls autoplay playsinline></video>' if is_playing else ""
         else:
-            player = f'<iframe class="video-player-v271" data-src="{safe_embed}" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
-        return f"""
-<div class="video-card-v264 video-card-v271 video-card-v300">
-<button type="button" class="video-preview-v271 video-preview-v300" aria-label="Play {safe_name} video" style="background-image:url('{_safe_html_v62(thumb_src)}');" onclick="var c=this.closest('.video-card-v300'); if(c){{c.classList.add('playing-v300'); var f=c.querySelector('iframe.video-player-v271'); if(f && !f.getAttribute('src')){{f.setAttribute('src', f.getAttribute('data-src'));}} var v=c.querySelector('video.video-player-v271'); if(v){{if(!v.getAttribute('src')){{v.setAttribute('src', v.getAttribute('data-src'));}} try{{v.play();}}catch(e){{}}}}">
+            player = f'<iframe class="video-player-v271" src="{safe_embed}" title="{safe_name} campus video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>' if is_playing else ""
+
+        play_href = f"?nav=universities&unidetail={uni_q}&playvideo=1#overview-v264"
+        if not is_playing:
+            preview = f"""
+<a class="video-preview-v271 video-preview-v300" aria-label="Play {safe_name} video" href="{_safe_html_v62(play_href)}" target="_self" style="background-image:url('{_safe_html_v62(thumb_src)}');">
 <span class="play-v264 play-v271">▶</span>
 <span class="video-label-v264 video-label-v271">Discover {safe_name}<br><small>Campus Tour</small></span>
-</button>
+</a>"""
+        else:
+            preview = ""
+        return f"""
+<div class="{card_class}">
+{preview}
 <div class="video-embed-wrap-v271">{player}</div>
 </div>"""
     if thumb_src:
