@@ -15275,6 +15275,148 @@ def home():
                   visibility: visible !important;
                   opacity: 1 !important;
                 }}
+                /* v311 compact full-card visibility override: make the full card fit inside the carousel viewport */
+                html, body {{
+                  overflow: visible !important;
+                  min-height: 720px !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-shell {{
+                  position: relative !important;
+                  width: 100% !important;
+                  min-height: 700px !important;
+                  height: 700px !important;
+                  overflow: visible !important;
+                  padding: 0 28px 70px 28px !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-window {{
+                  width: 100% !important;
+                  min-height: 660px !important;
+                  height: 660px !important;
+                  overflow-x: auto !important;
+                  overflow-y: visible !important;
+                  padding: 0 0 70px 0 !important;
+                  scrollbar-width: none !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-track {{
+                  display: flex !important;
+                  flex-wrap: nowrap !important;
+                  align-items: stretch !important;
+                  gap: 28px !important;
+                  width: max-content !important;
+                  min-height: 590px !important;
+                  height: 590px !important;
+                  padding: 8px 20px 70px 20px !important;
+                  overflow: visible !important;
+                  background: #ffffff !important;
+                }}
+                .home-carousel-slide-v295 {{
+                  height: 565px !important;
+                  min-height: 565px !important;
+                  overflow: visible !important;
+                  display: flex !important;
+                  align-items: stretch !important;
+                }}
+                .home-carousel-card-v295 {{
+                  width: 100% !important;
+                  height: 548px !important;
+                  min-height: 548px !important;
+                  max-height: none !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: hidden !important;
+                  border-radius: 18px !important;
+                  box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
+                  background: #ffffff !important;
+                }}
+                .home-carousel-card-v295 .home-uni-image-wrap-v207 {{
+                  height: 136px !important;
+                  flex: 0 0 136px !important;
+                }}
+                .home-carousel-card-v295 .home-featured-photo-v207,
+                .home-carousel-card-v295 .home-featured-photo-placeholder-v207 {{
+                  height: 136px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-featured-pill-v207 {{
+                  top: 12px !important;
+                  left: 14px !important;
+                  padding: 7px 13px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-logo-overlap-v207 {{
+                  top: 104px !important;
+                  left: 22px !important;
+                  width: 68px !important;
+                  height: 68px !important;
+                }}
+                .home-carousel-card-v295 .home-featured-logo-v207,
+                .home-carousel-card-v295 .home-featured-logo-placeholder-v207 {{
+                  width: 54px !important;
+                  height: 54px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-body-v207 {{
+                  flex: 1 1 auto !important;
+                  min-height: 0 !important;
+                  padding: 42px 18px 16px 18px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: visible !important;
+                }}
+                .home-carousel-card-v295 .home-uni-body-v207 h3 {{
+                  min-height: 48px !important;
+                  margin: 0 0 10px 0 !important;
+                  font-size: 20px !important;
+                  line-height: 1.22 !important;
+                  overflow: hidden !important;
+                }}
+                .home-carousel-card-v295 .home-uni-location-v207 {{
+                  min-height: 40px !important;
+                  margin: 0 0 12px 0 !important;
+                  align-items: center !important;
+                  overflow: hidden !important;
+                }}
+                .home-carousel-card-v295 .home-uni-location-v207 em {{
+                  font-size: 13px !important;
+                  line-height: 1.25 !important;
+                  display: -webkit-box !important;
+                  -webkit-line-clamp: 2 !important;
+                  -webkit-box-orient: vertical !important;
+                  overflow: hidden !important;
+                }}
+                .home-carousel-card-v295 .home-uni-stats-v207 {{
+                  margin: 0 0 14px 0 !important;
+                  gap: 8px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-stats-v207 div {{
+                  min-height: 68px !important;
+                  padding: 9px 8px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-stats-v207 small {{
+                  font-size: 10.5px !important;
+                  margin-bottom: 6px !important;
+                }}
+                .home-carousel-card-v295 .home-uni-stats-v207 b {{
+                  font-size: 14.5px !important;
+                  line-height: 1.12 !important;
+                  white-space: nowrap !important;
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
+                }}
+                .home-carousel-card-v295 .home-view-programs-link-v295 {{
+                  margin-top: auto !important;
+                  height: 54px !important;
+                  min-height: 54px !important;
+                  flex: 0 0 54px !important;
+                  width: 100% !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  border-radius: 12px !important;
+                }}
+
               </style>
             </head>
             <body>
@@ -15290,7 +15432,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=980, scrolling=False)
+            """, height=720, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
