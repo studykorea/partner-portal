@@ -15188,6 +15188,124 @@ def home():
                   flex-shrink: 0 !important;
                 }}
 
+
+
+                /* v322: final internal layout balance - large image, clear name below logo, no huge blank, button visible */
+                html, body {{ height: 720px !important; min-height: 720px !important; overflow: hidden !important; }}
+                .carousel-shell {{ height: 720px !important; min-height: 720px !important; padding: 8px 34px 62px 34px !important; overflow: visible !important; }}
+                .carousel-window {{ height: 682px !important; min-height: 682px !important; overflow-x: auto !important; overflow-y: visible !important; padding-bottom: 42px !important; }}
+                .carousel-track {{ height: 650px !important; min-height: 650px !important; padding: 0 0 42px 0 !important; overflow: visible !important; align-items: stretch !important; }}
+                .home-carousel-slide-v295 {{ height: 635px !important; min-height: 635px !important; overflow: visible !important; }}
+                .home-uni-card-v207, .home-carousel-card-v295 {{
+                  height: 620px !important;
+                  min-height: 620px !important;
+                  max-height: 620px !important;
+                  display: block !important;
+                  position: relative !important;
+                  overflow: hidden !important;
+                  border-radius: 18px !important;
+                  background: #ffffff !important;
+                  border: 1px solid #e5e7eb !important;
+                  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08) !important;
+                }}
+                .home-uni-image-wrap-v207, .home-featured-photo-v207, .home-featured-photo-placeholder-v207 {{
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                  width: 100% !important;
+                  object-fit: cover !important;
+                  object-position: center !important;
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  top: 166px !important;
+                  left: 28px !important;
+                  width: 88px !important;
+                  height: 88px !important;
+                  border-radius: 999px !important;
+                  z-index: 3 !important;
+                  background: #ffffff !important;
+                  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16) !important;
+                }}
+                .home-featured-logo-v207, .home-featured-logo-placeholder-v207 {{ width: 68px !important; height: 68px !important; }}
+                .home-uni-body-v207 {{
+                  position: absolute !important;
+                  top: 266px !important;
+                  left: 28px !important;
+                  right: 28px !important;
+                  bottom: 24px !important;
+                  height: auto !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: visible !important;
+                }}
+                .home-uni-body-v207 h3 {{
+                  color: #071633 !important;
+                  font-size: 22px !important;
+                  font-weight: 950 !important;
+                  line-height: 1.18 !important;
+                  margin: 0 0 14px 0 !important;
+                  min-height: 34px !important;
+                  max-height: 60px !important;
+                  height: auto !important;
+                  overflow: hidden !important;
+                  display: block !important;
+                }}
+                .home-uni-location-v207 {{
+                  display: flex !important;
+                  align-items: flex-start !important;
+                  gap: 10px !important;
+                  height: 38px !important;
+                  min-height: 38px !important;
+                  max-height: 38px !important;
+                  margin: 0 0 18px 0 !important;
+                  overflow: hidden !important;
+                }}
+                .home-uni-location-v207 em {{
+                  font-size: 13.5px !important;
+                  line-height: 1.35 !important;
+                  font-weight: 700 !important;
+                  color: #4b5563 !important;
+                }}
+                .home-uni-stats-v207 {{
+                  display: grid !important;
+                  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                  gap: 12px !important;
+                  margin: 0 0 16px 0 !important;
+                }}
+                .home-uni-stats-v207 div {{
+                  height: 76px !important;
+                  min-height: 76px !important;
+                  padding: 12px 12px !important;
+                  border: 1px solid #e2e8f0 !important;
+                  border-radius: 14px !important;
+                  background: #f8fafc !important;
+                }}
+                .home-uni-stats-v207 small {{ font-size: 11px !important; font-weight: 800 !important; color: #64748b !important; margin-bottom: 7px !important; }}
+                .home-uni-stats-v207 b {{ font-size: 16px !important; line-height: 1.18 !important; font-weight: 950 !important; color: #071633 !important; }}
+                .home-view-programs-link-v295, .home-view-programs-btn-v208 {{
+                  position: static !important;
+                  margin: auto 0 0 0 !important;
+                  width: 100% !important;
+                  height: 58px !important;
+                  min-height: 58px !important;
+                  flex: 0 0 58px !important;
+                  flex-shrink: 0 !important;
+                  border-radius: 16px !important;
+                  background: #061a40 !important;
+                  color: #ffffff !important;
+                  font-size: 17px !important;
+                  font-weight: 900 !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  padding: 0 24px !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  z-index: 10 !important;
+                }}
+                .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
+
               </style>
             </head>
             <body>
@@ -15203,7 +15321,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=690, scrolling=False)
+            """, height=720, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
