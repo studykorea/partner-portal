@@ -15066,19 +15066,19 @@ def home():
                 .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
 
                 /* v303: keep full card and bottom button visible inside carousel iframe */
-                .home-carousel-card-v295 {
+                .home-carousel-card-v295 {{
                   height: 610px !important;
                   min-height: 610px !important;
                   overflow: hidden !important;
-                }
-                .home-carousel-card-v295 .home-uni-body-v207 {
+                }}
+                .home-carousel-card-v295 .home-uni-body-v207 {{
                   min-height: 424px !important;
                   overflow: visible !important;
-                }
-                .home-carousel-card-v295 .home-view-programs-link-v295 {
+                }}
+                .home-carousel-card-v295 .home-view-programs-link-v295 {{
                   flex: 0 0 58px !important;
                   width: 100% !important;
-                }
+                }}
 
                 .carousel-arrow {{
                   position: absolute;
