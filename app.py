@@ -14837,7 +14837,7 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 720px;
+                  min-height: 800px;
                   overflow: hidden;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -14846,15 +14846,15 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 700px;
-                  height: 700px;
+                  min-height: 780px;
+                  height: 780px;
                   background: #ffffff !important;
                   overflow: visible;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  min-height: 680px;
-                  height: 680px;
+                  min-height: 760px;
+                  height: 760px;
                   overflow-x: auto;
                   overflow-y: hidden;
                   scrollbar-width: none;
@@ -14868,8 +14868,8 @@ def home():
                   align-items: stretch;
                   gap: 28px;
                   width: max-content;
-                  height: 650px;
-                  padding: 6px 0 28px 0;
+                  height: 730px;
+                  padding: 6px 0 42px 0;
                   background: #ffffff !important;
                   will-change: transform;
                 }}
@@ -14888,7 +14888,7 @@ def home():
                   width: calc((100vw - 112px) / 5);
                   min-width: 260px;
                   max-width: 340px;
-                  height: 625px;
+                  height: 690px;
                   scroll-snap-align: start;
                 }}
                 .home-uni-card-v207 {{
@@ -14899,8 +14899,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 610px;
-                  min-height: 610px;
+                  height: 675px;
+                  min-height: 675px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -14981,7 +14981,7 @@ def home():
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 48px 18px 20px 18px;
+                  padding: 48px 18px 24px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
@@ -15023,7 +15023,7 @@ def home():
                   display: grid;
                   grid-template-columns: 1fr 1fr;
                   gap: 8px;
-                  margin-top: 10px;
+                  margin-top: 12px;
                 }}
                 .home-uni-stats-v207 div {{
                   border: 1px solid #E4EAF3;
@@ -15049,8 +15049,8 @@ def home():
                 }}
                 .home-view-programs-link-v295 {{
                   margin-top: auto;
-                  min-height: 58px;
-                  flex: 0 0 58px;
+                  min-height: 60px;
+                  flex: 0 0 60px;
                   border-radius: 12px;
                   background: #061A40;
                   color: #ffffff !important;
@@ -15059,6 +15059,7 @@ def home():
                   align-items: center;
                   justify-content: space-between;
                   padding: 0 22px;
+                  margin-top: 18px;
                   font-weight: 950;
                   font-size: 16px;
                 }}
@@ -15067,16 +15068,16 @@ def home():
 
                 /* v303: keep full card and bottom button visible inside carousel iframe */
                 .home-carousel-card-v295 {{
-                  height: 610px !important;
-                  min-height: 610px !important;
+                  height: 675px !important;
+                  min-height: 675px !important;
                   overflow: hidden !important;
                 }}
                 .home-carousel-card-v295 .home-uni-body-v207 {{
-                  min-height: 424px !important;
+                  min-height: 485px !important;
                   overflow: visible !important;
                 }}
                 .home-carousel-card-v295 .home-view-programs-link-v295 {{
-                  flex: 0 0 58px !important;
+                  flex: 0 0 60px !important;
                   width: 100% !important;
                 }}
 
@@ -15129,7 +15130,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=720, scrolling=False)
+            """, height=800, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
