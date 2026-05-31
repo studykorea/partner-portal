@@ -14833,216 +14833,345 @@ def home():
             carousel_cards_html_v298 = ''.join(card_html_v295)
             carousel_duplicate_html_v298 = duplicate_html_v295
             carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            carousel_cards_html_v315 = ''.join(card_html_v295)
-            carousel_duplicate_html_v315 = ''.join(card_html_v295) if len(card_html_v295) > 1 else ''
-            carousel_animation_class_v315 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            st.markdown(f"""
-            <style>
-              .featured-carousel-section-v315 {{
-                width: 100%;
-                overflow: visible !important;
-                padding: 12px 34px 90px 34px !important;
-                background: #ffffff !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-viewport-v315 {{
-                width: 100%;
-                overflow-x: hidden !important;
-                overflow-y: visible !important;
-                padding: 12px 0 80px 0 !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-track-v315 {{
-                display: flex !important;
-                flex-wrap: nowrap !important;
-                align-items: stretch !important;
-                gap: 28px !important;
-                width: max-content !important;
-                overflow: visible !important;
-                padding: 0 0 42px 0 !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-section-v315.is-animated .featured-carousel-track-v315 {{
-                animation: featuredCarouselV315 42s linear infinite;
-              }}
-              .featured-carousel-section-v315:hover .featured-carousel-track-v315 {{
-                animation-play-state: paused;
-              }}
-              @keyframes featuredCarouselV315 {{
-                0% {{ transform: translateX(0); }}
-                100% {{ transform: translateX(calc(-50% - 14px)); }}
-              }}
-              .featured-carousel-section-v315 .home-carousel-slide-v295 {{
-                flex: 0 0 320px !important;
-                width: 320px !important;
-                min-width: 320px !important;
-                max-width: 320px !important;
-                height: auto !important;
-                min-height: 0 !important;
-                overflow: visible !important;
-                display: flex !important;
-                align-items: stretch !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-card-v207,
-              .featured-carousel-section-v315 .home-carousel-card-v295 {{
-                width: 100% !important;
-                height: 570px !important;
-                min-height: 570px !important;
-                max-height: none !important;
-                display: flex !important;
-                flex-direction: column !important;
-                overflow: hidden !important;
-                border-radius: 18px !important;
-                background: #ffffff !important;
-                border: 1px solid #DCE6F4 !important;
-                box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
-                box-sizing: border-box !important;
-                margin: 0 !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-image-wrap-v207 {{
-                height: 138px !important;
-                flex: 0 0 138px !important;
-                overflow: hidden !important;
-              }}
-              .featured-carousel-section-v315 .home-featured-photo-v207,
-              .featured-carousel-section-v315 .home-featured-photo-placeholder-v207 {{
-                height: 138px !important;
-                width: 100% !important;
-                object-fit: cover !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-featured-pill-v207 {{
-                top: 12px !important;
-                left: 14px !important;
-                padding: 7px 13px !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-logo-overlap-v207 {{
-                top: 104px !important;
-                left: 22px !important;
-                width: 68px !important;
-                height: 68px !important;
-              }}
-              .featured-carousel-section-v315 .home-featured-logo-v207,
-              .featured-carousel-section-v315 .home-featured-logo-placeholder-v207 {{
-                width: 54px !important;
-                height: 54px !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-body-v207 {{
-                flex: 1 1 auto !important;
-                min-height: 0 !important;
-                height: auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 42px 18px 16px 18px !important;
-                overflow: visible !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-body-v207 h3 {{
-                min-height: 50px !important;
-                max-height: 50px !important;
-                margin: 0 0 10px 0 !important;
-                font-size: 20px !important;
-                line-height: 1.22 !important;
-                overflow: hidden !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-location-v207 {{
-                min-height: 44px !important;
-                max-height: 44px !important;
-                margin: 0 0 12px 0 !important;
-                align-items: center !important;
-                overflow: hidden !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-location-v207 em {{
-                font-size: 13px !important;
-                line-height: 1.25 !important;
-                display: -webkit-box !important;
-                -webkit-line-clamp: 2 !important;
-                -webkit-box-orient: vertical !important;
-                overflow: hidden !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-stats-v207 {{
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
-                margin: 0 0 14px 0 !important;
-                flex: 0 0 auto !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-stats-v207 div {{
-                min-height: 68px !important;
-                padding: 9px 8px !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-stats-v207 small {{
-                font-size: 10.5px !important;
-                margin-bottom: 6px !important;
-              }}
-              .featured-carousel-section-v315 .home-uni-stats-v207 b {{
-                font-size: 14.5px !important;
-                line-height: 1.12 !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-              }}
-              .featured-carousel-section-v315 .home-view-programs-link-v295,
-              .featured-carousel-section-v315 .home-view-programs-btn-v208 {{
-                margin-top: auto !important;
-                height: 54px !important;
-                min-height: 54px !important;
-                flex: 0 0 54px !important;
-                width: 100% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                border-radius: 12px !important;
-                background: #061A40 !important;
-                color: #ffffff !important;
-                -webkit-text-fill-color: #ffffff !important;
-                text-decoration: none !important;
-                box-sizing: border-box !important;
-              }}
-              .featured-carousel-section-v315 .home-view-programs-link-v295 span,
-              .featured-carousel-section-v315 .home-view-programs-link-v295 b {{
-                color: #ffffff !important;
-                -webkit-text-fill-color: #ffffff !important;
-              }}
-              .featured-carousel-arrow-v315 {{
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 5;
-                width: 46px;
-                height: 46px;
-                border-radius: 999px;
-                border: 1px solid rgba(215,222,233,.95);
-                background: rgba(255,255,255,.96);
-                color: #061a40;
-                font-size: 28px;
-                font-weight: 900;
-                box-shadow: 0 12px 28px rgba(16,24,40,.14);
-                pointer-events: none;
-              }}
-              .featured-carousel-left-v315 {{ left: 4px; }}
-              .featured-carousel-right-v315 {{ right: 4px; }}
-              @media(max-width: 768px) {{
-                .featured-carousel-section-v315 {{ padding-left: 18px !important; padding-right: 18px !important; }}
-                .featured-carousel-section-v315 .home-carousel-slide-v295 {{ flex-basis: 290px !important; width: 290px !important; min-width: 290px !important; max-width: 290px !important; }}
-                .featured-carousel-arrow-v315 {{ display: none; }}
-              }}
-            </style>
-            <div class="featured-carousel-section-v315 {carousel_animation_class_v315}">
-              <button class="featured-carousel-arrow-v315 featured-carousel-left-v315" aria-label="Previous">‹</button>
-              <div class="featured-carousel-viewport-v315">
-                <div class="featured-carousel-track-v315">
-                  {carousel_cards_html_v315}
-                  {carousel_duplicate_html_v315}
+            components.html(f"""
+            <!doctype html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                html, body {{
+                  margin: 0;
+                  padding: 0;
+                  width: 100%;
+                  min-height: 760px;
+                  height: 760px;
+                  overflow: hidden;
+                  background: #ffffff !important;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }}
+                * {{ box-sizing: border-box; }}
+                .carousel-shell {{
+                  --gap: 28px;
+                  --visible: 5;
+                  position: relative;
+                  width: 100%;
+                  height: 740px;
+                  min-height: 740px;
+                  overflow: visible;
+                  padding: 10px 36px 74px 36px;
+                  background: #ffffff !important;
+                }}
+                .carousel-window {{
+                  width: 100%;
+                  height: 650px;
+                  min-height: 650px;
+                  overflow: hidden;
+                  background: #ffffff !important;
+                  padding: 0 0 34px 0;
+                }}
+                .carousel-track {{
+                  display: flex;
+                  flex-wrap: nowrap;
+                  align-items: stretch;
+                  gap: var(--gap);
+                  width: 100%;
+                  height: 620px;
+                  min-height: 620px;
+                  overflow: visible;
+                  background: #ffffff !important;
+                  transition: transform 560ms ease;
+                  will-change: transform;
+                }}
+                .home-carousel-slide-v295 {{
+                  flex: 0 0 calc((100% - (var(--gap) * (var(--visible) - 1))) / var(--visible));
+                  width: calc((100% - (var(--gap) * (var(--visible) - 1))) / var(--visible));
+                  min-width: 0;
+                  height: 610px;
+                  min-height: 610px;
+                  overflow: visible;
+                  display: flex;
+                  align-items: stretch;
+                  padding-bottom: 10px;
+                }}
+                .home-uni-card-v207,
+                .home-carousel-card-v295 {{
+                  position: relative;
+                  width: 100%;
+                  height: 590px !important;
+                  min-height: 590px !important;
+                  max-height: none !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: hidden !important;
+                  border-radius: 20px !important;
+                  background: #ffffff !important;
+                  border: 1px solid #DCE6F4 !important;
+                  box-shadow: 0 16px 34px rgba(16,24,40,.10) !important;
+                }}
+                .home-uni-card-v207:hover {{
+                  transform: translateY(-2px);
+                  box-shadow: 0 18px 42px rgba(16,24,40,.14) !important;
+                }}
+                .home-uni-image-wrap-v207 {{
+                  position: relative;
+                  height: 145px !important;
+                  flex: 0 0 145px !important;
+                  overflow: hidden;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                }}
+                .home-featured-photo-v207,
+                .home-featured-photo-placeholder-v207 {{
+                  width: 100%;
+                  height: 145px !important;
+                  object-fit: cover;
+                  display: block;
+                }}
+                .home-featured-photo-placeholder-v207 {{
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                  color: #667085;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 850;
+                }}
+                .home-uni-featured-pill-v207 {{
+                  position: absolute;
+                  top: 16px;
+                  left: 16px;
+                  background: #001F48;
+                  color: #ffffff;
+                  padding: 8px 14px;
+                  border-radius: 999px;
+                  font-size: 12px;
+                  font-weight: 900;
+                  box-shadow: 0 8px 16px rgba(0,31,72,.22);
+                  z-index: 4;
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  position: absolute;
+                  left: 24px;
+                  top: 112px;
+                  width: 74px;
+                  height: 74px;
+                  border-radius: 50%;
+                  background: #ffffff;
+                  border: 1px solid #E4EAF3;
+                  box-shadow: 0 10px 24px rgba(16,24,40,.12);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  overflow: hidden;
+                  z-index: 5;
+                }}
+                .home-featured-logo-v207,
+                .home-featured-logo-placeholder-v207 {{
+                  width: 60px;
+                  height: 60px;
+                  object-fit: contain;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 50%;
+                  color: #98A2B3;
+                  font-size: 12px;
+                  font-weight: 900;
+                }}
+                .home-uni-body-v207 {{
+                  flex: 1 1 auto !important;
+                  min-height: 0 !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  padding: 48px 18px 18px 18px !important;
+                  overflow: hidden !important;
+                }}
+                .home-uni-body-v207 h3 {{
+                  color: #061A40 !important;
+                  font-size: 20px !important;
+                  line-height: 1.22 !important;
+                  font-weight: 950 !important;
+                  letter-spacing: -0.02em;
+                  min-height: 50px !important;
+                  max-height: 54px !important;
+                  margin: 0 0 10px 0 !important;
+                  overflow: hidden !important;
+                  display: -webkit-box !important;
+                  -webkit-line-clamp: 2 !important;
+                  -webkit-box-orient: vertical !important;
+                }}
+                .home-uni-location-v207 {{
+                  display: flex !important;
+                  align-items: center !important;
+                  gap: 8px !important;
+                  color: #344054 !important;
+                  margin: 0 0 13px 0 !important;
+                  min-height: 42px !important;
+                  max-height: 44px !important;
+                  overflow: hidden !important;
+                }}
+                .home-location-pin-v208 {{
+                  width: 20px;
+                  min-width: 20px;
+                  display: inline-flex;
+                  color: #667085;
+                }}
+                .home-location-pin-v208 svg {{
+                  width: 18px;
+                  height: 18px;
+                  fill: #667085;
+                }}
+                .home-uni-location-v207 em {{
+                  color: #344054 !important;
+                  font-size: 13.5px !important;
+                  line-height: 1.25 !important;
+                  font-style: normal !important;
+                  font-weight: 700 !important;
+                  overflow: hidden !important;
+                  display: -webkit-box !important;
+                  -webkit-line-clamp: 2 !important;
+                  -webkit-box-orient: vertical !important;
+                }}
+                .home-uni-stats-v207 {{
+                  display: grid !important;
+                  grid-template-columns: 1fr 1fr !important;
+                  gap: 9px !important;
+                  margin: 0 0 16px 0 !important;
+                }}
+                .home-uni-stats-v207 div {{
+                  border: 1px solid #E4EAF3;
+                  border-radius: 12px;
+                  background: #FBFCFF;
+                  padding: 10px 9px;
+                  min-height: 72px;
+                  max-height: 76px;
+                  overflow: hidden;
+                }}
+                .home-uni-stats-v207 small {{
+                  display: block;
+                  color: #475467;
+                  font-size: 10.5px;
+                  line-height: 1.15;
+                  font-weight: 800;
+                  margin-bottom: 7px;
+                }}
+                .home-uni-stats-v207 b {{
+                  display: block;
+                  color: #061A40;
+                  font-size: 15px;
+                  line-height: 1.12;
+                  font-weight: 950;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }}
+                .home-view-programs-link-v295,
+                .home-view-programs-btn-v208 {{
+                  margin-top: auto !important;
+                  height: 56px !important;
+                  min-height: 56px !important;
+                  flex: 0 0 56px !important;
+                  width: 100% !important;
+                  border-radius: 14px !important;
+                  background: #061A40 !important;
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                  text-decoration: none !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  padding: 0 22px !important;
+                  font-weight: 950 !important;
+                  font-size: 15px !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                }}
+                .home-view-programs-link-v295 span,
+                .home-view-programs-link-v295 b {{
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                }}
+                .carousel-arrow {{
+                  position: absolute;
+                  top: 44%;
+                  transform: translateY(-50%);
+                  z-index: 20;
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 999px;
+                  border: 1px solid rgba(215,222,233,.95);
+                  background: rgba(255,255,255,.97);
+                  color: #061a40;
+                  font-size: 28px;
+                  font-weight: 900;
+                  box-shadow: 0 12px 28px rgba(16,24,40,.14);
+                  cursor: pointer;
+                }}
+                .carousel-arrow.left {{ left: 10px; }}
+                .carousel-arrow.right {{ right: 10px; }}
+                @media (max-width: 1535px) {{ .carousel-shell {{ --visible: 4; }} }}
+                @media (max-width: 1024px) {{
+                  .carousel-shell {{ --visible: 3; --gap: 22px; padding-left: 28px; padding-right: 28px; }}
+                }}
+                @media (max-width: 768px) {{
+                  .carousel-shell {{ --visible: 2; --gap: 18px; padding-left: 20px; padding-right: 20px; }}
+                  .carousel-arrow {{ display: none; }}
+                }}
+                @media (max-width: 520px) {{ .carousel-shell {{ --visible: 1; --gap: 16px; }} }}
+              </style>
+            </head>
+            <body>
+              <div class="carousel-shell {carousel_animation_class_v298}" data-count="{len(card_html_v295)}">
+                <button class="carousel-arrow left" aria-label="Previous">‹</button>
+                <div class="carousel-window">
+                  <div class="carousel-track">
+                    {carousel_cards_html_v298}
+                    {carousel_duplicate_html_v298}
+                  </div>
                 </div>
+                <button class="carousel-arrow right" aria-label="Next">›</button>
               </div>
-              <button class="featured-carousel-arrow-v315 featured-carousel-right-v315" aria-label="Next">›</button>
-            </div>
-            """, unsafe_allow_html=True)
-
+              <script>
+                const shell = document.querySelector('.carousel-shell');
+                const track = document.querySelector('.carousel-track');
+                const slides = Array.from(document.querySelectorAll('.home-carousel-slide-v295'));
+                const originalCount = Math.max(1, parseInt(shell.dataset.count || '1', 10));
+                let index = 0;
+                let paused = false;
+                function stepSize() {{
+                  if (!slides.length) return 0;
+                  const rect = slides[0].getBoundingClientRect();
+                  const gap = parseFloat(getComputedStyle(track).gap || '0') || 0;
+                  return rect.width + gap;
+                }}
+                function moveTo(i, animate=true) {{
+                  if (!track) return;
+                  track.style.transition = animate ? 'transform 560ms ease' : 'none';
+                  track.style.transform = `translateX(${{-i * stepSize()}}px)`;
+                }}
+                function next() {{
+                  if (originalCount <= 1 || paused) return;
+                  index += 1;
+                  moveTo(index, true);
+                  if (index >= originalCount) {{
+                    setTimeout(() => {{ index = 0; moveTo(0, false); }}, 620);
+                  }}
+                }}
+                function prev() {{
+                  if (originalCount <= 1) return;
+                  if (index <= 0) {{ index = originalCount - 1; moveTo(index, false); }}
+                  else {{ index -= 1; }}
+                  requestAnimationFrame(() => moveTo(index, true));
+                }}
+                shell.addEventListener('mouseenter', () => paused = true);
+                shell.addEventListener('mouseleave', () => paused = false);
+                document.querySelector('.carousel-arrow.right')?.addEventListener('click', next);
+                document.querySelector('.carousel-arrow.left')?.addEventListener('click', prev);
+                window.addEventListener('resize', () => moveTo(index, false));
+                setInterval(next, 2000);
+              </script>
+            </body>
+            </html>
+            """, height=760, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
