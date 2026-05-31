@@ -15417,6 +15417,147 @@ def home():
                   border-radius: 12px !important;
                 }}
 
+                /* v314: FINAL compact visible card fix - button appears immediately after stats */
+                html, body {
+                  min-height: 680px !important;
+                  height: auto !important;
+                  overflow: visible !important;
+                  background: #ffffff !important;
+                }
+                .carousel-shell {
+                  min-height: 650px !important;
+                  height: 650px !important;
+                  overflow: visible !important;
+                  padding: 0 34px 40px 34px !important;
+                  background: #ffffff !important;
+                }
+                .carousel-window {
+                  min-height: 620px !important;
+                  height: 620px !important;
+                  overflow-x: auto !important;
+                  overflow-y: visible !important;
+                  padding-bottom: 40px !important;
+                  background: #ffffff !important;
+                }
+                .carousel-track {
+                  min-height: 560px !important;
+                  height: 560px !important;
+                  align-items: stretch !important;
+                  padding: 8px 24px 36px 24px !important;
+                  overflow: visible !important;
+                  gap: 28px !important;
+                }
+                .home-carousel-slide-v295 {
+                  height: 535px !important;
+                  min-height: 535px !important;
+                  overflow: visible !important;
+                  display: flex !important;
+                  align-items: stretch !important;
+                }
+                .home-carousel-card-v295 {
+                  height: 520px !important;
+                  min-height: 520px !important;
+                  max-height: 520px !important;
+                  overflow: hidden !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                }
+                .home-carousel-card-v295 .home-uni-image-wrap-v207 {
+                  height: 126px !important;
+                  flex: 0 0 126px !important;
+                }
+                .home-carousel-card-v295 .home-featured-photo-v207,
+                .home-carousel-card-v295 .home-featured-photo-placeholder-v207 {
+                  height: 126px !important;
+                }
+                .home-carousel-card-v295 .home-uni-logo-overlap-v207 {
+                  top: 94px !important;
+                  width: 64px !important;
+                  height: 64px !important;
+                }
+                .home-carousel-card-v295 .home-featured-logo-v207,
+                .home-carousel-card-v295 .home-featured-logo-placeholder-v207 {
+                  width: 50px !important;
+                  height: 50px !important;
+                }
+                .home-carousel-card-v295 .home-uni-body-v207 {
+                  flex: 1 1 auto !important;
+                  min-height: 0 !important;
+                  padding: 38px 18px 16px 18px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: hidden !important;
+                }
+                .home-carousel-card-v295 .home-uni-body-v207 h3 {
+                  min-height: 44px !important;
+                  max-height: 50px !important;
+                  margin: 0 0 8px 0 !important;
+                  font-size: 19px !important;
+                  line-height: 1.18 !important;
+                  overflow: hidden !important;
+                }
+                .home-carousel-card-v295 .home-uni-location-v207 {
+                  min-height: 34px !important;
+                  max-height: 38px !important;
+                  margin: 0 0 10px 0 !important;
+                  overflow: hidden !important;
+                }
+                .home-carousel-card-v295 .home-uni-location-v207 em {
+                  font-size: 12.5px !important;
+                  line-height: 1.2 !important;
+                  display: -webkit-box !important;
+                  -webkit-line-clamp: 2 !important;
+                  -webkit-box-orient: vertical !important;
+                  overflow: hidden !important;
+                }
+                .home-carousel-card-v295 .home-uni-stats-v207 {
+                  margin: 0 0 12px 0 !important;
+                  gap: 8px !important;
+                }
+                .home-carousel-card-v295 .home-uni-stats-v207 div {
+                  min-height: 64px !important;
+                  max-height: 68px !important;
+                  padding: 8px 8px !important;
+                }
+                .home-carousel-card-v295 .home-uni-stats-v207 small {
+                  font-size: 10px !important;
+                  line-height: 1.1 !important;
+                  margin: 0 0 5px 0 !important;
+                }
+                .home-carousel-card-v295 .home-uni-stats-v207 b {
+                  font-size: 14px !important;
+                  line-height: 1.1 !important;
+                  white-space: nowrap !important;
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
+                }
+                .home-carousel-card-v295 .home-view-programs-link-v295,
+                .home-carousel-card-v295 .home-view-programs-btn-v208 {
+                  margin-top: 10px !important;
+                  height: 52px !important;
+                  min-height: 52px !important;
+                  flex: 0 0 52px !important;
+                  width: 100% !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  position: relative !important;
+                  bottom: auto !important;
+                  background: #061A40 !important;
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                  border-radius: 12px !important;
+                  text-decoration: none !important;
+                  padding: 0 20px !important;
+                }
+                .home-carousel-card-v295 .home-view-programs-link-v295 span,
+                .home-carousel-card-v295 .home-view-programs-link-v295 b {
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                }
+
               </style>
             </head>
             <body>
@@ -15432,7 +15573,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=1080, scrolling=False)
+            """, height=700, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
