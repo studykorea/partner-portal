@@ -15437,6 +15437,165 @@ def home():
                   -webkit-text-fill-color: #ffffff !important;
                 }}
 
+
+
+                /* v325: final visible-card layout override: keep the same card design, but place all content inside a fixed visible card box */
+                html, body {
+                  height: 780px !important;
+                  min-height: 780px !important;
+                  overflow: hidden !important;
+                  background: #ffffff !important;
+                }
+                .carousel-shell {
+                  height: 780px !important;
+                  min-height: 780px !important;
+                  overflow: hidden !important;
+                  padding: 8px 34px 70px 34px !important;
+                  background: #ffffff !important;
+                }
+                .carousel-window {
+                  height: 700px !important;
+                  min-height: 700px !important;
+                  overflow-x: auto !important;
+                  overflow-y: visible !important;
+                  padding-bottom: 40px !important;
+                  background: #ffffff !important;
+                }
+                .carousel-track {
+                  height: 670px !important;
+                  min-height: 670px !important;
+                  overflow: visible !important;
+                  padding: 0 0 36px 0 !important;
+                  align-items: stretch !important;
+                }
+                .home-carousel-slide-v295 {
+                  height: 640px !important;
+                  min-height: 640px !important;
+                  overflow: visible !important;
+                }
+                .home-uni-card-v207,
+                .home-carousel-card-v295 {
+                  height: 620px !important;
+                  min-height: 620px !important;
+                  max-height: 620px !important;
+                  overflow: hidden !important;
+                  position: relative !important;
+                  border-radius: 18px !important;
+                  background: #ffffff !important;
+                }
+                .home-uni-image-wrap-v207 {
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                  overflow: hidden !important;
+                }
+                .home-featured-photo-v207,
+                .home-featured-photo-placeholder-v207 {
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                  width: 100% !important;
+                  object-fit: cover !important;
+                  object-position: center !important;
+                }
+                .home-uni-logo-overlap-v207 {
+                  width: 88px !important;
+                  height: 88px !important;
+                  left: 28px !important;
+                  top: 166px !important;
+                  z-index: 5 !important;
+                }
+                .home-featured-logo-v207,
+                .home-featured-logo-placeholder-v207 {
+                  width: 68px !important;
+                  height: 68px !important;
+                }
+                .home-uni-body-v207 {
+                  position: absolute !important;
+                  left: 28px !important;
+                  right: 28px !important;
+                  top: 284px !important;
+                  bottom: 24px !important;
+                  height: auto !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: hidden !important;
+                }
+                .home-uni-body-v207 h3 {
+                  margin: 0 0 14px 0 !important;
+                  height: auto !important;
+                  min-height: 34px !important;
+                  max-height: 60px !important;
+                  overflow: hidden !important;
+                  font-size: 22px !important;
+                  line-height: 1.18 !important;
+                  color: #071633 !important;
+                  -webkit-text-fill-color: #071633 !important;
+                }
+                .home-uni-location-v207 {
+                  height: 42px !important;
+                  min-height: 42px !important;
+                  max-height: 42px !important;
+                  margin: 0 0 16px 0 !important;
+                  overflow: hidden !important;
+                  display: flex !important;
+                  align-items: flex-start !important;
+                  gap: 10px !important;
+                }
+                .home-uni-location-v207 em {
+                  font-size: 13.5px !important;
+                  line-height: 1.35 !important;
+                  font-weight: 700 !important;
+                  color: #4b5563 !important;
+                  -webkit-text-fill-color: #4b5563 !important;
+                }
+                .home-uni-stats-v207 {
+                  display: grid !important;
+                  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                  gap: 12px !important;
+                  margin: 0 0 12px 0 !important;
+                  flex: 0 0 auto !important;
+                }
+                .home-uni-stats-v207 div {
+                  height: 76px !important;
+                  min-height: 76px !important;
+                  max-height: 76px !important;
+                  padding: 12px 12px !important;
+                  border-radius: 14px !important;
+                  overflow: hidden !important;
+                }
+                .home-view-programs-link-v295,
+                .home-view-programs-btn-v208 {
+                  position: static !important;
+                  left: auto !important;
+                  right: auto !important;
+                  bottom: auto !important;
+                  margin: auto 0 0 0 !important;
+                  width: 100% !important;
+                  height: 58px !important;
+                  min-height: 58px !important;
+                  max-height: 58px !important;
+                  flex: 0 0 58px !important;
+                  flex-shrink: 0 !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  border-radius: 16px !important;
+                  background: #061a40 !important;
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                  padding: 0 24px !important;
+                  transform: none !important;
+                  z-index: 20 !important;
+                }
+                .home-view-programs-link-v295 span,
+                .home-view-programs-link-v295 b {
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                }
               </style>
             </head>
             <body>
@@ -15452,7 +15611,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=840, scrolling=False)
+            """, height=780, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
