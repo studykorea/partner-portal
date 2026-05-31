@@ -14833,747 +14833,216 @@ def home():
             carousel_cards_html_v298 = ''.join(card_html_v295)
             carousel_duplicate_html_v298 = duplicate_html_v295
             carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            components.html(f"""
-            <!doctype html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-                html, body {{
-                  margin: 0;
-                  padding: 0;
-                  width: 100%;
-                  min-height: 1040px;
-                  overflow: visible;
-                  background: #ffffff !important;
-                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                }}
-                * {{ box-sizing: border-box; }}
-                .carousel-shell {{
-                  position: relative;
-                  width: 100%;
-                  min-height: 1000px;
-                  height: 1000px;
-                  background: #ffffff !important;
-                  overflow: visible;
-                }}
-                .carousel-window {{
-                  width: 100%;
-                  min-height: 960px;
-                  height: 960px;
-                  overflow-x: auto;
-                  overflow-y: visible;
-                  scrollbar-width: none;
-                  -webkit-overflow-scrolling: touch;
-                  background: #ffffff !important;
-                }}
-                .carousel-window::-webkit-scrollbar {{ display: none; }}
-                .carousel-track {{
-                  display: flex;
-                  flex-wrap: nowrap;
-                  align-items: stretch;
-                  gap: 28px;
-                  width: max-content;
-                  min-height: 860px;
-                  height: auto;
-                  padding: 10px 36px 140px 36px;
-                  overflow: visible;
-                  background: #ffffff !important;
-                  will-change: transform;
-                }}
-                .carousel-shell.is-animated .carousel-track {{
-                  animation: featuredSlideV298 34s linear infinite;
-                }}
-                .carousel-shell:hover .carousel-track {{
-                  animation-play-state: paused;
-                }}
-                @keyframes featuredSlideV298 {{
-                  from {{ transform: translateX(0); }}
-                  to {{ transform: translateX(calc(-50% - 14px)); }}
-                }}
-                .home-carousel-slide-v295 {{
-                  flex: 0 0 calc((100vw - 112px) / 5);
-                  width: calc((100vw - 112px) / 5);
-                  min-width: 260px;
-                  max-width: 340px;
-                  min-height: 790px;
-                  height: auto;
-                  scroll-snap-align: start;
-                  overflow: visible;
-                }}
-                .home-uni-card-v207 {{
-                  position: relative;
-                  background: #ffffff !important;
-                  border: 1px solid #DCE6F4;
-                  border-radius: 18px;
-                  overflow: hidden;
-                  box-shadow: 0 14px 34px rgba(16,24,40,.08);
-                  width: 100%;
-                  height: 760px;
-                  min-height: 760px;
-                  display: flex;
-                  flex-direction: column;
-                  transition: transform .2s ease, box-shadow .2s ease;
-                }}
-                .home-uni-card-v207:hover {{
-                  transform: translateY(-3px);
-                  box-shadow: 0 18px 42px rgba(16,24,40,.12);
-                }}
-                .home-uni-image-wrap-v207 {{
-                  position: relative;
-                  height: 168px;
-                  overflow: hidden;
-                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 168px;
-                }}
-                .home-featured-photo-v207 {{
-                  width: 100%;
-                  height: 168px;
-                  object-fit: cover;
-                  display: block;
-                }}
-                .home-featured-photo-placeholder-v207 {{
-                  height: 168px;
-                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  color: #667085;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-weight: 850;
-                }}
-                .home-uni-featured-pill-v207 {{
-                  position: absolute;
-                  top: 16px;
-                  left: 16px;
-                  background: #001F48;
-                  color: #ffffff;
-                  padding: 8px 14px;
-                  border-radius: 999px;
-                  font-size: 12px;
-                  font-weight: 900;
-                  box-shadow: 0 8px 16px rgba(0,31,72,.22);
-                }}
-                .home-uni-logo-overlap-v207 {{
-                  position: absolute;
-                  left: 24px;
-                  top: 132px;
-                  width: 76px;
-                  height: 76px;
-                  border-radius: 50%;
-                  background: #ffffff;
-                  border: 1px solid #E4EAF3;
-                  box-shadow: 0 10px 24px rgba(16,24,40,.12);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  z-index: 3;
-                }}
-                .home-featured-logo-v207 {{
-                  width: 62px;
-                  height: 62px;
-                  object-fit: contain;
-                  display: block;
-                }}
-                .home-featured-logo-placeholder-v207 {{
-                  width: 62px;
-                  height: 62px;
-                  border-radius: 50%;
-                  background: #F4F7FB;
-                  color: #98A2B3;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 12px;
-                  font-weight: 900;
-                }}
-                .home-uni-body-v207 {{
-                  flex: 1 1 auto;
-                  display: flex;
-                  flex-direction: column;
-                  padding: 44px 18px 26px 18px;
-                }}
-                .home-uni-body-v207 h3 {{
-                  color: #061A40;
-                  font-size: 21px;
-                  line-height: 1.28;
-                  font-weight: 950;
-                  letter-spacing: -0.02em;
-                  min-height: 60px;
-                  margin: 0 0 12px 0;
-                }}
-                .home-uni-location-v207 {{
-                  display: flex;
-                  align-items: center;
-                  gap: 8px;
-                  color: #344054;
-                  margin-bottom: 16px;
-                  min-height: 44px;
-                }}
-                .home-uni-location-v207 span {{
-                  color: #667085;
-                  font-size: 19px;
-                  width: 20px;
-                  min-width: 20px;
-                  display: inline-flex;
-                }}
-                .home-location-pin-v208 svg {{
-                  width: 18px;
-                  height: 18px;
-                  fill: #667085;
-                }}
-                .home-uni-location-v207 em {{
-                  color: #344054;
-                  font-size: 14px;
-                  line-height: 1.35;
-                  font-style: normal;
-                  font-weight: 650;
-                }}
-                .home-uni-stats-v207 {{
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 8px;
-                  margin-top: 12px;
-                }}
-                .home-uni-stats-v207 div {{
-                  border: 1px solid #E4EAF3;
-                  border-radius: 10px;
-                  background: #FBFCFF;
-                  padding: 10px 7px;
-                  min-height: 70px;
-                }}
-                .home-uni-stats-v207 small {{
-                  display: block;
-                  color: #475467;
-                  font-size: 11px;
-                  line-height: 1.25;
-                  font-weight: 700;
-                  margin-bottom: 8px;
-                }}
-                .home-uni-stats-v207 b {{
-                  display: block;
-                  color: #061A40;
-                  font-size: 15px;
-                  line-height: 1.15;
-                  font-weight: 950;
-                }}
-                .home-view-programs-link-v295 {{
-                  margin-top: auto;
-                  min-height: 60px;
-                  flex: 0 0 60px;
-                  border-radius: 12px;
-                  background: #061A40;
-                  color: #ffffff !important;
-                  text-decoration: none;
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  padding: 0 22px;
-                  margin-top: 18px;
-                  font-weight: 950;
-                  font-size: 16px;
-                }}
-                .home-view-programs-link-v295 span,
-                .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
-
-                /* v303: keep full card and bottom button visible inside carousel iframe */
-                .home-carousel-card-v295 {{
-                  height: 760px !important;
-                  min-height: 760px !important;
-                  overflow: hidden !important;
-                }}
-                .home-carousel-card-v295 .home-uni-body-v207 {{
-                  min-height: 570px !important;
-                  overflow: visible !important;
-                }}
-                .home-carousel-card-v295 .home-view-programs-link-v295 {{
-                  flex: 0 0 60px !important;
-                  width: 100% !important;
-                }}
-
-
-                /* v309: stable no-crop carousel viewport - escaped CSS for Python f-string */
-                html, body {{ min-height: 980px !important; height: auto !important; overflow: visible !important; background: #ffffff !important; }}
-                .carousel-shell {{
-                  position: relative !important;
-                  width: 100% !important;
-                  min-height: 940px !important;
-                  height: 940px !important;
-                  overflow: visible !important;
-                  padding-bottom: 90px !important;
-                  background: #ffffff !important;
-                }}
-                .carousel-window {{
-                  width: 100% !important;
-                  min-height: 900px !important;
-                  height: 900px !important;
-                  overflow-x: auto !important;
-                  overflow-y: visible !important;
-                  padding-bottom: 90px !important;
-                  scrollbar-width: none !important;
-                  background: #ffffff !important;
-                }}
-                .carousel-track {{
-                  display: flex !important;
-                  flex-wrap: nowrap !important;
-                  align-items: stretch !important;
-                  gap: 28px !important;
-                  width: max-content !important;
-                  min-height: 820px !important;
-                  height: 820px !important;
-                  padding: 8px 0 100px 0 !important;
-                  overflow: visible !important;
-                  background: #ffffff !important;
-                }}
-                .home-carousel-slide-v295 {{
-                  height: 760px !important;
-                  min-height: 760px !important;
-                  overflow: visible !important;
-                  display: flex !important;
-                  align-items: stretch !important;
-                }}
-                .home-carousel-card-v295 {{
-                  height: 700px !important;
-                  min-height: 700px !important;
-                  width: 100% !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  overflow: hidden !important;
-                  border-radius: 18px !important;
-                  box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
-                }}
-                .home-carousel-card-v295 .home-uni-image-wrap-v207 {{ height: 150px !important; flex: 0 0 150px !important; }}
-                .home-carousel-card-v295 .home-featured-photo-v207,
-                .home-carousel-card-v295 .home-featured-photo-placeholder-v207 {{ height: 150px !important; }}
-                .home-carousel-card-v295 .home-uni-logo-overlap-v207 {{ top: 114px !important; width: 72px !important; height: 72px !important; }}
-                .home-carousel-card-v295 .home-featured-logo-v207,
-                .home-carousel-card-v295 .home-featured-logo-placeholder-v207 {{ width: 58px !important; height: 58px !important; }}
-                .home-carousel-card-v295 .home-uni-body-v207 {{
-                  flex: 1 1 auto !important;
-                  min-height: 0 !important;
-                  padding: 46px 18px 22px 18px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  overflow: visible !important;
-                }}
-                .home-carousel-card-v295 .home-uni-body-v207 h3 {{
-                  min-height: 58px !important;
-                  margin: 0 0 12px 0 !important;
-                  font-size: 20px !important;
-                  line-height: 1.25 !important;
-                }}
-                .home-carousel-card-v295 .home-uni-location-v207 {{
-                  min-height: 50px !important;
-                  margin-bottom: 14px !important;
-                  overflow: visible !important;
-                  white-space: normal !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 {{
-                  margin-top: 6px !important;
-                  margin-bottom: 18px !important;
-                  gap: 10px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 div {{ min-height: 76px !important; padding: 10px 8px !important; }}
-                .home-carousel-card-v295 .home-view-programs-link-v295 {{
-                  margin-top: auto !important;
-                  min-height: 58px !important;
-                  flex: 0 0 58px !important;
-                  width: 100% !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: space-between !important;
-                  visibility: visible !important;
-                }}
-
-                .carousel-arrow {{
-                  position: absolute;
-                  top: 46%;
-                  transform: translateY(-50%);
-                  z-index: 20;
-                  width: 46px;
-                  height: 46px;
-                  border-radius: 999px;
-                  border: 1px solid rgba(215,222,233,.95);
-                  background: rgba(255,255,255,.96);
-                  color: #061a40;
-                  font-size: 28px;
-                  font-weight: 900;
-                  box-shadow: 0 12px 28px rgba(16,24,40,.14);
-                  pointer-events: none;
-                }}
-                .left {{ left: 0; }}
-                .right {{ right: 0; }}
-                @media (max-width: 1535px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 72px) / 4); width: calc((100vw - 72px) / 4); }}
-                }}
-                @media (max-width: 1024px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 44px) / 3); width: calc((100vw - 44px) / 3); min-width: 250px; }}
-                  .carousel-track {{ gap: 22px; }}
-                }}
-                @media (max-width: 768px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 18px) / 2); width: calc((100vw - 18px) / 2); min-width: 250px; }}
-                  .carousel-track {{ gap: 18px; }}
-                  .carousel-arrow {{ display: none; }}
-                }}
-                @media (max-width: 520px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px); width: calc(100vw - 24px); min-width: calc(100vw - 24px); }}
-                  .carousel-track {{ gap: 16px; }}
-                }}
-
-                /* v310 final no-crop carousel override */
-                html, body {{
-                  overflow: visible !important;
-                  min-height: 1040px !important;
-                }}
-                .carousel-shell,
-                .carousel-window,
-                .carousel-track,
-                .home-carousel-slide-v295 {{
-                  overflow: visible !important;
-                }}
-                .carousel-shell {{
-                  min-height: 1000px !important;
-                  height: 1000px !important;
-                  padding: 0 18px 120px 18px !important;
-                }}
-                .carousel-window {{
-                  min-height: 960px !important;
-                  height: 960px !important;
-                  padding-bottom: 120px !important;
-                }}
-                .carousel-track {{
-                  min-height: 860px !important;
-                  height: auto !important;
-                  padding-bottom: 140px !important;
-                  align-items: stretch !important;
-                }}
-                .home-carousel-slide-v295 {{
-                  min-height: 790px !important;
-                  height: auto !important;
-                  display: flex !important;
-                  align-items: stretch !important;
-                }}
-                .home-carousel-card-v295 {{
-                  height: 760px !important;
-                  min-height: 760px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                }}
-                .home-carousel-card-v295 .home-uni-body-v207 {{
-                  flex: 1 1 auto !important;
-                  min-height: 570px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                }}
-                .home-carousel-card-v295 .home-view-programs-link-v295 {{
-                  margin-top: auto !important;
-                  flex: 0 0 60px !important;
-                  min-height: 60px !important;
-                  height: 60px !important;
-                  display: flex !important;
-                  visibility: visible !important;
-                  opacity: 1 !important;
-                }}
-                /* v311 compact full-card visibility override: make the full card fit inside the carousel viewport */
-                html, body {{
-                  overflow: visible !important;
-                  min-height: 720px !important;
-                  background: #ffffff !important;
-                }}
-                .carousel-shell {{
-                  position: relative !important;
-                  width: 100% !important;
-                  min-height: 700px !important;
-                  height: 700px !important;
-                  overflow: visible !important;
-                  padding: 0 28px 70px 28px !important;
-                  background: #ffffff !important;
-                }}
-                .carousel-window {{
-                  width: 100% !important;
-                  min-height: 660px !important;
-                  height: 660px !important;
-                  overflow-x: auto !important;
-                  overflow-y: visible !important;
-                  padding: 0 0 70px 0 !important;
-                  scrollbar-width: none !important;
-                  background: #ffffff !important;
-                }}
-                .carousel-track {{
-                  display: flex !important;
-                  flex-wrap: nowrap !important;
-                  align-items: stretch !important;
-                  gap: 28px !important;
-                  width: max-content !important;
-                  min-height: 590px !important;
-                  height: 590px !important;
-                  padding: 8px 20px 70px 20px !important;
-                  overflow: visible !important;
-                  background: #ffffff !important;
-                }}
-                .home-carousel-slide-v295 {{
-                  height: 565px !important;
-                  min-height: 565px !important;
-                  overflow: visible !important;
-                  display: flex !important;
-                  align-items: stretch !important;
-                }}
-                .home-carousel-card-v295 {{
-                  width: 100% !important;
-                  height: 548px !important;
-                  min-height: 548px !important;
-                  max-height: none !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  overflow: hidden !important;
-                  border-radius: 18px !important;
-                  box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
-                  background: #ffffff !important;
-                }}
-                .home-carousel-card-v295 .home-uni-image-wrap-v207 {{
-                  height: 136px !important;
-                  flex: 0 0 136px !important;
-                }}
-                .home-carousel-card-v295 .home-featured-photo-v207,
-                .home-carousel-card-v295 .home-featured-photo-placeholder-v207 {{
-                  height: 136px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-featured-pill-v207 {{
-                  top: 12px !important;
-                  left: 14px !important;
-                  padding: 7px 13px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-logo-overlap-v207 {{
-                  top: 104px !important;
-                  left: 22px !important;
-                  width: 68px !important;
-                  height: 68px !important;
-                }}
-                .home-carousel-card-v295 .home-featured-logo-v207,
-                .home-carousel-card-v295 .home-featured-logo-placeholder-v207 {{
-                  width: 54px !important;
-                  height: 54px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-body-v207 {{
-                  flex: 1 1 auto !important;
-                  min-height: 0 !important;
-                  padding: 42px 18px 16px 18px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  overflow: visible !important;
-                }}
-                .home-carousel-card-v295 .home-uni-body-v207 h3 {{
-                  min-height: 48px !important;
-                  margin: 0 0 10px 0 !important;
-                  font-size: 20px !important;
-                  line-height: 1.22 !important;
-                  overflow: hidden !important;
-                }}
-                .home-carousel-card-v295 .home-uni-location-v207 {{
-                  min-height: 40px !important;
-                  margin: 0 0 12px 0 !important;
-                  align-items: center !important;
-                  overflow: hidden !important;
-                }}
-                .home-carousel-card-v295 .home-uni-location-v207 em {{
-                  font-size: 13px !important;
-                  line-height: 1.25 !important;
-                  display: -webkit-box !important;
-                  -webkit-line-clamp: 2 !important;
-                  -webkit-box-orient: vertical !important;
-                  overflow: hidden !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 {{
-                  margin: 0 0 14px 0 !important;
-                  gap: 8px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 div {{
-                  min-height: 68px !important;
-                  padding: 9px 8px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 small {{
-                  font-size: 10.5px !important;
-                  margin-bottom: 6px !important;
-                }}
-                .home-carousel-card-v295 .home-uni-stats-v207 b {{
-                  font-size: 14.5px !important;
-                  line-height: 1.12 !important;
-                  white-space: nowrap !important;
-                  overflow: hidden !important;
-                  text-overflow: ellipsis !important;
-                }}
-                .home-carousel-card-v295 .home-view-programs-link-v295 {{
-                  margin-top: auto !important;
-                  height: 54px !important;
-                  min-height: 54px !important;
-                  flex: 0 0 54px !important;
-                  width: 100% !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: space-between !important;
-                  visibility: visible !important;
-                  opacity: 1 !important;
-                  border-radius: 12px !important;
-                }}
-
-                /* v314: FINAL compact visible card fix - button appears immediately after stats */
-                html, body {
-                  min-height: 680px !important;
-                  height: auto !important;
-                  overflow: visible !important;
-                  background: #ffffff !important;
-                }
-                .carousel-shell {
-                  min-height: 650px !important;
-                  height: 650px !important;
-                  overflow: visible !important;
-                  padding: 0 34px 40px 34px !important;
-                  background: #ffffff !important;
-                }
-                .carousel-window {
-                  min-height: 620px !important;
-                  height: 620px !important;
-                  overflow-x: auto !important;
-                  overflow-y: visible !important;
-                  padding-bottom: 40px !important;
-                  background: #ffffff !important;
-                }
-                .carousel-track {
-                  min-height: 560px !important;
-                  height: 560px !important;
-                  align-items: stretch !important;
-                  padding: 8px 24px 36px 24px !important;
-                  overflow: visible !important;
-                  gap: 28px !important;
-                }
-                .home-carousel-slide-v295 {
-                  height: 535px !important;
-                  min-height: 535px !important;
-                  overflow: visible !important;
-                  display: flex !important;
-                  align-items: stretch !important;
-                }
-                .home-carousel-card-v295 {
-                  height: 520px !important;
-                  min-height: 520px !important;
-                  max-height: 520px !important;
-                  overflow: hidden !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                }
-                .home-carousel-card-v295 .home-uni-image-wrap-v207 {
-                  height: 126px !important;
-                  flex: 0 0 126px !important;
-                }
-                .home-carousel-card-v295 .home-featured-photo-v207,
-                .home-carousel-card-v295 .home-featured-photo-placeholder-v207 {
-                  height: 126px !important;
-                }
-                .home-carousel-card-v295 .home-uni-logo-overlap-v207 {
-                  top: 94px !important;
-                  width: 64px !important;
-                  height: 64px !important;
-                }
-                .home-carousel-card-v295 .home-featured-logo-v207,
-                .home-carousel-card-v295 .home-featured-logo-placeholder-v207 {
-                  width: 50px !important;
-                  height: 50px !important;
-                }
-                .home-carousel-card-v295 .home-uni-body-v207 {
-                  flex: 1 1 auto !important;
-                  min-height: 0 !important;
-                  padding: 38px 18px 16px 18px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  overflow: hidden !important;
-                }
-                .home-carousel-card-v295 .home-uni-body-v207 h3 {
-                  min-height: 44px !important;
-                  max-height: 50px !important;
-                  margin: 0 0 8px 0 !important;
-                  font-size: 19px !important;
-                  line-height: 1.18 !important;
-                  overflow: hidden !important;
-                }
-                .home-carousel-card-v295 .home-uni-location-v207 {
-                  min-height: 34px !important;
-                  max-height: 38px !important;
-                  margin: 0 0 10px 0 !important;
-                  overflow: hidden !important;
-                }
-                .home-carousel-card-v295 .home-uni-location-v207 em {
-                  font-size: 12.5px !important;
-                  line-height: 1.2 !important;
-                  display: -webkit-box !important;
-                  -webkit-line-clamp: 2 !important;
-                  -webkit-box-orient: vertical !important;
-                  overflow: hidden !important;
-                }
-                .home-carousel-card-v295 .home-uni-stats-v207 {
-                  margin: 0 0 12px 0 !important;
-                  gap: 8px !important;
-                }
-                .home-carousel-card-v295 .home-uni-stats-v207 div {
-                  min-height: 64px !important;
-                  max-height: 68px !important;
-                  padding: 8px 8px !important;
-                }
-                .home-carousel-card-v295 .home-uni-stats-v207 small {
-                  font-size: 10px !important;
-                  line-height: 1.1 !important;
-                  margin: 0 0 5px 0 !important;
-                }
-                .home-carousel-card-v295 .home-uni-stats-v207 b {
-                  font-size: 14px !important;
-                  line-height: 1.1 !important;
-                  white-space: nowrap !important;
-                  overflow: hidden !important;
-                  text-overflow: ellipsis !important;
-                }
-                .home-carousel-card-v295 .home-view-programs-link-v295,
-                .home-carousel-card-v295 .home-view-programs-btn-v208 {
-                  margin-top: 10px !important;
-                  height: 52px !important;
-                  min-height: 52px !important;
-                  flex: 0 0 52px !important;
-                  width: 100% !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: space-between !important;
-                  visibility: visible !important;
-                  opacity: 1 !important;
-                  position: relative !important;
-                  bottom: auto !important;
-                  background: #061A40 !important;
-                  color: #ffffff !important;
-                  -webkit-text-fill-color: #ffffff !important;
-                  border-radius: 12px !important;
-                  text-decoration: none !important;
-                  padding: 0 20px !important;
-                }
-                .home-carousel-card-v295 .home-view-programs-link-v295 span,
-                .home-carousel-card-v295 .home-view-programs-link-v295 b {
-                  color: #ffffff !important;
-                  -webkit-text-fill-color: #ffffff !important;
-                }
-
-              </style>
-            </head>
-            <body>
-              <div class="carousel-shell {carousel_animation_class_v298}">
-                <button class="carousel-arrow left" aria-label="Previous">‹</button>
-                <div class="carousel-window">
-                  <div class="carousel-track">
-                    {carousel_cards_html_v298}
-                    {carousel_duplicate_html_v298}
-                  </div>
+            carousel_cards_html_v315 = ''.join(card_html_v295)
+            carousel_duplicate_html_v315 = ''.join(card_html_v295) if len(card_html_v295) > 1 else ''
+            carousel_animation_class_v315 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            st.markdown(f"""
+            <style>
+              .featured-carousel-section-v315 {{
+                width: 100%;
+                overflow: visible !important;
+                padding: 12px 34px 90px 34px !important;
+                background: #ffffff !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-viewport-v315 {{
+                width: 100%;
+                overflow-x: hidden !important;
+                overflow-y: visible !important;
+                padding: 12px 0 80px 0 !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-track-v315 {{
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                align-items: stretch !important;
+                gap: 28px !important;
+                width: max-content !important;
+                overflow: visible !important;
+                padding: 0 0 42px 0 !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-section-v315.is-animated .featured-carousel-track-v315 {{
+                animation: featuredCarouselV315 42s linear infinite;
+              }}
+              .featured-carousel-section-v315:hover .featured-carousel-track-v315 {{
+                animation-play-state: paused;
+              }}
+              @keyframes featuredCarouselV315 {{
+                0% {{ transform: translateX(0); }}
+                100% {{ transform: translateX(calc(-50% - 14px)); }}
+              }}
+              .featured-carousel-section-v315 .home-carousel-slide-v295 {{
+                flex: 0 0 320px !important;
+                width: 320px !important;
+                min-width: 320px !important;
+                max-width: 320px !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                display: flex !important;
+                align-items: stretch !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-card-v207,
+              .featured-carousel-section-v315 .home-carousel-card-v295 {{
+                width: 100% !important;
+                height: 570px !important;
+                min-height: 570px !important;
+                max-height: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: hidden !important;
+                border-radius: 18px !important;
+                background: #ffffff !important;
+                border: 1px solid #DCE6F4 !important;
+                box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-image-wrap-v207 {{
+                height: 138px !important;
+                flex: 0 0 138px !important;
+                overflow: hidden !important;
+              }}
+              .featured-carousel-section-v315 .home-featured-photo-v207,
+              .featured-carousel-section-v315 .home-featured-photo-placeholder-v207 {{
+                height: 138px !important;
+                width: 100% !important;
+                object-fit: cover !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-featured-pill-v207 {{
+                top: 12px !important;
+                left: 14px !important;
+                padding: 7px 13px !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-logo-overlap-v207 {{
+                top: 104px !important;
+                left: 22px !important;
+                width: 68px !important;
+                height: 68px !important;
+              }}
+              .featured-carousel-section-v315 .home-featured-logo-v207,
+              .featured-carousel-section-v315 .home-featured-logo-placeholder-v207 {{
+                width: 54px !important;
+                height: 54px !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-body-v207 {{
+                flex: 1 1 auto !important;
+                min-height: 0 !important;
+                height: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 42px 18px 16px 18px !important;
+                overflow: visible !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-body-v207 h3 {{
+                min-height: 50px !important;
+                max-height: 50px !important;
+                margin: 0 0 10px 0 !important;
+                font-size: 20px !important;
+                line-height: 1.22 !important;
+                overflow: hidden !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-location-v207 {{
+                min-height: 44px !important;
+                max-height: 44px !important;
+                margin: 0 0 12px 0 !important;
+                align-items: center !important;
+                overflow: hidden !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-location-v207 em {{
+                font-size: 13px !important;
+                line-height: 1.25 !important;
+                display: -webkit-box !important;
+                -webkit-line-clamp: 2 !important;
+                -webkit-box-orient: vertical !important;
+                overflow: hidden !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-stats-v207 {{
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin: 0 0 14px 0 !important;
+                flex: 0 0 auto !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-stats-v207 div {{
+                min-height: 68px !important;
+                padding: 9px 8px !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-stats-v207 small {{
+                font-size: 10.5px !important;
+                margin-bottom: 6px !important;
+              }}
+              .featured-carousel-section-v315 .home-uni-stats-v207 b {{
+                font-size: 14.5px !important;
+                line-height: 1.12 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+              }}
+              .featured-carousel-section-v315 .home-view-programs-link-v295,
+              .featured-carousel-section-v315 .home-view-programs-btn-v208 {{
+                margin-top: auto !important;
+                height: 54px !important;
+                min-height: 54px !important;
+                flex: 0 0 54px !important;
+                width: 100% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                border-radius: 12px !important;
+                background: #061A40 !important;
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+                text-decoration: none !important;
+                box-sizing: border-box !important;
+              }}
+              .featured-carousel-section-v315 .home-view-programs-link-v295 span,
+              .featured-carousel-section-v315 .home-view-programs-link-v295 b {{
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+              }}
+              .featured-carousel-arrow-v315 {{
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 5;
+                width: 46px;
+                height: 46px;
+                border-radius: 999px;
+                border: 1px solid rgba(215,222,233,.95);
+                background: rgba(255,255,255,.96);
+                color: #061a40;
+                font-size: 28px;
+                font-weight: 900;
+                box-shadow: 0 12px 28px rgba(16,24,40,.14);
+                pointer-events: none;
+              }}
+              .featured-carousel-left-v315 {{ left: 4px; }}
+              .featured-carousel-right-v315 {{ right: 4px; }}
+              @media(max-width: 768px) {{
+                .featured-carousel-section-v315 {{ padding-left: 18px !important; padding-right: 18px !important; }}
+                .featured-carousel-section-v315 .home-carousel-slide-v295 {{ flex-basis: 290px !important; width: 290px !important; min-width: 290px !important; max-width: 290px !important; }}
+                .featured-carousel-arrow-v315 {{ display: none; }}
+              }}
+            </style>
+            <div class="featured-carousel-section-v315 {carousel_animation_class_v315}">
+              <button class="featured-carousel-arrow-v315 featured-carousel-left-v315" aria-label="Previous">‹</button>
+              <div class="featured-carousel-viewport-v315">
+                <div class="featured-carousel-track-v315">
+                  {carousel_cards_html_v315}
+                  {carousel_duplicate_html_v315}
                 </div>
-                <button class="carousel-arrow right" aria-label="Next">›</button>
               </div>
-            </body>
-            </html>
-            """, height=700, scrolling=False)
+              <button class="featured-carousel-arrow-v315 featured-carousel-right-v315" aria-label="Next">›</button>
+            </div>
+            """, unsafe_allow_html=True)
+
 
         st.markdown("""
         <div class="home-featured-note-v207">
