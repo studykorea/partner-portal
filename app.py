@@ -15341,6 +15341,102 @@ def home():
                   overflow: hidden !important;
                 }}
 
+                /* v324: hard stop invisible clipping + force footer button inside the card */
+                html, body {{
+                  height: 820px !important;
+                  min-height: 820px !important;
+                  overflow: hidden !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-shell {{
+                  height: 820px !important;
+                  min-height: 820px !important;
+                  overflow: hidden !important;
+                  padding: 8px 34px 110px 34px !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-window {{
+                  height: 720px !important;
+                  min-height: 720px !important;
+                  overflow-x: auto !important;
+                  overflow-y: hidden !important;
+                  padding-bottom: 70px !important;
+                  background: #ffffff !important;
+                }}
+                .carousel-track {{
+                  height: 680px !important;
+                  min-height: 680px !important;
+                  padding: 0 0 70px 0 !important;
+                  align-items: stretch !important;
+                  overflow: visible !important;
+                }}
+                .home-carousel-slide-v295 {{
+                  height: 650px !important;
+                  min-height: 650px !important;
+                  overflow: visible !important;
+                }}
+                .home-uni-card-v207, .home-carousel-card-v295 {{
+                  height: 620px !important;
+                  min-height: 620px !important;
+                  max-height: 620px !important;
+                  position: relative !important;
+                  overflow: hidden !important;
+                  border-radius: 18px !important;
+                  background: #ffffff !important;
+                }}
+                .home-uni-body-v207 {{
+                  position: absolute !important;
+                  top: 262px !important;
+                  left: 22px !important;
+                  right: 22px !important;
+                  bottom: 92px !important;
+                  height: auto !important;
+                  padding: 0 !important;
+                  display: block !important;
+                  overflow: visible !important;
+                }}
+                .home-uni-body-v207 h3 {{
+                  margin: 0 0 16px 0 !important;
+                  min-height: 34px !important;
+                  max-height: 64px !important;
+                  overflow: hidden !important;
+                }}
+                .home-uni-location-v207 {{
+                  margin: 0 0 18px 0 !important;
+                  min-height: 38px !important;
+                  max-height: 44px !important;
+                  overflow: hidden !important;
+                }}
+                .home-uni-stats-v207 {{
+                  margin: 0 !important;
+                  gap: 10px !important;
+                }}
+                .home-view-programs-link-v295, .home-view-programs-btn-v208 {{
+                  position: absolute !important;
+                  left: 22px !important;
+                  right: 22px !important;
+                  bottom: 24px !important;
+                  width: calc(100% - 44px) !important;
+                  height: 58px !important;
+                  min-height: 58px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
+                  z-index: 30 !important;
+                  margin: 0 !important;
+                  transform: none !important;
+                  background: #061a40 !important;
+                  color: #ffffff !important;
+                  border-radius: 16px !important;
+                  padding: 0 24px !important;
+                }}
+                .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                }}
+
               </style>
             </head>
             <body>
@@ -15356,7 +15452,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=900, scrolling=False)
+            """, height=840, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
