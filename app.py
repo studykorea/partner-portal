@@ -15306,6 +15306,41 @@ def home():
                 }}
                 .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
 
+                /* v323: container-only no-clipping fix. Do not change card design/size. */
+                html, body {{
+                  height: 900px !important;
+                  min-height: 900px !important;
+                  overflow: visible !important;
+                }}
+                .carousel-shell {{
+                  height: 860px !important;
+                  min-height: 860px !important;
+                  overflow: visible !important;
+                  padding-bottom: 140px !important;
+                }}
+                .carousel-window {{
+                  height: 800px !important;
+                  min-height: 800px !important;
+                  overflow-x: auto !important;
+                  overflow-y: visible !important;
+                  padding-bottom: 140px !important;
+                }}
+                .carousel-track {{
+                  height: 760px !important;
+                  min-height: 760px !important;
+                  overflow: visible !important;
+                  padding-bottom: 140px !important;
+                  align-items: stretch !important;
+                }}
+                .home-carousel-slide-v295 {{
+                  height: 700px !important;
+                  min-height: 700px !important;
+                  overflow: visible !important;
+                }}
+                .home-uni-card-v207, .home-carousel-card-v295 {{
+                  overflow: hidden !important;
+                }}
+
               </style>
             </head>
             <body>
@@ -15321,7 +15356,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=720, scrolling=False)
+            """, height=900, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
