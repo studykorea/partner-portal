@@ -15306,271 +15306,228 @@ def home():
                 }}
                 .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
 
-                /* v323: container-only no-clipping fix. Do not change card design/size. */
+                /* v326: clean final carousel/card visibility and spacing fix */
                 html, body {{
-                  height: 900px !important;
-                  min-height: 900px !important;
-                  overflow: visible !important;
-                }}
-                .carousel-shell {{
-                  height: 860px !important;
-                  min-height: 860px !important;
-                  overflow: visible !important;
-                  padding-bottom: 140px !important;
-                }}
-                .carousel-window {{
-                  height: 800px !important;
-                  min-height: 800px !important;
-                  overflow-x: auto !important;
-                  overflow-y: visible !important;
-                  padding-bottom: 140px !important;
-                }}
-                .carousel-track {{
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  width: 100% !important;
                   height: 760px !important;
                   min-height: 760px !important;
-                  overflow: visible !important;
-                  padding-bottom: 140px !important;
-                  align-items: stretch !important;
-                }}
-                .home-carousel-slide-v295 {{
-                  height: 700px !important;
-                  min-height: 700px !important;
-                  overflow: visible !important;
-                }}
-                .home-uni-card-v207, .home-carousel-card-v295 {{
-                  overflow: hidden !important;
-                }}
-
-                /* v324: hard stop invisible clipping + force footer button inside the card */
-                html, body {{
-                  height: 820px !important;
-                  min-height: 820px !important;
                   overflow: hidden !important;
                   background: #ffffff !important;
                 }}
                 .carousel-shell {{
-                  height: 820px !important;
-                  min-height: 820px !important;
+                  position: relative !important;
+                  width: 100% !important;
+                  height: 760px !important;
+                  min-height: 760px !important;
                   overflow: hidden !important;
-                  padding: 8px 34px 110px 34px !important;
                   background: #ffffff !important;
+                  padding: 8px 34px 52px 34px !important;
                 }}
                 .carousel-window {{
-                  height: 720px !important;
-                  min-height: 720px !important;
+                  width: 100% !important;
+                  height: 690px !important;
+                  min-height: 690px !important;
                   overflow-x: auto !important;
                   overflow-y: hidden !important;
-                  padding-bottom: 70px !important;
+                  scrollbar-width: none !important;
+                  -webkit-overflow-scrolling: touch !important;
                   background: #ffffff !important;
                 }}
+                .carousel-window::-webkit-scrollbar {{ display: none !important; }}
                 .carousel-track {{
-                  height: 680px !important;
-                  min-height: 680px !important;
-                  padding: 0 0 70px 0 !important;
+                  display: flex !important;
+                  flex-wrap: nowrap !important;
                   align-items: stretch !important;
+                  gap: 28px !important;
+                  width: max-content !important;
+                  height: 660px !important;
+                  min-height: 660px !important;
+                  padding: 0 0 38px 0 !important;
+                  background: #ffffff !important;
+                  will-change: transform !important;
                   overflow: visible !important;
                 }}
+                .carousel-shell.is-animated .carousel-track {{
+                  animation: featuredSlideV326 34s linear infinite !important;
+                }}
+                .carousel-shell:hover .carousel-track {{ animation-play-state: paused !important; }}
+                @keyframes featuredSlideV326 {{
+                  from {{ transform: translateX(0); }}
+                  to {{ transform: translateX(calc(-50% - 14px)); }}
+                }}
                 .home-carousel-slide-v295 {{
+                  flex: 0 0 calc((100vw - 112px) / 5) !important;
+                  width: calc((100vw - 112px) / 5) !important;
+                  min-width: 260px !important;
+                  max-width: 340px !important;
                   height: 650px !important;
                   min-height: 650px !important;
                   overflow: visible !important;
+                  scroll-snap-align: start !important;
                 }}
-                .home-uni-card-v207, .home-carousel-card-v295 {{
+                .home-uni-card-v207,
+                .home-carousel-card-v295 {{
+                  width: 100% !important;
                   height: 620px !important;
                   min-height: 620px !important;
                   max-height: 620px !important;
                   position: relative !important;
+                  display: block !important;
                   overflow: hidden !important;
-                  border-radius: 18px !important;
+                  border-radius: 24px !important;
                   background: #ffffff !important;
+                  border: 1px solid #e5e7eb !important;
+                  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08) !important;
+                }}
+                .home-uni-image-wrap-v207 {{
+                  position: relative !important;
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                  overflow: hidden !important;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+                }}
+                .home-featured-photo-v207,
+                .home-featured-photo-placeholder-v207 {{
+                  width: 100% !important;
+                  height: 210px !important;
+                  min-height: 210px !important;
+                  max-height: 210px !important;
+                  object-fit: cover !important;
+                  object-position: center !important;
+                  display: block !important;
+                }}
+                .home-uni-featured-pill-v207 {{
+                  position: absolute !important;
+                  top: 16px !important;
+                  left: 16px !important;
+                  background: #061a40 !important;
+                  color: #ffffff !important;
+                  -webkit-text-fill-color: #ffffff !important;
+                  padding: 8px 14px !important;
+                  border-radius: 999px !important;
+                  font-size: 12px !important;
+                  font-weight: 900 !important;
+                  box-shadow: 0 8px 16px rgba(0,31,72,.22) !important;
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  position: absolute !important;
+                  left: 28px !important;
+                  top: 166px !important;
+                  width: 88px !important;
+                  height: 88px !important;
+                  border-radius: 999px !important;
+                  background: #ffffff !important;
+                  border: 1px solid #e5e7eb !important;
+                  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16) !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  overflow: hidden !important;
+                  z-index: 5 !important;
+                }}
+                .home-featured-logo-v207,
+                .home-featured-logo-placeholder-v207 {{
+                  width: 68px !important;
+                  height: 68px !important;
+                  object-fit: contain !important;
+                  display: block !important;
                 }}
                 .home-uni-body-v207 {{
                   position: absolute !important;
-                  top: 262px !important;
-                  left: 22px !important;
-                  right: 22px !important;
-                  bottom: 92px !important;
-                  height: auto !important;
-                  padding: 0 !important;
-                  display: block !important;
-                  overflow: visible !important;
-                }}
-                .home-uni-body-v207 h3 {{
-                  margin: 0 0 16px 0 !important;
-                  min-height: 34px !important;
-                  max-height: 64px !important;
-                  overflow: hidden !important;
-                }}
-                .home-uni-location-v207 {{
-                  margin: 0 0 18px 0 !important;
-                  min-height: 38px !important;
-                  max-height: 44px !important;
-                  overflow: hidden !important;
-                }}
-                .home-uni-stats-v207 {{
-                  margin: 0 !important;
-                  gap: 10px !important;
-                }}
-                .home-view-programs-link-v295, .home-view-programs-btn-v208 {{
-                  position: absolute !important;
-                  left: 22px !important;
-                  right: 22px !important;
-                  bottom: 24px !important;
-                  width: calc(100% - 44px) !important;
-                  height: 58px !important;
-                  min-height: 58px !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: space-between !important;
-                  visibility: visible !important;
-                  opacity: 1 !important;
-                  z-index: 30 !important;
-                  margin: 0 !important;
-                  transform: none !important;
-                  background: #061a40 !important;
-                  color: #ffffff !important;
-                  border-radius: 16px !important;
-                  padding: 0 24px !important;
-                }}
-                .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{
-                  color: #ffffff !important;
-                  -webkit-text-fill-color: #ffffff !important;
-                }}
-
-
-
-                /* v325: final visible-card layout override: keep the same card design, but place all content inside a fixed visible card box */
-                html, body {
-                  height: 780px !important;
-                  min-height: 780px !important;
-                  overflow: hidden !important;
-                  background: #ffffff !important;
-                }
-                .carousel-shell {
-                  height: 780px !important;
-                  min-height: 780px !important;
-                  overflow: hidden !important;
-                  padding: 8px 34px 70px 34px !important;
-                  background: #ffffff !important;
-                }
-                .carousel-window {
-                  height: 700px !important;
-                  min-height: 700px !important;
-                  overflow-x: auto !important;
-                  overflow-y: visible !important;
-                  padding-bottom: 40px !important;
-                  background: #ffffff !important;
-                }
-                .carousel-track {
-                  height: 670px !important;
-                  min-height: 670px !important;
-                  overflow: visible !important;
-                  padding: 0 0 36px 0 !important;
-                  align-items: stretch !important;
-                }
-                .home-carousel-slide-v295 {
-                  height: 640px !important;
-                  min-height: 640px !important;
-                  overflow: visible !important;
-                }
-                .home-uni-card-v207,
-                .home-carousel-card-v295 {
-                  height: 620px !important;
-                  min-height: 620px !important;
-                  max-height: 620px !important;
-                  overflow: hidden !important;
-                  position: relative !important;
-                  border-radius: 18px !important;
-                  background: #ffffff !important;
-                }
-                .home-uni-image-wrap-v207 {
-                  height: 210px !important;
-                  min-height: 210px !important;
-                  max-height: 210px !important;
-                  overflow: hidden !important;
-                }
-                .home-featured-photo-v207,
-                .home-featured-photo-placeholder-v207 {
-                  height: 210px !important;
-                  min-height: 210px !important;
-                  max-height: 210px !important;
-                  width: 100% !important;
-                  object-fit: cover !important;
-                  object-position: center !important;
-                }
-                .home-uni-logo-overlap-v207 {
-                  width: 88px !important;
-                  height: 88px !important;
-                  left: 28px !important;
-                  top: 166px !important;
-                  z-index: 5 !important;
-                }
-                .home-featured-logo-v207,
-                .home-featured-logo-placeholder-v207 {
-                  width: 68px !important;
-                  height: 68px !important;
-                }
-                .home-uni-body-v207 {
-                  position: absolute !important;
                   left: 28px !important;
                   right: 28px !important;
-                  top: 284px !important;
+                  top: 286px !important;
                   bottom: 24px !important;
                   height: auto !important;
                   padding: 0 !important;
                   display: flex !important;
                   flex-direction: column !important;
                   overflow: hidden !important;
-                }
-                .home-uni-body-v207 h3 {
+                }}
+                .home-uni-body-v207 h3 {{
                   margin: 0 0 14px 0 !important;
-                  height: auto !important;
+                  padding: 0 !important;
                   min-height: 34px !important;
                   max-height: 60px !important;
                   overflow: hidden !important;
-                  font-size: 22px !important;
-                  line-height: 1.18 !important;
                   color: #071633 !important;
                   -webkit-text-fill-color: #071633 !important;
-                }
-                .home-uni-location-v207 {
+                  font-size: 22px !important;
+                  line-height: 1.18 !important;
+                  font-weight: 950 !important;
+                  letter-spacing: -0.02em !important;
+                }}
+                .home-uni-location-v207 {{
+                  display: flex !important;
+                  align-items: flex-start !important;
+                  gap: 10px !important;
                   height: 42px !important;
                   min-height: 42px !important;
                   max-height: 42px !important;
                   margin: 0 0 16px 0 !important;
                   overflow: hidden !important;
-                  display: flex !important;
-                  align-items: flex-start !important;
-                  gap: 10px !important;
-                }
-                .home-uni-location-v207 em {
-                  font-size: 13.5px !important;
-                  line-height: 1.35 !important;
-                  font-weight: 700 !important;
+                }}
+                .home-location-pin-v208 {{
+                  width: 18px !important;
+                  min-width: 18px !important;
+                  height: 18px !important;
+                  display: inline-flex !important;
+                }}
+                .home-location-pin-v208 svg {{
+                  width: 18px !important;
+                  height: 18px !important;
+                  fill: #667085 !important;
+                }}
+                .home-uni-location-v207 em {{
                   color: #4b5563 !important;
                   -webkit-text-fill-color: #4b5563 !important;
-                }
-                .home-uni-stats-v207 {
+                  font-size: 13.5px !important;
+                  line-height: 1.35 !important;
+                  font-style: normal !important;
+                  font-weight: 700 !important;
+                }}
+                .home-uni-stats-v207 {{
                   display: grid !important;
                   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
                   gap: 12px !important;
-                  margin: 0 0 12px 0 !important;
+                  margin: 0 0 14px 0 !important;
                   flex: 0 0 auto !important;
-                }
-                .home-uni-stats-v207 div {
+                }}
+                .home-uni-stats-v207 div {{
                   height: 76px !important;
                   min-height: 76px !important;
                   max-height: 76px !important;
                   padding: 12px 12px !important;
+                  border: 1px solid #e2e8f0 !important;
                   border-radius: 14px !important;
+                  background: #f8fafc !important;
                   overflow: hidden !important;
-                }
+                }}
+                .home-uni-stats-v207 small {{
+                  display: block !important;
+                  font-size: 11px !important;
+                  line-height: 1.15 !important;
+                  font-weight: 800 !important;
+                  color: #64748b !important;
+                  -webkit-text-fill-color: #64748b !important;
+                  margin: 0 0 7px 0 !important;
+                }}
+                .home-uni-stats-v207 b {{
+                  display: block !important;
+                  font-size: 16px !important;
+                  line-height: 1.18 !important;
+                  font-weight: 950 !important;
+                  color: #071633 !important;
+                  -webkit-text-fill-color: #071633 !important;
+                  white-space: nowrap !important;
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
+                }}
                 .home-view-programs-link-v295,
-                .home-view-programs-btn-v208 {
-                  position: static !important;
-                  left: auto !important;
-                  right: auto !important;
-                  bottom: auto !important;
+                .home-view-programs-btn-v208 {{
                   margin: auto 0 0 0 !important;
                   width: 100% !important;
                   height: 58px !important;
@@ -15578,24 +15535,60 @@ def home():
                   max-height: 58px !important;
                   flex: 0 0 58px !important;
                   flex-shrink: 0 !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: space-between !important;
-                  visibility: visible !important;
-                  opacity: 1 !important;
                   border-radius: 16px !important;
                   background: #061a40 !important;
                   color: #ffffff !important;
                   -webkit-text-fill-color: #ffffff !important;
+                  text-decoration: none !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: space-between !important;
                   padding: 0 24px !important;
-                  transform: none !important;
+                  font-size: 17px !important;
+                  font-weight: 900 !important;
+                  visibility: visible !important;
+                  opacity: 1 !important;
                   z-index: 20 !important;
-                }
+                }}
                 .home-view-programs-link-v295 span,
-                .home-view-programs-link-v295 b {
+                .home-view-programs-link-v295 b {{
                   color: #ffffff !important;
                   -webkit-text-fill-color: #ffffff !important;
-                }
+                }}
+                .carousel-arrow {{
+                  position: absolute !important;
+                  top: 46% !important;
+                  transform: translateY(-50%) !important;
+                  z-index: 20 !important;
+                  width: 46px !important;
+                  height: 46px !important;
+                  border-radius: 999px !important;
+                  border: 1px solid rgba(215,222,233,.95) !important;
+                  background: rgba(255,255,255,.96) !important;
+                  color: #061a40 !important;
+                  font-size: 28px !important;
+                  font-weight: 900 !important;
+                  box-shadow: 0 12px 28px rgba(16,24,40,.14) !important;
+                  pointer-events: none !important;
+                }}
+                .left {{ left: 0 !important; }}
+                .right {{ right: 0 !important; }}
+                @media (max-width: 1535px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 72px) / 4) !important; width: calc((100vw - 72px) / 4) !important; }}
+                }}
+                @media (max-width: 1024px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 44px) / 3) !important; width: calc((100vw - 44px) / 3) !important; min-width: 250px !important; }}
+                  .carousel-track {{ gap: 22px !important; }}
+                }}
+                @media (max-width: 768px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 18px) / 2) !important; width: calc((100vw - 18px) / 2) !important; min-width: 250px !important; }}
+                  .carousel-track {{ gap: 18px !important; }}
+                  .carousel-arrow {{ display: none !important; }}
+                }}
+                @media (max-width: 520px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px) !important; width: calc(100vw - 24px) !important; min-width: calc(100vw - 24px) !important; }}
+                  .carousel-track {{ gap: 16px !important; }}
+                }}
               </style>
             </head>
             <body>
@@ -15611,7 +15604,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=780, scrolling=False)
+            """, height=760, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
