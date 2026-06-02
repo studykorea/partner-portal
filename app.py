@@ -648,7 +648,7 @@ def official_rep_name_html_v141(name):
 def official_rep_badge_html_v141(label="Official Representative"):
     return f'<span class="official-rep-badge-v141">{official_rep_icon_html_v141("official-rep-icon-badge-v141", 20)}<span>{_safe_html_v62(label)}</span></span>'
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=3600, show_spinner=False)
 def universities():
     return read_csv(UNIS)
 
