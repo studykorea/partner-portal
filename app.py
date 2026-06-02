@@ -98,29 +98,9 @@ def _table_exists(table):
         return False
 
 def _ensure_db_table_from_file(p):
-    """
-    First-use migration helper for Supabase/PostgreSQL.
-    Keeps the v58 design/code structure, but stores data in Supabase.
-    If the DB table does not exist yet, it is created from the original CSV/JSON seed file.
-    """
-    p = Path(p)
-
-    if p.suffix.lower() == ".csv":
-        table = _table_for_csv_path(p)
-        if not table:
-            return
-
-        if _table_exists(table):
-            return
-
-        if p.exists():
-            df = pd.read_csv(p, keep_default_na=False).fillna("")
-        else:
-            df = pd.DataFrame()
-
-        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
-
-    elif p.suffix.lower() == ".json":
+    # Disabled for speed on live website.
+    # Do not create/replace database tables during normal page loading.
+    return
         table = _table_for_json_path(p)
         if not table:
             return
