@@ -76,7 +76,7 @@ def get_database_url():
         st.stop()
     return url
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource
 def get_engine():
     return create_engine(get_database_url(), pool_pre_ping=True)
 
