@@ -14727,8 +14727,21 @@ def intl_count_v53(u):
     return ""
 
 
-def _home_featured_img_html_v207(path):
+def _home_featured_img_html_v207(path, uni_name=""):
+    # Prefer the image path from data/DB, but use local asset fallbacks when the DB value is empty.
     encoded = b64(path)
+    if not encoded:
+        name_key = str(uni_name or "").strip().lower()
+        fallback_map = {
+            "kyungsung university": "assets/universities/kyungsung.jpg",
+            "jeonbuk national university": "assets/universities/jeonbuk.jpg",
+            "kyungwoon university": "assets/universities/kyungwoon.jpg",
+            "sejong university": "assets/universities/sejong.jpg",
+            "youngsan university": "assets/universities/youngsan.jpg",
+        }
+        fallback = fallback_map.get(name_key, "")
+        if fallback:
+            encoded = b64(fallback)
     if not encoded:
         return '<div class="home-featured-photo-placeholder-v207">University image</div>'
     return f'<img class="home-featured-photo-v207" src="data:image/jpeg;base64,{encoded}" alt="University image">'
@@ -14736,7 +14749,10 @@ def _home_featured_img_html_v207(path):
 def _home_featured_logo_html_v207(path, uni_name=""):
     encoded = b64(path)
     if not encoded:
-        return '<div class="home-featured-logo-placeholder-v207">Logo</div>'
+        # If no real logo file exists yet, show a neat initials badge instead of a broken/empty logo.
+        words = [w for w in re.split(r"\s+", str(uni_name or "University")) if w and w.lower() != "university"]
+        initials = "".join([w[0].upper() for w in words[:3]]) or "U"
+        return f'<div class="home-featured-logo-placeholder-v207">{_safe_html_v62(initials)}</div>'
     return f'<img class="home-featured-logo-v207" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(uni_name)} logo">'
 
 def _home_location_v207(u):
@@ -14886,7 +14902,7 @@ def home():
                 location_v207 = _home_location_v207(u)
                 total_students_v207 = _home_total_students_v207(u)
                 intl_students_v207 = _home_international_students_v207(u)
-                image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""))
+                image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""), uni_name_v207)
                 logo_html_v207 = _home_featured_logo_html_v207(u.get("University_Logo", ""), uni_name_v207)
                 uni_q_v295 = quote_plus(str(uni_name_v207))
                 card_html_v295.append(f"""
@@ -14924,6 +14940,9 @@ def home():
             carousel_cards_html_v298 = ''.join(card_html_v295)
             carousel_duplicate_html_v298 = duplicate_html_v295
             carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            # Homepage featured cards: use a simple responsive grid instead of an animated carousel.
+            # This prevents the cards/buttons from being clipped and improves responsiveness.
+            featured_cards_html_v330 = ''.join(card_html_v295[:4])
             components.html(f"""
             <!doctype html>
             <html>
@@ -14935,8 +14954,8 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 620px;
-                  overflow: hidden;
+                  min-height: 670px;
+                  overflow: visible;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                 }}
@@ -14944,50 +14963,29 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 610px;
-                  height: 610px;
+                  min-height: 660px;
                   background: #ffffff !important;
                   overflow: visible;
+                  padding: 0 10px 46px 10px;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  min-height: 590px;
-                  height: 590px;
-                  overflow-x: auto;
-                  overflow-y: hidden;
-                  scrollbar-width: none;
-                  -webkit-overflow-scrolling: touch;
+                  overflow: visible;
                   background: #ffffff !important;
                 }}
-                .carousel-window::-webkit-scrollbar {{ display: none; }}
                 .carousel-track {{
-                  display: flex;
-                  flex-wrap: nowrap;
-                  align-items: stretch;
+                  display: grid;
+                  grid-template-columns: repeat(4, minmax(0, 1fr));
                   gap: 28px;
-                  width: max-content;
-                  height: 570px;
-                  padding: 6px 0 18px 0;
+                  width: 100%;
+                  min-height: 610px;
+                  padding: 6px 0 56px 0;
                   background: #ffffff !important;
-                  will-change: transform;
-                }}
-                .carousel-shell.is-animated .carousel-track {{
-                  animation: featuredSlideV298 34s linear infinite;
-                }}
-                .carousel-shell:hover .carousel-track {{
-                  animation-play-state: paused;
-                }}
-                @keyframes featuredSlideV298 {{
-                  from {{ transform: translateX(0); }}
-                  to {{ transform: translateX(calc(-50% - 14px)); }}
                 }}
                 .home-carousel-slide-v295 {{
-                  flex: 0 0 calc((100vw - 112px) / 5);
-                  width: calc((100vw - 112px) / 5);
-                  min-width: 260px;
-                  max-width: 340px;
-                  height: 548px;
-                  scroll-snap-align: start;
+                  width: 100%;
+                  min-width: 0;
+                  height: auto;
                 }}
                 .home-uni-card-v207 {{
                   position: relative;
@@ -14997,8 +14995,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 540px;
-                  min-height: 540px;
+                  height: 560px;
+                  min-height: 560px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -15044,9 +15042,9 @@ def home():
                 .home-uni-logo-overlap-v207 {{
                   position: absolute;
                   left: 24px;
-                  top: 132px;
-                  width: 76px;
-                  height: 76px;
+                  top: 128px;
+                  width: 74px;
+                  height: 74px;
                   border-radius: 50%;
                   background: #ffffff;
                   border: 1px solid #E4EAF3;
@@ -15058,45 +15056,46 @@ def home():
                   z-index: 3;
                 }}
                 .home-featured-logo-v207 {{
-                  width: 62px;
-                  height: 62px;
+                  width: 60px;
+                  height: 60px;
                   object-fit: contain;
                   display: block;
                 }}
                 .home-featured-logo-placeholder-v207 {{
-                  width: 62px;
-                  height: 62px;
+                  width: 60px;
+                  height: 60px;
                   border-radius: 50%;
                   background: #F4F7FB;
-                  color: #98A2B3;
+                  color: #061A40;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  font-size: 12px;
-                  font-weight: 900;
+                  font-size: 15px;
+                  font-weight: 950;
+                  letter-spacing: -0.02em;
                 }}
                 .home-uni-body-v207 {{
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 52px 18px 18px 18px;
+                  padding: 42px 18px 18px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
                   font-size: 21px;
-                  line-height: 1.28;
+                  line-height: 1.20;
                   font-weight: 950;
                   letter-spacing: -0.02em;
-                  min-height: 60px;
-                  margin: 0 0 12px 0;
+                  min-height: 34px;
+                  margin: 0 0 8px 0;
                 }}
                 .home-uni-location-v207 {{
                   display: flex;
-                  align-items: center;
+                  align-items: flex-start;
                   gap: 8px;
                   color: #344054;
-                  margin-bottom: 18px;
-                  min-height: 44px;
+                  margin: 0 0 14px 0;
+                  min-height: 34px;
                 }}
                 .home-uni-location-v207 span {{
                   color: #667085;
@@ -15104,6 +15103,7 @@ def home():
                   width: 20px;
                   min-width: 20px;
                   display: inline-flex;
+                  margin-top: 1px;
                 }}
                 .home-location-pin-v208 svg {{
                   width: 18px;
@@ -15113,7 +15113,7 @@ def home():
                 .home-uni-location-v207 em {{
                   color: #344054;
                   font-size: 14px;
-                  line-height: 1.35;
+                  line-height: 1.30;
                   font-style: normal;
                   font-weight: 650;
                 }}
@@ -15121,14 +15121,14 @@ def home():
                   display: grid;
                   grid-template-columns: 1fr 1fr;
                   gap: 8px;
-                  margin-top: 10px;
+                  margin-top: 4px;
                 }}
                 .home-uni-stats-v207 div {{
                   border: 1px solid #E4EAF3;
                   border-radius: 10px;
                   background: #FBFCFF;
                   padding: 10px 7px;
-                  min-height: 70px;
+                  min-height: 68px;
                 }}
                 .home-uni-stats-v207 small {{
                   display: block;
@@ -15161,56 +15161,29 @@ def home():
                 }}
                 .home-view-programs-link-v295 span,
                 .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
-                .carousel-arrow {{
-                  position: absolute;
-                  top: 46%;
-                  transform: translateY(-50%);
-                  z-index: 20;
-                  width: 46px;
-                  height: 46px;
-                  border-radius: 999px;
-                  border: 1px solid rgba(215,222,233,.95);
-                  background: rgba(255,255,255,.96);
-                  color: #061a40;
-                  font-size: 28px;
-                  font-weight: 900;
-                  box-shadow: 0 12px 28px rgba(16,24,40,.14);
-                  pointer-events: none;
+                .carousel-arrow {{ display: none; }}
+                @media (max-width: 1300px) {{
+                  .carousel-track {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
                 }}
-                .left {{ left: 0; }}
-                .right {{ right: 0; }}
-                @media (max-width: 1535px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 72px) / 4); width: calc((100vw - 72px) / 4); }}
+                @media (max-width: 900px) {{
+                  .carousel-track {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
                 }}
-                @media (max-width: 1024px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 44px) / 3); width: calc((100vw - 44px) / 3); min-width: 250px; }}
-                  .carousel-track {{ gap: 22px; }}
-                }}
-                @media (max-width: 768px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 18px) / 2); width: calc((100vw - 18px) / 2); min-width: 250px; }}
-                  .carousel-track {{ gap: 18px; }}
-                  .carousel-arrow {{ display: none; }}
-                }}
-                @media (max-width: 520px) {{
-                  .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px); width: calc(100vw - 24px); min-width: calc(100vw - 24px); }}
-                  .carousel-track {{ gap: 16px; }}
+                @media (max-width: 560px) {{
+                  .carousel-track {{ grid-template-columns: 1fr; }}
                 }}
               </style>
             </head>
             <body>
-              <div class="carousel-shell {carousel_animation_class_v298}">
-                <button class="carousel-arrow left" aria-label="Previous">‹</button>
+              <div class="carousel-shell is-static">
                 <div class="carousel-window">
                   <div class="carousel-track">
-                    {carousel_cards_html_v298}
-                    {carousel_duplicate_html_v298}
+                    {featured_cards_html_v330}
                   </div>
                 </div>
-                <button class="carousel-arrow right" aria-label="Next">›</button>
               </div>
             </body>
             </html>
-            """, height=620, scrolling=False)
+            """, height=720, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">

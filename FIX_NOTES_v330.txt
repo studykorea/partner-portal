@@ -1,0 +1,8 @@
+Fix notes v330
+- Replaced the Featured Universities animated carousel with a simple responsive grid showing up to 4 cards on the homepage.
+- Increased the embedded component height so the full card and View Programs button are visible.
+- Reduced the empty space between university name and location inside the featured cards.
+- Added local fallback cover images for Kyungsung, Jeonbuk, Kyungwoon, Sejong, and Youngsan when the database image path is empty.
+- Replaced missing logo placeholder text with clean initials badges when no real logo file is available.
+
+Upload this ZIP to GitHub, commit, then redeploy Render with Clear build cache & deploy.
