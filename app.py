@@ -8605,7 +8605,7 @@ div[data-testid="stButton"] > button[kind="secondary"]:has(div p) {
     font-size: 11px !important;
     line-height: 1.18 !important;
     font-weight: 800 !important;
-    margin: 0 0 7px 0 !important;
+    margin: 0 0 5px 0 !important;
     white-space: normal !important;
     word-break: normal !important;
 }
@@ -10194,7 +10194,7 @@ div[data-testid="stToast"] button{
     vertical-align: middle !important;
 }
 .uni-list-card-v214 .uni-list-location-v214 em{
-    font-size: 14.5px !important;
+    font-size: 13.6px !important;
     line-height: 1.2 !important;
     font-weight: 600 !important;
     color: #334155 !important;
@@ -15022,152 +15022,288 @@ def home():
             # v331: animated carousel with full-height visible cards and uploaded image/logo support.
             carousel_cards_html_v331 = "".join(card_html_v295) + duplicate_html_v295
             carousel_animation_class_v331 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            components.html(f"""
-            <!doctype html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-                html, body {{
-                  margin: 0;
-                  padding: 0;
-                  width: 100%;
-                  height: 560px;
-                  overflow: hidden;
-                  background: #ffffff !important;
-                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            # v333: native moving carousel, not inside an iframe.
+            # This prevents Streamlit iframe cropping and keeps the View Programs button visible.
+            carousel_cards_html_v333 = "".join(card_html_v295) + duplicate_html_v295
+            carousel_animation_class_v333 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            st.markdown(f"""
+            <style>
+            .featured-carousel-native-v333 {{
+                width: 100% !important;
+                max-width: 100% !important;
+                background: #ffffff !important;
+                overflow: hidden !important;
+                padding: 6px 0 20px 0 !important;
+                margin: 0 !important;
+                position: relative !important;
+            }}
+            .featured-carousel-native-v333 .carousel-track-v333 {{
+                display: flex !important;
+                align-items: stretch !important;
+                gap: 26px !important;
+                width: max-content !important;
+                padding: 8px 28px 18px 28px !important;
+                will-change: transform !important;
+            }}
+            .featured-carousel-native-v333.is-animated .carousel-track-v333 {{
+                animation: featuredSlideNativeV333 42s linear infinite !important;
+            }}
+            .featured-carousel-native-v333.is-animated:hover .carousel-track-v333 {{
+                animation-play-state: paused !important;
+            }}
+            @keyframes featuredSlideNativeV333 {{
+                0% {{ transform: translateX(0); }}
+                100% {{ transform: translateX(-50%); }}
+            }}
+            .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                flex: 0 0 clamp(300px, calc((100vw - 170px) / 4), 390px) !important;
+                width: clamp(300px, calc((100vw - 170px) / 4), 390px) !important;
+                min-width: 300px !important;
+                height: 372px !important;
+                box-sizing: border-box !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-card-v207,
+            .featured-carousel-native-v333 .home-carousel-card-v295 {{
+                width: 100% !important;
+                height: 372px !important;
+                min-height: 372px !important;
+                max-height: 372px !important;
+                border-radius: 18px !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
+                display: flex !important;
+                flex-direction: column !important;
+                box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
+                border: 1px solid #DCE6F4 !important;
+                position: relative !important;
+                margin: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-image-wrap-v207 {{
+                height: 118px !important;
+                min-height: 118px !important;
+                max-height: 118px !important;
+                flex: 0 0 118px !important;
+                overflow: hidden !important;
+                background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+                position: relative !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-photo-v207 {{
+                width: 100% !important;
+                height: 118px !important;
+                object-fit: cover !important;
+                display: block !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {{
+                height: 118px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+                color: #667085 !important;
+                font-weight: 850 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-featured-pill-v207 {{
+                position: absolute !important;
+                top: 14px !important;
+                left: 14px !important;
+                background: #001F48 !important;
+                color: #ffffff !important;
+                padding: 7px 13px !important;
+                border-radius: 999px !important;
+                font-size: 12px !important;
+                font-weight: 900 !important;
+                box-shadow: 0 8px 16px rgba(0,31,72,.22) !important;
+                z-index: 5 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-logo-overlap-v207 {{
+                position: absolute !important;
+                left: 22px !important;
+                top: 86px !important;
+                width: 58px !important;
+                height: 58px !important;
+                border-radius: 50% !important;
+                background: #ffffff !important;
+                border: 6px solid #ffffff !important;
+                box-shadow: 0 10px 24px rgba(16,24,40,.12) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+                z-index: 8 !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-logo-v207 {{
+                width: 48px !important;
+                height: 48px !important;
+                object-fit: contain !important;
+                display: block !important;
+                border-radius: 50% !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-logo-placeholder-v207 {{
+                width: 48px !important;
+                height: 48px !important;
+                border-radius: 50% !important;
+                background: #F4F7FB !important;
+                color: #061A40 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 14px !important;
+                font-weight: 950 !important;
+                letter-spacing: -0.02em !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 {{
+                flex: 1 1 auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 26px 18px 12px 18px !important;
+                min-height: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 h3 {{
+                color: #061A40 !important;
+                font-size: 18px !important;
+                line-height: 1.08 !important;
+                font-weight: 950 !important;
+                letter-spacing: -0.02em !important;
+                min-height: 30px !important;
+                max-height: 38px !important;
+                overflow: hidden !important;
+                margin: 0 0 5px 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207 {{
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+                color: #344054 !important;
+                margin: 0 0 8px 0 !important;
+                min-height: 24px !important;
+                max-height: 34px !important;
+                overflow: hidden !important;
+            }}
+            .featured-carousel-native-v333 .home-location-pin-v208 svg {{
+                width: 16px !important;
+                height: 16px !important;
+                fill: #667085 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207 em {{
+                color: #344054 !important;
+                font-size: 12.8px !important;
+                line-height: 1.20 !important;
+                font-style: normal !important;
+                font-weight: 650 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 {{
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 div {{
+                border: 1px solid #E4EAF3 !important;
+                border-radius: 10px !important;
+                background: #FBFCFF !important;
+                padding: 6px 7px !important;
+                min-height: 50px !important;
+                height: 50px !important;
+                overflow: hidden !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 small {{
+                display: block !important;
+                color: #475467 !important;
+                font-size: 10px !important;
+                line-height: 1.15 !important;
+                font-weight: 700 !important;
+                margin-bottom: 4px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 b {{
+                display: block !important;
+                color: #061A40 !important;
+                font-size: 13.6px !important;
+                line-height: 1.08 !important;
+                font-weight: 950 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-btn-v208,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 {{
+                margin-top: 10px !important;
+                height: 38px !important;
+                min-height: 38px !important;
+                border-radius: 12px !important;
+                background: #061A40 !important;
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+                text-decoration: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 0 16px !important;
+                font-weight: 950 !important;
+                font-size: 13.5px !important;
+                line-height: 1 !important;
+                box-shadow: 0 10px 20px rgba(0,31,72,.16) !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 span,
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 b,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 span,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 b {{
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+            }}
+            .home-featured-note-v207 {{
+                margin-top: 8px !important;
+                padding-bottom: 28px !important;
+                position: relative !important;
+                z-index: 1 !important;
+                background: #fff !important;
+            }}
+
+            /* v334 final compact card fix: remove the large blank bottom space and keep full card visible */
+            .featured-carousel-native-v333 .home-carousel-slide-v295,
+            .featured-carousel-native-v333 .home-uni-card-v207,
+            .featured-carousel-native-v333 .home-carousel-card-v295 {
+                height: 372px !important;
+                min-height: 372px !important;
+                max-height: 372px !important;
+            }
+            .featured-carousel-native-v333 .home-uni-image-wrap-v207,
+            .featured-carousel-native-v333 .home-featured-photo-v207,
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {
+                height: 118px !important;
+                min-height: 118px !important;
+                max-height: 118px !important;
+            }
+            .featured-carousel-native-v333 .home-uni-body-v207 {
+                padding-top: 26px !important;
+                padding-bottom: 12px !important;
+                gap: 0 !important;
+            }
+            .featured-carousel-native-v333 .home-view-programs-link-v295 {
+                margin-top: 10px !important;
+                margin-bottom: 0 !important;
+            }
+            @media (max-width: 1300px) {{
+                .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                    flex-basis: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
+                    width: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
                 }}
-                * {{ box-sizing: border-box; }}
-                .carousel-shell {{
-                  position: relative;
-                  width: 100%;
-                  height: 560px;
-                  background: #ffffff !important;
-                  overflow: hidden;
-                  padding: 6px 0 10px 0;
+            }}
+            @media (max-width: 900px) {{
+                .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                    flex-basis: 320px !important;
+                    width: 320px !important;
                 }}
-                .carousel-window {{
-                  width: 100%;
-                  height: 535px;
-                  overflow: hidden;
-                  background: #ffffff !important;
-                }}
-                .carousel-track {{
-                  display: flex;
-                  align-items: stretch;
-                  gap: 28px;
-                  width: max-content;
-                  height: 510px;
-                  padding: 8px 22px 12px 22px;
-                  background: #ffffff !important;
-                  will-change: transform;
-                }}
-                .carousel-shell.is-animated .carousel-track {{ animation: featuredSlideV332 38s linear infinite; }}
-                .carousel-shell.is-animated:hover .carousel-track {{ animation-play-state: paused; }}
-                @keyframes featuredSlideV332 {{
-                  0% {{ transform: translateX(0); }}
-                  100% {{ transform: translateX(-50%); }}
-                }}
-                .home-carousel-slide-v295 {{
-                  width: clamp(320px, calc((100vw - 160px) / 4), 410px);
-                  flex: 0 0 clamp(320px, calc((100vw - 160px) / 4), 410px);
-                  height: 492px;
-                  min-width: 320px;
-                }}
-                .home-uni-card-v207 {{
-                  position: relative;
-                  background: #ffffff !important;
-                  border: 1px solid #DCE6F4;
-                  border-radius: 18px;
-                  overflow: hidden;
-                  box-shadow: 0 14px 34px rgba(16,24,40,.08);
-                  width: 100%;
-                  height: 492px;
-                  min-height: 492px;
-                  display: flex;
-                  flex-direction: column;
-                  transition: transform .2s ease, box-shadow .2s ease;
-                }}
-                .home-uni-card-v207:hover {{ transform: translateY(-3px); box-shadow: 0 18px 42px rgba(16,24,40,.12); }}
-                .home-uni-image-wrap-v207 {{
-                  position: relative;
-                  height: 135px;
-                  overflow: hidden;
-                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 135px;
-                }}
-                .home-featured-photo-v207 {{ width: 100%; height: 135px; object-fit: cover; display: block; }}
-                .home-featured-photo-placeholder-v207 {{
-                  height: 135px; background: linear-gradient(135deg, #EAF1FA, #F8FBFF); color: #667085;
-                  display: flex; align-items: center; justify-content: center; font-weight: 850;
-                }}
-                .home-uni-featured-pill-v207 {{
-                  position: absolute; top: 14px; left: 14px; background: #001F48; color: #ffffff;
-                  padding: 7px 13px; border-radius: 999px; font-size: 12px; font-weight: 900;
-                  box-shadow: 0 8px 16px rgba(0,31,72,.22);
-                }}
-                .home-uni-logo-overlap-v207 {{
-                  position: absolute; left: 22px; top: 101px; width: 64px; height: 64px; border-radius: 50%;
-                  background: #ffffff; border: 1px solid #E4EAF3; box-shadow: 0 10px 24px rgba(16,24,40,.12);
-                  display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 3;
-                }}
-                .home-featured-logo-v207 {{ width: 54px; height: 54px; object-fit: contain; display: block; }}
-                .home-featured-logo-placeholder-v207 {{
-                  width: 54px; height: 54px; border-radius: 50%; background: #F4F7FB; color: #061A40;
-                  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 950;
-                  letter-spacing: -0.02em;
-                }}
-                .home-uni-body-v207 {{
-                  flex: 1 1 auto; display: flex; flex-direction: column; padding: 32px 18px 14px 18px;
-                }}
-                .home-uni-body-v207 h3 {{
-                  color: #061A40; font-size: 20px; line-height: 1.12; font-weight: 950; letter-spacing: -0.02em;
-                  min-height: 24px; margin: 0 0 6px 0;
-                }}
-                .home-uni-location-v207 {{
-                  display: flex; align-items: flex-start; gap: 8px; color: #344054; margin: 0 0 11px 0; min-height: 24px;
-                }}
-                .home-uni-location-v207 span {{
-                  color: #667085; font-size: 17px; width: 17px; min-width: 17px; display: inline-flex; margin-top: 1px;
-                }}
-                .home-location-pin-v208 svg {{ width: 16px; height: 16px; fill: #667085; }}
-                .home-uni-location-v207 em {{
-                  color: #344054; font-size: 13.5px; line-height: 1.20; font-style: normal; font-weight: 650;
-                }}
-                .home-uni-stats-v207 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0; }}
-                .home-uni-stats-v207 div {{
-                  border: 1px solid #E4EAF3; border-radius: 10px; background: #FBFCFF; padding: 8px 7px; min-height: 56px;
-                }}
-                .home-uni-stats-v207 small {{
-                  display: block; color: #475467; font-size: 10.5px; line-height: 1.15; font-weight: 700; margin-bottom: 6px;
-                }}
-                .home-uni-stats-v207 b {{ display: block; color: #061A40; font-size: 14.5px; line-height: 1.08; font-weight: 950; }}
-                .home-view-programs-link-v295 {{
-                  margin-top: 14px; height: 44px; min-height: 44px; border-radius: 12px; background: #061A40;
-                  color: #ffffff !important; text-decoration: none; display: flex; align-items: center; justify-content: space-between;
-                  padding: 0 17px; font-weight: 950; font-size: 14.5px;
-                }}
-                .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
-                .home-view-programs-link-v295 b {{ font-size: 20px; line-height: 1; }}
-                .carousel-arrow {{ display: none; }}
-                @media (max-width: 1300px) {{
-                  .home-carousel-slide-v295 {{ width: clamp(300px, calc((100vw - 130px) / 3), 390px); flex-basis: clamp(300px, calc((100vw - 130px) / 3), 390px); }}
-                }}
-                @media (max-width: 900px) {{ .home-carousel-slide-v295 {{ width: 330px; flex-basis: 330px; }} }}
-              </style>
-            </head>
-            <body>
-              <div class="carousel-shell {carousel_animation_class_v331}">
-                <div class="carousel-window">
-                  <div class="carousel-track">
-                    {carousel_cards_html_v331}
-                  </div>
+            }}
+            </style>
+            <div class="featured-carousel-native-v333 {carousel_animation_class_v333}">
+                <div class="carousel-track-v333">
+                    {carousel_cards_html_v333}
                 </div>
-              </div>
-            </body>
-            </html>
-            """, height=570, scrolling=False)
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("""
         <div class="home-featured-note-v207">
