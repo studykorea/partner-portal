@@ -76,7 +76,7 @@ def get_database_url():
         st.stop()
     return url
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_engine():
     return create_engine(get_database_url(), pool_pre_ping=True)
 
@@ -98,24 +98,69 @@ def _table_exists(table):
         return False
 
 def _ensure_db_table_from_file(p):
-    # Disabled for speed on live website.
-    # Do not create/replace database tables during normal page loading.
-    return
-    
-@st.cache_data(ttl=3600, show_spinner=False)
-def _read_sql_table_cached(table):
-    return pd.read_sql_table(table, get_engine())
-    
-@st.cache_data(ttl=3600, show_spinner=False)
-def read_csv(p):
+    """
+    First-use migration helper for Supabase/PostgreSQL.
+    Keeps the v58 design/code structure, but stores data in Supabase.
+    If the DB table does not exist yet, it is created from the original CSV/JSON seed file.
+    """
     p = Path(p)
-    if not p.exists():
+
+    if p.suffix.lower() == ".csv":
+        table = _table_for_csv_path(p)
+        if not table:
+            return
+
+        if _table_exists(table):
+            return
+
+        if p.exists():
+            df = pd.read_csv(p, keep_default_na=False).fillna("")
+        else:
+            df = pd.DataFrame()
+
+        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
+
+    elif p.suffix.lower() == ".json":
+        table = _table_for_json_path(p)
+        if not table:
+            return
+
+        if _table_exists(table):
+            return
+
+        if p.exists():
+            data = json.loads(p.read_text(encoding="utf-8"))
+            df = pd.DataFrame(data)
+        else:
+            df = pd.DataFrame()
+
+        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_sql_table_cached(table):
+    return pd.read_sql_query(text(f'SELECT * FROM "{table}"'), get_engine()).fillna("")
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_seed_csv_cached(path_str):
+    return pd.read_csv(path_str, keep_default_na=False).fillna("")
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _read_seed_json_cached(path_str):
+    return json.loads(Path(path_str).read_text(encoding="utf-8")) if Path(path_str).exists() else []
+
+def read_csv(p):
+    table = _table_for_csv_path(p)
+    if table:
+        _ensure_db_table_from_file(p)
+        try:
+            return _read_sql_table_cached(table).copy()
+        except Exception as e:
+            st.error(f"Could not read table '{table}': {e}")
+            return pd.DataFrame()
+
+    if not Path(p).exists():
         return pd.DataFrame()
-    try:
-        return pd.read_csv(p, keep_default_na=False).fillna("")
-    except Exception as e:
-        st.error(f"Could not read file '{p}': {e}")
-        return pd.DataFrame()
+    return _read_seed_csv_cached(str(p)).copy()
 
 def write_csv(p, df):
     df = _clean_df_for_db(df)
@@ -144,17 +189,16 @@ def add_row(p, row):
         df.loc[len(df)] = row
     write_csv(p, df)
 
-@st.cache_data(ttl=3600, show_spinner=False)
 def read_json(p):
-    p = Path(p)
-    if not p.exists():
-        return []
-    try:
-        with open(p, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        st.error(f"Could not read JSON file '{p}': {e}")
-        return []
+    table = _table_for_json_path(p)
+    if table:
+        _ensure_db_table_from_file(p)
+        try:
+            df = _read_sql_table_cached(table).copy()
+            return df.to_dict(orient="records")
+        except Exception as e:
+            st.error(f"Could not read table '{table}': {e}")
+            return []
 
     return _read_seed_json_cached(str(p))
 
@@ -624,7 +668,7 @@ def official_rep_name_html_v141(name):
 def official_rep_badge_html_v141(label="Official Representative"):
     return f'<span class="official-rep-badge-v141">{official_rep_icon_html_v141("official-rep-icon-badge-v141", 20)}<span>{_safe_html_v62(label)}</span></span>'
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=300, show_spinner=False)
 def universities():
     return read_csv(UNIS)
 
@@ -1208,7 +1252,7 @@ section[data-testid="stSidebar"]{display:none;}
 }
 .footer-contact p {
     margin: 9px 0;
-    font-size: 15px;
+    font-size: 16px;
 }
 @media(max-width:900px){
     .clean-footer-grid {
@@ -1363,7 +1407,7 @@ div[data-testid="stVerticalBlock"] > div:empty {
     border-radius: 999px;
     padding: 8px 16px;
     font-weight: 850;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 .partner-stat-grid {
     display: grid;
@@ -14670,7 +14714,7 @@ def home():
       </div>
     </section>
     """, unsafe_allow_html=True)
-    return
+
     st.markdown("""
     <section class="home-featured-section-v207">
         <div class="home-featured-head-v207">
@@ -14779,304 +14823,303 @@ def home():
 
             duplicate_html_v295 = "".join(card_html_v295) if len(card_html_v295) > 1 else ""
             carousel_state_v295 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            carousel_animation_class_v328 = carousel_state_v295
-            carousel_cards_html_v328 = "".join(card_html_v295) + duplicate_html_v295
-
-            carousel_css_v328 = """
-            <style>
-            /* v328: native Streamlit carousel, no iframe/component clipping */
-            .home-featured-section-v207 {
-              padding-bottom: 18px !important;
-            }
-            .home-carousel-native-v328 {
-              width: 100% !important;
-              position: relative !important;
-              overflow: hidden !important;
-              padding: 22px 38px 56px 38px !important;
-              box-sizing: border-box !important;
-              background: #ffffff !important;
-              min-height: 690px !important;
-            }
-            .home-carousel-native-v328 .home-carousel-track-v328 {
-              display: flex !important;
-              flex-wrap: nowrap !important;
-              align-items: stretch !important;
-              gap: 28px !important;
-              width: max-content !important;
-              will-change: transform !important;
-            }
-            .home-carousel-native-v328.is-animated .home-carousel-track-v328 {
-              animation: homeFeaturedSlideV328 34s linear infinite !important;
-            }
-            .home-carousel-native-v328:hover .home-carousel-track-v328 {
-              animation-play-state: paused !important;
-            }
-            @keyframes homeFeaturedSlideV328 {
-              from { transform: translateX(0); }
-              to { transform: translateX(calc(-50% - 14px)); }
-            }
-            .home-carousel-native-v328 .home-carousel-slide-v295 {
-              flex: 0 0 calc((100vw - 210px) / 4) !important;
-              width: calc((100vw - 210px) / 4) !important;
-              min-width: 320px !important;
-              max-width: 390px !important;
-              height: 620px !important;
-              overflow: visible !important;
-              box-sizing: border-box !important;
-            }
-            .home-carousel-native-v328 .home-uni-card-v207,
-            .home-carousel-native-v328 .home-carousel-card-v295 {
-              position: relative !important;
-              width: 100% !important;
-              height: 600px !important;
-              min-height: 600px !important;
-              max-height: 600px !important;
-              display: flex !important;
-              flex-direction: column !important;
-              background: #ffffff !important;
-              border: 1px solid #e5e7eb !important;
-              border-radius: 24px !important;
-              overflow: hidden !important;
-              box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08) !important;
-              box-sizing: border-box !important;
-            }
-            .home-carousel-native-v328 .home-uni-image-wrap-v207 {
-              position: relative !important;
-              height: 190px !important;
-              min-height: 190px !important;
-              max-height: 190px !important;
-              flex: 0 0 190px !important;
-              overflow: hidden !important;
-              background: linear-gradient(135deg, #eef4fb, #f8fbff) !important;
-            }
-            .home-carousel-native-v328 .home-featured-photo-v207,
-            .home-carousel-native-v328 .home-featured-photo-placeholder-v207 {
-              width: 100% !important;
-              height: 190px !important;
-              min-height: 190px !important;
-              max-height: 190px !important;
-              object-fit: cover !important;
-              object-position: center !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              color: #667085 !important;
-              -webkit-text-fill-color: #667085 !important;
-              font-weight: 850 !important;
-            }
-            .home-carousel-native-v328 .home-uni-featured-pill-v207 {
-              position: absolute !important;
-              top: 16px !important;
-              left: 16px !important;
-              background: #061a40 !important;
-              color: #ffffff !important;
-              -webkit-text-fill-color: #ffffff !important;
-              padding: 8px 14px !important;
-              border-radius: 999px !important;
-              font-size: 12px !important;
-              line-height: 1 !important;
-              font-weight: 900 !important;
-              box-shadow: 0 8px 16px rgba(0,31,72,.22) !important;
-            }
-            .home-carousel-native-v328 .home-uni-logo-overlap-v207 {
-              position: absolute !important;
-              left: 28px !important;
-              top: 146px !important;
-              width: 88px !important;
-              height: 88px !important;
-              border-radius: 999px !important;
-              background: #ffffff !important;
-              border: 1px solid #e5e7eb !important;
-              box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16) !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              overflow: hidden !important;
-              z-index: 5 !important;
-            }
-            .home-carousel-native-v328 .home-featured-logo-v207,
-            .home-carousel-native-v328 .home-featured-logo-placeholder-v207 {
-              width: 68px !important;
-              height: 68px !important;
-              object-fit: contain !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              color: #98a2b3 !important;
-              -webkit-text-fill-color: #98a2b3 !important;
-              font-size: 12px !important;
-              font-weight: 900 !important;
-            }
-            .home-carousel-native-v328 .home-uni-body-v207 {
-              flex: 1 1 auto !important;
-              min-height: 0 !important;
-              padding: 66px 24px 22px 24px !important;
-              display: flex !important;
-              flex-direction: column !important;
-              overflow: hidden !important;
-              box-sizing: border-box !important;
-            }
-            .home-carousel-native-v328 .home-uni-body-v207 h3 {
-              margin: 0 0 14px 0 !important;
-              padding: 0 !important;
-              min-height: 32px !important;
-              max-height: 58px !important;
-              overflow: hidden !important;
-              color: #071633 !important;
-              -webkit-text-fill-color: #071633 !important;
-              font-size: 22px !important;
-              line-height: 1.18 !important;
-              font-weight: 950 !important;
-              letter-spacing: -0.02em !important;
-            }
-            .home-carousel-native-v328 .home-uni-location-v207 {
-              display: flex !important;
-              align-items: flex-start !important;
-              gap: 10px !important;
-              min-height: 38px !important;
-              max-height: 44px !important;
-              margin: 0 0 16px 0 !important;
-              overflow: hidden !important;
-            }
-            .home-carousel-native-v328 .home-location-pin-v208 {
-              width: 18px !important;
-              min-width: 18px !important;
-              height: 18px !important;
-              display: inline-flex !important;
-              margin-top: 1px !important;
-            }
-            .home-carousel-native-v328 .home-location-pin-v208 svg {
-              width: 18px !important;
-              height: 18px !important;
-              fill: #667085 !important;
-            }
-            .home-carousel-native-v328 .home-uni-location-v207 em {
-              color: #4b5563 !important;
-              -webkit-text-fill-color: #4b5563 !important;
-              font-size: 13.5px !important;
-              line-height: 1.35 !important;
-              font-style: normal !important;
-              font-weight: 700 !important;
-            }
-            .home-carousel-native-v328 .home-uni-stats-v207 {
-              display: grid !important;
-              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-              gap: 10px !important;
-              margin: 0 0 16px 0 !important;
-              flex: 0 0 auto !important;
-            }
-            .home-carousel-native-v328 .home-uni-stats-v207 div {
-              height: 76px !important;
-              min-height: 76px !important;
-              max-height: 76px !important;
-              padding: 12px 12px !important;
-              border: 1px solid #e2e8f0 !important;
-              border-radius: 14px !important;
-              background: #f8fafc !important;
-              overflow: hidden !important;
-              box-sizing: border-box !important;
-            }
-            .home-carousel-native-v328 .home-uni-stats-v207 small {
-              display: block !important;
-              font-size: 11px !important;
-              line-height: 1.15 !important;
-              font-weight: 800 !important;
-              color: #64748b !important;
-              -webkit-text-fill-color: #64748b !important;
-              margin: 0 0 7px 0 !important;
-            }
-            .home-carousel-native-v328 .home-uni-stats-v207 b {
-              display: block !important;
-              font-size: 16px !important;
-              line-height: 1.18 !important;
-              font-weight: 950 !important;
-              color: #071633 !important;
-              -webkit-text-fill-color: #071633 !important;
-              white-space: nowrap !important;
-              overflow: hidden !important;
-              text-overflow: ellipsis !important;
-            }
-            .home-carousel-native-v328 .home-view-programs-link-v295,
-            .home-carousel-native-v328 .home-view-programs-btn-v208 {
-              margin: auto 0 0 0 !important;
-              width: 100% !important;
-              height: 56px !important;
-              min-height: 56px !important;
-              max-height: 56px !important;
-              flex: 0 0 56px !important;
-              flex-shrink: 0 !important;
-              border-radius: 15px !important;
-              background: #061a40 !important;
-              color: #ffffff !important;
-              -webkit-text-fill-color: #ffffff !important;
-              text-decoration: none !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: space-between !important;
-              padding: 0 22px !important;
-              font-size: 16px !important;
-              font-weight: 900 !important;
-              visibility: visible !important;
-              opacity: 1 !important;
-            }
-            .home-carousel-native-v328 .home-view-programs-link-v295 span,
-            .home-carousel-native-v328 .home-view-programs-link-v295 b {
-              color: #ffffff !important;
-              -webkit-text-fill-color: #ffffff !important;
-            }
-            .home-carousel-arrow-v328 {
-              position: absolute !important;
-              top: 48% !important;
-              transform: translateY(-50%) !important;
-              z-index: 20 !important;
-              width: 46px !important;
-              height: 46px !important;
-              border-radius: 999px !important;
-              border: 1px solid rgba(215,222,233,.95) !important;
-              background: rgba(255,255,255,.96) !important;
-              color: #061a40 !important;
-              font-size: 28px !important;
-              font-weight: 900 !important;
-              box-shadow: 0 12px 28px rgba(16,24,40,.14) !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              pointer-events: none !important;
-            }
-            .home-carousel-arrow-left-v328 { left: 4px !important; }
-            .home-carousel-arrow-right-v328 { right: 4px !important; }
-            @media (min-width: 1600px) {
-              .home-carousel-native-v328 .home-carousel-slide-v295 { flex-basis: calc((100vw - 240px) / 4) !important; width: calc((100vw - 240px) / 4) !important; }
-            }
-            @media (max-width: 1300px) {
-              .home-carousel-native-v328 .home-carousel-slide-v295 { flex-basis: calc((100vw - 130px) / 3) !important; width: calc((100vw - 130px) / 3) !important; }
-            }
-            @media (max-width: 900px) {
-              .home-carousel-native-v328 .home-carousel-slide-v295 { flex-basis: calc((100vw - 90px) / 2) !important; width: calc((100vw - 90px) / 2) !important; min-width: 280px !important; }
-            }
-            @media (max-width: 560px) {
-              .home-carousel-native-v328 { padding-left: 18px !important; padding-right: 18px !important; }
-              .home-carousel-native-v328 .home-carousel-slide-v295 { flex-basis: calc(100vw - 52px) !important; width: calc(100vw - 52px) !important; min-width: calc(100vw - 52px) !important; }
-              .home-carousel-arrow-v328 { display: none !important; }
-            }
-            </style>
-            """
-
-            carousel_html_v328 = f"""
-            <div class="home-carousel-native-v328 {carousel_animation_class_v328}">
-              <div class="home-carousel-arrow-v328 home-carousel-arrow-left-v328">‹</div>
-              <div class="home-carousel-track-v328">
-                {carousel_cards_html_v328}
+            carousel_cards_html_v298 = ''.join(card_html_v295)
+            carousel_duplicate_html_v298 = duplicate_html_v295
+            carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
+            components.html(f"""
+            <!doctype html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                html, body {{
+                  margin: 0;
+                  padding: 0;
+                  width: 100%;
+                  min-height: 620px;
+                  overflow: hidden;
+                  background: #ffffff !important;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }}
+                * {{ box-sizing: border-box; }}
+                .carousel-shell {{
+                  position: relative;
+                  width: 100%;
+                  min-height: 610px;
+                  height: 610px;
+                  background: #ffffff !important;
+                  overflow: visible;
+                }}
+                .carousel-window {{
+                  width: 100%;
+                  min-height: 590px;
+                  height: 590px;
+                  overflow-x: auto;
+                  overflow-y: hidden;
+                  scrollbar-width: none;
+                  -webkit-overflow-scrolling: touch;
+                  background: #ffffff !important;
+                }}
+                .carousel-window::-webkit-scrollbar {{ display: none; }}
+                .carousel-track {{
+                  display: flex;
+                  flex-wrap: nowrap;
+                  align-items: stretch;
+                  gap: 28px;
+                  width: max-content;
+                  height: 570px;
+                  padding: 6px 0 18px 0;
+                  background: #ffffff !important;
+                  will-change: transform;
+                }}
+                .carousel-shell.is-animated .carousel-track {{
+                  animation: featuredSlideV298 34s linear infinite;
+                }}
+                .carousel-shell:hover .carousel-track {{
+                  animation-play-state: paused;
+                }}
+                @keyframes featuredSlideV298 {{
+                  from {{ transform: translateX(0); }}
+                  to {{ transform: translateX(calc(-50% - 14px)); }}
+                }}
+                .home-carousel-slide-v295 {{
+                  flex: 0 0 calc((100vw - 112px) / 5);
+                  width: calc((100vw - 112px) / 5);
+                  min-width: 260px;
+                  max-width: 340px;
+                  height: 548px;
+                  scroll-snap-align: start;
+                }}
+                .home-uni-card-v207 {{
+                  position: relative;
+                  background: #ffffff !important;
+                  border: 1px solid #DCE6F4;
+                  border-radius: 18px;
+                  overflow: hidden;
+                  box-shadow: 0 14px 34px rgba(16,24,40,.08);
+                  width: 100%;
+                  height: 540px;
+                  min-height: 540px;
+                  display: flex;
+                  flex-direction: column;
+                  transition: transform .2s ease, box-shadow .2s ease;
+                }}
+                .home-uni-card-v207:hover {{
+                  transform: translateY(-3px);
+                  box-shadow: 0 18px 42px rgba(16,24,40,.12);
+                }}
+                .home-uni-image-wrap-v207 {{
+                  position: relative;
+                  height: 168px;
+                  overflow: hidden;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                  flex: 0 0 168px;
+                }}
+                .home-featured-photo-v207 {{
+                  width: 100%;
+                  height: 168px;
+                  object-fit: cover;
+                  display: block;
+                }}
+                .home-featured-photo-placeholder-v207 {{
+                  height: 168px;
+                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
+                  color: #667085;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 850;
+                }}
+                .home-uni-featured-pill-v207 {{
+                  position: absolute;
+                  top: 16px;
+                  left: 16px;
+                  background: #001F48;
+                  color: #ffffff;
+                  padding: 8px 14px;
+                  border-radius: 999px;
+                  font-size: 12px;
+                  font-weight: 900;
+                  box-shadow: 0 8px 16px rgba(0,31,72,.22);
+                }}
+                .home-uni-logo-overlap-v207 {{
+                  position: absolute;
+                  left: 24px;
+                  top: 132px;
+                  width: 76px;
+                  height: 76px;
+                  border-radius: 50%;
+                  background: #ffffff;
+                  border: 1px solid #E4EAF3;
+                  box-shadow: 0 10px 24px rgba(16,24,40,.12);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  overflow: hidden;
+                  z-index: 3;
+                }}
+                .home-featured-logo-v207 {{
+                  width: 62px;
+                  height: 62px;
+                  object-fit: contain;
+                  display: block;
+                }}
+                .home-featured-logo-placeholder-v207 {{
+                  width: 62px;
+                  height: 62px;
+                  border-radius: 50%;
+                  background: #F4F7FB;
+                  color: #98A2B3;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 12px;
+                  font-weight: 900;
+                }}
+                .home-uni-body-v207 {{
+                  flex: 1 1 auto;
+                  display: flex;
+                  flex-direction: column;
+                  padding: 52px 18px 18px 18px;
+                }}
+                .home-uni-body-v207 h3 {{
+                  color: #061A40;
+                  font-size: 21px;
+                  line-height: 1.28;
+                  font-weight: 950;
+                  letter-spacing: -0.02em;
+                  min-height: 60px;
+                  margin: 0 0 12px 0;
+                }}
+                .home-uni-location-v207 {{
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  color: #344054;
+                  margin-bottom: 18px;
+                  min-height: 44px;
+                }}
+                .home-uni-location-v207 span {{
+                  color: #667085;
+                  font-size: 19px;
+                  width: 20px;
+                  min-width: 20px;
+                  display: inline-flex;
+                }}
+                .home-location-pin-v208 svg {{
+                  width: 18px;
+                  height: 18px;
+                  fill: #667085;
+                }}
+                .home-uni-location-v207 em {{
+                  color: #344054;
+                  font-size: 14px;
+                  line-height: 1.35;
+                  font-style: normal;
+                  font-weight: 650;
+                }}
+                .home-uni-stats-v207 {{
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 8px;
+                  margin-top: 10px;
+                }}
+                .home-uni-stats-v207 div {{
+                  border: 1px solid #E4EAF3;
+                  border-radius: 10px;
+                  background: #FBFCFF;
+                  padding: 10px 7px;
+                  min-height: 70px;
+                }}
+                .home-uni-stats-v207 small {{
+                  display: block;
+                  color: #475467;
+                  font-size: 11px;
+                  line-height: 1.25;
+                  font-weight: 700;
+                  margin-bottom: 8px;
+                }}
+                .home-uni-stats-v207 b {{
+                  display: block;
+                  color: #061A40;
+                  font-size: 15px;
+                  line-height: 1.15;
+                  font-weight: 950;
+                }}
+                .home-view-programs-link-v295 {{
+                  margin-top: auto;
+                  min-height: 58px;
+                  border-radius: 12px;
+                  background: #061A40;
+                  color: #ffffff !important;
+                  text-decoration: none;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 0 22px;
+                  font-weight: 950;
+                  font-size: 16px;
+                }}
+                .home-view-programs-link-v295 span,
+                .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
+                .carousel-arrow {{
+                  position: absolute;
+                  top: 46%;
+                  transform: translateY(-50%);
+                  z-index: 20;
+                  width: 46px;
+                  height: 46px;
+                  border-radius: 999px;
+                  border: 1px solid rgba(215,222,233,.95);
+                  background: rgba(255,255,255,.96);
+                  color: #061a40;
+                  font-size: 28px;
+                  font-weight: 900;
+                  box-shadow: 0 12px 28px rgba(16,24,40,.14);
+                  pointer-events: none;
+                }}
+                .left {{ left: 0; }}
+                .right {{ right: 0; }}
+                @media (max-width: 1535px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 72px) / 4); width: calc((100vw - 72px) / 4); }}
+                }}
+                @media (max-width: 1024px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 44px) / 3); width: calc((100vw - 44px) / 3); min-width: 250px; }}
+                  .carousel-track {{ gap: 22px; }}
+                }}
+                @media (max-width: 768px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc((100vw - 18px) / 2); width: calc((100vw - 18px) / 2); min-width: 250px; }}
+                  .carousel-track {{ gap: 18px; }}
+                  .carousel-arrow {{ display: none; }}
+                }}
+                @media (max-width: 520px) {{
+                  .home-carousel-slide-v295 {{ flex-basis: calc(100vw - 24px); width: calc(100vw - 24px); min-width: calc(100vw - 24px); }}
+                  .carousel-track {{ gap: 16px; }}
+                }}
+              </style>
+            </head>
+            <body>
+              <div class="carousel-shell {carousel_animation_class_v298}">
+                <button class="carousel-arrow left" aria-label="Previous">‹</button>
+                <div class="carousel-window">
+                  <div class="carousel-track">
+                    {carousel_cards_html_v298}
+                    {carousel_duplicate_html_v298}
+                  </div>
+                </div>
+                <button class="carousel-arrow right" aria-label="Next">›</button>
               </div>
-              <div class="home-carousel-arrow-v328 home-carousel-arrow-right-v328">›</div>
-            </div>
-            <div class="home-featured-note-v207">
-                <span>◇</span> All universities are official partners and recognized by the Korean Ministry of Education.
-            </div>
-            """
-            st.markdown(carousel_css_v328 + carousel_html_v328, unsafe_allow_html=True)
+            </body>
+            </html>
+            """, height=620, scrolling=False)
 
-    footer()
+        st.markdown("""
+        <div class="home-featured-note-v207">
+            <span>◇</span> All universities are official partners and recognized by the Korean Ministry of Education.
+        </div>
+        """, unsafe_allow_html=True)
+
     footer()
 
 
