@@ -14727,10 +14727,39 @@ def intl_count_v53(u):
     return ""
 
 
+def _home_media_src_v331(path):
+    """Return a usable src for local assets, external URLs, or already encoded data URLs."""
+    try:
+        raw = str(path or "").strip()
+    except Exception:
+        raw = ""
+    if not raw or raw.lower() in ["nan", "none", "null", "<na>"]:
+        return ""
+    if raw.startswith("data:image"):
+        return raw
+    if raw.startswith("http://") or raw.startswith("https://"):
+        return raw
+    encoded = b64(raw)
+    if encoded:
+        ext = raw.lower().split("?")[0]
+        mime = "image/png" if ext.endswith(".png") else "image/jpeg"
+        return f"data:{mime};base64,{encoded}"
+    return ""
+
+def _home_first_value_v331(u, keys):
+    for key in keys:
+        try:
+            val = u.get(key, "")
+        except Exception:
+            val = ""
+        if display_value_v53(val):
+            return display_value_v53(val)
+    return ""
+
 def _home_featured_img_html_v207(path, uni_name=""):
-    # Prefer the image path from data/DB, but use local asset fallbacks when the DB value is empty.
-    encoded = b64(path)
-    if not encoded:
+    # Prefer DB/uploaded URL/path, then local fallback assets.
+    src = _home_media_src_v331(path)
+    if not src:
         name_key = str(uni_name or "").strip().lower()
         fallback_map = {
             "kyungsung university": "assets/universities/kyungsung.jpg",
@@ -14739,21 +14768,19 @@ def _home_featured_img_html_v207(path, uni_name=""):
             "sejong university": "assets/universities/sejong.jpg",
             "youngsan university": "assets/universities/youngsan.jpg",
         }
-        fallback = fallback_map.get(name_key, "")
-        if fallback:
-            encoded = b64(fallback)
-    if not encoded:
+        src = _home_media_src_v331(fallback_map.get(name_key, ""))
+    if not src:
         return '<div class="home-featured-photo-placeholder-v207">University image</div>'
-    return f'<img class="home-featured-photo-v207" src="data:image/jpeg;base64,{encoded}" alt="University image">'
+    return f'<img class="home-featured-photo-v207" src="{src}" alt="University image">'
 
 def _home_featured_logo_html_v207(path, uni_name=""):
-    encoded = b64(path)
-    if not encoded:
-        # If no real logo file exists yet, show a neat initials badge instead of a broken/empty logo.
-        words = [w for w in re.split(r"\s+", str(uni_name or "University")) if w and w.lower() != "university"]
-        initials = "".join([w[0].upper() for w in words[:3]]) or "U"
-        return f'<div class="home-featured-logo-placeholder-v207">{_safe_html_v62(initials)}</div>'
-    return f'<img class="home-featured-logo-v207" src="data:image/png;base64,{encoded}" alt="{_safe_html_v62(uni_name)} logo">'
+    src = _home_media_src_v331(path)
+    if src:
+        return f'<img class="home-featured-logo-v207" src="{src}" alt="{_safe_html_v62(uni_name)} logo">'
+    # If no real logo file/path exists in the DB or ZIP, show a clean initials badge instead of a broken image.
+    words = [w for w in re.split(r"\s+", str(uni_name or "University")) if w and w.lower() != "university"]
+    initials = "".join([w[0].upper() for w in words[:2]]) or "U"
+    return f'<div class="home-featured-logo-placeholder-v207">{_safe_html_v62(initials)}</div>'
 
 def _home_location_v207(u):
     val = display_value_v53(u.get("Location", ""))
@@ -14867,7 +14894,12 @@ def home():
             )
 
         featured_df_v207 = unis.copy()
-        for col in ["University", "Location", "Region", "Overview", "Image", "University_Logo", "School_Size", "International_Students"]:
+        # Keep compatibility with different DB/admin column names for images and logos.
+        for col in [
+            "University", "Location", "Region", "Overview", "Image", "image", "Image_URL", "image_url",
+            "Cover_Image", "cover_image", "Cover_URL", "cover_url", "University_Logo", "Logo", "logo",
+            "Logo_URL", "logo_url", "Logo_Path", "logo_path", "University Logo", "School_Size", "International_Students"
+        ]:
             if col not in featured_df_v207.columns:
                 featured_df_v207[col] = ""
 
@@ -14902,8 +14934,10 @@ def home():
                 location_v207 = _home_location_v207(u)
                 total_students_v207 = _home_total_students_v207(u)
                 intl_students_v207 = _home_international_students_v207(u)
-                image_html_v207 = _home_featured_img_html_v207(u.get("Image", ""), uni_name_v207)
-                logo_html_v207 = _home_featured_logo_html_v207(u.get("University_Logo", ""), uni_name_v207)
+                image_path_v331 = _home_first_value_v331(u, ["Image", "image", "Image_URL", "image_url", "Cover_Image", "cover_image", "Cover_URL", "cover_url"])
+                logo_path_v331 = _home_first_value_v331(u, ["University_Logo", "Logo", "logo", "Logo_URL", "logo_url", "Logo_Path", "logo_path", "University Logo"])
+                image_html_v207 = _home_featured_img_html_v207(image_path_v331, uni_name_v207)
+                logo_html_v207 = _home_featured_logo_html_v207(logo_path_v331, uni_name_v207)
                 uni_q_v295 = quote_plus(str(uni_name_v207))
                 card_html_v295.append(f"""
                 <article class="home-carousel-slide-v295">
@@ -14940,9 +14974,9 @@ def home():
             carousel_cards_html_v298 = ''.join(card_html_v295)
             carousel_duplicate_html_v298 = duplicate_html_v295
             carousel_animation_class_v298 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            # Homepage featured cards: use a simple responsive grid instead of an animated carousel.
-            # This prevents the cards/buttons from being clipped and improves responsiveness.
-            featured_cards_html_v330 = ''.join(card_html_v295[:4])
+            # v331: animated carousel with full-height visible cards and uploaded image/logo support.
+            carousel_cards_html_v331 = "".join(card_html_v295) + duplicate_html_v295
+            carousel_animation_class_v331 = "is-animated" if len(card_html_v295) > 1 else "is-static"
             components.html(f"""
             <!doctype html>
             <html>
@@ -14954,8 +14988,8 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  min-height: 670px;
-                  overflow: visible;
+                  height: 690px;
+                  overflow: hidden;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                 }}
@@ -14963,29 +14997,42 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  min-height: 660px;
+                  height: 690px;
                   background: #ffffff !important;
-                  overflow: visible;
-                  padding: 0 10px 46px 10px;
+                  overflow: hidden;
+                  padding: 6px 0 26px 0;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  overflow: visible;
+                  height: 625px;
+                  overflow: hidden;
                   background: #ffffff !important;
                 }}
                 .carousel-track {{
-                  display: grid;
-                  grid-template-columns: repeat(4, minmax(0, 1fr));
+                  display: flex;
+                  align-items: stretch;
                   gap: 28px;
-                  width: 100%;
-                  min-height: 610px;
-                  padding: 6px 0 56px 0;
+                  width: max-content;
+                  height: 590px;
+                  padding: 8px 22px 22px 22px;
                   background: #ffffff !important;
+                  will-change: transform;
+                }}
+                .carousel-shell.is-animated .carousel-track {{
+                  animation: featuredSlideV331 38s linear infinite;
+                }}
+                .carousel-shell.is-animated:hover .carousel-track {{
+                  animation-play-state: paused;
+                }}
+                @keyframes featuredSlideV331 {{
+                  0% {{ transform: translateX(0); }}
+                  100% {{ transform: translateX(-50%); }}
                 }}
                 .home-carousel-slide-v295 {{
-                  width: 100%;
-                  min-width: 0;
-                  height: auto;
+                  width: clamp(320px, calc((100vw - 160px) / 4), 420px);
+                  flex: 0 0 clamp(320px, calc((100vw - 160px) / 4), 420px);
+                  height: 540px;
+                  min-width: 320px;
                 }}
                 .home-uni-card-v207 {{
                   position: relative;
@@ -14995,8 +15042,8 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 560px;
-                  min-height: 560px;
+                  height: 535px;
+                  min-height: 535px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
@@ -15007,19 +15054,19 @@ def home():
                 }}
                 .home-uni-image-wrap-v207 {{
                   position: relative;
-                  height: 168px;
+                  height: 150px;
                   overflow: hidden;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 168px;
+                  flex: 0 0 150px;
                 }}
                 .home-featured-photo-v207 {{
                   width: 100%;
-                  height: 168px;
+                  height: 150px;
                   object-fit: cover;
                   display: block;
                 }}
                 .home-featured-photo-placeholder-v207 {{
-                  height: 168px;
+                  height: 150px;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
                   color: #667085;
                   display: flex;
@@ -15041,10 +15088,10 @@ def home():
                 }}
                 .home-uni-logo-overlap-v207 {{
                   position: absolute;
-                  left: 24px;
-                  top: 128px;
-                  width: 74px;
-                  height: 74px;
+                  left: 22px;
+                  top: 116px;
+                  width: 70px;
+                  height: 70px;
                   border-radius: 50%;
                   background: #ffffff;
                   border: 1px solid #E4EAF3;
@@ -15062,8 +15109,8 @@ def home():
                   display: block;
                 }}
                 .home-featured-logo-placeholder-v207 {{
-                  width: 60px;
-                  height: 60px;
+                  width: 58px;
+                  height: 58px;
                   border-radius: 50%;
                   background: #F4F7FB;
                   color: #061A40;
@@ -15078,16 +15125,16 @@ def home():
                   flex: 1 1 auto;
                   display: flex;
                   flex-direction: column;
-                  padding: 42px 18px 18px 18px;
+                  padding: 36px 18px 16px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
                   color: #061A40;
                   font-size: 21px;
-                  line-height: 1.20;
+                  line-height: 1.16;
                   font-weight: 950;
                   letter-spacing: -0.02em;
-                  min-height: 34px;
-                  margin: 0 0 8px 0;
+                  min-height: 28px;
+                  margin: 0 0 6px 0;
                 }}
                 .home-uni-location-v207 {{
                   display: flex;
@@ -15095,25 +15142,25 @@ def home():
                   gap: 8px;
                   color: #344054;
                   margin: 0 0 14px 0;
-                  min-height: 34px;
+                  min-height: 26px;
                 }}
                 .home-uni-location-v207 span {{
                   color: #667085;
-                  font-size: 19px;
-                  width: 20px;
-                  min-width: 20px;
+                  font-size: 18px;
+                  width: 18px;
+                  min-width: 18px;
                   display: inline-flex;
                   margin-top: 1px;
                 }}
                 .home-location-pin-v208 svg {{
-                  width: 18px;
-                  height: 18px;
+                  width: 17px;
+                  height: 17px;
                   fill: #667085;
                 }}
                 .home-uni-location-v207 em {{
                   color: #344054;
                   font-size: 14px;
-                  line-height: 1.30;
+                  line-height: 1.25;
                   font-style: normal;
                   font-weight: 650;
                 }}
@@ -15121,33 +15168,34 @@ def home():
                   display: grid;
                   grid-template-columns: 1fr 1fr;
                   gap: 8px;
-                  margin-top: 4px;
+                  margin-top: 2px;
                 }}
                 .home-uni-stats-v207 div {{
                   border: 1px solid #E4EAF3;
                   border-radius: 10px;
                   background: #FBFCFF;
-                  padding: 10px 7px;
-                  min-height: 68px;
+                  padding: 9px 7px;
+                  min-height: 62px;
                 }}
                 .home-uni-stats-v207 small {{
                   display: block;
                   color: #475467;
                   font-size: 11px;
-                  line-height: 1.25;
+                  line-height: 1.20;
                   font-weight: 700;
-                  margin-bottom: 8px;
+                  margin-bottom: 7px;
                 }}
                 .home-uni-stats-v207 b {{
                   display: block;
                   color: #061A40;
                   font-size: 15px;
-                  line-height: 1.15;
+                  line-height: 1.12;
                   font-weight: 950;
                 }}
                 .home-view-programs-link-v295 {{
                   margin-top: auto;
-                  min-height: 58px;
+                  height: 48px;
+                  min-height: 48px;
                   border-radius: 12px;
                   background: #061A40;
                   color: #ffffff !important;
@@ -15155,35 +15203,32 @@ def home():
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  padding: 0 22px;
+                  padding: 0 18px;
                   font-weight: 950;
-                  font-size: 16px;
+                  font-size: 15px;
                 }}
                 .home-view-programs-link-v295 span,
                 .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
                 .carousel-arrow {{ display: none; }}
                 @media (max-width: 1300px) {{
-                  .carousel-track {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
+                  .home-carousel-slide-v295 {{ width: clamp(300px, calc((100vw - 130px) / 3), 390px); flex-basis: clamp(300px, calc((100vw - 130px) / 3), 390px); }}
                 }}
                 @media (max-width: 900px) {{
-                  .carousel-track {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
-                }}
-                @media (max-width: 560px) {{
-                  .carousel-track {{ grid-template-columns: 1fr; }}
+                  .home-carousel-slide-v295 {{ width: 330px; flex-basis: 330px; }}
                 }}
               </style>
             </head>
             <body>
-              <div class="carousel-shell is-static">
+              <div class="carousel-shell {carousel_animation_class_v331}">
                 <div class="carousel-window">
                   <div class="carousel-track">
-                    {featured_cards_html_v330}
+                    {carousel_cards_html_v331}
                   </div>
                 </div>
               </div>
             </body>
             </html>
-            """, height=720, scrolling=False)
+            """, height=700, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
