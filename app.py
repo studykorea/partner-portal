@@ -15261,30 +15261,55 @@ def home():
                 background: #fff !important;
             }}
 
-            /* v334 final compact card fix: remove the large blank bottom space and keep full card visible */
+            /* v335 final compact card fix: remove large blank bottom space and keep full card visible */
             .featured-carousel-native-v333 .home-carousel-slide-v295,
             .featured-carousel-native-v333 .home-uni-card-v207,
-            .featured-carousel-native-v333 .home-carousel-card-v295 {
+            .featured-carousel-native-v333 .home-carousel-card-v295 {{
                 height: 372px !important;
                 min-height: 372px !important;
                 max-height: 372px !important;
-            }
+                overflow: hidden !important;
+            }}
             .featured-carousel-native-v333 .home-uni-image-wrap-v207,
             .featured-carousel-native-v333 .home-featured-photo-v207,
-            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {{
                 height: 118px !important;
                 min-height: 118px !important;
                 max-height: 118px !important;
-            }
-            .featured-carousel-native-v333 .home-uni-body-v207 {
-                padding-top: 26px !important;
-                padding-bottom: 12px !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 {{
+                padding-top: 24px !important;
+                padding-bottom: 10px !important;
                 gap: 0 !important;
-            }
-            .featured-carousel-native-v333 .home-view-programs-link-v295 {
-                margin-top: 10px !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-title-v207,
+            .featured-carousel-native-v333 h3,
+            .featured-carousel-native-v333 h4 {{
+                margin-top: 0 !important;
+                margin-bottom: 10px !important;
+                line-height: 1.08 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207,
+            .featured-carousel-native-v333 [class*="location"] {{
+                margin-top: 0 !important;
+                margin-bottom: 14px !important;
+                min-height: 28px !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207,
+            .featured-carousel-native-v333 [class*="stat"] {{
+                margin-top: 0 !important;
+                margin-bottom: 10px !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-link-v295,
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 {{
+                margin-top: 6px !important;
                 margin-bottom: 0 !important;
-            }
+                height: 42px !important;
+                min-height: 42px !important;
+            }}
+            .home-featured-note-v207 {{
+                margin-top: 0 !important;
+            }}
             @media (max-width: 1300px) {{
                 .featured-carousel-native-v333 .home-carousel-slide-v295 {{
                     flex-basis: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
