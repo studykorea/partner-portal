@@ -8272,6 +8272,35 @@ div[data-testid="stSelectbox"] label {
     height: 190px !important;
     min-height: 190px !important;
 }
+/* FIX: reduce empty space inside featured university cards */
+.home-featured-section-v207 h3,
+.home-featured-section-v207 h4,
+.home-featured-section-v207 [class*="name"],
+.home-featured-section-v207 [class*="title"] {
+    margin-bottom: 14px !important;
+    line-height: 1.15 !important;
+}
+
+.home-featured-section-v207 [class*="location"],
+.home-featured-section-v207 [class*="address"] {
+    margin-top: 0px !important;
+    margin-bottom: 22px !important;
+}
+
+.home-featured-section-v207 [class*="body"],
+.home-featured-section-v207 [class*="content"],
+.home-featured-section-v207 [class*="info"] {
+    padding-top: 44px !important;
+    gap: 12px !important;
+}
+
+.home-featured-section-v207 [class*="stat"] {
+    margin-top: 6px !important;
+}
+
+.home-featured-section-v207 [class*="card"] {
+    min-height: 500px !important;
+}
 .home-featured-head-v207 {
     display: flex !important;
     align-items: flex-start !important;
