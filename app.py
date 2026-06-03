@@ -14670,7 +14670,7 @@ def home():
       </div>
     </section>
     """, unsafe_allow_html=True)
-
+    return
     st.markdown("""
     <section class="home-featured-section-v207">
         <div class="home-featured-head-v207">
