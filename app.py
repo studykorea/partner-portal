@@ -101,32 +101,6 @@ def _ensure_db_table_from_file(p):
     # Disabled for speed on live website.
     # Do not create/replace database tables during normal page loading.
     return
-        table = _table_for_json_path(p)
-        if not table:
-            return
-
-        if _table_exists(table):
-            return
-
-        if p.exists():
-            data = json.loads(p.read_text(encoding="utf-8"))
-            df = pd.DataFrame(data)
-        else:
-            df = pd.DataFrame()
-
-        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
-
-@st.cache_data(ttl=300, show_spinner=False)
-def _read_sql_table_cached(table):
-    return pd.read_sql_query(text(f'SELECT * FROM "{table}"'), get_engine()).fillna("")
-
-@st.cache_data(ttl=300, show_spinner=False)
-def _read_seed_csv_cached(path_str):
-    return pd.read_csv(path_str, keep_default_na=False).fillna("")
-
-@st.cache_data(ttl=300, show_spinner=False)
-def _read_seed_json_cached(path_str):
-    return json.loads(Path(path_str).read_text(encoding="utf-8")) if Path(path_str).exists() else []
 
 def read_csv(p):
     table = _table_for_csv_path(p)
