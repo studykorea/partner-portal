@@ -14728,22 +14728,62 @@ def intl_count_v53(u):
 
 
 def _home_media_src_v331(path):
-    """Return a usable src for local assets, external URLs, or already encoded data URLs."""
+    """Return a usable src for local assets, uploaded file paths, external URLs, or base64 images."""
     try:
-        raw = str(path or "").strip()
+        raw = str(path or "").strip().strip('"').strip("'")
     except Exception:
         raw = ""
-    if not raw or raw.lower() in ["nan", "none", "null", "<na>"]:
+    if not raw or raw.lower() in ["nan", "none", "null", "<na>", "not provided", "not provided in uploaded excel file"]:
         return ""
+
+    # Already usable data URL
     if raw.startswith("data:image"):
         return raw
+
+    # Extract a URL if the DB saved extra text around it.
+    m = re.search("https?://[^\\s'\"<>]+", raw)
+    if m:
+        return m.group(0)
     if raw.startswith("http://") or raw.startswith("https://"):
         return raw
-    encoded = b64(raw)
-    if encoded:
-        ext = raw.lower().split("?")[0]
-        mime = "image/png" if ext.endswith(".png") else "image/jpeg"
-        return f"data:{mime};base64,{encoded}"
+
+    # Raw base64 image data saved in DB.
+    compact = re.sub(r"\s+", "", raw)
+    if len(compact) > 200 and re.fullmatch(r"[A-Za-z0-9+/=]+", compact):
+        if compact.startswith("iVBOR"):
+            return "data:image/png;base64," + compact
+        if compact.startswith("/9j/"):
+            return "data:image/jpeg;base64," + compact
+        if compact.startswith("R0lG"):
+            return "data:image/gif;base64," + compact
+        return "data:image/png;base64," + compact
+
+    # Try exact local path first.
+    candidates = [raw, raw.lstrip("/"), raw.replace("\\", "/").lstrip("/")]
+
+    # If DB only saved a filename, search common upload/asset folders.
+    base_name = Path(raw.replace("\\", "/")).name
+    if base_name:
+        candidates += [
+            f"assets/{base_name}",
+            f"assets/universities/{base_name}",
+            f"assets/logos/{base_name}",
+            f"public/{base_name}",
+            f"public/uploads/{base_name}",
+            f"uploads/{base_name}",
+            f"data/{base_name}",
+        ]
+
+    for cand in candidates:
+        encoded = b64(cand)
+        if encoded:
+            ext = str(cand).lower().split("?")[0]
+            mime = "image/png" if ext.endswith(".png") else "image/jpeg"
+            if ext.endswith(".svg"):
+                mime = "image/svg+xml"
+            elif ext.endswith(".webp"):
+                mime = "image/webp"
+            return f"data:{mime};base64,{encoded}"
     return ""
 
 def _home_first_value_v331(u, keys):
@@ -14935,7 +14975,12 @@ def home():
                 total_students_v207 = _home_total_students_v207(u)
                 intl_students_v207 = _home_international_students_v207(u)
                 image_path_v331 = _home_first_value_v331(u, ["Image", "image", "Image_URL", "image_url", "Cover_Image", "cover_image", "Cover_URL", "cover_url"])
-                logo_path_v331 = _home_first_value_v331(u, ["University_Logo", "Logo", "logo", "Logo_URL", "logo_url", "Logo_Path", "logo_path", "University Logo"])
+                logo_path_v331 = _home_first_value_v331(u, [
+                    "University_Logo", "university_logo", "University Logo", "University Logo URL", "University_Logo_URL",
+                    "Logo", "logo", "Logo_URL", "logo_url", "Logo_Path", "logo_path", "Logo_File", "logo_file",
+                    "Logo_Image", "logo_image", "Logo Image", "Logo_B64", "logo_b64", "Logo_Base64", "logo_base64",
+                    "Uploaded_Logo", "uploaded_logo", "School_Logo", "school_logo"
+                ])
                 image_html_v207 = _home_featured_img_html_v207(image_path_v331, uni_name_v207)
                 logo_html_v207 = _home_featured_logo_html_v207(logo_path_v331, uni_name_v207)
                 uni_q_v295 = quote_plus(str(uni_name_v207))
@@ -14988,7 +15033,7 @@ def home():
                   margin: 0;
                   padding: 0;
                   width: 100%;
-                  height: 690px;
+                  height: 560px;
                   overflow: hidden;
                   background: #ffffff !important;
                   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -14997,14 +15042,14 @@ def home():
                 .carousel-shell {{
                   position: relative;
                   width: 100%;
-                  height: 690px;
+                  height: 560px;
                   background: #ffffff !important;
                   overflow: hidden;
-                  padding: 6px 0 26px 0;
+                  padding: 6px 0 10px 0;
                 }}
                 .carousel-window {{
                   width: 100%;
-                  height: 625px;
+                  height: 535px;
                   overflow: hidden;
                   background: #ffffff !important;
                 }}
@@ -15013,25 +15058,21 @@ def home():
                   align-items: stretch;
                   gap: 28px;
                   width: max-content;
-                  height: 590px;
-                  padding: 8px 22px 22px 22px;
+                  height: 510px;
+                  padding: 8px 22px 12px 22px;
                   background: #ffffff !important;
                   will-change: transform;
                 }}
-                .carousel-shell.is-animated .carousel-track {{
-                  animation: featuredSlideV331 38s linear infinite;
-                }}
-                .carousel-shell.is-animated:hover .carousel-track {{
-                  animation-play-state: paused;
-                }}
-                @keyframes featuredSlideV331 {{
+                .carousel-shell.is-animated .carousel-track {{ animation: featuredSlideV332 38s linear infinite; }}
+                .carousel-shell.is-animated:hover .carousel-track {{ animation-play-state: paused; }}
+                @keyframes featuredSlideV332 {{
                   0% {{ transform: translateX(0); }}
                   100% {{ transform: translateX(-50%); }}
                 }}
                 .home-carousel-slide-v295 {{
-                  width: clamp(320px, calc((100vw - 160px) / 4), 420px);
-                  flex: 0 0 clamp(320px, calc((100vw - 160px) / 4), 420px);
-                  height: 540px;
+                  width: clamp(320px, calc((100vw - 160px) / 4), 410px);
+                  flex: 0 0 clamp(320px, calc((100vw - 160px) / 4), 410px);
+                  height: 492px;
                   min-width: 320px;
                 }}
                 .home-uni-card-v207 {{
@@ -15042,180 +15083,78 @@ def home():
                   overflow: hidden;
                   box-shadow: 0 14px 34px rgba(16,24,40,.08);
                   width: 100%;
-                  height: 535px;
-                  min-height: 535px;
+                  height: 492px;
+                  min-height: 492px;
                   display: flex;
                   flex-direction: column;
                   transition: transform .2s ease, box-shadow .2s ease;
                 }}
-                .home-uni-card-v207:hover {{
-                  transform: translateY(-3px);
-                  box-shadow: 0 18px 42px rgba(16,24,40,.12);
-                }}
+                .home-uni-card-v207:hover {{ transform: translateY(-3px); box-shadow: 0 18px 42px rgba(16,24,40,.12); }}
                 .home-uni-image-wrap-v207 {{
                   position: relative;
-                  height: 150px;
+                  height: 135px;
                   overflow: hidden;
                   background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  flex: 0 0 150px;
+                  flex: 0 0 135px;
                 }}
-                .home-featured-photo-v207 {{
-                  width: 100%;
-                  height: 150px;
-                  object-fit: cover;
-                  display: block;
-                }}
+                .home-featured-photo-v207 {{ width: 100%; height: 135px; object-fit: cover; display: block; }}
                 .home-featured-photo-placeholder-v207 {{
-                  height: 150px;
-                  background: linear-gradient(135deg, #EAF1FA, #F8FBFF);
-                  color: #667085;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-weight: 850;
+                  height: 135px; background: linear-gradient(135deg, #EAF1FA, #F8FBFF); color: #667085;
+                  display: flex; align-items: center; justify-content: center; font-weight: 850;
                 }}
                 .home-uni-featured-pill-v207 {{
-                  position: absolute;
-                  top: 16px;
-                  left: 16px;
-                  background: #001F48;
-                  color: #ffffff;
-                  padding: 8px 14px;
-                  border-radius: 999px;
-                  font-size: 12px;
-                  font-weight: 900;
+                  position: absolute; top: 14px; left: 14px; background: #001F48; color: #ffffff;
+                  padding: 7px 13px; border-radius: 999px; font-size: 12px; font-weight: 900;
                   box-shadow: 0 8px 16px rgba(0,31,72,.22);
                 }}
                 .home-uni-logo-overlap-v207 {{
-                  position: absolute;
-                  left: 22px;
-                  top: 116px;
-                  width: 70px;
-                  height: 70px;
-                  border-radius: 50%;
-                  background: #ffffff;
-                  border: 1px solid #E4EAF3;
-                  box-shadow: 0 10px 24px rgba(16,24,40,.12);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  overflow: hidden;
-                  z-index: 3;
+                  position: absolute; left: 22px; top: 101px; width: 64px; height: 64px; border-radius: 50%;
+                  background: #ffffff; border: 1px solid #E4EAF3; box-shadow: 0 10px 24px rgba(16,24,40,.12);
+                  display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 3;
                 }}
-                .home-featured-logo-v207 {{
-                  width: 60px;
-                  height: 60px;
-                  object-fit: contain;
-                  display: block;
-                }}
+                .home-featured-logo-v207 {{ width: 54px; height: 54px; object-fit: contain; display: block; }}
                 .home-featured-logo-placeholder-v207 {{
-                  width: 58px;
-                  height: 58px;
-                  border-radius: 50%;
-                  background: #F4F7FB;
-                  color: #061A40;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 15px;
-                  font-weight: 950;
+                  width: 54px; height: 54px; border-radius: 50%; background: #F4F7FB; color: #061A40;
+                  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 950;
                   letter-spacing: -0.02em;
                 }}
                 .home-uni-body-v207 {{
-                  flex: 1 1 auto;
-                  display: flex;
-                  flex-direction: column;
-                  padding: 36px 18px 16px 18px;
+                  flex: 1 1 auto; display: flex; flex-direction: column; padding: 32px 18px 14px 18px;
                 }}
                 .home-uni-body-v207 h3 {{
-                  color: #061A40;
-                  font-size: 21px;
-                  line-height: 1.16;
-                  font-weight: 950;
-                  letter-spacing: -0.02em;
-                  min-height: 28px;
-                  margin: 0 0 6px 0;
+                  color: #061A40; font-size: 20px; line-height: 1.12; font-weight: 950; letter-spacing: -0.02em;
+                  min-height: 24px; margin: 0 0 6px 0;
                 }}
                 .home-uni-location-v207 {{
-                  display: flex;
-                  align-items: flex-start;
-                  gap: 8px;
-                  color: #344054;
-                  margin: 0 0 14px 0;
-                  min-height: 26px;
+                  display: flex; align-items: flex-start; gap: 8px; color: #344054; margin: 0 0 11px 0; min-height: 24px;
                 }}
                 .home-uni-location-v207 span {{
-                  color: #667085;
-                  font-size: 18px;
-                  width: 18px;
-                  min-width: 18px;
-                  display: inline-flex;
-                  margin-top: 1px;
+                  color: #667085; font-size: 17px; width: 17px; min-width: 17px; display: inline-flex; margin-top: 1px;
                 }}
-                .home-location-pin-v208 svg {{
-                  width: 17px;
-                  height: 17px;
-                  fill: #667085;
-                }}
+                .home-location-pin-v208 svg {{ width: 16px; height: 16px; fill: #667085; }}
                 .home-uni-location-v207 em {{
-                  color: #344054;
-                  font-size: 14px;
-                  line-height: 1.25;
-                  font-style: normal;
-                  font-weight: 650;
+                  color: #344054; font-size: 13.5px; line-height: 1.20; font-style: normal; font-weight: 650;
                 }}
-                .home-uni-stats-v207 {{
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 8px;
-                  margin-top: 2px;
-                }}
+                .home-uni-stats-v207 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0; }}
                 .home-uni-stats-v207 div {{
-                  border: 1px solid #E4EAF3;
-                  border-radius: 10px;
-                  background: #FBFCFF;
-                  padding: 9px 7px;
-                  min-height: 62px;
+                  border: 1px solid #E4EAF3; border-radius: 10px; background: #FBFCFF; padding: 8px 7px; min-height: 56px;
                 }}
                 .home-uni-stats-v207 small {{
-                  display: block;
-                  color: #475467;
-                  font-size: 11px;
-                  line-height: 1.20;
-                  font-weight: 700;
-                  margin-bottom: 7px;
+                  display: block; color: #475467; font-size: 10.5px; line-height: 1.15; font-weight: 700; margin-bottom: 6px;
                 }}
-                .home-uni-stats-v207 b {{
-                  display: block;
-                  color: #061A40;
-                  font-size: 15px;
-                  line-height: 1.12;
-                  font-weight: 950;
-                }}
+                .home-uni-stats-v207 b {{ display: block; color: #061A40; font-size: 14.5px; line-height: 1.08; font-weight: 950; }}
                 .home-view-programs-link-v295 {{
-                  margin-top: auto;
-                  height: 48px;
-                  min-height: 48px;
-                  border-radius: 12px;
-                  background: #061A40;
-                  color: #ffffff !important;
-                  text-decoration: none;
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  padding: 0 18px;
-                  font-weight: 950;
-                  font-size: 15px;
+                  margin-top: 14px; height: 44px; min-height: 44px; border-radius: 12px; background: #061A40;
+                  color: #ffffff !important; text-decoration: none; display: flex; align-items: center; justify-content: space-between;
+                  padding: 0 17px; font-weight: 950; font-size: 14.5px;
                 }}
-                .home-view-programs-link-v295 span,
-                .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
+                .home-view-programs-link-v295 span, .home-view-programs-link-v295 b {{ color: #ffffff !important; }}
+                .home-view-programs-link-v295 b {{ font-size: 20px; line-height: 1; }}
                 .carousel-arrow {{ display: none; }}
                 @media (max-width: 1300px) {{
                   .home-carousel-slide-v295 {{ width: clamp(300px, calc((100vw - 130px) / 3), 390px); flex-basis: clamp(300px, calc((100vw - 130px) / 3), 390px); }}
                 }}
-                @media (max-width: 900px) {{
-                  .home-carousel-slide-v295 {{ width: 330px; flex-basis: 330px; }}
-                }}
+                @media (max-width: 900px) {{ .home-carousel-slide-v295 {{ width: 330px; flex-basis: 330px; }} }}
               </style>
             </head>
             <body>
@@ -15228,7 +15167,7 @@ def home():
               </div>
             </body>
             </html>
-            """, height=700, scrolling=False)
+            """, height=570, scrolling=False)
 
         st.markdown("""
         <div class="home-featured-note-v207">
