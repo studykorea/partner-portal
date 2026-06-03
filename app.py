@@ -144,16 +144,17 @@ def add_row(p, row):
         df.loc[len(df)] = row
     write_csv(p, df)
 
+@st.cache_data(ttl=3600, show_spinner=False)
 def read_json(p):
-    table = _table_for_json_path(p)
-    if table:
-        _ensure_db_table_from_file(p)
-        try:
-            df = _read_sql_table_cached(table).copy()
-            return df.to_dict(orient="records")
-        except Exception as e:
-            st.error(f"Could not read table '{table}': {e}")
-            return []
+    p = Path(p)
+    if not p.exists():
+        return []
+    try:
+        with open(p, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"Could not read JSON file '{p}': {e}")
+        return []
 
     return _read_seed_json_cached(str(p))
 
