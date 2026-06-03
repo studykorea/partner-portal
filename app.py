@@ -8239,6 +8239,39 @@ div[data-testid="stSelectbox"] label {
     min-height: 180px !important;
     overflow: hidden !important;
 }
+/* STRONG FIX: stop featured university cards from being cut */
+.home-featured-section-v207 {
+    overflow: visible !important;
+    padding-bottom: 140px !important;
+}
+
+.home-featured-section-v207 div {
+    overflow: visible !important;
+}
+
+.home-featured-section-v207 [class*="track"],
+.home-featured-section-v207 [class*="carousel"],
+.home-featured-section-v207 [class*="cards"],
+.home-featured-section-v207 [class*="slider"] {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 620px !important;
+    padding-bottom: 80px !important;
+}
+
+.home-featured-section-v207 [class*="card"] {
+    height: auto !important;
+    min-height: 560px !important;
+    overflow: visible !important;
+    margin-bottom: 70px !important;
+}
+
+.home-featured-section-v207 [class*="image"],
+.home-featured-section-v207 [class*="thumb"],
+.home-featured-section-v207 [class*="cover"] {
+    height: 190px !important;
+    min-height: 190px !important;
+}
 .home-featured-head-v207 {
     display: flex !important;
     align-items: flex-start !important;
