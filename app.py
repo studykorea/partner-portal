@@ -106,19 +106,16 @@ def _ensure_db_table_from_file(p):
 def _read_sql_table_cached(table):
     return pd.read_sql_table(table, get_engine())
     
+@st.cache_data(ttl=3600, show_spinner=False)
 def read_csv(p):
-    table = _table_for_csv_path(p)
-    if table:
-        _ensure_db_table_from_file(p)
-        try:
-            return _read_sql_table_cached(table).copy()
-        except Exception as e:
-            st.error(f"Could not read table '{table}': {e}")
-            return pd.DataFrame()
-
-    if not Path(p).exists():
+    p = Path(p)
+    if not p.exists():
         return pd.DataFrame()
-    return _read_seed_csv_cached(str(p)).copy()
+    try:
+        return pd.read_csv(p, keep_default_na=False).fillna("")
+    except Exception as e:
+        st.error(f"Could not read file '{p}': {e}")
+        return pd.DataFrame()
 
 def write_csv(p, df):
     df = _clean_df_for_db(df)
