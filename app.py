@@ -101,7 +101,11 @@ def _ensure_db_table_from_file(p):
     # Disabled for speed on live website.
     # Do not create/replace database tables during normal page loading.
     return
-
+    
+@st.cache_data(ttl=3600, show_spinner=False)
+def _read_sql_table_cached(table):
+    return pd.read_sql_table(table, get_engine())
+    
 def read_csv(p):
     table = _table_for_csv_path(p)
     if table:
