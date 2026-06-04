@@ -751,10 +751,53 @@ def _set_login_session_from_user_v60(user):
     st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
     st.session_state.full_name = user.get("full_name", "")
     st.session_state.account_type = user.get("account_type", user.get("role", ""))
+    # v338: restore full super-admin access for UniQuest Admin accounts
+    if is_super_admin_user_v338(user):
+        st.session_state.role = "admin"
+        if st.session_state.get("page") in ["Home", "Login", "Partner Sign Up", "Dashboard"]:
+            st.session_state.page = "Admin Dashboard"
     try:
         st.session_state.auth_token = _make_auth_token_v60(user)
     except Exception:
         st.session_state.auth_token = ""
+
+
+# v338: Super admin role repair
+# Some UniQuest super-admin accounts are stored as account_type="UniQuest Admin"
+# while role may still be agency_rep/agency_partner. Treat these accounts as portal admin
+# so the full admin dashboard and management menus remain visible.
+def is_super_admin_user_v338(user):
+    try:
+        role_v338 = str(user.get("role", "") or "").strip().lower().replace("-", "_")
+        account_type_v338 = str(user.get("account_type", "") or user.get("type", "") or "").strip().lower().replace("-", " ")
+        full_name_v338 = str(user.get("full_name", "") or user.get("name", "") or "").strip().lower()
+        username_v338 = str(user.get("username", "") or "").strip().lower()
+        agency_v338 = normalize_agency_id(user.get("agency_name", "") or user.get("partner_group", "") or user.get("agency_id", ""))
+        if role_v338 in ["admin", "super_admin", "super admin", "portal_admin", "portal admin"]:
+            return True
+        if account_type_v338 in ["uniquest admin", "super admin", "portal admin", "admin"]:
+            return True
+        if username_v338 in ["admin", "superadmin", "super_admin", "uniquestadmin", "uniquest_admin"]:
+            return True
+        if "super admin" in full_name_v338 and agency_v338 == "uniquest":
+            return True
+    except Exception:
+        pass
+    return False
+
+def is_super_admin_session_v338():
+    try:
+        fake_user_v338 = {
+            "role": st.session_state.get("role", ""),
+            "account_type": st.session_state.get("account_type", ""),
+            "full_name": st.session_state.get("full_name", ""),
+            "username": st.session_state.get("username", ""),
+            "agency_name": st.session_state.get("agency_name", ""),
+            "agency_id": st.session_state.get("agency_id", ""),
+        }
+        return is_super_admin_user_v338(fake_user_v338)
+    except Exception:
+        return False
 
 def _make_auth_token_v60(user):
     data = f'{user.get("username","")}|{user.get("password_hash","")}|{user.get("status","")}|{user.get("role","")}'
@@ -856,7 +899,7 @@ def restore_login_from_query_v60():
             except Exception:
                 pass
             if st.session_state.page in ["Home", "Login", "Partner Sign Up"]:
-                st.session_state.page = "Admin Dashboard" if user["role"] == "admin" else "Dashboard"
+                st.session_state.page = "Admin Dashboard" if is_super_admin_user_v338(user) else "Dashboard"
 
 
 restore_login_from_query_v60()
@@ -969,7 +1012,7 @@ def handle_top_nav_query_v70():
         # v110: Program detail links use nav=Universities + uni/programdetail.
         # Keep the page as Universities and let handle_program_detail_query_v110 select the program.
         if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
-            requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
+            requested_page = "Admin Dashboard" if is_super_admin_session_v338() else "Dashboard"
         st.session_state.page = requested_page
         # v293: Normal page navigation should not keep an old university detail selected.
         # Keep detail selection only when a direct detail query is present.
@@ -27922,7 +27965,9 @@ if not st.session_state.logged_in:
     else:
         home()
 else:
-    if st.session_state.role == "admin":
+    if is_super_admin_session_v338():
+        # v338: force admin role in session so all old admin-only helpers keep working
+        st.session_state.role = "admin"
         if st.session_state.page == "Partner Management":
             admin_partner_management_v58()
         elif st.session_state.page == "Universities":
