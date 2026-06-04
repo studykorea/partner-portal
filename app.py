@@ -15264,27 +15264,27 @@ def home():
             /* v334 final compact card fix: remove the large blank bottom space and keep full card visible */
             .featured-carousel-native-v333 .home-carousel-slide-v295,
             .featured-carousel-native-v333 .home-uni-card-v207,
-            .featured-carousel-native-v333 .home-carousel-card-v295 {
+            .featured-carousel-native-v333 .home-carousel-card-v295 {{
                 height: 372px !important;
                 min-height: 372px !important;
                 max-height: 372px !important;
-            }
+            }}
             .featured-carousel-native-v333 .home-uni-image-wrap-v207,
             .featured-carousel-native-v333 .home-featured-photo-v207,
-            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {{
                 height: 118px !important;
                 min-height: 118px !important;
                 max-height: 118px !important;
-            }
-            .featured-carousel-native-v333 .home-uni-body-v207 {
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 {{
                 padding-top: 26px !important;
                 padding-bottom: 12px !important;
                 gap: 0 !important;
-            }
-            .featured-carousel-native-v333 .home-view-programs-link-v295 {
+            }}
+            .featured-carousel-native-v333 .home-view-programs-link-v295 {{
                 margin-top: 10px !important;
                 margin-bottom: 0 !important;
-            }
+            }}
             @media (max-width: 1300px) {{
                 .featured-carousel-native-v333 .home-carousel-slide-v295 {{
                     flex-basis: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
