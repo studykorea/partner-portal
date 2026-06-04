@@ -98,43 +98,10 @@ def _table_exists(table):
         return False
 
 def _ensure_db_table_from_file(p):
+    """v339 speed/memory fix: do not auto-create or replace DB tables during page load.
+    Use admin save/sync actions only. This prevents heavy CSV/JSON-to-SQL work on every public/home load.
     """
-    First-use migration helper for Supabase/PostgreSQL.
-    Keeps the v58 design/code structure, but stores data in Supabase.
-    If the DB table does not exist yet, it is created from the original CSV/JSON seed file.
-    """
-    p = Path(p)
-
-    if p.suffix.lower() == ".csv":
-        table = _table_for_csv_path(p)
-        if not table:
-            return
-
-        if _table_exists(table):
-            return
-
-        if p.exists():
-            df = pd.read_csv(p, keep_default_na=False).fillna("")
-        else:
-            df = pd.DataFrame()
-
-        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
-
-    elif p.suffix.lower() == ".json":
-        table = _table_for_json_path(p)
-        if not table:
-            return
-
-        if _table_exists(table):
-            return
-
-        if p.exists():
-            data = json.loads(p.read_text(encoding="utf-8"))
-            df = pd.DataFrame(data)
-        else:
-            df = pd.DataFrame()
-
-        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
+    return
 
 @st.cache_data(ttl=300, show_spinner=False)
 def _read_sql_table_cached(table):
@@ -623,10 +590,15 @@ def visible_logs(df):
         return df[df.get("agency_id", "") == current_agency_id()]
     return df[df.get("partner_username", "") == st.session_state.username]
 
-@st.cache_data(ttl=3600, show_spinner=False)
-def _b64_file_cached(path_str):
+@st.cache_data(ttl=1800, show_spinner=False)
+def _b64_file_cached(path_str, mtime, size):
     p = Path(path_str)
-    return base64.b64encode(p.read_bytes()).decode() if p.exists() and p.is_file() else ""
+    if not p.exists() or not p.is_file():
+        return ""
+    # v339 memory guard: never cache very large images as base64 in Streamlit memory.
+    if size and size > 1_800_000:
+        return ""
+    return base64.b64encode(p.read_bytes()).decode()
 
 def b64(path):
     try:
@@ -638,7 +610,11 @@ def b64(path):
         full_path = BASE / p
         if not full_path.exists() or not full_path.is_file():
             return ""
-        return _b64_file_cached(str(full_path))
+        stat = full_path.stat()
+        if stat.st_size > 1_800_000:
+            # v339: do not load huge images into memory/base64. Re-upload a compressed image.
+            return ""
+        return _b64_file_cached(str(full_path), stat.st_mtime, stat.st_size)
     except Exception:
         return ""
 
@@ -745,59 +721,26 @@ handle_program_detail_query_v110()
 def _set_login_session_from_user_v60(user):
     st.session_state.logged_in = True
     st.session_state.username = user["username"]
-    st.session_state.role = user["role"]
+    raw_role_v339 = str(user.get("role", "") or "").strip()
+    raw_account_v339 = str(user.get("account_type", "") or "").strip()
+    raw_name_v339 = str(user.get("full_name", user.get("username", "")) or "").strip()
+    # v339: UniQuest Admin / Super Admin must open the real portal admin dashboard,
+    # not the partner dashboard.
+    role_blob_v339 = " ".join([raw_role_v339, raw_account_v339, raw_name_v339]).lower()
+    if "uniquest admin" in role_blob_v339 or "super admin" in role_blob_v339 or raw_role_v339.lower() in ["admin", "super_admin", "superadmin"]:
+        st.session_state.role = "admin"
+        st.session_state.account_type = "UniQuest Admin"
+    else:
+        st.session_state.role = raw_role_v339
+        st.session_state.account_type = raw_account_v339 or raw_role_v339
     st.session_state.status = user.get("status", "approved")
     st.session_state.agency_name = user.get("agency_name", "")
     st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
     st.session_state.full_name = user.get("full_name", "")
-    st.session_state.account_type = user.get("account_type", user.get("role", ""))
-    # v338: restore full super-admin access for UniQuest Admin accounts
-    if is_super_admin_user_v338(user):
-        st.session_state.role = "admin"
-        if st.session_state.get("page") in ["Home", "Login", "Partner Sign Up", "Dashboard"]:
-            st.session_state.page = "Admin Dashboard"
     try:
         st.session_state.auth_token = _make_auth_token_v60(user)
     except Exception:
         st.session_state.auth_token = ""
-
-
-# v338: Super admin role repair
-# Some UniQuest super-admin accounts are stored as account_type="UniQuest Admin"
-# while role may still be agency_rep/agency_partner. Treat these accounts as portal admin
-# so the full admin dashboard and management menus remain visible.
-def is_super_admin_user_v338(user):
-    try:
-        role_v338 = str(user.get("role", "") or "").strip().lower().replace("-", "_")
-        account_type_v338 = str(user.get("account_type", "") or user.get("type", "") or "").strip().lower().replace("-", " ")
-        full_name_v338 = str(user.get("full_name", "") or user.get("name", "") or "").strip().lower()
-        username_v338 = str(user.get("username", "") or "").strip().lower()
-        agency_v338 = normalize_agency_id(user.get("agency_name", "") or user.get("partner_group", "") or user.get("agency_id", ""))
-        if role_v338 in ["admin", "super_admin", "super admin", "portal_admin", "portal admin"]:
-            return True
-        if account_type_v338 in ["uniquest admin", "super admin", "portal admin", "admin"]:
-            return True
-        if username_v338 in ["admin", "superadmin", "super_admin", "uniquestadmin", "uniquest_admin"]:
-            return True
-        if "super admin" in full_name_v338 and agency_v338 == "uniquest":
-            return True
-    except Exception:
-        pass
-    return False
-
-def is_super_admin_session_v338():
-    try:
-        fake_user_v338 = {
-            "role": st.session_state.get("role", ""),
-            "account_type": st.session_state.get("account_type", ""),
-            "full_name": st.session_state.get("full_name", ""),
-            "username": st.session_state.get("username", ""),
-            "agency_name": st.session_state.get("agency_name", ""),
-            "agency_id": st.session_state.get("agency_id", ""),
-        }
-        return is_super_admin_user_v338(fake_user_v338)
-    except Exception:
-        return False
 
 def _make_auth_token_v60(user):
     data = f'{user.get("username","")}|{user.get("password_hash","")}|{user.get("status","")}|{user.get("role","")}'
@@ -899,7 +842,7 @@ def restore_login_from_query_v60():
             except Exception:
                 pass
             if st.session_state.page in ["Home", "Login", "Partner Sign Up"]:
-                st.session_state.page = "Admin Dashboard" if is_super_admin_user_v338(user) else "Dashboard"
+                st.session_state.page = "Admin Dashboard" if user["role"] == "admin" else "Dashboard"
 
 
 restore_login_from_query_v60()
@@ -1012,7 +955,7 @@ def handle_top_nav_query_v70():
         # v110: Program detail links use nav=Universities + uni/programdetail.
         # Keep the page as Universities and let handle_program_detail_query_v110 select the program.
         if st.session_state.get("logged_in") and requested_page in ["Home", "Login", "Partner Sign Up"]:
-            requested_page = "Admin Dashboard" if is_super_admin_session_v338() else "Dashboard"
+            requested_page = "Admin Dashboard" if st.session_state.get("role") == "admin" else "Dashboard"
         st.session_state.page = requested_page
         # v293: Normal page navigation should not keep an old university detail selected.
         # Keep detail selection only when a direct detail query is present.
@@ -14277,48 +14220,68 @@ def ensure_columns_v49(df, columns):
     return df
 
 def save_uploaded_university_photo_v49(uploaded_file, university_name):
+    """v339 memory-safe campus photo upload. Compresses before saving."""
     if uploaded_file is None:
         return ""
-    from PIL import Image, ImageDraw, ImageEnhance
-    slug = safe_slug_v49(university_name)
-    out_dir = BASE / "assets" / "universities"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"{slug}.jpg"
+    try:
+        if getattr(uploaded_file, "size", 0) and uploaded_file.size > 8_000_000:
+            st.error("Image is too large. Please upload a campus image under 8 MB.")
+            return ""
+        from PIL import Image, ImageEnhance
+        slug = safe_slug_v49(university_name)
+        out_dir = BASE / "assets" / "universities"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"{slug}.jpg"
 
-    img = Image.open(uploaded_file).convert("RGB")
-    target_size = (1600, 900)
-    target_ratio = target_size[0] / target_size[1]
-    w, h = img.size
-    ratio = w / h
+        uploaded_file.seek(0)
+        img = Image.open(uploaded_file).convert("RGB")
+        target_size = (1100, 620)
+        target_ratio = target_size[0] / target_size[1]
+        w, h = img.size
+        ratio = w / h if h else target_ratio
 
-    if ratio > target_ratio:
-        new_w = int(h * target_ratio)
-        left = (w - new_w) // 2
-        img = img.crop((left, 0, left + new_w, h))
-    else:
-        new_h = int(w / target_ratio)
-        top = max(0, (h - new_h) // 2)
-        img = img.crop((0, top, w, top + new_h))
+        if ratio > target_ratio:
+            new_w = int(h * target_ratio)
+            left = max(0, (w - new_w) // 2)
+            img = img.crop((left, 0, left + new_w, h))
+        else:
+            new_h = int(w / target_ratio)
+            top = max(0, (h - new_h) // 2)
+            img = img.crop((0, top, w, top + new_h))
 
-    img = img.resize(target_size, Image.Resampling.LANCZOS)
-    img = ImageEnhance.Sharpness(img).enhance(1.08)
-    img.save(out_path, quality=94, optimize=True)
-    return f"assets/universities/{slug}.jpg"
+        img = img.resize(target_size, Image.Resampling.LANCZOS)
+        img = ImageEnhance.Sharpness(img).enhance(1.04)
+        img.save(out_path, quality=78, optimize=True, progressive=True)
+        st.cache_data.clear()
+        return f"assets/universities/{slug}.jpg"
+    except Exception as e:
+        st.error(f"Could not upload campus image: {e}")
+        return ""
+
 
 
 
 def save_uploaded_university_logo_v88(uploaded_file, university_name):
-    """Save university logo after auto-cleaning unnecessary outside background/margins."""
+    """v339 memory-safe logo upload. Keeps the logo small so Render does not exceed RAM."""
     if uploaded_file is None:
         return ""
-    slug = safe_slug_v49(university_name)
-    out_dir = BASE / "assets" / "university_logos"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"{slug}_logo.png"
+    try:
+        if getattr(uploaded_file, "size", 0) and uploaded_file.size > 3_000_000:
+            st.error("Logo file is too large. Please upload a logo under 3 MB.")
+            return ""
+        slug = safe_slug_v49(university_name)
+        out_dir = BASE / "assets" / "university_logos"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = out_dir / f"{slug}_logo.png"
 
-    cleaned = clean_logo_image_v98(uploaded_file, canvas_size=900, padding_ratio=0.08)
-    cleaned.save(out_path, "PNG", optimize=True)
-    return f"assets/university_logos/{slug}_logo.png"
+        uploaded_file.seek(0)
+        cleaned = clean_logo_image_v98(uploaded_file, canvas_size=320, padding_ratio=0.10)
+        cleaned.save(out_path, "PNG", optimize=True, compress_level=9)
+        st.cache_data.clear()
+        return f"assets/university_logos/{slug}_logo.png"
+    except Exception as e:
+        st.error(f"Could not upload logo: {e}")
+        return ""
 
 
 
@@ -14584,7 +14547,7 @@ def university_logo_html_v88(path, name="University"):
 
 
 def save_uploaded_university_gallery_v89(uploaded_files, university_name):
-    """Save multiple university slideshow photos and return pipe-separated paths."""
+    """v339 memory-safe gallery upload. Limits count and compresses images."""
     if not uploaded_files:
         return ""
     from PIL import Image, ImageEnhance
@@ -14593,14 +14556,18 @@ def save_uploaded_university_gallery_v89(uploaded_files, university_name):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     saved = []
-    for idx, uploaded_file in enumerate(uploaded_files, start=1):
+    for idx, uploaded_file in enumerate(list(uploaded_files)[:5], start=1):
         try:
+            if getattr(uploaded_file, "size", 0) and uploaded_file.size > 8_000_000:
+                st.warning(f"Gallery image {idx} skipped because it is over 8 MB.")
+                continue
             out_path = out_dir / f"{slug}_slide_{idx}.jpg"
+            uploaded_file.seek(0)
             img = Image.open(uploaded_file).convert("RGB")
-            target_size = (1800, 760)
+            target_size = (1200, 506)
             target_ratio = target_size[0] / target_size[1]
             w, h = img.size
-            ratio = w / h
+            ratio = w / h if h else target_ratio
 
             if ratio > target_ratio:
                 new_w = int(h * target_ratio)
@@ -14612,11 +14579,12 @@ def save_uploaded_university_gallery_v89(uploaded_files, university_name):
                 img = img.crop((0, top, w, top + new_h))
 
             img = img.resize(target_size, Image.Resampling.LANCZOS)
-            img = ImageEnhance.Sharpness(img).enhance(1.08)
-            img.save(out_path, quality=94, optimize=True)
+            img = ImageEnhance.Sharpness(img).enhance(1.04)
+            img.save(out_path, quality=76, optimize=True, progressive=True)
             saved.append(f"assets/universities/{slug}_gallery/{slug}_slide_{idx}.jpg")
-        except Exception:
-            pass
+        except Exception as e:
+            st.warning(f"Gallery image {idx} could not be processed: {e}")
+    st.cache_data.clear()
     return "|".join(saved)
 
 def gallery_paths_v89(u):
@@ -27965,9 +27933,7 @@ if not st.session_state.logged_in:
     else:
         home()
 else:
-    if is_super_admin_session_v338():
-        # v338: force admin role in session so all old admin-only helpers keep working
-        st.session_state.role = "admin"
+    if st.session_state.role == "admin":
         if st.session_state.page == "Partner Management":
             admin_partner_management_v58()
         elif st.session_state.page == "Universities":
