@@ -15870,7 +15870,6 @@ def dash_shell(items):
 if st.button(label_v194, key=f"dash_nav_btn_v194_{safe_key_v194}", use_container_width=True):
     set_page(item)
     st.rerun()
-                _dash_go_v194(item)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
