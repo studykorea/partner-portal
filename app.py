@@ -15863,7 +15863,13 @@ def dash_shell(items):
             label_v194 = f"{label_v194} ▸"
 
         with nav_cols_v194[idx_v194]:
-            if st.button(label_v194, key=f"dash_nav_btn_v194_{idx_v194}_{item}", use_container_width=True):
+           safe_key_v194 = hashlib.md5(
+    f"{current_page_v96}_{st.session_state.get('partner_dashboard_view_v81','')}_{idx_v194}_{item}".encode()
+).hexdigest()
+
+if st.button(label_v194, key=f"dash_nav_btn_v194_{safe_key_v194}", use_container_width=True):
+    set_page(item)
+    st.rerun()
                 _dash_go_v194(item)
 
     st.markdown('</div>', unsafe_allow_html=True)
