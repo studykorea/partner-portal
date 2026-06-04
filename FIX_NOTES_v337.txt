@@ -1,0 +1,7 @@
+Fix notes v337
+- Rebuilt Featured Universities carousel inside a fixed-height HTML component to prevent Streamlit layout clipping.
+- Keeps automatic sliding/moving carousel.
+- Uses compact cards so the View Programs button is visible inside the card.
+- Reduced empty vertical space in cards.
+- Added broader logo-column auto-detection for uploaded logos/seals/emblems from the database.
+- Note: actual logo images must exist in Supabase/database URLs or GitHub assets. If only initials show, the deployed app cannot access the uploaded logo file path.
