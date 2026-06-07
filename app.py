@@ -98,10 +98,43 @@ def _table_exists(table):
         return False
 
 def _ensure_db_table_from_file(p):
-    """v339 speed/memory fix: do not auto-create or replace DB tables during page load.
-    Use admin save/sync actions only. This prevents heavy CSV/JSON-to-SQL work on every public/home load.
     """
-    return
+    First-use migration helper for Supabase/PostgreSQL.
+    Keeps the v58 design/code structure, but stores data in Supabase.
+    If the DB table does not exist yet, it is created from the original CSV/JSON seed file.
+    """
+    p = Path(p)
+
+    if p.suffix.lower() == ".csv":
+        table = _table_for_csv_path(p)
+        if not table:
+            return
+
+        if _table_exists(table):
+            return
+
+        if p.exists():
+            df = pd.read_csv(p, keep_default_na=False).fillna("")
+        else:
+            df = pd.DataFrame()
+
+        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
+
+    elif p.suffix.lower() == ".json":
+        table = _table_for_json_path(p)
+        if not table:
+            return
+
+        if _table_exists(table):
+            return
+
+        if p.exists():
+            data = json.loads(p.read_text(encoding="utf-8"))
+            df = pd.DataFrame(data)
+        else:
+            df = pd.DataFrame()
+
+        _clean_df_for_db(df).to_sql(table, get_engine(), if_exists="replace", index=False)
 
 @st.cache_data(ttl=300, show_spinner=False)
 def _read_sql_table_cached(table):
@@ -590,15 +623,10 @@ def visible_logs(df):
         return df[df.get("agency_id", "") == current_agency_id()]
     return df[df.get("partner_username", "") == st.session_state.username]
 
-@st.cache_data(ttl=1800, show_spinner=False)
-def _b64_file_cached(path_str, mtime, size):
+@st.cache_data(ttl=3600, show_spinner=False)
+def _b64_file_cached(path_str):
     p = Path(path_str)
-    if not p.exists() or not p.is_file():
-        return ""
-    # v339 memory guard: never cache very large images as base64 in Streamlit memory.
-    if size and size > 1_800_000:
-        return ""
-    return base64.b64encode(p.read_bytes()).decode()
+    return base64.b64encode(p.read_bytes()).decode() if p.exists() and p.is_file() else ""
 
 def b64(path):
     try:
@@ -610,11 +638,7 @@ def b64(path):
         full_path = BASE / p
         if not full_path.exists() or not full_path.is_file():
             return ""
-        stat = full_path.stat()
-        if stat.st_size > 1_800_000:
-            # v339: do not load huge images into memory/base64. Re-upload a compressed image.
-            return ""
-        return _b64_file_cached(str(full_path), stat.st_mtime, stat.st_size)
+        return _b64_file_cached(str(full_path))
     except Exception:
         return ""
 
@@ -721,22 +745,12 @@ handle_program_detail_query_v110()
 def _set_login_session_from_user_v60(user):
     st.session_state.logged_in = True
     st.session_state.username = user["username"]
-    raw_role_v339 = str(user.get("role", "") or "").strip()
-    raw_account_v339 = str(user.get("account_type", "") or "").strip()
-    raw_name_v339 = str(user.get("full_name", user.get("username", "")) or "").strip()
-    # v339: UniQuest Admin / Super Admin must open the real portal admin dashboard,
-    # not the partner dashboard.
-    role_blob_v339 = " ".join([raw_role_v339, raw_account_v339, raw_name_v339]).lower()
-    if "uniquest admin" in role_blob_v339 or "super admin" in role_blob_v339 or raw_role_v339.lower() in ["admin", "super_admin", "superadmin"]:
-        st.session_state.role = "admin"
-        st.session_state.account_type = "UniQuest Admin"
-    else:
-        st.session_state.role = raw_role_v339
-        st.session_state.account_type = raw_account_v339 or raw_role_v339
+    st.session_state.role = user["role"]
     st.session_state.status = user.get("status", "approved")
     st.session_state.agency_name = user.get("agency_name", "")
     st.session_state.agency_id = user.get("agency_id", normalize_agency_id(user.get("agency_name", "")))
     st.session_state.full_name = user.get("full_name", "")
+    st.session_state.account_type = user.get("account_type", user.get("role", ""))
     try:
         st.session_state.auth_token = _make_auth_token_v60(user)
     except Exception:
@@ -14220,68 +14234,48 @@ def ensure_columns_v49(df, columns):
     return df
 
 def save_uploaded_university_photo_v49(uploaded_file, university_name):
-    """v339 memory-safe campus photo upload. Compresses before saving."""
     if uploaded_file is None:
         return ""
-    try:
-        if getattr(uploaded_file, "size", 0) and uploaded_file.size > 8_000_000:
-            st.error("Image is too large. Please upload a campus image under 8 MB.")
-            return ""
-        from PIL import Image, ImageEnhance
-        slug = safe_slug_v49(university_name)
-        out_dir = BASE / "assets" / "universities"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        out_path = out_dir / f"{slug}.jpg"
+    from PIL import Image, ImageDraw, ImageEnhance
+    slug = safe_slug_v49(university_name)
+    out_dir = BASE / "assets" / "universities"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{slug}.jpg"
 
-        uploaded_file.seek(0)
-        img = Image.open(uploaded_file).convert("RGB")
-        target_size = (1100, 620)
-        target_ratio = target_size[0] / target_size[1]
-        w, h = img.size
-        ratio = w / h if h else target_ratio
+    img = Image.open(uploaded_file).convert("RGB")
+    target_size = (1600, 900)
+    target_ratio = target_size[0] / target_size[1]
+    w, h = img.size
+    ratio = w / h
 
-        if ratio > target_ratio:
-            new_w = int(h * target_ratio)
-            left = max(0, (w - new_w) // 2)
-            img = img.crop((left, 0, left + new_w, h))
-        else:
-            new_h = int(w / target_ratio)
-            top = max(0, (h - new_h) // 2)
-            img = img.crop((0, top, w, top + new_h))
+    if ratio > target_ratio:
+        new_w = int(h * target_ratio)
+        left = (w - new_w) // 2
+        img = img.crop((left, 0, left + new_w, h))
+    else:
+        new_h = int(w / target_ratio)
+        top = max(0, (h - new_h) // 2)
+        img = img.crop((0, top, w, top + new_h))
 
-        img = img.resize(target_size, Image.Resampling.LANCZOS)
-        img = ImageEnhance.Sharpness(img).enhance(1.04)
-        img.save(out_path, quality=78, optimize=True, progressive=True)
-        st.cache_data.clear()
-        return f"assets/universities/{slug}.jpg"
-    except Exception as e:
-        st.error(f"Could not upload campus image: {e}")
-        return ""
-
+    img = img.resize(target_size, Image.Resampling.LANCZOS)
+    img = ImageEnhance.Sharpness(img).enhance(1.08)
+    img.save(out_path, quality=94, optimize=True)
+    return f"assets/universities/{slug}.jpg"
 
 
 
 def save_uploaded_university_logo_v88(uploaded_file, university_name):
-    """v339 memory-safe logo upload. Keeps the logo small so Render does not exceed RAM."""
+    """Save university logo after auto-cleaning unnecessary outside background/margins."""
     if uploaded_file is None:
         return ""
-    try:
-        if getattr(uploaded_file, "size", 0) and uploaded_file.size > 3_000_000:
-            st.error("Logo file is too large. Please upload a logo under 3 MB.")
-            return ""
-        slug = safe_slug_v49(university_name)
-        out_dir = BASE / "assets" / "university_logos"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        out_path = out_dir / f"{slug}_logo.png"
+    slug = safe_slug_v49(university_name)
+    out_dir = BASE / "assets" / "university_logos"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{slug}_logo.png"
 
-        uploaded_file.seek(0)
-        cleaned = clean_logo_image_v98(uploaded_file, canvas_size=320, padding_ratio=0.10)
-        cleaned.save(out_path, "PNG", optimize=True, compress_level=9)
-        st.cache_data.clear()
-        return f"assets/university_logos/{slug}_logo.png"
-    except Exception as e:
-        st.error(f"Could not upload logo: {e}")
-        return ""
+    cleaned = clean_logo_image_v98(uploaded_file, canvas_size=900, padding_ratio=0.08)
+    cleaned.save(out_path, "PNG", optimize=True)
+    return f"assets/university_logos/{slug}_logo.png"
 
 
 
@@ -14547,7 +14541,7 @@ def university_logo_html_v88(path, name="University"):
 
 
 def save_uploaded_university_gallery_v89(uploaded_files, university_name):
-    """v339 memory-safe gallery upload. Limits count and compresses images."""
+    """Save multiple university slideshow photos and return pipe-separated paths."""
     if not uploaded_files:
         return ""
     from PIL import Image, ImageEnhance
@@ -14556,18 +14550,14 @@ def save_uploaded_university_gallery_v89(uploaded_files, university_name):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     saved = []
-    for idx, uploaded_file in enumerate(list(uploaded_files)[:5], start=1):
+    for idx, uploaded_file in enumerate(uploaded_files, start=1):
         try:
-            if getattr(uploaded_file, "size", 0) and uploaded_file.size > 8_000_000:
-                st.warning(f"Gallery image {idx} skipped because it is over 8 MB.")
-                continue
             out_path = out_dir / f"{slug}_slide_{idx}.jpg"
-            uploaded_file.seek(0)
             img = Image.open(uploaded_file).convert("RGB")
-            target_size = (1200, 506)
+            target_size = (1800, 760)
             target_ratio = target_size[0] / target_size[1]
             w, h = img.size
-            ratio = w / h if h else target_ratio
+            ratio = w / h
 
             if ratio > target_ratio:
                 new_w = int(h * target_ratio)
@@ -14579,12 +14569,11 @@ def save_uploaded_university_gallery_v89(uploaded_files, university_name):
                 img = img.crop((0, top, w, top + new_h))
 
             img = img.resize(target_size, Image.Resampling.LANCZOS)
-            img = ImageEnhance.Sharpness(img).enhance(1.04)
-            img.save(out_path, quality=76, optimize=True, progressive=True)
+            img = ImageEnhance.Sharpness(img).enhance(1.08)
+            img.save(out_path, quality=94, optimize=True)
             saved.append(f"assets/universities/{slug}_gallery/{slug}_slide_{idx}.jpg")
-        except Exception as e:
-            st.warning(f"Gallery image {idx} could not be processed: {e}")
-    st.cache_data.clear()
+        except Exception:
+            pass
     return "|".join(saved)
 
 def gallery_paths_v89(u):
@@ -14990,19 +14979,8 @@ def home():
                     "University_Logo", "university_logo", "University Logo", "University Logo URL", "University_Logo_URL",
                     "Logo", "logo", "Logo_URL", "logo_url", "Logo_Path", "logo_path", "Logo_File", "logo_file",
                     "Logo_Image", "logo_image", "Logo Image", "Logo_B64", "logo_b64", "Logo_Base64", "logo_base64",
-                    "Uploaded_Logo", "uploaded_logo", "School_Logo", "school_logo", "logo_data", "Logo_Data",
-                    "logo_file_path", "Logo_File_Path", "university_logo_file", "University_Logo_File", "seal", "Seal",
-                    "emblem", "Emblem", "symbol", "Symbol"
+                    "Uploaded_Logo", "uploaded_logo", "School_Logo", "school_logo"
                 ])
-                if not logo_path_v331:
-                    # Last-resort auto-detect: use any DB column whose name suggests a logo/seal/emblem.
-                    for _col_v337 in list(getattr(u, "index", [])):
-                        _col_name_v337 = str(_col_v337).lower()
-                        if any(_key_v337 in _col_name_v337 for _key_v337 in ["logo", "seal", "emblem", "symbol"]):
-                            _val_v337 = display_value_v53(u.get(_col_v337, ""))
-                            if _val_v337:
-                                logo_path_v331 = _val_v337
-                                break
                 image_html_v207 = _home_featured_img_html_v207(image_path_v331, uni_name_v207)
                 logo_html_v207 = _home_featured_logo_html_v207(logo_path_v331, uni_name_v207)
                 uni_q_v295 = quote_plus(str(uni_name_v207))
@@ -15028,7 +15006,7 @@ def home():
                                 <div><small>Total Students</small><b>{_safe_html_v62(total_students_v207)}</b></div>
                                 <div><small>International Students</small><b>{_safe_html_v62(intl_students_v207)}</b></div>
                             </div>
-                            <a class="home-view-programs-btn-v208 home-view-programs-link-v295" href="?go=universities&homeuni={uni_q_v295}" target="_top">
+                            <a class="home-view-programs-btn-v208 home-view-programs-link-v295" href="?go=universities&homeuni={uni_q_v295}" target="_self">
                                 <span>View Programs</span><b>→</b>
                             </a>
                         </div>
@@ -15048,256 +15026,309 @@ def home():
             # This prevents Streamlit iframe cropping and keeps the View Programs button visible.
             carousel_cards_html_v333 = "".join(card_html_v295) + duplicate_html_v295
             carousel_animation_class_v333 = "is-animated" if len(card_html_v295) > 1 else "is-static"
-            components.html(f"""
-            <!doctype html>
-            <html>
-            <head>
-            <meta charset="utf-8" />
+            st.markdown(f"""
             <style>
-                html, body {{
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    background: #ffffff !important;
-                    overflow: hidden !important;
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-                }}
-                * {{ box-sizing: border-box !important; }}
-                .featured-carousel-native-v337 {{
-                    width: 100% !important;
-                    height: 390px !important;
-                    overflow: hidden !important;
-                    background: #ffffff !important;
-                    padding: 10px 0 18px 0 !important;
-                }}
-                .featured-carousel-native-v337 .carousel-track-v337 {{
-                    display: flex !important;
-                    align-items: stretch !important;
-                    gap: 22px !important;
-                    width: max-content !important;
-                    will-change: transform !important;
-                    animation: featuredSlideV337 42s linear infinite !important;
-                    padding: 0 18px !important;
-                }}
-                .featured-carousel-native-v337:hover .carousel-track-v337 {{
-                    animation-play-state: paused !important;
-                }}
-                .featured-carousel-native-v337.is-static .carousel-track-v337 {{
-                    animation: none !important;
-                }}
-                @keyframes featuredSlideV337 {{
-                    0% {{ transform: translateX(0); }}
-                    100% {{ transform: translateX(-50%); }}
-                }}
-                .featured-carousel-native-v337 .home-carousel-slide-v295 {{
-                    flex: 0 0 330px !important;
-                    width: 330px !important;
-                    height: 356px !important;
-                    min-height: 356px !important;
-                    display: block !important;
-                    overflow: visible !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-card-v207,
-                .featured-carousel-native-v337 .home-carousel-card-v295 {{
-                    position: relative !important;
-                    width: 100% !important;
-                    height: 356px !important;
-                    min-height: 356px !important;
-                    max-height: 356px !important;
-                    background: #ffffff !important;
-                    border: 1px solid #DCE6F4 !important;
-                    border-radius: 18px !important;
-                    overflow: hidden !important;
-                    box-shadow: 0 12px 28px rgba(16,24,40,.08) !important;
-                    margin: 0 !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-image-wrap-v207 {{
-                    position: relative !important;
-                    height: 104px !important;
-                    min-height: 104px !important;
-                    max-height: 104px !important;
-                    overflow: hidden !important;
-                    background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
-                }}
-                .featured-carousel-native-v337 .home-featured-photo-v207,
-                .featured-carousel-native-v337 .home-featured-photo-placeholder-v207 {{
-                    width: 100% !important;
-                    height: 104px !important;
-                    min-height: 104px !important;
-                    max-height: 104px !important;
-                    object-fit: cover !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    color: #667085 !important;
-                    font-size: 14px !important;
-                    font-weight: 850 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-featured-pill-v207 {{
-                    position: absolute !important;
-                    top: 14px !important;
-                    left: 14px !important;
-                    background: #061A40 !important;
-                    color: #ffffff !important;
-                    padding: 7px 13px !important;
-                    border-radius: 999px !important;
-                    font-size: 12px !important;
-                    font-weight: 900 !important;
-                    box-shadow: 0 7px 15px rgba(0,31,72,.22) !important;
-                    z-index: 5 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-logo-overlap-v207 {{
-                    position: absolute !important;
-                    left: 22px !important;
-                    top: 78px !important;
-                    width: 58px !important;
-                    height: 58px !important;
-                    border-radius: 50% !important;
-                    background: #ffffff !important;
-                    border: 5px solid #ffffff !important;
-                    box-shadow: 0 8px 18px rgba(16,24,40,.12) !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    overflow: hidden !important;
-                    z-index: 6 !important;
-                }}
-                .featured-carousel-native-v337 .home-featured-logo-v207 {{
-                    width: 48px !important;
-                    height: 48px !important;
-                    object-fit: contain !important;
-                    display: block !important;
-                    border-radius: 50% !important;
-                }}
-                .featured-carousel-native-v337 .home-featured-logo-placeholder-v207 {{
-                    width: 48px !important;
-                    height: 48px !important;
-                    border-radius: 50% !important;
-                    background: #F4F7FB !important;
-                    color: #061A40 !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    font-size: 13px !important;
-                    font-weight: 950 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-body-v207 {{
-                    flex: 1 !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    padding: 36px 18px 14px 18px !important;
-                    gap: 0 !important;
-                    min-height: 0 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-body-v207 h3 {{
-                    color: #061A40 !important;
-                    font-size: 18px !important;
-                    line-height: 1.08 !important;
-                    font-weight: 950 !important;
-                    letter-spacing: -0.02em !important;
-                    margin: 0 0 8px 0 !important;
-                    min-height: 38px !important;
-                    max-height: 40px !important;
-                    overflow: hidden !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-location-v207 {{
-                    display: flex !important;
-                    align-items: center !important;
-                    gap: 7px !important;
-                    margin: 0 0 10px 0 !important;
-                    height: 30px !important;
-                    max-height: 30px !important;
-                    overflow: hidden !important;
-                    color: #344054 !important;
-                }}
-                .featured-carousel-native-v337 .home-location-pin-v208 svg {{
-                    width: 15px !important;
-                    height: 15px !important;
-                    fill: #667085 !important;
-                    flex: 0 0 auto !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-location-v207 em {{
-                    color: #344054 !important;
-                    font-size: 12.5px !important;
-                    line-height: 1.15 !important;
-                    font-style: normal !important;
-                    font-weight: 650 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-stats-v207 {{
-                    display: grid !important;
-                    grid-template-columns: 1fr 1fr !important;
-                    gap: 8px !important;
-                    margin: 0 0 12px 0 !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-stats-v207 div {{
-                    border: 1px solid #E4EAF3 !important;
-                    border-radius: 10px !important;
-                    background: #FBFCFF !important;
-                    padding: 7px 8px !important;
-                    height: 54px !important;
-                    min-height: 54px !important;
-                    overflow: hidden !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-stats-v207 small {{
-                    display: block !important;
-                    color: #475467 !important;
-                    font-size: 9.8px !important;
-                    line-height: 1.1 !important;
-                    font-weight: 750 !important;
-                    margin: 0 0 4px 0 !important;
-                    white-space: nowrap !important;
-                    overflow: hidden !important;
-                    text-overflow: ellipsis !important;
-                }}
-                .featured-carousel-native-v337 .home-uni-stats-v207 b {{
-                    display: block !important;
-                    color: #061A40 !important;
-                    font-size: 13.8px !important;
-                    line-height: 1.05 !important;
-                    font-weight: 950 !important;
-                    white-space: nowrap !important;
-                    overflow: hidden !important;
-                    text-overflow: ellipsis !important;
-                }}
-                .featured-carousel-native-v337 .home-view-programs-btn-v208,
-                .featured-carousel-native-v337 .home-view-programs-link-v295 {{
-                    margin-top: auto !important;
-                    height: 38px !important;
-                    min-height: 38px !important;
-                    border-radius: 12px !important;
-                    background: #061A40 !important;
-                    color: #ffffff !important;
-                    -webkit-text-fill-color: #ffffff !important;
-                    text-decoration: none !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: space-between !important;
-                    padding: 0 15px !important;
-                    font-weight: 950 !important;
-                    font-size: 13.2px !important;
-                    line-height: 1 !important;
-                    box-shadow: 0 8px 16px rgba(0,31,72,.16) !important;
-                }}
-                .featured-carousel-native-v337 .home-view-programs-btn-v208 span,
-                .featured-carousel-native-v337 .home-view-programs-btn-v208 b,
-                .featured-carousel-native-v337 .home-view-programs-link-v295 span,
-                .featured-carousel-native-v337 .home-view-programs-link-v295 b {{
-                    color: #ffffff !important;
-                    -webkit-text-fill-color: #ffffff !important;
-                }}
-            </style>
-            </head>
-            <body>
-                <div class="featured-carousel-native-v337 {carousel_animation_class_v333}">
-                    <div class="carousel-track-v337">
-                        {carousel_cards_html_v333}
-                    </div>
-                </div>
-            </body>
-            </html>
-            """, height=410, scrolling=False)
+            .featured-carousel-native-v333 {{
+                width: 100% !important;
+                max-width: 100% !important;
+                background: #ffffff !important;
+                overflow: hidden !important;
+                padding: 6px 0 20px 0 !important;
+                margin: 0 !important;
+                position: relative !important;
+            }}
+            .featured-carousel-native-v333 .carousel-track-v333 {{
+                display: flex !important;
+                align-items: stretch !important;
+                gap: 26px !important;
+                width: max-content !important;
+                padding: 8px 28px 18px 28px !important;
+                will-change: transform !important;
+            }}
+            .featured-carousel-native-v333.is-animated .carousel-track-v333 {{
+                animation: featuredSlideNativeV333 42s linear infinite !important;
+            }}
+            .featured-carousel-native-v333.is-animated:hover .carousel-track-v333 {{
+                animation-play-state: paused !important;
+            }}
+            @keyframes featuredSlideNativeV333 {{
+                0% {{ transform: translateX(0); }}
+                100% {{ transform: translateX(-50%); }}
+            }}
+            .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                flex: 0 0 clamp(300px, calc((100vw - 170px) / 4), 390px) !important;
+                width: clamp(300px, calc((100vw - 170px) / 4), 390px) !important;
+                min-width: 300px !important;
+                height: 372px !important;
+                box-sizing: border-box !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-card-v207,
+            .featured-carousel-native-v333 .home-carousel-card-v295 {{
+                width: 100% !important;
+                height: 372px !important;
+                min-height: 372px !important;
+                max-height: 372px !important;
+                border-radius: 18px !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
+                display: flex !important;
+                flex-direction: column !important;
+                box-shadow: 0 14px 34px rgba(16,24,40,.08) !important;
+                border: 1px solid #DCE6F4 !important;
+                position: relative !important;
+                margin: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-image-wrap-v207 {{
+                height: 118px !important;
+                min-height: 118px !important;
+                max-height: 118px !important;
+                flex: 0 0 118px !important;
+                overflow: hidden !important;
+                background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+                position: relative !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-photo-v207 {{
+                width: 100% !important;
+                height: 118px !important;
+                object-fit: cover !important;
+                display: block !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {{
+                height: 118px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: linear-gradient(135deg, #EAF1FA, #F8FBFF) !important;
+                color: #667085 !important;
+                font-weight: 850 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-featured-pill-v207 {{
+                position: absolute !important;
+                top: 14px !important;
+                left: 14px !important;
+                background: #001F48 !important;
+                color: #ffffff !important;
+                padding: 7px 13px !important;
+                border-radius: 999px !important;
+                font-size: 12px !important;
+                font-weight: 900 !important;
+                box-shadow: 0 8px 16px rgba(0,31,72,.22) !important;
+                z-index: 5 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-logo-overlap-v207 {{
+                position: absolute !important;
+                left: 22px !important;
+                top: 86px !important;
+                width: 58px !important;
+                height: 58px !important;
+                border-radius: 50% !important;
+                background: #ffffff !important;
+                border: 6px solid #ffffff !important;
+                box-shadow: 0 10px 24px rgba(16,24,40,.12) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+                z-index: 8 !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-logo-v207 {{
+                width: 48px !important;
+                height: 48px !important;
+                object-fit: contain !important;
+                display: block !important;
+                border-radius: 50% !important;
+            }}
+            .featured-carousel-native-v333 .home-featured-logo-placeholder-v207 {{
+                width: 48px !important;
+                height: 48px !important;
+                border-radius: 50% !important;
+                background: #F4F7FB !important;
+                color: #061A40 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 14px !important;
+                font-weight: 950 !important;
+                letter-spacing: -0.02em !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 {{
+                flex: 1 1 auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 26px 18px 12px 18px !important;
+                min-height: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 h3 {{
+                color: #061A40 !important;
+                font-size: 18px !important;
+                line-height: 1.08 !important;
+                font-weight: 950 !important;
+                letter-spacing: -0.02em !important;
+                min-height: 30px !important;
+                max-height: 38px !important;
+                overflow: hidden !important;
+                margin: 0 0 5px 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207 {{
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+                color: #344054 !important;
+                margin: 0 0 8px 0 !important;
+                min-height: 24px !important;
+                max-height: 34px !important;
+                overflow: hidden !important;
+            }}
+            .featured-carousel-native-v333 .home-location-pin-v208 svg {{
+                width: 16px !important;
+                height: 16px !important;
+                fill: #667085 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207 em {{
+                color: #344054 !important;
+                font-size: 12.8px !important;
+                line-height: 1.20 !important;
+                font-style: normal !important;
+                font-weight: 650 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 {{
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+                margin: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 div {{
+                border: 1px solid #E4EAF3 !important;
+                border-radius: 10px !important;
+                background: #FBFCFF !important;
+                padding: 6px 7px !important;
+                min-height: 50px !important;
+                height: 50px !important;
+                overflow: hidden !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 small {{
+                display: block !important;
+                color: #475467 !important;
+                font-size: 10px !important;
+                line-height: 1.15 !important;
+                font-weight: 700 !important;
+                margin-bottom: 4px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207 b {{
+                display: block !important;
+                color: #061A40 !important;
+                font-size: 13.6px !important;
+                line-height: 1.08 !important;
+                font-weight: 950 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-btn-v208,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 {{
+                margin-top: 10px !important;
+                height: 38px !important;
+                min-height: 38px !important;
+                border-radius: 12px !important;
+                background: #061A40 !important;
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+                text-decoration: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 0 16px !important;
+                font-weight: 950 !important;
+                font-size: 13.5px !important;
+                line-height: 1 !important;
+                box-shadow: 0 10px 20px rgba(0,31,72,.16) !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 span,
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 b,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 span,
+            .featured-carousel-native-v333 .home-view-programs-link-v295 b {{
+                color: #ffffff !important;
+                -webkit-text-fill-color: #ffffff !important;
+            }}
+            .home-featured-note-v207 {{
+                margin-top: 8px !important;
+                padding-bottom: 28px !important;
+                position: relative !important;
+                z-index: 1 !important;
+                background: #fff !important;
+            }}
 
+            /* v335 final compact card fix: remove large blank bottom space and keep full card visible */
+            .featured-carousel-native-v333 .home-carousel-slide-v295,
+            .featured-carousel-native-v333 .home-uni-card-v207,
+            .featured-carousel-native-v333 .home-carousel-card-v295 {{
+                height: 372px !important;
+                min-height: 372px !important;
+                max-height: 372px !important;
+                overflow: hidden !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-image-wrap-v207,
+            .featured-carousel-native-v333 .home-featured-photo-v207,
+            .featured-carousel-native-v333 .home-featured-photo-placeholder-v207 {{
+                height: 118px !important;
+                min-height: 118px !important;
+                max-height: 118px !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-body-v207 {{
+                padding-top: 24px !important;
+                padding-bottom: 10px !important;
+                gap: 0 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-title-v207,
+            .featured-carousel-native-v333 h3,
+            .featured-carousel-native-v333 h4 {{
+                margin-top: 0 !important;
+                margin-bottom: 10px !important;
+                line-height: 1.08 !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-location-v207,
+            .featured-carousel-native-v333 [class*="location"] {{
+                margin-top: 0 !important;
+                margin-bottom: 14px !important;
+                min-height: 28px !important;
+            }}
+            .featured-carousel-native-v333 .home-uni-stats-v207,
+            .featured-carousel-native-v333 [class*="stat"] {{
+                margin-top: 0 !important;
+                margin-bottom: 10px !important;
+            }}
+            .featured-carousel-native-v333 .home-view-programs-link-v295,
+            .featured-carousel-native-v333 .home-view-programs-btn-v208 {{
+                margin-top: 6px !important;
+                margin-bottom: 0 !important;
+                height: 42px !important;
+                min-height: 42px !important;
+            }}
+            .home-featured-note-v207 {{
+                margin-top: 0 !important;
+            }}
+            @media (max-width: 1300px) {{
+                .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                    flex-basis: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
+                    width: clamp(300px, calc((100vw - 120px) / 3), 380px) !important;
+                }}
+            }}
+            @media (max-width: 900px) {{
+                .featured-carousel-native-v333 .home-carousel-slide-v295 {{
+                    flex-basis: 320px !important;
+                    width: 320px !important;
+                }}
+            }}
+            </style>
+            <div class="featured-carousel-native-v333 {carousel_animation_class_v333}">
+                <div class="carousel-track-v333">
+                    {carousel_cards_html_v333}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("""
         <div class="home-featured-note-v207">
@@ -15863,13 +15894,8 @@ def dash_shell(items):
             label_v194 = f"{label_v194} ▸"
 
         with nav_cols_v194[idx_v194]:
-           safe_key_v194 = hashlib.md5(
-    f"{current_page_v96}_{st.session_state.get('partner_dashboard_view_v81','')}_{idx_v194}_{item}".encode()
-).hexdigest()
-
-if st.button(label_v194, key=f"dash_nav_btn_v194_{safe_key_v194}", use_container_width=True):
-    set_page(item)
-    st.rerun()
+            if st.button(label_v194, key=f"dash_nav_btn_v194_{idx_v194}_{item}", use_container_width=True):
+                _dash_go_v194(item)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
