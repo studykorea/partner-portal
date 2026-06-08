@@ -34,3 +34,43 @@ a { text-decoration: none; }
 .kua-mobile-status-shell{padding:26px 16px 54px;display:flex;justify-content:center}.status-phone-card{width:min(100%,850px);background:#fff;border-radius:34px;padding:36px;box-shadow:0 20px 55px rgba(30,64,175,.08);border:1px solid #E8EEF6}.status-phone-top{display:flex;align-items:center;justify-content:space-between;color:#061A40}.status-phone-top span{font-size:42px;font-weight:500}.status-phone-top h1{font-size:34px;line-height:1;margin:0;font-weight:950;letter-spacing:-.03em}.status-phone-top b{font-size:30px}.status-summary-card{margin-top:34px;border:1px solid #DFE7F2;border-radius:24px;background:#fff;box-shadow:0 14px 32px rgba(16,24,40,.08);padding:26px;display:grid;grid-template-columns:150px 1fr;gap:28px;align-items:center}.status-summary-card dl{display:grid;grid-template-columns:180px 1fr;margin:0}.status-summary-card dt,.status-summary-card dd{border-bottom:1px solid #E5EAF2;padding:14px 0}.status-summary-card dt{font-size:20px;color:#64748B}.status-summary-card dd{margin:0;color:#061A40;font-size:22px;font-weight:950}.status-summary-card em{display:inline-flex;border-radius:13px;background:#CFF7E8;color:#0B875E;padding:10px 28px;font-style:normal}.status-timeline{margin:38px 0 0}.status-step{display:grid;grid-template-columns:86px 1fr;position:relative}.status-step:not(:last-child):before{content:"";position:absolute;left:36px;top:60px;bottom:-14px;width:4px;background:#D6DEE9}.status-step.done:not(:last-child):before{background:#13B394}.status-step.current:not(:last-child):before{background:#156BEA}.status-dot{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:950;background:#F3F6FA;color:#94A3B8;border:4px solid #E2E8F0;z-index:2}.status-step.done .status-dot{background:#11AA8C;color:#fff;border-color:#11AA8C}.status-step.current .status-dot{background:#116BEE;color:#fff;border:12px solid #EAF2FF}.status-step-body{display:grid;grid-template-columns:1fr 150px;gap:18px;padding-bottom:34px}.status-step-body h3{font-size:24px;margin:0;color:#111827;font-weight:950}.status-step-body p{font-size:17px;line-height:1.45;color:#64748B;margin:10px 0 0}.status-step-body aside{text-align:right;color:#475569;font-size:17px}.status-step-body aside b{display:block;font-weight:800}.status-step-body aside span{display:block;margin-top:10px}.status-step.current .status-step-body{border:1px solid #CFE0FF;border-radius:18px;background:#F8FBFF;padding:22px 22px 22px;margin-bottom:26px;box-shadow:0 10px 28px rgba(30,100,240,.08)}.status-step.current .status-step-body h3,.status-step.current .status-step-body aside{color:#0D55D9}.status-step-body strong{display:inline-flex;margin-top:18px;border-radius:9px;background:#116BEE;color:#fff;padding:10px 20px;font-size:16px}.status-full-btn{width:100%;height:74px;border:0;border-radius:14px;background:linear-gradient(135deg,#116BEE,#006AE8);color:#fff;font-size:26px;font-weight:950;box-shadow:0 18px 38px rgba(0,106,232,.24)}.status-help{margin-top:28px;display:grid;grid-template-columns:58px 1fr 24px;gap:18px;align-items:center}.status-help span{width:58px;height:58px;border-radius:50%;background:#EEF5FF;display:flex;align-items:center;justify-content:center;font-size:24px}.status-help b{color:#061A40;font-size:18px}.status-help p{margin:4px 0 0;color:#64748B;font-size:16px}.status-help i{font-size:42px;color:#116BEE;font-style:normal}
 @media(max-width:1200px){.kua-profile-shell{grid-template-columns:1fr}.kua-profile-side{position:static}.kua-profile-info-grid{grid-template-columns:1fr}.kua-profile-stat-ribbon{grid-template-columns:repeat(3,1fr);gap:26px}.kua-profile-about-card{grid-template-columns:1fr}.kua-university-grid{justify-content:center}.kua-universities-hero h1{font-size:44px}}
 @media(max-width:720px){.kua-universities-hero,.kua-university-card-section,.kua-profile-section{width:calc(100% - 20px)}.kua-university-grid{grid-template-columns:1fr}.kua-university-card{width:100%}.kua-profile-about-card{padding:22px}.kua-profile-actions{flex-direction:column}.kua-profile-stat-ribbon{grid-template-columns:repeat(2,1fr)}.quick-facts dl{grid-template-columns:1fr}.quick-facts dd{text-align:left}.status-phone-card{padding:22px;border-radius:24px}.status-summary-card{grid-template-columns:1fr}.status-summary-card dl{grid-template-columns:1fr}.status-step{grid-template-columns:62px 1fr}.status-dot{width:54px;height:54px;font-size:24px}.status-step:not(:last-child):before{left:26px}.status-step-body{grid-template-columns:1fr}.status-step-body aside{text-align:left}.status-phone-top h1{font-size:26px}.status-summary-card dt{font-size:16px}.status-summary-card dd{font-size:18px}.status-step-body h3{font-size:19px}.status-step-body p{font-size:15px}.status-full-btn{font-size:20px;height:62px}}
+
+
+/* v347 corrections from Streamlit reference screenshots */
+.featured-carousel{height:520px;min-height:520px;padding:10px 0 42px;overflow:hidden;}
+.carousel-track{align-items:flex-start;}
+.home-featured-section{padding-bottom:28px;}
+.kua-university-card{height:486px;min-height:486px;}
+.kua-card-photo-wrap{height:150px;min-height:150px;}
+.kua-card-photo{height:150px;}
+.kua-card-logo-overlap{top:108px;}
+.kua-card-body{padding-top:52px;}
+.kua-card-body h3{font-size:21px;min-height:52px;max-height:54px;overflow:hidden;}
+.kua-card-programs{min-height:82px;max-height:82px;overflow:hidden;}
+.kua-card-programs span{font-size:13px;line-height:1.12;}
+.kua-card-btn{display:flex !important;}
+.kua-university-grid{grid-template-columns:repeat(auto-fill,minmax(335px,335px));align-items:start;}
+.kua-universities-hero{display:grid;grid-template-columns:minmax(0,1fr) 560px;gap:36px;align-items:center;min-height:300px;padding:44px 44px 38px;position:relative;overflow:hidden;}
+.kua-universities-hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px);background-size:15px 15px;mask-image:linear-gradient(90deg,transparent 0%,#000 35%,transparent 68%);opacity:.45;pointer-events:none;}
+.kua-universities-hero-copy{position:relative;z-index:2;}
+.kua-universities-hero-slider{position:relative;z-index:2;height:230px;}
+.hero-slide-card{position:absolute;overflow:hidden;border-radius:22px;border:1px solid rgba(255,255,255,.24);box-shadow:0 20px 45px rgba(0,0,0,.23);background:#0b1d53;}
+.hero-slide-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-slide-card span{position:absolute;left:18px;bottom:16px;color:#fff;font-size:17px;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.hero-slide-main{width:410px;height:220px;right:70px;top:4px;}
+.hero-slide-small{width:190px;height:105px;}
+.hero-slide-small.one{left:0;top:22px;transform:rotate(-4deg);}
+.hero-slide-small.two{right:0;bottom:4px;transform:rotate(4deg);}
+.credentials-section.streamlit-match{background:#F7FAFF;padding:46px 16px 58px;}
+.credentials-section.streamlit-match .credential-card{min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.credential-img{width:76px;height:76px;object-fit:contain;margin:0 auto 14px;display:block;border-radius:18px;}
+.streamlit-footer{background:linear-gradient(135deg,#061A40 0%,#0B1D53 100%);position:relative;}
+.footer-map-bg{position:absolute;right:4%;top:18px;width:520px;height:260px;background:url('/assets/footer_world_map_v213.png') center/contain no-repeat;opacity:.11;filter:grayscale(1);pointer-events:none;}
+.streamlit-footer .premium-footer-grid,.streamlit-footer .premium-footer-bottom{position:relative;z-index:2;}
+.streamlit-footer .footer-contact-card{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.16);box-shadow:0 14px 34px rgba(0,0,0,.12);}
+.streamlit-footer .footer-contact-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;}
+.university-seal{background:radial-gradient(circle,#fff 0%,#fff 58%,#eef9fb 100%);}
+.seal-ring-text{font-size:8px;top:9px;color:#2f93a3;}
+.seal-inner-shield{background:linear-gradient(180deg,#244B91,#142F69);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);}
+@media(max-width:1200px){.kua-universities-hero{grid-template-columns:1fr;}.kua-universities-hero-slider{display:none;}.featured-carousel{height:510px;min-height:510px;}}
+@media(max-width:720px){.featured-carousel{height:auto;min-height:0;overflow:visible;}.carousel-track{animation:none;display:grid;width:100%;grid-template-columns:1fr;padding:0;}.kua-university-card{width:100%;}.kua-universities-hero{padding:32px 24px;}.kua-universities-hero h1{font-size:40px;}.credentials-section.streamlit-match .credential-card{min-height:210px;}}

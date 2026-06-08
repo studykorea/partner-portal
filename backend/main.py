@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-APP_NAME = "UniQuest Partner Portal API"
+APP_NAME = "Korea University Admissions KUA API"
 ALLOWED_ORIGINS = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "").split(",") if origin.strip()]
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"

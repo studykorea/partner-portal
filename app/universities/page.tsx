@@ -9,9 +9,16 @@ export default function UniversitiesPage() {
     <main className="min-h-screen bg-white">
       <TopNav />
       <section className="kua-universities-hero">
-        <p className="eyebrow">KUA official partner network</p>
-        <h1>Universities</h1>
-        <p>Review partner universities in Korea, available programs, application periods, tuition information, and student support details.</p>
+        <div className="kua-universities-hero-copy">
+          <p className="eyebrow">KUA official partner network</p>
+          <h1>Universities</h1>
+          <p>Review partner universities in Korea, available programs, application periods, tuition information, and student support details.</p>
+        </div>
+        <div className="kua-universities-hero-slider" aria-label="Partner university campus images">
+          <div className="hero-slide-card hero-slide-main"><img src="/assets/kyungsung.webp" alt="Kyungsung University campus" /><span>Kyungsung University</span></div>
+          <div className="hero-slide-card hero-slide-small one"><img src="/assets/jeonbuk.webp" alt="Jeonbuk National University" /></div>
+          <div className="hero-slide-card hero-slide-small two"><img src="/assets/sejong.webp" alt="Sejong University" /></div>
+        </div>
       </section>
       <section className="kua-university-card-section">
         <div className="home-featured-head compact">

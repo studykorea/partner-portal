@@ -18,7 +18,8 @@ export const universities = [
     "homepage": "ks.ac.kr",
     "region": "Busan",
     "address": "309 Suyeong-ro, Nam-gu, Busan, Republic of Korea, 48434",
-    "phone": "051-663-4114"
+    "phone": "051-663-4114",
+    "logo": "/assets/ksu_logo.svg"
   },
   {
     "name": "Jeonbuk National University",
@@ -37,7 +38,8 @@ export const universities = [
     "homepage": "www.jbnu.ac.kr",
     "region": "Jeollabuk-do",
     "address": "567 Baekje-daero, Deokjin-gu, Jeonju-si, Jeollabuk-do, Republic of Korea, 54896",
-    "phone": "063-270-2114"
+    "phone": "063-270-2114",
+    "logo": "/assets/jbnu_logo.svg"
   },
   {
     "name": "Kyungwoon University",
@@ -56,7 +58,8 @@ export const universities = [
     "homepage": "www.ikw.ac.kr",
     "region": "Gyeongsangbuk-do",
     "address": "730 Gangdong-ro, Sandong-eup, Gumi-si, Gyeongsangbuk-do, Republic of Korea, 39160",
-    "phone": "054-479-1114"
+    "phone": "054-479-1114",
+    "logo": "/assets/kwu_logo.svg"
   },
   {
     "name": "Sejong University",
@@ -77,7 +80,8 @@ export const universities = [
     "homepage": "www.sejong.ac.kr",
     "region": "Seoul",
     "address": "209 Neungdong-ro, Gwangjin-gu, Seoul, Republic of Korea, 05006",
-    "phone": "02-3408-3114"
+    "phone": "02-3408-3114",
+    "logo": "/assets/sju_logo.svg"
   },
   {
     "name": "Youngsan University",
@@ -98,6 +102,7 @@ export const universities = [
     "homepage": "www.ysu.ac.kr",
     "region": "Busan",
     "address": "142 Bansongsunhwan-ro, Haeundae-gu, Busan, Republic of Korea, 48015",
-    "phone": "051-540-7000"
+    "phone": "051-540-7000",
+    "logo": "/assets/ysu_logo.svg"
   }
 ] as const;
