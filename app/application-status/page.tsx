@@ -1,14 +1,27 @@
 import TopNav from "../../components/TopNav";
 import Footer from "../../components/Footer";
+import UniversitySeal from "../../components/UniversitySeal";
 
-const steps = ["Application Submitted", "Document Review", "University Screening", "Admission Result", "VIN / Visa Process", "Final Visa Result"];
+const steps = [
+  ["Application Submitted", "Your application has been submitted successfully.", "10 Apr 2025", "10:30 AM", "done"],
+  ["University Received Your Application", "Kyungsung University has received your application.", "11 Apr 2025", "02:15 PM", "done"],
+  ["Application Number Issued", "Your application number has been generated.", "12 Apr 2025", "11:05 AM", "done"],
+  ["Interview Date Announced", "Your interview date will be announced soon.", "14 Apr 2025", "09:00 AM", "current"],
+  ["Interview Completed", "Complete your interview as per the schedule.", "-", "", "next"],
+  ["Admission Result Released", "The admission result will be released.", "-", "", "next"],
+];
 export default function StatusPage() {
   return (
     <main className="min-h-screen bg-[#F6F9FE]"><TopNav />
-      <section className="mx-auto max-w-[1100px] px-5 py-14 lg:px-8">
-        <div className="rounded-[32px] bg-[#061A40] p-8 text-white"><p className="text-sm font900 uppercase tracking-[0.18em] text-blue-300">Application Status</p><h1 className="mt-3 text-5xl font900">Visa & Application Timeline</h1><p className="mt-4 text-blue-100">Track student application progress from submission to final visa result.</p></div>
-        <div className="mt-8 rounded-[28px] border border-[#DCE6F4] bg-white p-8 shadow-sm">
-          {steps.map((s, idx) => <div key={s} className="grid grid-cols-[60px_1fr] gap-4"><div className="flex flex-col items-center"><div className={`flex h-12 w-12 items-center justify-center rounded-full text-lg font900 ${idx < 3 ? 'bg-green-600 text-white' : idx === 3 ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>{idx < 3 ? '✓' : idx+1}</div>{idx < steps.length-1 && <div className="h-14 w-1 bg-slate-200" />}</div><div className="pb-8"><h3 className="text-xl font900 text-[#061A40]">{s}</h3><p className="mt-1 text-sm text-slate-500">Status details and dates will be loaded from FastAPI after backend connection.</p></div></div>)}
+      <section className="kua-mobile-status-shell">
+        <div className="status-phone-card">
+          <div className="status-phone-top"><span>‹</span><h1>Application Status</h1><b>🔔</b></div>
+          <div className="status-summary-card"><UniversitySeal name="Kyungsung University" size="lg" /><dl><dt>Applicant</dt><dd>Aaray Sharma</dd><dt>University</dt><dd>Kyungsung University</dd><dt>Program</dt><dd>Global Hospitality Management</dd><dt>Status</dt><dd><em>In Progress</em></dd></dl></div>
+          <div className="status-timeline">
+            {steps.map(([title, desc, date, time, state], idx) => <div key={title} className={`status-step ${state}`}><div className="status-dot">{state === "done" ? "✓" : state === "current" ? "◷" : idx + 1}</div><div className="status-step-body"><div><h3>{idx + 1}. {title}</h3><p>{desc}</p>{state === "current" && <strong>Current Step</strong>}</div><aside><b>{date}</b><span>{time}</span></aside></div></div>)}
+          </div>
+          <button className="status-full-btn">▣ View Full Status</button>
+          <div className="status-help"><span>🛡</span><div><b>Need Help?</b><p>Contact our support team</p></div><i>›</i></div>
         </div>
       </section><Footer /></main>
   );
