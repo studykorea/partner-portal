@@ -1,27 +1,21 @@
-partner_portal.db
-.streamlit/secrets.toml
+# dependencies
+node_modules/
+.next/
+out/
+
+# Python
 __pycache__/
 *.pyc
-.DS_Store
+.venv/
+venv/
 
-# Environment files
+# Env/secrets
 .env
 .env.local
-.env.production
-backend/.env
-frontend/.env.local
+.streamlit/secrets.toml
+secrets.toml
 
-# Local uploads must not be committed
-uploads/
-student_uploads/
-*.pdf
-*.jpeg
-*.jpg
-*.png
-!assets/**
-
-# Node/Python build cache
-frontend/node_modules/
-frontend/.next/
-__pycache__/
-*.pyc
+# Backups and deploy bloat
+*.zip
+*.tar.gz
+.DS_Store
