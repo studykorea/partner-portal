@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UniQuest Partner Portal",
+  title: "Korea University Admissions KUA",
   description: "Fast partner portal for Korean university recruitment, applications, and agency management.",
 };
 
