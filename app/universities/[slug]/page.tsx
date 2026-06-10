@@ -1,19 +1,15 @@
 import TopNav from "../../../components/TopNav";
 import Footer from "../../../components/Footer";
 import UniversityProfile from "../../../components/UniversityProfile";
-import { universities } from "../../../lib/universities";
-
-function slugify(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
+import { universities, slugifyUniversity } from "../../../lib/universities";
 
 export function generateStaticParams() {
-  return universities.map((university) => ({ slug: slugify(university.name) }));
+  return universities.map((university) => ({ slug: slugifyUniversity(university.name) }));
 }
 
 export default async function UniversityDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const university = universities.find((item) => slugify(item.name) === slug) ?? universities[0];
+  const university = universities.find((item) => slugifyUniversity(item.name) === slug) ?? universities[0];
   return (
     <main className="min-h-screen bg-white">
       <TopNav />
