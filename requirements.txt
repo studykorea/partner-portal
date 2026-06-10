@@ -1,7 +1,10 @@
-streamlit==1.40.2
+streamlit
 pandas
+
 sqlalchemy
 psycopg2-binary
 openpyxl
+
 reportlab
+
 Pillow
