@@ -19,3 +19,5 @@ secrets.toml
 *.zip
 *.tar.gz
 .DS_Store
+/__pycache__
+/__pycache__
