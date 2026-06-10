@@ -1,21 +1,5 @@
-# dependencies
-node_modules/
-.next/
-out/
-
-# Python
+partner_portal.db
+.streamlit/secrets.toml
 __pycache__/
 *.pyc
-.venv/
-venv/
-
-# Env/secrets
-.env
-.env.local
-.streamlit/secrets.toml
-secrets.toml
-
-# Backups and deploy bloat
-*.zip
-*.tar.gz
 .DS_Store
