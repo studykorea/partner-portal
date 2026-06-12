@@ -1,15 +1,6 @@
-import { universities } from "../lib/universities";
+import { universities, slugifyUniversity } from "../lib/universities";
 
 type University = (typeof universities)[number];
-
-const fallbackStats = [
-  ["👥", "Total Students"],
-  ["🌐", "International Students"],
-  ["🏛️", "Colleges"],
-  ["🌎", "Countries Represented"],
-  ["🤝", "Industry Partners"],
-  ["✨", "Employment Rate"],
-];
 
 const defaultDeadlines = [
   { program: "Undergraduate", status: "Closed", tone: "closed", open: "19 May 2026", close: "30 May 2026" },
@@ -18,16 +9,33 @@ const defaultDeadlines = [
 ];
 
 const nationalityRows = [
-  ["🇳🇵", "Nepal", "1,200", 100],
-  ["🇧🇩", "Bangladesh", "1,100", 92],
-  ["🇻🇳", "Vietnam", "200", 18],
-  ["🇮🇩", "Indonesia", "100", 11],
-  ["🇵🇰", "Pakistan", "50", 7],
+  { flag: "/assets/flags/nepal.svg", country: "Nepal", value: "1,200", pct: 100 },
+  { flag: "/assets/flags/bangladesh.svg", country: "Bangladesh", value: "1,100", pct: 92 },
+  { flag: "/assets/flags/vietnam.svg", country: "Vietnam", value: "200", pct: 18 },
+  { flag: "/assets/flags/indonesia.svg", country: "Indonesia", value: "100", pct: 11 },
+  { flag: "/assets/flags/pakistan.svg", country: "Pakistan", value: "50", pct: 7 },
 ];
+
+function safeUrl(url: string) {
+  if (!url) return "#";
+  return url.startsWith("http") ? url : `https://${url}`;
+}
+
+function searchUrl(platform: "facebook" | "instagram" | "youtube", name: string) {
+  const q = encodeURIComponent(name);
+  if (platform === "facebook") return `https://www.facebook.com/search/top?q=${q}`;
+  if (platform === "instagram") return `https://www.instagram.com/explore/search/keyword/?q=${q}`;
+  return `https://www.youtube.com/results?search_query=${q}%20campus%20tour`;
+}
 
 export default function UniversityProfile({ university = universities[0] }: { university?: University }) {
   const isKyungsung = university.name === "Kyungsung University";
   const logo = university.logo || "/assets/ksu_logo.svg";
+  const slug = slugifyUniversity(university.name);
+  const homepageUrl = safeUrl(university.homepage);
+  const applyUrl = `/apply?university=${encodeURIComponent(university.name)}`;
+  const youtubeSearch = searchUrl("youtube", university.name);
+  const videoEmbed = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${university.name} campus tour`)}`;
   const stats = [
     ["👥", isKyungsung ? "10,000–15,000" : university.students, "Total Students"],
     ["🌐", `${university.internationalStudents}+`, "International Students"],
@@ -49,7 +57,7 @@ export default function UniversityProfile({ university = universities[0] }: { un
     <section className="kua-detail-v350">
       <div className="detail-hero-v350" style={{ backgroundImage: `linear-gradient(90deg, rgba(6,26,64,.78), rgba(6,26,64,.48), rgba(6,26,64,.10)), url('${university.image}')` }}>
         <a href="/universities" className="detail-back-v350">← Back to Universities</a>
-        <div className="detail-hero-icons-v350"><a href={`https://${university.homepage}`} target="_blank" rel="noreferrer">↗</a><button>♡</button></div>
+        <div className="detail-hero-icons-v350"><a href={homepageUrl} target="_blank" rel="noreferrer" aria-label="Official website">↗</a><a href={`/saved-universities?add=${slug}`} aria-label="Save university">♡</a></div>
         <div className="detail-hero-content-v350">
           <div className="detail-logo-v350"><img src={logo} alt={`${university.name} logo`} /></div>
           <div className="detail-title-v350">
@@ -76,12 +84,11 @@ export default function UniversityProfile({ university = universities[0] }: { un
             <div className="detail-about-text-v350">
               <h2>About {university.name}</h2>
               <p>{isKyungsung ? "A private university in Busan offering global, practical, and industry-oriented programs." : university.overview}</p>
-              <div className="detail-actions-v350"><a href="#apply">Apply Now</a><a href={`https://${university.homepage}`} target="_blank" rel="noreferrer">Visit Official Website ↗</a></div>
+              <div className="detail-actions-v350"><a href={applyUrl}>Apply Now</a><a href={homepageUrl} target="_blank" rel="noreferrer">Visit Official Website ↗</a></div>
             </div>
-            <div className="detail-video-v350">
-              <img src={(university as any).videoImage || university.image} alt={`${university.name} campus tour`} />
-              <button>▶</button>
-              <div><b>Discover {university.name}</b><span>Watch Campus Tour</span></div>
+            <div className="detail-video-v350 playable-video-v352">
+              <iframe title={`${university.name} campus tour video`} src={videoEmbed} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+              <a className="video-fallback-v352" href={youtubeSearch} target="_blank" rel="noreferrer">Open campus videos on YouTube ↗</a>
             </div>
           </section>
 
@@ -92,7 +99,7 @@ export default function UniversityProfile({ university = universities[0] }: { un
         <aside id="admissions" className="deadline-panel-v350">
           <h2>Application Deadlines</h2>
           {defaultDeadlines.map((d) => <div className="deadline-row-v350" key={d.program}><span>🗓️</span><div><b>{d.program}</b><em className={d.tone}>{d.status}</em><small>Open: {d.open}</small><small>Close: {d.close}</small></div></div>)}
-          <a href="#apply">View Details & Apply →</a>
+          <a href={applyUrl}>View Details & Apply →</a>
         </aside>
       </div>
 
@@ -104,14 +111,20 @@ export default function UniversityProfile({ university = universities[0] }: { un
 
       <section className="useful-links-v350" id="contact">
         <h2>Useful Links</h2><div className="blue-line-v350"></div>
-        <div className="link-grid-v350"><a href={`https://${university.homepage}`} target="_blank" rel="noreferrer"><span>⌂</span><b>Homepage</b><em>↗</em></a><a><span>▤</span><b>Brochure</b><em>↗</em></a><a><span>f</span><b>Facebook</b><em>↗</em></a><a><span>◎</span><b>Instagram</b><em>↗</em></a><a><span>▶</span><b>YouTube</b><em>↗</em></a></div>
+        <div className="link-grid-v350 social-links-v352">
+          <a href={homepageUrl} target="_blank" rel="noreferrer"><span className="social-home-v352">⌂</span><b>Homepage</b><em>↗</em></a>
+          <a href={`${homepageUrl}/eng`} target="_blank" rel="noreferrer"><span className="social-brochure-v352">▤</span><b>Brochure</b><em>↗</em></a>
+          <a href={searchUrl("facebook", university.name)} target="_blank" rel="noreferrer"><span className="social-facebook-v352">f</span><b>Facebook</b><em>↗</em></a>
+          <a href={searchUrl("instagram", university.name)} target="_blank" rel="noreferrer"><span className="social-instagram-v352">◎</span><b>Instagram</b><em>↗</em></a>
+          <a href={youtubeSearch} target="_blank" rel="noreferrer"><span className="social-youtube-v352">▶</span><b>YouTube</b><em>↗</em></a>
+        </div>
       </section>
 
       <section className="enrollment-v350">
         <div className="enroll-head-v350"><div><h2>Student Enrollment Information</h2><p>Enrollment data uploaded by the university admin. <span>2026</span></p></div><b>Total shown: 2,180</b></div>
         <div className="enroll-grid-v350">
           <div className="enroll-card-v350"><h3>🎓 Students by Program Level</h3><div className="bar-row-v350"><b>1,200</b><i style={{width:"55%"}}></i></div><div className="bar-row-v350"><b>800</b><i style={{width:"38%"}}></i></div><div className="bar-row-v350"><b>180</b><i style={{width:"9%"}}></i></div></div>
-          <div className="enroll-card-v350"><h3>🌎 Top Nationalities</h3>{nationalityRows.map(([flag, country, value, pct]) => <div className="nationality-row-v350" key={country}><span>{flag}</span><b>{value}</b><i style={{width:`${pct}%`}}></i></div>)}</div>
+          <div className="enroll-card-v350"><h3>🌎 Top Nationalities</h3>{nationalityRows.map((row) => <div className="nationality-row-v350" key={row.country}><span><img src={row.flag} alt={`${row.country} flag`} /></span><b>{row.value}</b><i style={{width:`${row.pct}%`}}></i></div>)}</div>
         </div>
       </section>
 
