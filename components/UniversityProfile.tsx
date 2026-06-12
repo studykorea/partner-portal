@@ -2,12 +2,6 @@ import { universities, slugifyUniversity } from "../lib/universities";
 
 type University = (typeof universities)[number];
 
-const defaultDeadlines = [
-  { program: "Undergraduate", status: "Closed", tone: "closed", open: "19 May 2026", close: "30 May 2026" },
-  { program: "Graduate (Masters/Ph.D.)", status: "Closed", tone: "closed", open: "15 May 2026", close: "05 Jun 2026" },
-  { program: "KLP / EAP", status: "Closed", tone: "closed", open: "18 May 2026", close: "29 May 2026" },
-];
-
 const nationalityRows = [
   { flag: "/assets/flags/nepal.svg", country: "Nepal", value: "1,200", pct: 100 },
   { flag: "/assets/flags/bangladesh.svg", country: "Bangladesh", value: "1,100", pct: 92 },
@@ -31,11 +25,12 @@ function searchUrl(platform: "facebook" | "instagram" | "youtube", name: string)
 export default function UniversityProfile({ university = universities[0] }: { university?: University }) {
   const isKyungsung = university.name === "Kyungsung University";
   const logo = university.logo || "/assets/ksu_logo.svg";
+  const heroImage = university.heroImage || university.image;
   const slug = slugifyUniversity(university.name);
   const homepageUrl = safeUrl(university.homepage);
   const applyUrl = `/apply?university=${encodeURIComponent(university.name)}`;
   const youtubeSearch = searchUrl("youtube", university.name);
-  const videoEmbed = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${university.name} campus tour`)}`;
+  const videoEmbed = university.youtubeUrl && university.youtubeUrl.includes("watch?v=") ? university.youtubeUrl.replace("watch?v=", "embed/") : `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${university.name} campus tour`)}`;
   const stats = [
     ["👥", isKyungsung ? "10,000–15,000" : university.students, "Total Students"],
     ["🌐", `${university.internationalStudents}+`, "International Students"],
@@ -47,28 +42,30 @@ export default function UniversityProfile({ university = universities[0] }: { un
 
   const programs = {
     undergraduate: university.topMajors.slice(0, 6),
-    graduate: isKyungsung
-      ? ["Department of Global Business", "Department of Global Hospitality", "Department of Korean Culture and Education", "Department of International Studies", "Department of Global IT Engineering", "Department of Digital Marketing"]
-      : university.topMajors.slice(0, 5).map((m) => `Department of ${m}`),
-    klp: ["D4-1 (4 semester)", "Korean Language Program", "KLP / EAP"],
+    graduate: university.graduatePrograms?.length
+      ? university.graduatePrograms
+      : isKyungsung
+        ? ["Department of Global Business", "Department of Global Hospitality", "Department of Korean Culture and Education", "Department of International Studies", "Department of Global IT Engineering", "Department of Digital Marketing"]
+        : university.topMajors.slice(0, 5).map((m) => `Department of ${m}`),
+    klp: university.klpPrograms?.length ? university.klpPrograms : ["D4-1 (4 semester)", "Korean Language Program", "KLP / EAP"],
   };
 
   return (
     <section className="kua-detail-v350">
-      <div className="detail-hero-v350" style={{ backgroundImage: `linear-gradient(90deg, rgba(6,26,64,.78), rgba(6,26,64,.48), rgba(6,26,64,.10)), url('${university.image}')` }}>
+      <div className="detail-hero-v350" style={{ backgroundImage: `linear-gradient(90deg, rgba(6,26,64,.78), rgba(6,26,64,.48), rgba(6,26,64,.10)), url('${heroImage}')` }}>
         <a href="/universities" className="detail-back-v350">← Back to Universities</a>
         <div className="detail-hero-icons-v350"><a href={homepageUrl} target="_blank" rel="noreferrer" aria-label="Official website">↗</a><a href={`/saved-universities?add=${slug}`} aria-label="Save university">♡</a></div>
         <div className="detail-hero-content-v350">
           <div className="detail-logo-v350"><img src={logo} alt={`${university.name} logo`} /></div>
           <div className="detail-title-v350">
-            <span>{isKyungsung ? "Private University" : university.region}</span>
+            <span>{university.type || (isKyungsung ? "Private University" : university.region)}</span>
             <h1>{university.name}</h1>
             <p>📍 {university.location}</p>
           </div>
         </div>
         <div className="detail-hero-stats-v350">
-          <div><small>Established</small><b>{isKyungsung ? "Not updated" : "Not updated"}</b></div>
-          <div><small>Type</small><b>{isKyungsung ? "Private" : "Partner"}</b></div>
+          <div><small>Established</small><b>{university.established || "Not updated"}</b></div>
+          <div><small>Type</small><b>{university.type || (isKyungsung ? "Private" : "Partner")}</b></div>
           <div><small>Students</small><b>{university.students} students</b></div>
           <div><small>International Students</small><b>{university.internationalStudents} international students</b></div>
         </div>
@@ -88,7 +85,7 @@ export default function UniversityProfile({ university = universities[0] }: { un
             </div>
             <div className="detail-video-v350 playable-video-v352">
               <iframe title={`${university.name} campus tour video`} src={videoEmbed} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-              <a className="video-fallback-v352" href={youtubeSearch} target="_blank" rel="noreferrer">Open campus videos on YouTube ↗</a>
+              <a className="video-fallback-v352" href={university.youtubeUrl ? safeUrl(university.youtubeUrl) : youtubeSearch} target="_blank" rel="noreferrer">Open campus videos on YouTube ↗</a>
             </div>
           </section>
 
@@ -98,7 +95,7 @@ export default function UniversityProfile({ university = universities[0] }: { un
         </main>
         <aside id="admissions" className="deadline-panel-v350">
           <h2>Application Deadlines</h2>
-          {defaultDeadlines.map((d) => <div className="deadline-row-v350" key={d.program}><span>🗓️</span><div><b>{d.program}</b><em className={d.tone}>{d.status}</em><small>Open: {d.open}</small><small>Close: {d.close}</small></div></div>)}
+          {(university.admissions?.length ? university.admissions : []).map((d) => <div className="deadline-row-v350" key={d.program}><span>🗓️</span><div><b>{d.program}</b><em className={d.tone}>{d.status}</em><small>Open: {d.open || "Not fixed"}</small><small>Close: {d.close || "Not fixed"}</small></div></div>)}
           <a href={applyUrl}>View Details & Apply →</a>
         </aside>
       </div>
@@ -106,17 +103,17 @@ export default function UniversityProfile({ university = universities[0] }: { un
       <section className="detail-three-grid-v350">
         <div className="detail-card-v350"><h3>Top Programs</h3>{university.topMajors.slice(0,6).map((m) => <p key={m}>{m}</p>)}<a href="#programs">View All Programs →</a></div>
         <div className="detail-card-v350"><h3>Why Choose {university.name}?</h3><p>✓ Industry-oriented curriculum and practical learning</p><p>✓ Global exchange programs and international support</p><p>✓ Modern campus facilities</p><p>✓ Career support and internship opportunities</p><p>✓ Scholarships for international students</p></div>
-        <div className="detail-card-v350 quick-v350"><h3>Quick Facts</h3><dl><dt>Location</dt><dd>{university.location}</dd><dt>Website</dt><dd>{university.homepage}</dd><dt>Total Students</dt><dd>{university.students} students</dd><dt>International Students</dt><dd>{university.internationalStudents} international students</dd><dt>Type</dt><dd>{isKyungsung ? "Private University" : "Partner University"}</dd><dt>Language</dt><dd>Korean, English</dd><dt>Tuition Range</dt><dd>{university.tuition}</dd></dl></div>
+        <div className="detail-card-v350 quick-v350"><h3>Quick Facts</h3><dl><dt>Location</dt><dd>{university.location}</dd><dt>Website</dt><dd>{university.homepage}</dd><dt>Total Students</dt><dd>{university.students} students</dd><dt>International Students</dt><dd>{university.internationalStudents} international students</dd><dt>Type</dt><dd>{university.type || (isKyungsung ? "Private University" : "Partner University")}</dd><dt>Accreditation</dt><dd>{university.accreditation || "Not updated"}</dd><dt>Language</dt><dd>Korean, English</dd><dt>Tuition Range</dt><dd>{university.tuition}</dd></dl></div>
       </section>
 
       <section className="useful-links-v350" id="contact">
         <h2>Useful Links</h2><div className="blue-line-v350"></div>
         <div className="link-grid-v350 social-links-v352">
           <a href={homepageUrl} target="_blank" rel="noreferrer"><span className="social-home-v352">⌂</span><b>Homepage</b><em>↗</em></a>
-          <a href={`${homepageUrl}/eng`} target="_blank" rel="noreferrer"><span className="social-brochure-v352">▤</span><b>Brochure</b><em>↗</em></a>
-          <a href={searchUrl("facebook", university.name)} target="_blank" rel="noreferrer"><span className="social-facebook-v352">f</span><b>Facebook</b><em>↗</em></a>
-          <a href={searchUrl("instagram", university.name)} target="_blank" rel="noreferrer"><span className="social-instagram-v352">◎</span><b>Instagram</b><em>↗</em></a>
-          <a href={youtubeSearch} target="_blank" rel="noreferrer"><span className="social-youtube-v352">▶</span><b>YouTube</b><em>↗</em></a>
+          <a href={university.brochureUrl ? safeUrl(university.brochureUrl) : `${homepageUrl}/eng`} target="_blank" rel="noreferrer"><span className="social-brochure-v352">▤</span><b>Brochure</b><em>↗</em></a>
+          <a href={university.facebookUrl ? safeUrl(university.facebookUrl) : searchUrl("facebook", university.name)} target="_blank" rel="noreferrer"><span className="social-facebook-v352">f</span><b>Facebook</b><em>↗</em></a>
+          <a href={university.instagramUrl ? safeUrl(university.instagramUrl) : searchUrl("instagram", university.name)} target="_blank" rel="noreferrer"><span className="social-instagram-v352">◎</span><b>Instagram</b><em>↗</em></a>
+          <a href={university.youtubeUrl ? safeUrl(university.youtubeUrl) : youtubeSearch} target="_blank" rel="noreferrer"><span className="social-youtube-v352">▶</span><b>YouTube</b><em>↗</em></a>
         </div>
       </section>
 

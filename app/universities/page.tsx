@@ -1,11 +1,14 @@
+export const dynamic = "force-dynamic";
+
 import TopNav from "../../components/TopNav";
 import Footer from "../../components/Footer";
 import UniversityCard from "../../components/UniversityCard";
-import { universities, slugifyUniversity } from "../../lib/universities";
+import { fetchUniversities, slugifyUniversity } from "../../lib/universities";
 import Link from "next/link";
 
-export default function UniversitiesPage() {
-  const heroSlides = [universities[4], universities[0], universities[1], universities[3]];
+export default async function UniversitiesPage() {
+  const universities = await fetchUniversities();
+  const heroSlides = [universities[4], universities[0], universities[1], universities[3]].filter(Boolean);
   return (
     <main className="min-h-screen bg-white universities-v349-page">
       <TopNav />

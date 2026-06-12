@@ -8,7 +8,7 @@ export default function UniversityCard({ university }: { university: University;
         <img src={university.image} alt={`${university.name} campus`} loading="lazy" />
         <button className="streamlit-heart" aria-label="Save university">♡</button>
       </div>
-      <div className="streamlit-logo-bubble">Logo</div>
+      <div className="streamlit-logo-bubble">{university.logo ? <img src={university.logo} alt={`${university.name} logo`} /> : "Logo"}</div>
       <div className="streamlit-card-body">
         <div className="streamlit-title-row">
           <h3>{university.name}</h3>

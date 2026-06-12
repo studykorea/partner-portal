@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TopNav from "../../components/TopNav";
 import Footer from "../../components/Footer";
-import { universities as baseUniversities, slugifyUniversity } from "../../lib/universities";
+import { universities as baseUniversities, slugifyUniversity, API_URL } from "../../lib/universities";
 
 type AdmissionTone = "open" | "soon" | "closed" | "notfixed";
 type AdmissionEdit = { program: string; open: string; close: string; status: string; tone: AdmissionTone };
@@ -75,8 +75,8 @@ function defaultAdmissions(name: string): AdmissionEdit[] {
   ];
 }
 
-function toEditable(): EditableUniversity[] {
-  return baseUniversities.map((u) => ({
+function toEditable(source = baseUniversities): EditableUniversity[] {
+  return source.map((u: any) => ({
     name: u.name,
     location: u.location,
     region: u.region,
@@ -96,7 +96,7 @@ function toEditable(): EditableUniversity[] {
     topMajors: [...u.topMajors],
     graduatePrograms: u.name === "Kyungsung University"
       ? ["Department of Global Business", "Department of Global Hospitality", "Department of Korean Culture and Education", "Department of International Studies", "Department of Global IT Engineering", "Department of Digital Marketing"]
-      : u.topMajors.map((m) => `Department of ${m}`),
+      : (u.topMajors || []).map((m: string) => `Department of ${m}`),
     klpPrograms: ["D4-1 (4 semester)", "Korean Language Program", "KLP / EAP"],
     image: u.image,
     logo: u.logo || "/assets/ksu_logo.svg",
@@ -108,7 +108,7 @@ function toEditable(): EditableUniversity[] {
     facebookUrl: `https://www.facebook.com/search/top?q=${encodeURIComponent(u.name)}`,
     instagramUrl: `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(u.name)}`,
     youtubeUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent(`${u.name} campus tour`)}`,
-    admissions: defaultAdmissions(u.name),
+    admissions: u.admissions?.length ? u.admissions.map((a: any) => ({ program: a.program, open: a.open || "", close: a.close || "", status: a.status || "Not fixed yet", tone: (a.tone || "notfixed") as AdmissionTone })) : defaultAdmissions(u.name),
   }));
 }
 
@@ -128,10 +128,39 @@ export default function AdminPage() {
   const [tab, setTab] = useState("Universities");
   const [items, setItems] = useState<EditableUniversity[]>(toEditable());
   const [selected, setSelected] = useState(0);
-  const selectedUniversity = items[selected];
+  const [saveMessage, setSaveMessage] = useState<{type: "ok" | "err"; text: string} | null>(null);
+  const selectedUniversity = items[selected] || items[0];
+
+  useEffect(() => {
+    if (!API_URL) return;
+    fetch(`${API_URL}/api/universities`, { cache: "no-store" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => { if (data?.items?.length) setItems(toEditable(data.items)); })
+      .catch(() => undefined);
+  }, []);
 
   function updateSelected(next: EditableUniversity) {
     setItems((old) => old.map((u, i) => (i === selected ? next : u)));
+  }
+
+  async function saveSelectedUniversity() {
+    if (!API_URL) {
+      setSaveMessage({ type: "err", text: "Backend is not connected. Add NEXT_PUBLIC_API_URL to the frontend Render environment." });
+      return;
+    }
+    const slug = slugifyUniversity(selectedUniversity.name);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/universities/${slug}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(selectedUniversity),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setSaveMessage({ type: "ok", text: `Saved permanently to Supabase. Public pages will load the updated data. Slug: ${data.slug || slug}` });
+    } catch (err: any) {
+      setSaveMessage({ type: "err", text: `Save failed: ${err?.message || "Check backend Supabase environment variables and schema."}` });
+    }
   }
 
   return (
@@ -160,7 +189,7 @@ export default function AdminPage() {
         </div>
 
         {tab === "Overview" && <OverviewPanel />}
-        {tab === "Universities" && <UniversitiesPanel items={items} selected={selected} setSelected={setSelected} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
+        {tab === "Universities" && <UniversitiesPanel items={items} selected={selected} setSelected={setSelected} selectedUniversity={selectedUniversity} updateSelected={updateSelected} saveSelectedUniversity={saveSelectedUniversity} saveMessage={saveMessage} />}
         {tab === "Applications" && <ApplicationsPanel />}
         {tab === "Partner Approvals" && <GenericPanel title="Partner Agency Approvals" description="Approve official representatives, partner agencies, sub-agencies, and staff access requests." items={["Pending requests", "Approved partners", "Rejected requests", "Agency documents", "MoU contact records", "Role assignment"]} />}
         {tab === "Images & Logos" && <ImagesPanel items={items} selected={selected} setSelected={setSelected} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
@@ -177,18 +206,18 @@ function OverviewPanel() {
   return <div className="mt-8 grid gap-5 lg:grid-cols-3">{["Official Representatives", "Partner Agencies", "Pending Approvals", "Universities", "Applications", "Eligibility Usage"].map((title) => <button key={title} className="rounded-[24px] border border-[#DCE6F4] bg-white p-6 text-left shadow-sm hover:border-blue-400"><h2 className="text-xl font900">Open {title}</h2><p className="mt-3 text-sm leading-7 text-slate-600">Review and manage {title.toLowerCase()} records.</p></button>)}</div>;
 }
 
-function UniversitiesPanel({ items, selected, setSelected, selectedUniversity, updateSelected }: { items: EditableUniversity[]; selected: number; setSelected: (n: number) => void; selectedUniversity: EditableUniversity; updateSelected: (u: EditableUniversity) => void }) {
+function UniversitiesPanel({ items, selected, setSelected, selectedUniversity, updateSelected, saveSelectedUniversity, saveMessage }: { items: EditableUniversity[]; selected: number; setSelected: (n: number) => void; selectedUniversity: EditableUniversity; updateSelected: (u: EditableUniversity) => void; saveSelectedUniversity: () => void; saveMessage: {type: "ok" | "err"; text: string} | null }) {
   return (
     <div className="mt-8 rounded-[28px] border border-[#DCE6F4] bg-white p-6 shadow-sm">
       <div className="flex flex-wrap justify-between gap-3"><h2 className="text-3xl font900">University Management</h2><button className="rounded-2xl bg-[#061A40] px-5 py-3 text-sm font900 text-white">+ Add University</button></div>
       <p className="mt-3 text-sm text-slate-600">Click Edit to select a university, then update its name, majors, deadlines, logo, hero image, accreditation, and links below.</p>
       <div className="mt-6 overflow-x-auto"><table className="w-full min-w-[1050px] text-left text-sm"><thead className="bg-[#F4F7FC] text-slate-600"><tr>{["University", "City", "Students", "International", "Accreditation", "Admission", "Actions"].map(h => <th key={h} className="px-4 py-3 font900">{h}</th>)}</tr></thead><tbody>{items.map((row, index) => <tr key={row.name} className={`border-b border-slate-100 ${selected === index ? "bg-blue-50/50" : ""}`}><td className="px-4 py-4 font900">{row.name}</td><td className="px-4 py-4 font800">{row.location}</td><td className="px-4 py-4 font800">{row.students}</td><td className="px-4 py-4 font800">{row.internationalStudents}</td><td className="px-4 py-4 font800">{row.accreditation}</td><td className="px-4 py-4 font800"><span className={`admin-status ${row.admissions[0].tone}`}>{row.admissions[0].status}</span></td><td className="px-4 py-4"><button onClick={() => setSelected(index)} className="rounded-xl bg-blue-50 px-4 py-2 font900 text-blue-700">Edit</button></td></tr>)}</tbody></table></div>
-      <UniversityEditor university={selectedUniversity} updateSelected={updateSelected} />
+      <UniversityEditor university={selectedUniversity} updateSelected={updateSelected} saveSelectedUniversity={saveSelectedUniversity} saveMessage={saveMessage} />
     </div>
   );
 }
 
-function UniversityEditor({ university, updateSelected }: { university: EditableUniversity; updateSelected: (u: EditableUniversity) => void }) {
+function UniversityEditor({ university, updateSelected, saveSelectedUniversity, saveMessage }: { university: EditableUniversity; updateSelected: (u: EditableUniversity) => void; saveSelectedUniversity: () => void; saveMessage: {type: "ok" | "err"; text: string} | null }) {
   function updateField<K extends keyof EditableUniversity>(key: K, value: EditableUniversity[K]) { updateSelected({ ...university, [key]: value }); }
   function textAreaList(value: string[], setter: (v: string[]) => void, placeholder: string) { return <textarea value={value.join("\n")} placeholder={placeholder} onChange={(e) => setter(e.target.value.split("\n").filter(Boolean))} className="admin-textarea" />; }
 
@@ -220,7 +249,7 @@ function UniversityEditor({ university, updateSelected }: { university: Editable
       </div>
       <AdmissionsEditor university={university} updateSelected={updateSelected} />
       <MediaEditor university={university} updateSelected={updateSelected} />
-      <button onClick={() => alert("Saved in this admin screen preview. Next production step: connect this Save button to FastAPI + Supabase so it updates the public university pages permanently.")} className="mt-6 rounded-2xl bg-[#061A40] px-6 py-4 text-sm font900 text-white">Save University Changes</button>
+      <button onClick={saveSelectedUniversity} className="mt-6 rounded-2xl bg-[#061A40] px-6 py-4 text-sm font900 text-white">Save University Changes</button>{saveMessage && <div className={`save-message ${saveMessage.type}`}>{saveMessage.text}</div>}
     </div>
   );
 }
@@ -254,14 +283,33 @@ function AdmissionsEditor({ university, updateSelected }: { university: Editable
 }
 
 function MediaEditor({ university, updateSelected }: { university: EditableUniversity; updateSelected: (u: EditableUniversity) => void }) {
-  function filePreview(field: keyof EditableUniversity, file?: File) { if (!file) return; const url = URL.createObjectURL(file); updateSelected({ ...university, [field]: url } as EditableUniversity); }
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  async function uploadAsset(field: "logo" | "image" | "heroImage" | "accreditationBadge" | "brochureUrl", assetType: string, file?: File) {
+    if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
+    updateSelected({ ...university, [field]: previewUrl } as EditableUniversity);
+    if (!API_URL) { setUploadMessage("Preview only: NEXT_PUBLIC_API_URL is missing."); return; }
+    const form = new FormData();
+    form.append("asset_type", assetType);
+    form.append("file", file);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/universities/${slugifyUniversity(university.name)}/upload`, { method: "POST", body: form });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      updateSelected({ ...university, [field]: data.url } as EditableUniversity);
+      setUploadMessage(`Uploaded ${assetType.replace("_", " ")} permanently. Click Save University Changes after finishing text edits.`);
+    } catch (err: any) {
+      setUploadMessage(`Upload failed: ${err?.message || "check Supabase Storage bucket"}`);
+    }
+  }
   return (
     <div className="mt-6 rounded-[24px] border border-slate-100 bg-white p-5">
       <h3 className="text-xl font900">University Images, Logo & Links</h3>
+      {uploadMessage && <div className="mt-3 rounded-2xl bg-blue-50 px-4 py-3 text-sm font900 text-blue-800">{uploadMessage}</div>}
       <div className="mt-4 grid gap-5 xl:grid-cols-3">
-        <UploadBox label="University Logo / Seal" current={university.logo} onChange={(f) => filePreview("logo", f)} />
-        <UploadBox label="Card Campus Image" current={university.image} onChange={(f) => filePreview("image", f)} />
-        <UploadBox label="Detail Hero Cover Image" current={university.heroImage} onChange={(f) => filePreview("heroImage", f)} />
+        <UploadBox label="University Logo / Seal" current={university.logo} onChange={(f) => uploadAsset("logo", "logo", f)} />
+        <UploadBox label="Card Campus Image" current={university.image} onChange={(f) => uploadAsset("image", "card_image", f)} />
+        <UploadBox label="Detail Hero Cover Image" current={university.heroImage} onChange={(f) => uploadAsset("heroImage", "hero_image", f)} />
       </div>
       <div className="mt-5 grid gap-5 xl:grid-cols-3">
         <AdminInput label="Official Homepage URL" value={university.homepage} onChange={(v) => updateSelected({ ...university, homepage: v })} />
