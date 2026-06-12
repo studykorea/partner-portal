@@ -53,45 +53,100 @@ def read_csv(name: str) -> list[dict[str, Any]]:
         return [dict(row) for row in csv.DictReader(f)]
 
 def default_universities() -> list[dict[str, Any]]:
+    """Load the built-in university seed data from CSV.
+
+    The old Streamlit CSV uses title-case column names such as University,
+    Location, Total_Students, etc.  The previous seed reader only looked for
+    lowercase keys, so Supabase received blank/default values and all rows
+    collapsed into one generic slug: "university".  This reader normalizes
+    column names and maps old CSV paths to the public Next.js asset paths.
+    """
     rows = read_csv("universities.csv")
     if not rows:
         return []
+
+    public_image_map = {
+        "kyungsung": "/assets/kyungsung.webp",
+        "jeonbuk": "/assets/jeonbuk.webp",
+        "kyungwoon": "/assets/kyungwoon.webp",
+        "sejong": "/assets/sejong.webp",
+        "youngsan": "/assets/youngsan.webp",
+    }
+    logo_map = {
+        "kyungsung-university": "/assets/ksu_logo.svg",
+        "jeonbuk-national-university": "/assets/jbnu_logo.svg",
+        "kyungwoon-university": "/assets/kwu_logo.svg",
+        "sejong-university": "/assets/sju_logo.svg",
+        "youngsan-university": "/assets/ysu_logo.svg",
+    }
+
+    def norm(row: dict[str, Any]) -> dict[str, str]:
+        return {str(k).strip().lower(): (v or "") for k, v in row.items()}
+
+    def pick(row: dict[str, str], *keys: str, default: str = "") -> str:
+        for key in keys:
+            value = row.get(key.lower(), "")
+            if value not in (None, ""):
+                return str(value).strip()
+        return default
+
+    def split_programs(value: str) -> list[str]:
+        value = value.replace(";", "|")
+        return [x.strip() for x in value.split("|") if x.strip()]
+
+    def asset_for(name: str, raw: str) -> str:
+        text = f"{name} {raw}".lower()
+        for key, path in public_image_map.items():
+            if key in text:
+                return path
+        return "/assets/kyungsung.webp"
+
     items = []
-    for row in rows:
-        name = row.get("name") or row.get("university") or "University"
+    for raw_row in rows:
+        row = norm(raw_row)
+        name = pick(row, "name", "university", default="University")
+        slug = slugify(name)
+        image = asset_for(name, pick(row, "image", "card_image_url"))
+        location = pick(row, "location", "city")
+        students = pick(row, "school_size", "students", "total_students", default="Not updated")
+        international = pick(row, "international_students", "internationalstudents", default="Not updated")
+        overview = pick(row, "short_description", "overview")
+        top_majors = split_programs(pick(row, "top_majors", "majors"))
+        homepage = pick(row, "homepage", "website")
+        video_url = pick(row, "university_video_url", "video_url")
         items.append({
-            "slug": slugify(name),
+            "slug": slug,
             "name": name,
-            "location": row.get("location") or row.get("city") or "",
-            "region": row.get("region") or row.get("location") or "",
-            "students": row.get("students") or row.get("total_students") or "Not updated",
-            "internationalStudents": row.get("international_students") or row.get("internationalStudents") or "Not updated",
-            "type": row.get("type") or "Partner University",
-            "established": row.get("established") or "Not updated",
-            "accreditation": row.get("accreditation") or "Not updated",
-            "accreditationBadge": row.get("accreditation_badge_url") or "/assets/certified_information_badge_custom.png",
-            "homepage": row.get("homepage") or row.get("website") or "",
-            "email": row.get("email") or "koreastudypartner@gmail.com",
-            "phone": row.get("phone") or "",
-            "address": row.get("address") or "",
-            "overview": row.get("overview") or "",
-            "tuition": row.get("tuition") or row.get("tuition_range") or "Not updated",
-            "intake": row.get("intake") or "March, September",
-            "topMajors": [x.strip() for x in (row.get("top_majors") or row.get("majors") or "").split("|") if x.strip()],
-            "graduatePrograms": [x.strip() for x in (row.get("graduate_programs") or "").split("|") if x.strip()],
-            "klpPrograms": [x.strip() for x in (row.get("klp_programs") or "D4-1 (4 semester)|Korean Language Program|KLP / EAP").split("|") if x.strip()],
-            "image": row.get("image") or row.get("card_image_url") or "/assets/kyungsung.webp",
-            "logo": row.get("logo") or row.get("logo_url") or "",
-            "heroImage": row.get("hero_image_url") or row.get("image") or "/assets/kyungsung.webp",
-            "videoUrl": row.get("video_url") or "",
-            "brochureUrl": row.get("brochure_url") or "",
-            "facebookUrl": row.get("facebook_url") or "",
-            "instagramUrl": row.get("instagram_url") or "",
-            "youtubeUrl": row.get("youtube_url") or "",
+            "location": location,
+            "region": pick(row, "region", default=location),
+            "students": students,
+            "internationalStudents": international,
+            "type": pick(row, "type", default="Partner University"),
+            "established": pick(row, "established", default="Not updated"),
+            "accreditation": pick(row, "accreditation", default="Accredited"),
+            "accreditationBadge": pick(row, "accreditation_badge_url", default="/assets/certified_information_badge_custom.png"),
+            "homepage": homepage,
+            "email": pick(row, "email", default="koreastudypartner@gmail.com"),
+            "phone": pick(row, "phone", "representative_phone"),
+            "address": pick(row, "address"),
+            "overview": overview,
+            "tuition": pick(row, "tuition", "tuition_range", default="Not updated"),
+            "intake": pick(row, "intake", default="March, September"),
+            "topMajors": top_majors,
+            "graduatePrograms": split_programs(pick(row, "graduate_programs")),
+            "klpPrograms": split_programs(pick(row, "klp_programs", default="D4-1 (4 semester)|Korean Language Program|KLP / EAP")),
+            "image": image,
+            "logo": logo_map.get(slug, ""),
+            "heroImage": image,
+            "videoUrl": video_url,
+            "brochureUrl": pick(row, "brochure_url"),
+            "facebookUrl": pick(row, "facebook_url"),
+            "instagramUrl": pick(row, "instagram_url"),
+            "youtubeUrl": pick(row, "youtube_url") or video_url,
             "admissions": [
-                {"program": "Undergraduate", "open": "", "close": "", "status": "Not fixed yet", "tone": "notfixed"},
-                {"program": "Graduate (Masters/Ph.D.)", "open": "", "close": "", "status": "Not fixed yet", "tone": "notfixed"},
-                {"program": "KLP / EAP", "open": "", "close": "", "status": "Not fixed yet", "tone": "notfixed"},
+                {"program": "Undergraduate", "open": "19 May 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "close": "30 May 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "status": "Admission Closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "Not fixed yet", "tone": "closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "notfixed"},
+                {"program": "Graduate (Masters/Ph.D.)", "open": "15 May 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "close": "05 Jun 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "status": "Admission Closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "Not fixed yet", "tone": "closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "notfixed"},
+                {"program": "KLP / EAP", "open": "18 May 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "close": "29 May 2026" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "", "status": "Admission Closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "Not fixed yet", "tone": "closed" if slug in {"kyungsung-university", "jeonbuk-national-university"} else "notfixed"},
             ],
         })
     return items
@@ -296,6 +351,12 @@ async def upload_university_asset(slug: str, asset_type: str = Form(...), file: 
 def seed_default_universities():
     sb = get_supabase()
     items = default_universities()
+    # Remove the broken generic row created by older seed versions.
+    try:
+        sb.table("admission_timelines").delete().eq("university_slug", "university").execute()
+        sb.table("universities").delete().eq("slug", "university").execute()
+    except Exception:
+        pass
     for idx, item in enumerate(items):
         payload = UniversityPayload(**item)
         record = {
@@ -311,9 +372,11 @@ def seed_default_universities():
         }
         sb.table("universities").upsert(record, on_conflict="slug").execute()
         rows = [{"university_slug": item["slug"], "program": a["program"], "open_date": a.get("open", ""), "close_date": a.get("close", ""), "status": a.get("status", "Not fixed yet"), "tone": a.get("tone", "notfixed"), "sort_order": i} for i, a in enumerate(item["admissions"])]
+        # Reset and insert admissions for this university so the seed can be run multiple times cleanly.
+        sb.table("admission_timelines").delete().eq("university_slug", item["slug"]).execute()
         if rows:
-            sb.table("admission_timelines").upsert(rows).execute()
-    return {"ok": True, "inserted": len(items)}
+            sb.table("admission_timelines").insert(rows).execute()
+    return {"ok": True, "inserted": len(items), "slugs": [item["slug"] for item in items]}
 
 @app.get("/api/admission-criteria")
 def list_admission_criteria():
