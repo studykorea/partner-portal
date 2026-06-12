@@ -1,0 +1,5 @@
+KUA v353 fixes:
+- Login page now shows only one Login action and Partner Sign Up link; removed separate Partner Dashboard/Admin Dashboard buttons.
+- Super admin route opens from admin/super email until Supabase Auth is connected.
+- Added a larger Super Admin Dashboard UI with modules matching the old Streamlit concept: university management, applications, partner approvals, images/logos, admissions, tuition/scholarships, and settings.
+- Upload controls are UI-ready; permanent uploads require connecting FastAPI + Supabase Storage.
