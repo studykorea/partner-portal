@@ -2,10 +2,13 @@ import Link from "next/link";
 import TopNav from "../components/TopNav";
 import Footer from "../components/Footer";
 import UniversityCard from "../components/UniversityCard";
-import { universities } from "../lib/universities";
+import { fetchUniversities } from "../lib/universities";
 
-export default function Home() {
-  const carouselItems = [...universities, ...universities];
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const universities = await fetchUniversities();
+  const carouselItems = universities;
   return (
     <main className="min-h-screen bg-white">
       <TopNav />

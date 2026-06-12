@@ -359,15 +359,22 @@ def seed_default_universities():
         pass
     for idx, item in enumerate(items):
         payload = UniversityPayload(**item)
+        # Preserve any images/logos that the admin has already uploaded to Supabase Storage.
+        existing = []
+        try:
+            existing = sb.table("universities").select("logo_url,card_image_url,hero_image_url,accreditation_badge_url,brochure_url").eq("slug", item["slug"]).limit(1).execute().data or []
+        except Exception:
+            existing = []
+        existing_row = existing[0] if existing else {}
         record = {
             "slug": item["slug"], "name": payload.name, "location": payload.location, "region": payload.region,
             "students": payload.students, "international_students": payload.internationalStudents,
             "type": payload.type, "established": payload.established, "accreditation": payload.accreditation,
-            "accreditation_badge_url": payload.accreditationBadge, "homepage": payload.homepage, "email": payload.email,
+            "accreditation_badge_url": existing_row.get("accreditation_badge_url") or payload.accreditationBadge, "homepage": payload.homepage, "email": payload.email,
             "phone": payload.phone, "address": payload.address, "overview": payload.overview, "tuition": payload.tuition,
             "intake": payload.intake, "top_majors": "|".join(payload.topMajors), "graduate_programs": "|".join(payload.graduatePrograms),
-            "klp_programs": "|".join(payload.klpPrograms), "card_image_url": payload.image, "logo_url": payload.logo,
-            "hero_image_url": payload.heroImage, "video_url": payload.videoUrl, "brochure_url": payload.brochureUrl,
+            "klp_programs": "|".join(payload.klpPrograms), "card_image_url": existing_row.get("card_image_url") or payload.image, "logo_url": existing_row.get("logo_url") or payload.logo,
+            "hero_image_url": existing_row.get("hero_image_url") or payload.heroImage, "video_url": payload.videoUrl, "brochure_url": existing_row.get("brochure_url") or payload.brochureUrl,
             "facebook_url": payload.facebookUrl, "instagram_url": payload.instagramUrl, "youtube_url": payload.youtubeUrl, "sort_order": idx,
         }
         sb.table("universities").upsert(record, on_conflict="slug").execute()

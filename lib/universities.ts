@@ -173,6 +173,31 @@ export const universities: University[] = [
   },
 ];
 
+
+const fallbackBySlug: Record<string, Partial<University>> = {
+  "kyungsung-university": { image: "/assets/kyungsung.webp", logo: "/assets/ksu_logo.svg", heroImage: "/assets/kyungsung.webp" },
+  "jeonbuk-national-university": { image: "/assets/jeonbuk.webp", logo: "/assets/jbnu_logo.svg", heroImage: "/assets/jeonbuk.webp" },
+  "kyungwoon-university": { image: "/assets/kyungwoon.webp", logo: "/assets/kwu_logo.svg", heroImage: "/assets/kyungwoon.webp" },
+  "sejong-university": { image: "/assets/sejong.webp", logo: "/assets/sju_logo.svg", heroImage: "/assets/sejong.webp" },
+  "youngsan-university": { image: "/assets/youngsan.webp", logo: "/assets/ysu_logo.svg", heroImage: "/assets/youngsan.webp" },
+};
+
+function isMissingAsset(value?: string) {
+  return !value || value === "Logo" || value === "University image" || value === "Not updated";
+}
+
+export function hydrateUniversityAssets(item: University): University {
+  const slug = item.slug || slugifyUniversity(item.name || "University");
+  const fallback = fallbackBySlug[slug] || {};
+  return {
+    ...item,
+    slug,
+    image: isMissingAsset(item.image) ? (fallback.image || "/assets/kyungsung.webp") : item.image,
+    logo: isMissingAsset(item.logo) ? fallback.logo : item.logo,
+    heroImage: isMissingAsset(item.heroImage) ? (fallback.heroImage || fallback.image || item.image) : item.heroImage,
+  };
+}
+
 export function slugifyUniversity(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
@@ -185,7 +210,7 @@ export async function fetchUniversities(): Promise<University[]> {
     const res = await fetch(`${API_URL}/api/universities`, { cache: "no-store" });
     if (!res.ok) return universities;
     const data = await res.json();
-    return Array.isArray(data.items) && data.items.length ? data.items : universities;
+    return Array.isArray(data.items) && data.items.length ? data.items.map(hydrateUniversityAssets) : universities;
   } catch {
     return universities;
   }
@@ -195,8 +220,8 @@ export async function fetchUniversity(slug: string): Promise<University> {
   if (API_URL) {
     try {
       const res = await fetch(`${API_URL}/api/universities/${slug}`, { cache: "no-store" });
-      if (res.ok) return await res.json();
+      if (res.ok) return hydrateUniversityAssets(await res.json());
     } catch {}
   }
-  return universities.find((item) => slugifyUniversity(item.name) === slug) ?? universities[0];
+  return hydrateUniversityAssets(universities.find((item) => slugifyUniversity(item.name) === slug) ?? universities[0]);
 }
