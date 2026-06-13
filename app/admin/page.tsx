@@ -198,7 +198,7 @@ export default function AdminPage() {
         {tab === "Universities" && <UniversitiesPanel items={items} selected={selected} setSelected={selectUniversity} editorRef={editorRef} selectedUniversity={selectedUniversity} updateSelected={updateSelected} saveSelectedUniversity={saveSelectedUniversity} saveMessage={saveMessage} />}
         {tab === "Applications" && <ApplicationsPanel />}
         {tab === "Partner Approvals" && <GenericPanel title="Partner Agency Approvals" description="Approve official representatives, partner agencies, sub-agencies, and staff access requests." items={["Pending requests", "Approved partners", "Rejected requests", "Agency documents", "MoU contact records", "Role assignment"]} />}
-        {tab === "Images & Logos" && <ImagesPanel items={items} selected={selected} setSelected={selectUniversity} editorRef={editorRef} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
+        {tab === "Images & Logos" && <ImagesPanel items={items} selected={selected} setSelected={selectUniversity} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
         {tab === "Admissions" && <AdmissionsPanel selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
         {tab === "Tuition & Scholarships" && <TuitionPanel selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
         {tab === "Users & Settings" && <GenericPanel title="Users & Settings" description="Manage roles, passwords, permissions, site notices, backups, security, and system logs." items={["Super admin", "Staff", "Partner", "Read-only", "System logs", "Security settings"]} />}
