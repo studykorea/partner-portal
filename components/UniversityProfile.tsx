@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { universities, slugifyUniversity } from "../lib/universities";
 
 type University = (typeof universities)[number];
@@ -22,6 +25,62 @@ function searchUrl(platform: "facebook" | "instagram" | "youtube", name: string)
   return `https://www.youtube.com/results?search_query=${q}%20campus%20tour`;
 }
 
+function getYouTubeId(url?: string) {
+  if (!url) return "";
+  try {
+    const u = new URL(safeUrl(url));
+    if (u.hostname.includes("youtu.be")) return u.pathname.replace("/", "").split("?")[0];
+    if (u.searchParams.get("v")) return u.searchParams.get("v") || "";
+    const parts = u.pathname.split("/").filter(Boolean);
+    const marker = parts.findIndex((p) => ["embed", "shorts", "live"].includes(p));
+    if (marker >= 0 && parts[marker + 1]) return parts[marker + 1];
+  } catch {
+    return "";
+  }
+  return "";
+}
+
+function PlayableCampusVideo({ university }: { university: University }) {
+  const [playing, setPlaying] = useState(false);
+  const videoId = getYouTubeId(university.youtubeUrl);
+  const thumbnail = videoId
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : (university.heroImage || university.image);
+  const embedUrl = videoId
+    ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`
+    : "";
+
+  if (playing && embedUrl) {
+    return (
+      <div className="detail-video-v350 video-inline-v360">
+        <iframe
+          title={`${university.name} campus tour video`}
+          src={embedUrl}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="detail-video-v350 video-thumb-v360"
+      onClick={() => videoId && setPlaying(true)}
+      aria-label={`Play ${university.name} campus video`}
+    >
+      <img src={thumbnail} alt={`${university.name} video thumbnail`} />
+      <span className="video-play-v360">▶</span>
+      <div className="video-caption-v360">
+        <b>Discover {university.name}</b>
+        <small>Watch Campus Tour</small>
+      </div>
+    </button>
+  );
+}
+
 export default function UniversityProfile({ university = universities[0] }: { university?: University }) {
   const isKyungsung = university.name === "Kyungsung University";
   const logo = university.logo || "/assets/ksu_logo.svg";
@@ -30,7 +89,6 @@ export default function UniversityProfile({ university = universities[0] }: { un
   const homepageUrl = safeUrl(university.homepage);
   const applyUrl = `/apply?university=${encodeURIComponent(university.name)}`;
   const youtubeSearch = searchUrl("youtube", university.name);
-  const videoEmbed = university.youtubeUrl && university.youtubeUrl.includes("watch?v=") ? university.youtubeUrl.replace("watch?v=", "embed/") : `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${university.name} campus tour`)}`;
   const stats = [
     ["👥", isKyungsung ? "10,000–15,000" : university.students, "Total Students"],
     ["🌐", `${university.internationalStudents}+`, "International Students"],
@@ -83,10 +141,7 @@ export default function UniversityProfile({ university = universities[0] }: { un
               <p>{isKyungsung ? "A private university in Busan offering global, practical, and industry-oriented programs." : university.overview}</p>
               <div className="detail-actions-v350"><a href={applyUrl}>Apply Now</a><a href={homepageUrl} target="_blank" rel="noreferrer">Visit Official Website ↗</a></div>
             </div>
-            <div className="detail-video-v350 playable-video-v352">
-              <iframe title={`${university.name} campus tour video`} src={videoEmbed} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-              <a className="video-fallback-v352" href={university.youtubeUrl ? safeUrl(university.youtubeUrl) : youtubeSearch} target="_blank" rel="noreferrer">Open campus videos on YouTube ↗</a>
-            </div>
+            <PlayableCampusVideo university={university} />
           </section>
 
           <section className="detail-stat-ribbon-v350">
