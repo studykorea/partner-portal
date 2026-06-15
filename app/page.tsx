@@ -35,8 +35,10 @@ export default async function Home() {
           <Link href="/universities" className="home-featured-viewall">View All <span>›</span></Link>
         </div>
         <div className="featured-carousel">
-          <div className="carousel-track">
-            {carouselItems.map((university, index) => <UniversityCard key={`${university.name}-${index}`} university={university} />)}
+          <div className="carousel-track v362-carousel-track">
+            {[...carouselItems, ...carouselItems].map((university, index) => (
+              <UniversityCard key={`${university.name}-${index}`} university={university} />
+            ))}
           </div>
         </div>
         <div className="home-featured-note"><span>◇</span> All universities are official partners and recognized by the Korean Ministry of Education.</div>
