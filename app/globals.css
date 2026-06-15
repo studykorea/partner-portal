@@ -590,3 +590,26 @@ a { text-decoration: none; }
   .home-featured-section .carousel-track{animation:none!important;display:grid!important;grid-template-columns:1fr!important;width:100%!important;min-width:0!important;padding:0!important;}
   .home-featured-section .streamlit-university-card.v361-premium-card{width:100%!important;max-width:340px!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0 auto!important;}
 }
+
+/* v365: stronger always-moving home featured university carousel */
+.home-featured-section .featured-carousel{
+  overflow:hidden!important;
+}
+.home-featured-section .carousel-track,
+.home-featured-section .v362-carousel-track{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  width:max-content!important;
+  min-width:max-content!important;
+  will-change:transform!important;
+  animation:v365AutoSlideFeatured 24s linear infinite!important;
+  animation-play-state:running!important;
+}
+.home-featured-section .featured-carousel:hover .carousel-track,
+.home-featured-section .featured-carousel:hover .v362-carousel-track{
+  animation-play-state:running!important;
+}
+@keyframes v365AutoSlideFeatured{
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(-50%,0,0)}
+}
