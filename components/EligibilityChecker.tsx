@@ -5,6 +5,18 @@ import Link from "next/link";
 import { slugifyUniversity, type University } from "../lib/universities";
 
 type ProgramLevel = "bachelor" | "master" | "phd" | "klp";
+type MajorCategory = "business" | "it" | "engineering" | "hospitality" | "korean" | "media" | "tourism" | "other";
+
+const majorOptions: { value: MajorCategory; label: string; keywords: string[] }[] = [
+  { value: "business", label: "Business / Management", keywords: ["business", "commerce", "management", "administration", "marketing"] },
+  { value: "it", label: "IT / Software / Computer", keywords: ["it", "software", "computer", "digital", "data", "information"] },
+  { value: "engineering", label: "Engineering / Mechanical", keywords: ["engineering", "mechanical", "design"] },
+  { value: "hospitality", label: "Hospitality / Hotel", keywords: ["hospitality", "hotel", "food", "culinary"] },
+  { value: "korean", label: "Korean Studies / Korean Language", keywords: ["korean", "language", "culture", "klp", "eap"] },
+  { value: "media", label: "Media / Communication / Entertainment", keywords: ["media", "communication", "entertainment", "k-entertainment"] },
+  { value: "tourism", label: "Tourism / Airline / Convention", keywords: ["tourism", "airline", "convention"] },
+  { value: "other", label: "Other / Not decided", keywords: [] },
+];
 
 const rules: Record<string, Record<ProgramLevel, { gpa: number; percent: number; ielts: number; label: string }>> = {
   "Kyungsung University": {
@@ -57,27 +69,36 @@ function normalizeScore(raw: string) {
   return { gpa: value, percent: (value / 4.5) * 100, original: value };
 }
 
-function evaluate(university: University, program: ProgramLevel, scoreRaw: string, ieltsRaw: string, major: string) {
+function universityHasMajor(university: University, major: MajorCategory) {
+  if (major === "other") return true;
+  const selected = majorOptions.find((m) => m.value === major);
+  if (!selected) return true;
+
+  const searchableText = [
+    university.name,
+    university.location,
+    ...(university.topMajors || []),
+    ...(university.graduatePrograms || []),
+    ...(university.klpPrograms || []),
+  ].join(" ").toLowerCase();
+
+  return selected.keywords.some((keyword) => searchableText.includes(keyword));
+}
+
+function evaluate(university: University, program: ProgramLevel, scoreRaw: string, ieltsRaw: string, major: MajorCategory) {
   const rule = rules[university.name]?.[program] || rules["Kyungsung University"][program];
   const score = normalizeScore(scoreRaw);
   const ielts = parseNumber(ieltsRaw);
-  const hasScore = score.original > 0;
-  const needsLanguage = program !== "klp";
-  const hasEnglish = !needsLanguage || ielts > 0;
-  const scorePass = program === "klp" || (hasScore && (score.gpa >= rule.gpa || score.percent >= rule.percent));
-  const englishPass = !needsLanguage || (hasEnglish && ielts >= rule.ielts);
-  const majors = [...(university.topMajors || []), ...(university.graduatePrograms || []), ...(university.klpPrograms || [])];
-  const majorMatch = !major.trim() || majors.some((m) => m.toLowerCase().includes(major.toLowerCase()) || major.toLowerCase().includes(m.toLowerCase().split(" ")[0]));
-  const missing = [];
-  if (!hasScore && program !== "klp") missing.push(scoreLabel(program));
-  if (!hasEnglish && needsLanguage) missing.push("IELTS / TOEFL / TOPIK");
 
-  let status: "Eligible" | "Conditional" | "Not Eligible" = "Not Eligible";
-  if (program === "klp") status = "Eligible";
-  else if (scorePass && englishPass && majorMatch) status = "Eligible";
-  else if ((scorePass || englishPass) && majorMatch) status = "Conditional";
+  if (program === "klp") {
+    return { rule, eligible: universityHasMajor(university, major) };
+  }
 
-  return { rule, status, scorePass, englishPass, majorMatch, missing };
+  const scorePass = score.original > 0 && (score.gpa >= rule.gpa || score.percent >= rule.percent);
+  const englishPass = ielts > 0 && ielts >= rule.ielts;
+  const majorPass = universityHasMajor(university, major);
+
+  return { rule, eligible: scorePass && englishPass && majorPass };
 }
 
 export default function EligibilityChecker({ universities }: { universities: University[] }) {
@@ -85,31 +106,61 @@ export default function EligibilityChecker({ universities }: { universities: Uni
   const [program, setProgram] = useState<ProgramLevel>("bachelor");
   const [score, setScore] = useState("");
   const [ielts, setIelts] = useState("");
-  const [major, setMajor] = useState("");
+  const [major, setMajor] = useState<MajorCategory | "">("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const results = useMemo(() => {
-    return universities.map((university) => ({
-      university,
-      result: evaluate(university, program, score, ielts, major),
-    })).sort((a, b) => {
-      const rank = { Eligible: 0, Conditional: 1, "Not Eligible": 2 };
-      return rank[a.result.status] - rank[b.result.status];
-    });
-  }, [universities, program, score, ielts, major]);
+  const eligibleResults = useMemo(() => {
+    if (!submitted) return [];
+    return universities
+      .map((university) => ({
+        university,
+        result: evaluate(university, program, score, ielts, major as MajorCategory),
+      }))
+      .filter((item) => item.result.eligible);
+  }, [universities, program, score, ielts, major, submitted]);
 
-  const visibleResults = results.filter((item) => item.result.status !== "Not Eligible");
-  const hasInput = program === "klp" || parseNumber(score) > 0 || parseNumber(ielts) > 0 || major.trim().length > 0;
+  const selectedProgramLabel =
+    program === "bachelor" ? "Bachelor / Undergraduate" :
+    program === "master" ? "Master" :
+    program === "phd" ? "Ph.D." : "KLP / EAP";
+
+  const selectedMajorLabel = majorOptions.find((m) => m.value === major)?.label || "";
+
+  function handleCheck() {
+    const missing: string[] = [];
+    if (!name.trim()) missing.push("student name");
+    if (!program) missing.push("program level");
+    if (!major) missing.push("major category");
+    if (program !== "klp" && parseNumber(score) <= 0) missing.push(scoreLabel(program));
+    if (program !== "klp" && parseNumber(ielts) <= 0) missing.push("IELTS / TOEFL / TOPIK score");
+
+    if (missing.length > 0) {
+      setSubmitted(false);
+      setError(`Please input ${missing.join(", ")} first.`);
+      return;
+    }
+
+    setError("");
+    setSubmitted(true);
+  }
+
+  function handleChange(fn: () => void) {
+    fn();
+    setSubmitted(false);
+    setError("");
+  }
 
   return (
     <div className="eligibility-tool-v368">
       <div className="eligibility-form-card-v368">
         <div className="eligibility-grid-v368">
           <label>Student Name
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Student name" />
+            <input value={name} onChange={(e) => handleChange(() => setName(e.target.value))} placeholder="Student name" />
           </label>
 
           <label>Program Level
-            <select value={program} onChange={(e) => setProgram(e.target.value as ProgramLevel)}>
+            <select value={program} onChange={(e) => handleChange(() => setProgram(e.target.value as ProgramLevel))}>
               <option value="bachelor">Bachelor / Undergraduate</option>
               <option value="master">Master</option>
               <option value="phd">Ph.D.</option>
@@ -119,71 +170,97 @@ export default function EligibilityChecker({ universities }: { universities: Uni
 
           {program === "bachelor" && (
             <label>High School GPA or %
-              <input value={score} onChange={(e) => setScore(e.target.value)} placeholder="Example: 3.2 or 72" />
+              <input value={score} onChange={(e) => handleChange(() => setScore(e.target.value))} placeholder="Example: 3.2 or 72" />
             </label>
           )}
 
           {program === "master" && (
             <label>Bachelor GPA or %
-              <input value={score} onChange={(e) => setScore(e.target.value)} placeholder="Example: 3.0 or 70" />
+              <input value={score} onChange={(e) => handleChange(() => setScore(e.target.value))} placeholder="Example: 3.0 or 70" />
             </label>
           )}
 
           {program === "phd" && (
             <label>Master GPA or %
-              <input value={score} onChange={(e) => setScore(e.target.value)} placeholder="Example: 3.3 or 78" />
+              <input value={score} onChange={(e) => handleChange(() => setScore(e.target.value))} placeholder="Example: 3.3 or 78" />
             </label>
           )}
 
           {program !== "klp" && (
             <label>IELTS / TOEFL / TOPIK
-              <input value={ielts} onChange={(e) => setIelts(e.target.value)} placeholder="IELTS example: 5.5" />
+              <input value={ielts} onChange={(e) => handleChange(() => setIelts(e.target.value))} placeholder="IELTS example: 5.5" />
             </label>
           )}
 
-          <label>Preferred Major
-            <input value={major} onChange={(e) => setMajor(e.target.value)} placeholder="Example: Business, Hospitality, IT" />
+          <label className={program === "klp" ? "eligibility-wide-v369" : ""}>Major Category
+            <select value={major} onChange={(e) => handleChange(() => setMajor(e.target.value as MajorCategory))}>
+              <option value="">Select major category</option>
+              {majorOptions.map((option) => (
+                <option value={option.value} key={option.value}>{option.label}</option>
+              ))}
+            </select>
           </label>
         </div>
 
+        {error && <div className="eligibility-error-v369">{error}</div>}
+
+        <button type="button" onClick={handleCheck} className="eligibility-check-button-v369">
+          Check Eligibility
+        </button>
+
         <div className="eligibility-summary-v368">
-          <b>{name ? `${name}'s result` : "Live eligibility result"}</b>
-          <span>Results update automatically while you type.</span>
+          <b>{name.trim() ? `${name.trim()}'s result` : "Eligibility result"}</b>
+          <span>Input all information and click Check Eligibility. Only eligible universities will appear.</span>
         </div>
       </div>
 
       <div className="eligibility-results-card-v368">
         <div className="eligibility-results-head-v368">
           <div>
-            <p>Recommended Universities</p>
-            <h2>{hasInput ? `${visibleResults.length} possible match${visibleResults.length === 1 ? "" : "es"}` : "Enter student information"}</h2>
+            <p>Eligible Universities</p>
+            <h2>
+              {!submitted
+                ? "Waiting for check"
+                : eligibleResults.length > 0
+                  ? `${name.trim()}, you are eligible for ${eligibleResults.length} ${eligibleResults.length === 1 ? "university" : "universities"}`
+                  : `${name.trim()}, no eligible university found`}
+            </h2>
           </div>
-          <span>{program === "bachelor" ? "Bachelor" : program === "master" ? "Master" : program === "phd" ? "Ph.D." : "KLP / EAP"}</span>
+          <span>{selectedProgramLabel}</span>
         </div>
 
-        {!hasInput ? (
+        {!submitted ? (
           <div className="eligibility-empty-v368">
-            Enter GPA/percentage and language score. Eligible or conditional universities will appear here automatically.
+            Please enter all student information, choose a major category, then click <b>Check Eligibility</b>.
+          </div>
+        ) : eligibleResults.length === 0 ? (
+          <div className="eligibility-empty-v368">
+            No fully eligible university matched this information. Try a different major category or check the GPA/language score.
           </div>
         ) : (
-          <div className="eligibility-result-list-v368">
-            {results.map(({ university, result }) => (
-              <div className={`eligibility-result-item-v368 ${result.status.toLowerCase().replace(" ", "-")}`} key={university.name}>
-                <img src={university.logo || university.image} alt={`${university.name} logo`} />
-                <div>
-                  <h3>{university.name}</h3>
-                  <p>{university.location}</p>
-                  <small>
-                    Requirement: {program === "klp" ? "No IELTS required for KLP/EAP" : `GPA ${result.rule.gpa}+ or ${result.rule.percent}%+, IELTS ${result.rule.ielts}+`}
-                  </small>
+          <>
+            <div className="eligibility-success-v369">
+              Major category: <b>{selectedMajorLabel}</b>. Only fully eligible universities are shown below.
+            </div>
+            <div className="eligibility-result-list-v368">
+              {eligibleResults.map(({ university, result }) => (
+                <div className="eligibility-result-item-v368 eligible" key={university.name}>
+                  <img src={university.logo || university.image} alt={`${university.name} logo`} />
+                  <div>
+                    <h3>{university.name}</h3>
+                    <p>{university.location}</p>
+                    <small>
+                      Requirement passed: {program === "klp" ? "KLP / EAP" : `GPA ${result.rule.gpa}+ or ${result.rule.percent}%+, IELTS ${result.rule.ielts}+`}
+                    </small>
+                  </div>
+                  <div className="eligibility-status-wrap-v368">
+                    <b>Eligible</b>
+                    <Link href={`/universities/${slugifyUniversity(university.name)}`}>View Details →</Link>
+                  </div>
                 </div>
-                <div className="eligibility-status-wrap-v368">
-                  <b>{result.status}</b>
-                  <Link href={`/universities/${slugifyUniversity(university.name)}`}>View Details →</Link>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
