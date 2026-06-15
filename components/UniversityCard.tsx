@@ -5,6 +5,13 @@ function primaryAdmission(university: University) {
   return university.admissions?.find((item) => item.program.toLowerCase().includes("undergraduate")) || university.admissions?.[0];
 }
 
+function cleanNumber(value?: string) {
+  return (value || "Not updated")
+    .replace(/\s*international\s*students?/gi, "")
+    .replace(/\s*students?/gi, "")
+    .trim();
+}
+
 export default function UniversityCard({ university }: { university: University; index?: number }) {
   const detailHref = `/universities/${slugifyUniversity(university.name)}`;
   const admission = primaryAdmission(university);
@@ -36,8 +43,8 @@ export default function UniversityCard({ university }: { university: University;
         </div>
 
         <div className="streamlit-stat-grid v361-stat-grid">
-          <div className="streamlit-stat-box v361-stat-box"><span className="streamlit-stat-icon">👥</span><section><small>Total Students</small><b>{university.students}</b></section></div>
-          <div className="streamlit-stat-box v361-stat-box"><span className="streamlit-stat-icon">🌐</span><section><small>International</small><b>{university.internationalStudents}</b></section></div>
+          <div className="streamlit-stat-box v361-stat-box"><span className="streamlit-stat-icon">👥</span><section><small>Total Students</small><b>{cleanNumber(university.students)}</b></section></div>
+          <div className="streamlit-stat-box v361-stat-box"><span className="streamlit-stat-icon">🌐</span><section><small>International</small><b>{cleanNumber(university.internationalStudents)}</b></section></div>
         </div>
 
         {majors.length ? (

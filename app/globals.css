@@ -393,3 +393,49 @@ a { text-decoration: none; }
   .home-featured-section .carousel-track{animation:none!important;display:grid!important;grid-template-columns:1fr!important;width:100%!important;min-width:0!important;padding:0!important;}
   .streamlit-university-card.v361-premium-card{width:100%!important;max-width:390px!important;margin:0 auto!important;}
 }
+
+/* v363: compact fully visible sliding cards */
+.home-featured-section .featured-carousel{
+  height:530px!important;
+  min-height:530px!important;
+  padding:0 0 26px!important;
+}
+.home-featured-section .carousel-track,
+.home-featured-section .v362-carousel-track{
+  gap:22px!important;
+  padding:0 20px!important;
+}
+.streamlit-university-card.v361-premium-card,
+.kua-university-card.v348-card{
+  width:330px!important;
+  flex:0 0 330px!important;
+  height:492px!important;
+  min-height:492px!important;
+  max-height:492px!important;
+  border-radius:17px!important;
+}
+.v361-card-cover{height:132px!important;min-height:132px!important;}
+.v361-featured-badge{left:14px!important;top:14px!important;padding:6px 11px!important;}
+.v361-featured-badge:after{font-size:11px!important;}
+.v361-heart{width:38px!important;height:38px!important;right:12px!important;top:12px!important;font-size:24px!important;}
+.v361-logo-bubble{top:100px!important;left:20px!important;width:70px!important;height:70px!important;box-shadow:0 0 0 7px #fff,0 10px 22px rgba(15,23,42,.12)!important;}
+.v361-logo-bubble img{width:58px!important;height:58px!important;}
+.v361-card-body{padding:42px 16px 14px!important;}
+.v361-title-row h3{font-size:20px!important;line-height:1.08!important;min-height:44px!important;max-height:45px!important;margin-bottom:7px!important;}
+.v361-location{font-size:12px!important;min-height:26px!important;max-height:27px!important;margin-bottom:9px!important;}
+.v361-stat-grid{grid-template-columns:1fr 1fr!important;gap:7px!important;margin-bottom:9px!important;}
+.v361-stat-box{height:48px!important;min-height:48px!important;padding:7px 8px!important;border-radius:11px!important;grid-template-columns:26px 1fr!important;gap:7px!important;}
+.v361-stat-box .streamlit-stat-icon{width:26px!important;height:26px!important;border-radius:8px!important;font-size:12px!important;}
+.v361-stat-box small{font-size:9.5px!important;line-height:1!important;margin-bottom:2px!important;}
+.v361-stat-box b{font-size:12px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.v361-snapshot-title{font-size:12.5px!important;margin:0 0 6px!important;}
+.v361-admission-list{gap:5px!important;margin-bottom:7px!important;}
+.v361-admission-row{font-size:11.2px!important;grid-template-columns:minmax(0,1fr) 103px!important;gap:6px!important;}
+.v361-admission-row .streamlit-status{height:22px!important;min-width:92px!important;padding:0 7px!important;font-size:9.5px!important;border-radius:7px!important;}
+.v361-scholarship-link{font-size:11.5px!important;margin:0 0 7px!important;}
+.v361-detail-button{height:40px!important;min-height:40px!important;border-radius:11px!important;font-size:12.5px!important;padding:0 14px!important;}
+.v361-detail-button span:after{font-size:12.5px!important;}
+.home-featured-section .streamlit-university-card.v361-premium-card{width:330px!important;flex-basis:330px!important;}
+@media(max-width:720px){
+  .streamlit-university-card.v361-premium-card{height:auto!important;min-height:0!important;max-height:none!important;}
+}
