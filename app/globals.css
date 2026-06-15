@@ -613,3 +613,39 @@ a { text-decoration: none; }
   0%{transform:translate3d(0,0,0)}
   100%{transform:translate3d(-50%,0,0)}
 }
+
+/* v366: force fast auto-sliding featured university carousel every second */
+.home-featured-section .featured-carousel{
+  overflow:hidden!important;
+  position:relative!important;
+}
+.home-featured-section .carousel-track,
+.home-featured-section .v362-carousel-track{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  width:max-content!important;
+  min-width:max-content!important;
+  transform:translate3d(0,0,0)!important;
+  will-change:transform!important;
+  animation-name:v366OneSecondAutoSlide!important;
+  animation-duration:10s!important;
+  animation-timing-function:linear!important;
+  animation-iteration-count:infinite!important;
+  animation-play-state:running!important;
+}
+.home-featured-section .featured-carousel:hover .carousel-track,
+.home-featured-section .featured-carousel:hover .v362-carousel-track,
+.home-featured-section .carousel-track:hover,
+.home-featured-section .v362-carousel-track:hover{
+  animation-play-state:running!important;
+}
+@keyframes v366OneSecondAutoSlide{
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(-50%,0,0)}
+}
+@media (prefers-reduced-motion: reduce){
+  .home-featured-section .carousel-track,
+  .home-featured-section .v362-carousel-track{
+    animation:v366OneSecondAutoSlide 10s linear infinite!important;
+  }
+}
