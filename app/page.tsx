@@ -1,7 +1,7 @@
 import Link from "next/link";
 import TopNav from "../components/TopNav";
 import Footer from "../components/Footer";
-import UniversityCard from "../components/UniversityCard";
+import FeaturedUniversitiesCarousel from "../components/FeaturedUniversitiesCarousel";
 import { fetchUniversities } from "../lib/universities";
 
 export const dynamic = "force-dynamic";
@@ -34,13 +34,7 @@ export default async function Home() {
           </div>
           <Link href="/universities" className="home-featured-viewall">View All <span>›</span></Link>
         </div>
-        <div className="featured-carousel">
-          <div className="carousel-track v362-carousel-track">
-            {[...carouselItems, ...carouselItems].map((university, index) => (
-              <UniversityCard key={`${university.name}-${index}`} university={university} />
-            ))}
-          </div>
-        </div>
+        <FeaturedUniversitiesCarousel universities={carouselItems} />
         <div className="home-featured-note"><span>◇</span> All universities are official partners and recognized by the Korean Ministry of Education.</div>
       </section>
       <Footer />

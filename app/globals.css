@@ -649,3 +649,58 @@ a { text-decoration: none; }
     animation:v366OneSecondAutoSlide 10s linear infinite!important;
   }
 }
+
+/* v367: JS-driven featured university auto-slide + remove extra bottom gap */
+.home-featured-section{
+  padding-bottom:16px!important;
+}
+.home-featured-section .home-featured-note{
+  display:none!important;
+  margin:0!important;
+}
+.home-featured-carousel-shell{
+  position:relative;
+  margin:0;
+  padding:0;
+}
+.home-featured-carousel-scroll{
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  padding:0 0 2px 0;
+}
+.home-featured-carousel-scroll::-webkit-scrollbar{
+  display:none;
+}
+.home-featured-carousel-track-js{
+  display:flex;
+  align-items:stretch;
+  gap:26px;
+  width:max-content;
+  padding:0 18px;
+}
+.home-featured-carousel-item{
+  flex:0 0 auto;
+}
+.home-featured-section .featured-carousel,
+.home-featured-section .carousel-track,
+.home-featured-section .v362-carousel-track{
+  animation:none!important;
+}
+.home-featured-section .home-featured-carousel-shell,
+.home-featured-section .home-featured-carousel-scroll{
+  height:auto!important;
+  min-height:0!important;
+  background:transparent!important;
+}
+.home-featured-section .streamlit-university-card.v361-premium-card,
+.home-featured-section .kua-university-card.v348-card{
+  margin:0!important;
+}
+@media (max-width: 720px){
+  .home-featured-carousel-track-js{
+    gap:18px;
+    padding:0 12px;
+  }
+}
