@@ -947,3 +947,19 @@ a { text-decoration: none; }
 .eligibility-result-item-v368.conditional{
   display:none!important;
 }
+
+
+/* v371: separate EAP and KLP eligibility fields */
+.eligibility-help-v371{
+  display:block;
+  margin-top:8px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.35;
+}
+.eligibility-optional-v371{
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+}
