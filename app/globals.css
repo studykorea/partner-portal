@@ -704,3 +704,200 @@ a { text-decoration: none; }
     padding:0 12px;
   }
 }
+
+
+/* v368: working eligibility checker */
+.eligibility-tool-v368{
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:minmax(360px,.85fr) minmax(520px,1.15fr);
+  gap:28px;
+  align-items:start;
+}
+.eligibility-form-card-v368,
+.eligibility-results-card-v368{
+  border:1px solid #dce6f4;
+  background:#fff;
+  border-radius:28px;
+  box-shadow:0 14px 34px rgba(16,24,40,.07);
+  padding:28px;
+}
+.eligibility-grid-v368{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 20px;
+}
+.eligibility-grid-v368 label{
+  color:#17233f;
+  font-size:14px;
+  font-weight:950;
+}
+.eligibility-grid-v368 input,
+.eligibility-grid-v368 select{
+  margin-top:9px;
+  width:100%;
+  height:54px;
+  border:1px solid #dbe5f3;
+  border-radius:16px;
+  padding:0 16px;
+  background:#fff;
+  color:#061a40;
+  font-weight:850;
+  outline:none;
+}
+.eligibility-grid-v368 input:focus,
+.eligibility-grid-v368 select:focus{
+  border-color:#2457d6;
+  box-shadow:0 0 0 4px rgba(36,87,214,.10);
+}
+.eligibility-summary-v368{
+  margin-top:22px;
+  border-radius:18px;
+  padding:18px;
+  background:linear-gradient(135deg,#eef4ff,#f8fbff);
+  border:1px solid #dbe7ff;
+}
+.eligibility-summary-v368 b{
+  display:block;
+  color:#061a40;
+  font-size:18px;
+  font-weight:950;
+}
+.eligibility-summary-v368 span{
+  display:block;
+  margin-top:5px;
+  color:#667085;
+  font-size:14px;
+  font-weight:750;
+}
+.eligibility-results-head-v368{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:18px;
+}
+.eligibility-results-head-v368 p{
+  margin:0 0 6px;
+  color:#2457d6;
+  font-size:13px;
+  font-weight:950;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.eligibility-results-head-v368 h2{
+  margin:0;
+  color:#061a40;
+  font-size:30px;
+  line-height:1.1;
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.eligibility-results-head-v368 span{
+  flex:0 0 auto;
+  border-radius:999px;
+  background:#eef4ff;
+  color:#2457d6;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:950;
+}
+.eligibility-empty-v368{
+  border:1px dashed #b9c7dd;
+  border-radius:18px;
+  background:#f8fbff;
+  padding:26px;
+  color:#667085;
+  font-weight:800;
+  line-height:1.7;
+}
+.eligibility-result-list-v368{
+  display:grid;
+  gap:14px;
+}
+.eligibility-result-item-v368{
+  display:grid;
+  grid-template-columns:62px minmax(0,1fr) auto;
+  gap:16px;
+  align-items:center;
+  border:1px solid #e2eaf5;
+  border-radius:20px;
+  padding:16px;
+  background:#fff;
+}
+.eligibility-result-item-v368.eligible{
+  border-color:#bdebd0;
+  background:linear-gradient(135deg,#f3fff7,#fff);
+}
+.eligibility-result-item-v368.conditional{
+  border-color:#ffe2a8;
+  background:linear-gradient(135deg,#fffaf0,#fff);
+}
+.eligibility-result-item-v368.not-eligible{
+  opacity:.72;
+  background:#f8fafc;
+}
+.eligibility-result-item-v368 img{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  object-fit:contain;
+  background:#fff;
+  box-shadow:0 0 0 6px #f4f7fb;
+}
+.eligibility-result-item-v368 h3{
+  margin:0;
+  color:#061a40;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:950;
+}
+.eligibility-result-item-v368 p{
+  margin:5px 0;
+  color:#344054;
+  font-size:13px;
+  font-weight:800;
+}
+.eligibility-result-item-v368 small{
+  color:#667085;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:750;
+}
+.eligibility-status-wrap-v368{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.eligibility-status-wrap-v368 b{
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:950;
+}
+.eligible .eligibility-status-wrap-v368 b{
+  background:#dcfce7;
+  color:#166534;
+}
+.conditional .eligibility-status-wrap-v368 b{
+  background:#fef3c7;
+  color:#92400e;
+}
+.not-eligible .eligibility-status-wrap-v368 b{
+  background:#fee2e2;
+  color:#991b1b;
+}
+.eligibility-status-wrap-v368 a{
+  color:#2457d6;
+  font-size:12px;
+  font-weight:950;
+}
+@media(max-width:980px){
+  .eligibility-tool-v368{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .eligibility-grid-v368{grid-template-columns:1fr;}
+  .eligibility-result-item-v368{grid-template-columns:54px 1fr;}
+  .eligibility-status-wrap-v368{grid-column:1/-1;align-items:flex-start;}
+}
