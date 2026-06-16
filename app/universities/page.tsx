@@ -41,7 +41,7 @@ export default async function UniversitiesPage() {
         <label><span>Admission Status</span><select defaultValue="All"><option>All</option><option>Open</option><option>Opening Soon</option><option>Closed</option></select></label>
         <label><span>Intake / Round</span><select defaultValue="All"><option>All</option><option>March Intake</option><option>September Intake</option></select></label>
         <label><span>Sort By</span><select defaultValue="Default"><option>Default</option><option>Name</option><option>Highest International Students</option></select></label>
-        <button className="streamlit-filter-button">Filter</button>
+        <button className="streamlit-filter-button">Apply Filters</button>
       </section>
 
       <section id="university-list" className="streamlit-university-list-section">
