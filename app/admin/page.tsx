@@ -200,7 +200,7 @@ export default function AdminPage() {
         {tab === "Partner Approvals" && <GenericPanel title="Partner Agency Approvals" description="Approve official representatives, partner agencies, sub-agencies, and staff access requests." items={["Pending requests", "Approved partners", "Rejected requests", "Agency documents", "MoU contact records", "Role assignment"]} />}
         {tab === "Images & Logos" && <ImagesPanel items={items} selected={selected} setSelected={selectUniversity} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
         {tab === "Admissions" && <AdmissionsPanel selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
-        {tab === "Tuition & Scholarships" && <TuitionPanel selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
+        {tab === "Tuition & Scholarships" && <TuitionPanel items={items} selected={selected} setSelected={selectUniversity} selectedUniversity={selectedUniversity} updateSelected={updateSelected} />}
         {tab === "Users & Settings" && <GenericPanel title="Users & Settings" description="Manage roles, passwords, permissions, site notices, backups, security, and system logs." items={["Super admin", "Staff", "Partner", "Read-only", "System logs", "Security settings"]} />}
       </section>
       <Footer />
@@ -337,8 +337,162 @@ function AdmissionsPanel({ selectedUniversity, updateSelected }: { selectedUnive
   return <div className="mt-8 rounded-[28px] border border-[#DCE6F4] bg-white p-6 shadow-sm"><h2 className="text-3xl font900">Admission Deadlines</h2><p className="mt-3 text-slate-600">Edit opening dates, closing dates, admission status, intake round, and application links.</p><AdmissionsEditor university={selectedUniversity} updateSelected={updateSelected} /></div>;
 }
 
-function TuitionPanel({ selectedUniversity, updateSelected }: { selectedUniversity: EditableUniversity; updateSelected: (u: EditableUniversity) => void }) {
-  return <div className="mt-8 rounded-[28px] border border-[#DCE6F4] bg-white p-6 shadow-sm"><h2 className="text-3xl font900">Tuition & Scholarship Rules</h2><div className="mt-6 grid gap-5 lg:grid-cols-2"><AdminBox title="Tuition"><AdminInput label="Tuition Range" value={selectedUniversity.tuition} onChange={(v) => updateSelected({ ...selectedUniversity, tuition: v })} /><AdminInput label="Intake" value={selectedUniversity.intake} onChange={(v) => updateSelected({ ...selectedUniversity, intake: v })} /></AdminBox><AdminBox title="Scholarship Calculator Rules"><AdminInput label="Scholarship %" value="30% / 50% / 70%" onChange={() => {}} /><AdminInput label="GPA requirement" value="2.5+" onChange={() => {}} /><AdminInput label="Language score" value="TOPIK / IELTS / TOEFL" onChange={() => {}} /></AdminBox></div></div>;
+function TuitionPanel({ items, selected, setSelected, selectedUniversity, updateSelected }: { items: EditableUniversity[]; selected: number; setSelected: (n: number) => void; selectedUniversity: EditableUniversity; updateSelected: (u: EditableUniversity) => void }) {
+  const undergraduateText = selectedUniversity.topMajors?.join("\n") || "";
+  const graduateText = selectedUniversity.graduatePrograms?.join("\n") || "";
+  const languageText = selectedUniversity.klpPrograms?.join("\n") || "KLP\nEAP";
+
+  function updateList(field: "topMajors" | "graduatePrograms" | "klpPrograms", value: string) {
+    updateSelected({
+      ...selectedUniversity,
+      [field]: value.split("\n").map((item) => item.trim()).filter(Boolean),
+    });
+  }
+
+  return (
+    <div className="mt-8 space-y-6">
+      <div className="rounded-[30px] border border-[#DCE6F4] bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font900 uppercase tracking-[.16em] text-[#2457D6]">Tuition & Scholarship Setup</p>
+            <h2 className="mt-2 text-3xl font900">Select a university first</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-7 text-slate-600">
+              Manage tuition by university, program, and major. Scholarship rules should be based on tuition only. Add separate notes for university/government scholarships when needed.
+            </p>
+          </div>
+          <span className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font900 text-blue-700">
+            Editing: {selectedUniversity.name}
+          </span>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {items.map((u, index) => (
+            <button
+              type="button"
+              key={u.name}
+              onClick={() => setSelected(index)}
+              className={`group rounded-[24px] border p-4 text-left transition hover:-translate-y-1 hover:shadow-xl ${selected === index ? "border-[#2457D6] bg-blue-50 shadow-lg shadow-blue-100" : "border-[#DCE6F4] bg-white"}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-blue-100 bg-white shadow-sm">
+                  {u.logo ? <img src={u.logo} alt={`${u.name} logo`} className="h-full w-full object-contain p-1" /> : <div className="grid h-full place-items-center text-xs font900 text-slate-400">Logo</div>}
+                </div>
+                <div>
+                  <h3 className="line-clamp-2 text-base font900 leading-tight">{u.name}</h3>
+                  <p className="mt-1 text-xs font800 text-slate-500">{u.location}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between rounded-2xl bg-white px-3 py-2 text-xs font900 text-slate-600">
+                <span>{u.tuition || "Tuition not updated"}</span>
+                <span className="text-blue-700">Edit →</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+        <div className="rounded-[30px] border border-[#DCE6F4] bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+            <div className="h-20 w-20 overflow-hidden rounded-full border border-blue-100 bg-white shadow-sm">
+              {selectedUniversity.logo ? <img src={selectedUniversity.logo} alt={`${selectedUniversity.name} logo`} className="h-full w-full object-contain p-1" /> : <div className="grid h-full place-items-center text-xs font900 text-slate-400">Logo</div>}
+            </div>
+            <div>
+              <p className="text-xs font900 uppercase tracking-[.16em] text-[#2457D6]">Selected University</p>
+              <h2 className="text-3xl font900">{selectedUniversity.name}</h2>
+              <p className="mt-1 text-sm font800 text-slate-500">{selectedUniversity.location}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <AdminInput label="General Tuition Range" value={selectedUniversity.tuition} onChange={(v) => updateSelected({ ...selectedUniversity, tuition: v })} />
+            <AdminInput label="Intake / Semester" value={selectedUniversity.intake} onChange={(v) => updateSelected({ ...selectedUniversity, intake: v })} />
+          </div>
+
+          <div className="mt-6 grid gap-5 lg:grid-cols-3">
+            <label className="admin-label">
+              Undergraduate majors and tuition notes
+              <textarea
+                value={undergraduateText}
+                onChange={(e) => updateList("topMajors", e.target.value)}
+                className="admin-textarea-v372"
+                placeholder={"Global Business Administration - KRW ...\nGlobal Hospitality Management - KRW ..."}
+              />
+              <small className="admin-help-v372">Write one major per line. Add tuition amount beside each major if different.</small>
+            </label>
+
+            <label className="admin-label">
+              Graduate majors and tuition notes
+              <textarea
+                value={graduateText}
+                onChange={(e) => updateList("graduatePrograms", e.target.value)}
+                className="admin-textarea-v372"
+                placeholder={"Department of Global Business - KRW ...\nDepartment of Global Hospitality - KRW ..."}
+              />
+              <small className="admin-help-v372">Use this for Masters/Ph.D. program tuition by department.</small>
+            </label>
+
+            <label className="admin-label">
+              Language programs
+              <textarea
+                value={languageText}
+                onChange={(e) => updateList("klpPrograms", e.target.value)}
+                className="admin-textarea-v372"
+                placeholder={"KLP - Korean Language Program\nEAP - English Academic Purpose"}
+              />
+              <small className="admin-help-v372">KLP and EAP should be managed separately.</small>
+            </label>
+          </div>
+        </div>
+
+        <div className="rounded-[30px] border border-[#DCE6F4] bg-white p-6 shadow-sm">
+          <p className="text-sm font900 uppercase tracking-[.16em] text-[#2457D6]">Scholarship Rules</p>
+          <h2 className="mt-2 text-3xl font900">Tuition-based scholarship</h2>
+          <p className="mt-2 text-sm leading-7 text-slate-600">
+            Use this area as the rule guide for the calculator. The actual discount must apply only to tuition fee, not application fee or admission fee.
+          </p>
+
+          <div className="mt-6 space-y-4">
+            <div className="rounded-[24px] border border-blue-100 bg-[#F8FBFF] p-5">
+              <h3 className="font900">Undergraduate / Bachelor</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                <AdminInput label="GPA / %" value="Example: 2.5+ or 60%+" onChange={() => {}} />
+                <AdminInput label="IELTS / TOPIK" value="Example: IELTS 5.5+" onChange={() => {}} />
+                <AdminInput label="Scholarship %" value="Example: 30 / 50 / 70" onChange={() => {}} />
+              </div>
+            </div>
+
+            <div className="rounded-[24px] border border-blue-100 bg-[#F8FBFF] p-5">
+              <h3 className="font900">Graduate / Masters / Ph.D.</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                <AdminInput label="GPA / %" value="Example: 3.0+ or 70%+" onChange={() => {}} />
+                <AdminInput label="IELTS / TOPIK" value="Example: IELTS 6.0+" onChange={() => {}} />
+                <AdminInput label="Scholarship %" value="Example: 30 / 50 / 70" onChange={() => {}} />
+              </div>
+            </div>
+
+            <div className="rounded-[24px] border border-blue-100 bg-[#F8FBFF] p-5">
+              <h3 className="font900">KLP / EAP</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <AdminInput label="KLP condition" value="TOPIK optional / Korean language track" onChange={() => {}} />
+                <AdminInput label="EAP condition" value="IELTS 4.0 or 5.0 depending on university" onChange={() => {}} />
+              </div>
+            </div>
+
+            <label className="admin-label">
+              Other scholarship notes
+              <textarea
+                className="admin-textarea-v372 min-h-[120px]"
+                placeholder="Example: Government scholarship, university special scholarship, nationality-based scholarship, early registration discount..."
+                defaultValue=""
+              />
+              <small className="admin-help-v372">Use this for any extra university or government scholarships. These notes are separate from the tuition calculator.</small>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function ApplicationsPanel() {

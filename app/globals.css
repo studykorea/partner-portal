@@ -963,3 +963,32 @@ a { text-decoration: none; }
   font-size:12px;
   font-weight:750;
 }
+
+
+/* v372: clearer admin tuition/scholarship editor */
+.admin-textarea-v372{
+  margin-top:10px;
+  min-height:180px;
+  width:100%;
+  resize:vertical;
+  border-radius:18px;
+  border:1px solid #dbe5f3;
+  background:#fff;
+  padding:14px 16px;
+  color:#061A40;
+  font-weight:800;
+  line-height:1.65;
+  outline:none;
+}
+.admin-textarea-v372:focus{
+  border-color:#2457D6;
+  box-shadow:0 0 0 4px rgba(36,87,214,.10);
+}
+.admin-help-v372{
+  display:block;
+  margin-top:8px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.45;
+}
