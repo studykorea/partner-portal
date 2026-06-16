@@ -191,6 +191,11 @@ def normalize_university(row: dict[str, Any], admissions: Optional[list[dict[str
         "instagramUrl": row.get("instagram_url") or row.get("instagramUrl") or "",
         "youtubeUrl": row.get("youtube_url") or row.get("youtubeUrl") or "",
         "admissions": admissions or row.get("admissions") or [],
+        "undergraduateTuition": row.get("undergraduate_tuition") or row.get("undergraduateTuition") or [],
+        "graduateTuition": row.get("graduate_tuition") or row.get("graduateTuition") or [],
+        "languageTuition": row.get("language_tuition") or row.get("languageTuition") or [],
+        "scholarshipRules": row.get("scholarship_rules") or row.get("scholarshipRules") or [],
+        "otherScholarships": row.get("other_scholarships") or row.get("otherScholarships") or "",
     }
 
 class AdmissionPayload(BaseModel):
@@ -220,6 +225,11 @@ class UniversityPayload(BaseModel):
     topMajors: list[str] = Field(default_factory=list)
     graduatePrograms: list[str] = Field(default_factory=list)
     klpPrograms: list[str] = Field(default_factory=list)
+    undergraduateTuition: list[dict[str, Any]] = Field(default_factory=list)
+    graduateTuition: list[dict[str, Any]] = Field(default_factory=list)
+    languageTuition: list[dict[str, Any]] = Field(default_factory=list)
+    scholarshipRules: list[dict[str, Any]] = Field(default_factory=list)
+    otherScholarships: str = ""
     image: str = ""
     logo: str = ""
     heroImage: str = ""
@@ -288,6 +298,11 @@ def upsert_university(slug: str, payload: UniversityPayload):
         "top_majors": "|".join(payload.topMajors),
         "graduate_programs": "|".join(payload.graduatePrograms),
         "klp_programs": "|".join(payload.klpPrograms),
+        "undergraduate_tuition": payload.undergraduateTuition,
+        "graduate_tuition": payload.graduateTuition,
+        "language_tuition": payload.languageTuition,
+        "scholarship_rules": payload.scholarshipRules,
+        "other_scholarships": payload.otherScholarships,
         "card_image_url": payload.image,
         "logo_url": payload.logo,
         "hero_image_url": payload.heroImage,
