@@ -1339,3 +1339,44 @@ a { text-decoration: none; }
     max-height:none !important;
   }
 }
+
+/* v376: prevent university logo from covering university name */
+.universities-v349-page .streamlit-title-row.v361-title-row{
+  position:relative !important;
+  padding-left:88px !important;
+  min-height:72px !important;
+  margin-bottom:6px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+}
+.universities-v349-page .streamlit-title-row.v361-title-row h3{
+  margin:0 0 3px !important;
+  min-height:0 !important;
+  max-height:none !important;
+  font-size:21px !important;
+  line-height:1.08 !important;
+}
+.universities-v349-page .streamlit-location.v361-location{
+  margin:0 !important;
+  min-height:0 !important;
+  max-height:none !important;
+}
+.universities-v349-page .streamlit-card-body.v361-card-body{
+  padding-top:38px !important;
+}
+.universities-v349-page .streamlit-logo-bubble.v361-logo-bubble{
+  left:20px !important;
+  top:120px !important;
+  width:74px !important;
+  height:74px !important;
+}
+.universities-v349-page .streamlit-logo-bubble.v361-logo-bubble img{
+  width:60px !important;
+  height:60px !important;
+}
+@media(max-width:760px){
+  .universities-v349-page .streamlit-title-row.v361-title-row{
+    padding-left:84px !important;
+  }
+}
