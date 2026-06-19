@@ -18,7 +18,7 @@ export default function UniversityCard({ university }: { university: University;
   const majors = university.topMajors?.slice(0, 3) || [];
 
   return (
-    <article className="streamlit-university-card v361-premium-card">
+    <article className="streamlit-university-card v361-premium-card v377-sample-card">
       <Link className="streamlit-card-cover v361-card-cover" href={detailHref} aria-label={`View ${university.name} details`}>
         <img src={university.image} alt={`${university.name} campus`} loading="lazy" />
         <span className="v361-cover-shine" />
@@ -37,7 +37,7 @@ export default function UniversityCard({ university }: { university: University;
           <span>{university.region || university.location}</span>
         </div>
 
-        <div className="streamlit-title-row v361-title-row">
+        <div className="streamlit-title-row v361-title-row v377-title-row">
           <h3>{university.name}</h3>
           <p className="streamlit-location v361-location"><span>⌖</span>{university.location}</p>
         </div>
