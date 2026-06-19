@@ -1498,3 +1498,62 @@ a { text-decoration: none; }
     max-height:none !important;
   }
 }
+
+/* v378: move university title block upward and remove extra empty gaps */
+.universities-v349-page .streamlit-university-card.v377-sample-card{
+  height:508px !important;
+  min-height:508px !important;
+  max-height:508px !important;
+}
+.universities-v349-page .streamlit-card-cover.v361-card-cover{
+  height:168px !important;
+}
+.universities-v349-page .streamlit-logo-bubble.v361-logo-bubble{
+  top:110px !important;
+  left:18px !important;
+  width:70px !important;
+  height:70px !important;
+}
+.universities-v349-page .streamlit-logo-bubble.v361-logo-bubble img{
+  width:56px !important;
+  height:56px !important;
+}
+.universities-v349-page .streamlit-card-body.v361-card-body{
+  padding:14px 18px 14px !important;
+}
+.universities-v349-page .streamlit-title-row.v377-title-row{
+  padding-left:76px !important;
+  min-height:42px !important;
+  margin:0 0 4px !important;
+}
+.universities-v349-page .streamlit-title-row.v377-title-row h3{
+  font-size:17px !important;
+  line-height:1.02 !important;
+  margin:0 0 1px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+}
+.universities-v349-page .streamlit-location.v361-location{
+  margin:0 0 8px !important;
+  font-size:11px !important;
+  min-height:13px !important;
+}
+.universities-v349-page .streamlit-stat-grid.v361-stat-grid{
+  margin:0 0 10px !important;
+}
+.universities-v349-page .streamlit-snapshot-title.v361-snapshot-title{
+  margin:0 0 6px !important;
+}
+.universities-v349-page .streamlit-admission-list.v361-admission-list{
+  margin-bottom:8px !important;
+}
+.universities-v349-page .streamlit-scholarship-link.v361-scholarship-link{
+  margin:0 0 8px !important;
+}
+@media(max-width:760px){
+  .universities-v349-page .streamlit-university-card.v377-sample-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+}
